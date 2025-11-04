@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Trải Bài Tarot Cùng AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        /* --- (MỚI) CSS CHO LOADER HÀNH TINH 3D --- */
+        .interpretation-loader {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem 1rem; /* (CHỈNH SỬA) Giảm padding cho gọn hơn */
+            /* min-height: 250px; (XÓA) Bỏ min-height */
+            overflow: hidden; 
+            perspective: 800px; /* (MỚI) Thêm perspective cho 3D */
+        }
+
+        .loader-planet-system {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            /* Hiệu ứng xoay nhẹ toàn hệ thống */
+            animation: system-wobble 15s infinite ease-in-out;
+        }
+
+        .loader-planet-sphere {
+            width: 100px; /* (MỚI) Tăng kích thước cho ảnh */
+            height: 100px; /* (MỚI) Tăng kích thước cho ảnh */
+            border-radius: 50%;
+            
+            /* === (CHỈNH SỬA) SỬ DỤNG ẢNH PNG === */
+            /* !!! THAY URL ẢNH PNG CỦA BẠN VÀO ĐÂY !!! */
+            /* Ví dụ: background-image: url('hinh-hanh-tinh.png'); */
+            background-image: url('planet.png'); /* (CHỈNH SỬA) Đổi sang ảnh local */
+            
+            background-size: cover; /* Hiển thị toàn bộ ảnh */
+            background-position: center;
+            background-color: transparent; /* Đảm bảo không có nền */
+            
+            /* (MỚI) Thêm lại hiệu ứng phát sáng (nhấp nháy) */
+            animation: planet-glow 2.5s infinite ease-in-out;
+            
+            position: absolute;
+        }
+
+        .loader-orbit {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform-style: preserve-3d;
+            /* Hiệu ứng xoay 360 độ */
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        /* Quỹ đạo 1 (Sao trắng) */
+        .orbit-1 {
+            animation-name: orbit-spin-1;
+            animation-duration: 3s; /* (CHỈNH SỬA) Tăng tốc từ 5s */
+        }
+        .orbit-1::before {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 15px #fff;
+            top: 50%; /* Đặt ở giữa */
+            left: 0; /* Đặt ở cạnh trái */
+            transform: translate(-50%, -50%); /* Căn giữa vào quỹ đạo */
+            filter: blur(3px);
+        }
+
+        /* Quỹ đạo 2 (Sao vàng) */
+        .orbit-2 {
+            animation-name: orbit-spin-2;
+            animation-duration: 5s; /* (CHỈNH SỬA) Tăng tốc từ 8s */
+        }
+        .orbit-2::before {
+            content: '';
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #ffc;
+            box-shadow: 0 0 15px #ffc;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            filter: blur(3px);
+        }
+
+        /* Quỹ đạo 3 (Sao đỏ) */
+        .orbit-3 {
+            animation-name: orbit-spin-3;
+            animation-duration: 7s; /* (CHỈNH SỬA) Tăng tốc từ 12s */
+        }
+        .orbit-3::before {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #fcc;
+            box-shadow: 0 0 15px #fcc;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            filter: blur(3px);
+        }
+
+
+        /* (MỚI) Quỹ đạo 4 (Cyan) */
+        .orbit-4 {
+            animation-name: orbit-spin-4;
+            animation-duration: 10s;
+        }
+        .orbit-4::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #0ff;
+            box-shadow: 0 0 15px #0ff;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            filter: blur(3px);
+        }
+
+        /* (MỚI) Quỹ đạo 5 (Tím) */
+        .orbit-5 {
+            animation-name: orbit-spin-5;
+            animation-duration: 14s;
+        }
+        .orbit-5::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #f0f;
+            box-shadow: 0 0 15px #f0f;
+            top: 50%;
+            left: 0;
+            transform: translate(-50%, -50%);
+            filter: blur(3px);
+        }
+
+
+        .loader-text {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-color);
+            opacity: 0.8;
+            text-shadow: 0 0 10px var(--text-color);
+            animation: text-fade 2s infinite ease-in-out;
+        }
+
+        /* Keyframes cho hiệu ứng */
+        @keyframes system-wobble {
+            0% { transform: rotateY(-10deg) rotateX(5deg); }
+            50% { transform: rotateY(10deg) rotateX(-5deg); }
+            100% { transform: rotateY(-10deg) rotateX(5deg); }
+        }
+
+        /* (CHỈNH SỬA) Giảm góc nghiêng rotateX để quỹ đạo nhìn tròn hơn */
+        @keyframes orbit-spin-1 {
+            from { transform: rotateX(65deg) rotateZ(0deg); }
+            to   { transform: rotateX(65deg) rotateZ(360deg); }
+        }
+        @keyframes orbit-spin-2 {
+            from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); }
+            to   { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); }
+        }
+        @keyframes orbit-spin-3 {
+            from { transform: rotateX(65deg) rotateY(-60deg) rotateZ(0deg); }
+            to   { transform: rotateX(65deg) rotateY(-60deg) rotateZ(360deg); }
+        }
+
+        /* (CHỈNH SỬA) Thêm keyframes cho 2 quỹ đạo mới */
+        @keyframes orbit-spin-4 {
+            from { transform: rotateX(65deg) rotateY(-45deg) rotateZ(0deg); }
+            to   { transform: rotateX(65deg) rotateY(-45deg) rotateZ(360deg); }
+        }
+        @keyframes orbit-spin-5 {
+            from { transform: rotateX(65deg) rotateY(30deg) rotateZ(0deg); }
+            to   { transform: rotateX(65deg) rotateY(30deg) rotateZ(360deg); }
+        }
+
+        @keyframes text-fade {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        /* (MỚI) Keyframes cho hiệu ứng ảnh phát sáng (sử dụng filter) */
+        @keyframes planet-glow {
+            0% {
+                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff);
+            }
+            50% {
+                filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 25px #c1c8ff);
+            }
+            100% {
+                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff);
+            }
+        }
+        /* --- (HẾT) CSS CHO LOADER --- */
+        
+    </style>
+</head>
+<body>
+
+    <!-- (MỚI) Hiệu ứng sao lấp lánh -->
+    <div id="stars-bg">
+        <div id="stars1"></div>
+        <div id="stars2"></div>
+        <div id="stars3"></div>
+        <div id="stars4"></div>
+    </div>
+    
+
+
+    
+    <!-- (MỚI) Menu điều hướng -->
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html#" class="nav-link logo-link">TAROT READER</a>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-link">Trang Chủ</a>
+            <a href="tarot.html" class="nav-link">Bói tarot</a>
+            <a href="index.html#" class="nav-link">Về chúng tôi</a>
+            <a href="index.html#" class="nav-link">Blogs</a>
+            <a href="index.html#" class="nav-link">Đặt lịch</a>
+            <a href="index.html#" class="nav-link">Liên hệ</a>
+            <!-- (MỚI) Thêm nút Lịch sử vào menu -->
+            <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+    </nav>
+
+
+    <!-- Nút Lịch sử -->
+    <!-- (XÓA) Xóa nút #history-btn cũ khỏi body -->
+    <!-- <button id="history-btn">Lịch sử</button> -->
+
+    <!-- Màn hình 1: Đặt câu hỏi -->
+    <div id="question-screen" class="screen active">
+        <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
+        
+        <div id="question-input-area" class="question-input-area">
+            <!-- (CHỈNH SỬA) Thêm min-height cho textarea -->
+            <textarea id="question-input" class="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" style="min-height: 56px;"></textarea>
+            <button id="submit-question-btn" title="Gửi câu hỏi">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="dropdown-container">
+            <button id="suggested-questions-toggle" class="dropdown-toggle">
+                <span>Gợi ý câu hỏi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div id="suggested-questions-list" class="dropdown-menu">
+                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
+            </div>
+        </div>
+        
+        <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+    </div>
+
+    <!-- Màn hình 2: Xáo bài -->
+    <div id="shuffling-screen" class="screen">
+        <div id="shuffling-question-display" class="question-display-header"></div>
+        <div class="shuffling-animation-container">
+            <div class="shuffle-card"></div>
+            <div class="shuffle-card"></div>
+            <div class="shuffle-card"></div>
+        </div>
+        <p class="shuffling-instruction">
+            Hãy giữ tập trung vào câu hỏi của bạn.
+            <br>
+            Để có kết quả tốt nhất, bạn không nên làm việc riêng trong lúc này.
+        </p>
+    </div>
+
+    <!-- Màn hình 3: Chọn bài -->
+    <div id="drawing-screen" class="screen">
+        <div id="drawing-question-display" class="question-display-header"></div>
+        <h2 class="drawing-subheader">Hãy chọn 3 lá bài</h2>
+        
+        <div id="chosen-cards-display">
+            <div class="chosen-card-placeholder"></div>
+            <div class="chosen-card-placeholder"></div>
+            <div class="chosen-card-placeholder"></div>
+        </div>
+        
+        <div id="card-spread-container">
+            <!-- Hàng 1 & 2 cho Desktop -->
+            <div class="card-row" id="card-row-1"></div>
+            <div class="card-row" id="card-row-2"></div>
+            <!-- 4 hàng cho Mobile -->
+            <div class="card-row mobile-row" id="card-row-3"></div>
+            <div class="card-row mobile-row" id="card-row-4"></div>
+            <div class="card-row mobile-row" id="card-row-5"></div>
+            <div class="card-row mobile-row" id="card-row-6"></div>
+        </div>
+        
+        <div id="action-button-container">
+            <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
+        </div>
+        
+        <div id="interpretation-results-display"></div>
+        
+        <div id="follow-up-question-container">
+            <h3>Bạn có câu hỏi nào khác không?</h3>
+            <div id="follow-up-input-area" class="question-input-area">
+                <textarea id="follow-up-question-input" class="question-input" placeholder="Đặt câu hỏi tiếp theo..." style="min-height: 56px;"></textarea>
+                <button id="submit-follow-up-btn" title="Gửi câu hỏi mới">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                    </svg>
+                </button>
+            </div>
+            <p id="follow-up-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+        </div>
+    </div>
+    
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        <div class="modal-header">
+            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+            <h2>Lịch sử trải bài</h2>
+        </div>
+        <div id="history-list-wrapper" class="modal-scroll-wrapper">
+            <div id="history-list">
+                <!-- Lịch sử sẽ được render bằng JS -->
+            </div>
+        </div>
+    </div>
+    <script src="common.js" defer></script>
+
+    <script>
+        /* ============================================= */
+/* === TAROT.JS (Tarot Game Logic) === */
+/* ============================================= */
+
+// (QUAN TRỌNG) URL Webhook để *luận giải*
+const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2a1c95d5-dd30-4710-9f1c-f9c45686f218'; // !!! THAY THẾ URL CỦA BẠN !!!
+
+// (MỚI - QUAN TRỌNG) URL Webhook để *kiểm tra* câu hỏi
+const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/fe3c376f-62f2-472d-ac01-d39ba5496e75'; // !!! BẠN PHẢI THAY THẾ URL NÀY !!!
+
+// (MỚI) Di chuyển SHEET_ID ra ngoài để dùng chung
+const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
+
+// DOM Elements (Game-specific)
+const screens = document.querySelectorAll('.screen');
+const questionInput = document.getElementById('question-input');
+const submitQuestionBtn = document.getElementById('submit-question-btn');
+const questionErrorDisplay = document.getElementById('question-error-display'); 
+
+const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
+const suggestedQuestionsList = document.getElementById('suggested-questions-list');
+
+const cardRow1 = document.getElementById('card-row-1');
+const cardRow2 = document.getElementById('card-row-2');
+const cardRow3 = document.getElementById('card-row-3'); 
+const cardRow4 = document.getElementById('card-row-4');
+const cardRow5 = document.getElementById('card-row-5');
+const cardRow6 = document.getElementById('card-row-6');
+const chosenCardsDisplay = document.getElementById('chosen-cards-display'); 
+const shufflingQuestionDisplay = document.getElementById('shuffling-question-display');
+const drawingQuestionDisplay = document.getElementById('drawing-question-display');
+const getInterpretationButton = document.getElementById('get-interpretation-button');
+const mainResultsDisplay = document.getElementById('interpretation-results-display');
+const followUpContainer = document.getElementById('follow-up-question-container');
+const followUpInput = document.getElementById('follow-up-question-input');
+const followUpSubmitBtn = document.getElementById('submit-follow-up-btn');
+const followUpErrorDisplay = document.getElementById('follow-up-error-display'); 
+
+// (MỚI) HTML cho các icon của nút
+const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+</svg>`;
+const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" width="20" height="20">
+    <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+</svg>`;
+
+// State (Game-specific)
+let cardData = [];
+let selectedCards = [];
+let userQuestion = '';
+let isAnimating = false; 
+let allCardImagesLoaded = false;
+let currentReadingId = null; 
+
+// === (MỚI) Chức năng Auto-Grow Textarea ===
+function autoGrow(element) {
+    if (!element) return;
+    element.style.height = 'auto'; 
+    // (CHỈNH SỬA) Đảm bảo chiều cao không nhỏ hơn 56px
+    element.style.height = Math.max(56, element.scrollHeight) + 'px'; 
+}
+
+// === Functions ===
+
+/** Chuyển màn hình */
+function showScreen(screenId) {
+    screens.forEach(screen => screen.classList.remove('active'));
+    const activeScreen = document.getElementById(screenId);
+    if (activeScreen) {
+        activeScreen.classList.add('active');
+    }
+}
+
+/** Tải dữ liệu 78 lá bài từ Google Sheet */
+async function initialize() {
+    try {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const text = await response.text();
+        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
+        const table = JSON.parse(jsonText).table;
+
+        cardData = table.rows.map((row, index) => ({
+            id: index,
+            name: row.c[0]?.v || 'Unknown Card',
+            image: row.c[1]?.v || 'https://placehold.co/200x340'
+        }));
+
+        preloadAllCardImages(); // (MỚI) Bắt đầu tải trước ảnh
+    } catch (error)
+    {
+        console.error("Lỗi khi tải lá bài:", error);
+        if (document.getElementById('card-spread-container')) {
+             document.getElementById('card-spread-container').innerHTML = '<p>Lỗi tải bộ bài. Vui lòng tải lại trang.</p>';
+        }
+    }
+}
+
+/** Tải câu hỏi gợi ý từ Google Sheet */
+async function loadSuggestedQuestions() {
+    if (!suggestedQuestionsList) return; // Không làm gì nếu không có phần gợi ý
+    
+    try {
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const text = await response.text();
+        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
+        const table = JSON.parse(jsonText).table;
+
+        const rawData = table.rows.map(row => ({
+            category: row.c[0]?.v,
+            question: row.c[1]?.v
+        }));
+
+        const grouped = {};
+        rawData.forEach(item => {
+            if (!item.category || !item.question) return; 
+            if (!grouped[item.category]) {
+                grouped[item.category] = [];
+            }
+            grouped[item.category].push(item.question);
+        });
+        
+        renderSuggestedQuestions(grouped);
+
+    } catch (error) {
+        console.error("Lỗi khi tải câu hỏi gợi ý:", error);
+        suggestedQuestionsList.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Không thể tải gợi ý.</p>';
+    }
+}
+
+/** Hiển thị câu hỏi gợi ý */
+function renderSuggestedQuestions(groupedData) {
+    if (!suggestedQuestionsList) return;
+    let html = '';
+    for (const category in groupedData) {
+        html += `<h4 class="category-title">${category}</h4>`;
+        groupedData[category].forEach(question => {
+            const safeQuestion = question.replace(/"/g, '&quot;');
+            html += `<button class="suggestion-item" data-question="${safeQuestion}">${question}</button>`;
+        });
+    }
+    suggestedQuestionsList.innerHTML = html;
+}
+
+/** Tải trước hình ảnh 78 lá bài */
+function preloadAllCardImages() {
+    if (!cardData || cardData.length === 0) return;
+
+    console.log("Bắt đầu tải trước 78 hình ảnh lá bài...");
+    const imagePromises = cardData.map(card => {
+        return new Promise((resolve) => { 
+            const img = new Image();
+            img.src = card.image;
+            img.onload = resolve;
+            img.onerror = resolve; // Vẫn resolve dù lỗi để không bị kẹt
+        });
+    });
+
+    Promise.all(imagePromises)
+        .then(() => {
+            allCardImagesLoaded = true;
+            console.log("Tất cả 78 hình ảnh lá bài đã được tải trước!");
+        })
+        .catch(err => {
+            console.error("Lỗi trong quá trình tải trước hình ảnh:", err);
+            allCardImagesLoaded = true; // Vẫn tiếp tục dù lỗi
+        });
+}
+
+/** Xử lý khi nộp câu hỏi đầu tiên */
+async function handleQuestionSubmit() {
+    const questionFromInput = questionInput.value.trim();
+    questionErrorDisplay.textContent = ''; 
+    questionErrorDisplay.style.color = '#ff8a8a'; 
+
+    if (!questionFromInput) {
+        const inputArea = document.getElementById('question-input-area');
+        inputArea.style.animation = 'shake 0.5s ease';
+        setTimeout(() => { inputArea.style.animation = ''; }, 500);
+        return;
+    }
+    
+    submitQuestionBtn.disabled = true;
+    submitQuestionBtn.innerHTML = spinnerIcon;
+    questionErrorDisplay.textContent = 'Đang kiểm tra câu hỏi của bạn...'; 
+    questionErrorDisplay.style.color = '#d4af37'; 
+    
+    try {
+        const response = await fetch(N8N_VALIDATE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: questionFromInput })
+        });
+
+        if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
+             throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
+        }
+        
+        if (!response.ok) {
+            throw new Error('Lỗi từ máy chủ xác thực.');
+        }
+
+        const n8nResponse = await response.json();
+        const validationResult = n8nResponse;
+
+        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
+            userQuestion = questionFromInput;
+            currentReadingId = crypto.randomUUID(); 
+            startNewReadingFlow();
+            submitQuestionBtn.disabled = false;
+            submitQuestionBtn.innerHTML = sendIcon;
+        } else {
+            questionErrorDisplay.textContent = validationResult?.reason || 'Câu hỏi không hợp lệ.';
+            questionErrorDisplay.style.color = '#ff8a8a'; 
+            submitQuestionBtn.disabled = false;
+            submitQuestionBtn.innerHTML = sendIcon;
+        }
+
+    } catch (error) {
+        console.error("Lỗi khi xác thực câu hỏi:", error);
+        if (error.message.includes('URL')) {
+            questionErrorDisplay.textContent = 'Lỗi: Bạn chưa cập nhật N8N_VALIDATE_URL trong code.';
+        } else {
+            questionErrorDisplay.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại.';
+        }
+        questionErrorDisplay.style.color = '#ff8a8a'; 
+        submitQuestionBtn.disabled = false;
+        submitQuestionBtn.innerHTML = sendIcon;
+    }
+}
+
+/** Xử lý khi nộp câu hỏi tiếp theo */
+async function handleFollowUpSubmit() {
+    const questionFromInput = followUpInput.value.trim();
+    followUpErrorDisplay.textContent = ''; 
+    followUpErrorDisplay.style.color = '#ff8a8a'; 
+
+    if (!questionFromInput) {
+        const inputArea = document.getElementById('follow-up-input-area');
+        inputArea.style.animation = 'shake 0.5s ease';
+        setTimeout(() => { inputArea.style.animation = ''; }, 500);
+        return;
+    }
+    
+    followUpSubmitBtn.disabled = true;
+    followUpSubmitBtn.innerHTML = spinnerIcon;
+    followUpErrorDisplay.textContent = 'Đang kiểm tra câu hỏi của bạn...'; 
+    followUpErrorDisplay.style.color = '#d4af37'; 
+
+    try {
+        const response = await fetch(N8N_VALIDATE_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: questionFromInput })
+        });
+
+        if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
+             throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
+        }
+
+        if (!response.ok) {
+            throw new Error('Lỗi từ máy chủ xác thực.');
+        }
+
+        const n8nResponse = await response.json();
+        const validationResult = n8nResponse;
+
+        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
+            userQuestion = questionFromInput;
+            followUpInput.value = '';
+            currentReadingId = crypto.randomUUID(); 
+            startNewReadingFlow();
+            followUpSubmitBtn.disabled = false;
+            followUpSubmitBtn.innerHTML = sendIcon;
+        } else {
+            followUpErrorDisplay.textContent = validationResult?.reason || 'Câu hỏi không hợp lệ.';
+            followUpErrorDisplay.style.color = '#ff8a8a'; 
+            followUpSubmitBtn.disabled = false;
+            followUpSubmitBtn.innerHTML = sendIcon;
+        }
+
+    } catch (error) {
+        console.error("Lỗi khi xác thực câu hỏi (hỏi tiếp):", error);
+        if (error.message.includes('URL')) {
+            followUpErrorDisplay.textContent = 'Lỗi: Bạn chưa cập nhật N8N_VALIDATE_URL trong code.';
+        } else {
+            followUpErrorDisplay.textContent = 'Không thể kết nối máy chủ. Vui lòng thử lại.';
+        }
+        followUpErrorDisplay.style.color = '#ff8a8a'; 
+        followUpSubmitBtn.disabled = false;
+        followUpSubmitBtn.innerHTML = sendIcon;
+    }
+}
+
+/** Tiêm CSS cho hiệu ứng rung lắc */
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = `@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }`;
+document.head.appendChild(styleSheet);
+
+
+/** Bắt đầu một lượt trải bài mới (chuyển qua màn hình xáo bài) */
+function startNewReadingFlow() {
+    sessionStorage.removeItem('tarotSession'); 
+    
+    shufflingQuestionDisplay.textContent = userQuestion;
+    drawingQuestionDisplay.textContent = userQuestion;
+    showScreen('shuffling-screen');
+
+    const shuffleTime = 2500; 
+    const startTime = Date.now();
+
+    // Chờ cho đến khi ảnh được tải xong VÀ hết thời gian xáo bài
+    function checkAndProceed() {
+        const elapsedTime = Date.now() - startTime;
+        const timeRemaining = shuffleTime - elapsedTime;
+
+        if (allCardImagesLoaded && timeRemaining <= 0) {
+            populateCardDeck();
+            showScreen('drawing-screen');
+        } else {
+            // Nếu ảnh đã tải xong, chỉ cần chờ hết thời gian
+            // Nếu ảnh chưa xong, kiểm tra lại sau 100ms
+            const nextCheck = allCardImagesLoaded ? timeRemaining : 100;
+            setTimeout(checkAndProceed, Math.max(nextCheck, 0)); 
+        }
+    }
+
+    checkAndProceed();
+}
+
+/** Tạo bộ bài 78 lá úp */
+function populateCardDeck() {
+    // Dọn dẹp
+    cardRow1.innerHTML = '';
+    cardRow2.innerHTML = '';
+    cardRow3.innerHTML = '';
+    cardRow4.innerHTML = '';
+    cardRow5.innerHTML = '';
+    cardRow6.innerHTML = '';
+    selectedCards = []; 
+    mainResultsDisplay.style.display = 'none';
+    mainResultsDisplay.innerHTML = '';
+    updateChosenCardsDisplay();
+
+    const drawingScreen = document.getElementById('drawing-screen');
+    drawingScreen.classList.remove('results-active');
+    
+    getInterpretationButton.classList.remove('visible');
+    getInterpretationButton.style.display = 'none';
+    
+    followUpContainer.style.display = 'none';
+    followUpInput.value = ''; 
+    questionInput.value = ''; 
+    if (questionErrorDisplay) questionErrorDisplay.textContent = '';
+    if (followUpErrorDisplay) followUpErrorDisplay.textContent = '';
+
+    // Tạo 78 lá bài
+    for (let i = 0; i < 78; i++) {
+        const cardElementDesktop = document.createElement('div');
+        cardElementDesktop.className = 'facedown-card';
+        cardElementDesktop.dataset.positionIndex = i;
+        // Hiệu ứng chia bài
+        cardElementDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 30}ms`;
+        
+        const cardElementMobile = cardElementDesktop.cloneNode(true);
+        
+        const animationEndCallback = (e) => {
+            if (e.animationName === 'dealCardIn') {
+                e.target.classList.add('is-dealt'); 
+                e.target.style.animation = ''; 
+            }
+        };
+        cardElementDesktop.addEventListener('animationend', animationEndCallback);
+        cardElementMobile.addEventListener('animationend', animationEndCallback);
+        
+        // Gắn listener click
+        const clickHandler = (e) => handleCardSelection(e, e.currentTarget);
+        cardElementDesktop.addEventListener('click', clickHandler);
+        cardElementMobile.addEventListener('click', clickHandler);
+        
+        cardElementDesktop.addEventListener('touchstart', clickHandler);
+        cardElementMobile.addEventListener('touchstart', clickHandler);
+
+        // Phân phối vào các hàng
+        if (i < 39) {
+            cardRow1.appendChild(cardElementDesktop);
+        } else {
+            cardRow2.appendChild(cardElementDesktop);
+        }
+        
+        if (i < 20) {
+            cardRow3.appendChild(cardElementMobile);
+        } else if (i < 40) {
+            cardRow4.appendChild(cardElementMobile);
+        } else if (i < 60) {
+            cardRow5.appendChild(cardElementMobile);
+        } else {
+            cardRow6.appendChild(cardElementMobile);
+        }
+    }
+}
+
+/** Xử lý khi người dùng chọn 1 lá bài */
+function handleCardSelection(event, clickedElement) {
+    event.preventDefault();
+    
+    if (selectedCards.length >= 3 || isAnimating) return; // Đã chọn đủ hoặc đang lật
+
+    const posIndex = clickedElement.dataset.positionIndex;
+    // Tìm cả 2 lá (desktop/mobile) có cùng index
+    const allCardsWithIndex = document.querySelectorAll(`.facedown-card[data-position-index="${posIndex}"]`);
+
+    let alreadyChosen = false;
+    allCardsWithIndex.forEach(card => {
+        if (card.classList.contains('is-chosen')) {
+            alreadyChosen = true;
+        }
+    });
+    if (alreadyChosen) return;
+
+    isAnimating = true; 
+
+    // Đánh dấu cả 2 lá là đã chọn
+    allCardsWithIndex.forEach(card => card.classList.add('is-chosen'));
+
+    // Chọn ngẫu nhiên 1 lá bài từ bộ bài (chưa được chọn)
+    const availableCards = cardData.filter(card => !selectedCards.some(sc => sc.id === card.id));
+    const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
+    const isReversed = Math.random() < 0.5;
+    const orientation = isReversed ? 'Ngược' : 'Xuôi';
+    const chosenCard = { ...randomCard, isReversed, orientation };
+
+    // Tìm ô trống tiếp theo
+    const targetPlaceholder = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
+    
+    if (targetPlaceholder) {
+        // Chạy hiệu ứng bay và lật bài
+        animateCardFlight(clickedElement, targetPlaceholder, chosenCard);
+    } else {
+        isAnimating = false;
+    }
+}
+
+/** Hiệu ứng lá bài bay từ bộ bài đến ô đã chọn và lật ra */
+function animateCardFlight(startEl, endEl, cardData) {
+    
+    const img = new Image();
+    
+    // Phải chờ ảnh mặt trước tải xong thì mới bắt đầu hiệu ứng
+    // để đảm bảo khi lật ra là có ảnh
+    const onImageLoaded = () => {
+        const startRect = startEl.getBoundingClientRect();
+        const endRect = endEl.getBoundingClientRect();
+        
+        // Tạo 1 lá bài giả để bay
+        const flyingCard = document.createElement('div');
+        flyingCard.className = 'flying-card-animator';
+        
+        const reversedClass = cardData.isReversed ? 'reversed' : '';
+        flyingCard.innerHTML = `
+            <div class="flying-card-inner">
+                <div class="flying-card-back"></div>
+                <div class="flying-card-front">
+                    <img src="${cardData.image}" alt="${cardData.name}" class="${reversedClass}">
+                </div>
+            </div>
+        `;
+        
+        // Đặt lá bài giả lên vị trí lá bài thật
+        flyingCard.style.top = `${startRect.top + window.scrollY}px`;
+        flyingCard.style.left = `${startRect.left}px`;
+        flyingCard.style.width = `${startRect.width}px`;
+        flyingCard.style.height = `${startRect.height}px`;
+        
+        document.body.appendChild(flyingCard);
+        
+        // Chạy hiệu ứng
+        requestAnimationFrame(() => {
+            const inner = flyingCard.querySelector('.flying-card-inner');
+            
+            // 1. Bay đến vị trí mới
+            flyingCard.style.top = `${endRect.top + window.scrollY}px`;
+            flyingCard.style.left = `${endRect.left}px`;
+            flyingCard.style.width = `${endRect.width}px`;
+            flyingCard.style.height = `${endRect.height}px`;
+            
+            // 2. Lật lá bài
+            inner.style.transform = 'rotateY(180deg) translateZ(0)';
+        });
+
+        let flightHasEnded = false;
+        
+        // Khi hiệu ứng kết thúc
+        const onFlightEnd = (event) => {
+            if (event.target !== flyingCard || flightHasEnded) {
+                return;
+            }
+            flightHasEnded = true; 
+
+            flyingCard.removeEventListener('transitionend', onFlightEnd);
+            flyingCard.remove(); // Xóa lá bài giả
+            
+            // Cập nhật mảng state và hiển thị lá bài thật
+            selectedCards.push(cardData);
+            updateChosenCardsDisplay(); 
+
+            if (selectedCards.length === 3) {
+                transitionToResultsView(); // Đã chọn đủ 3 lá
+            }
+            
+            isAnimating = false; // Cho phép chọn lá tiếp theo
+        };
+        
+        flyingCard.addEventListener('transitionend', onFlightEnd);
+    };
+
+    img.onload = onImageLoaded; 
+    img.onerror = onImageLoaded; // Vẫn chạy dù ảnh lỗi
+    img.src = cardData.image; 
+}
+
+
+/** Cập nhật khu vực 3 lá bài đã chọn */
+function updateChosenCardsDisplay() {
+    chosenCardsDisplay.innerHTML = '';
+    let cardItemElements = []; 
+    
+    // Tạo các lá bài đã chọn
+    selectedCards.forEach(card => {
+        const cardItem = document.createElement('div');
+        cardItem.className = 'chosen-card-item';
+        cardItem.innerHTML = `
+            <div class="card-image-wrapper">
+                <img src="${card.image}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
+            </div>
+            <div class="card-info">
+                <div class="card-name">${card.name}</div>
+                ${card.isReversed ? '<div class="card-orientation">(Lá bài Ngược)</div>' : ''}
+            </div>
+        `;
+        cardItemElements.push(cardItem); 
+    });
+    
+    // Thêm các lá bài vào (với hiệu ứng mờ)
+    cardItemElements.forEach(item => {
+        chosenCardsDisplay.appendChild(item);
+        setTimeout(() => {
+            item.style.opacity = '1';
+        }, 0);
+    });
+
+    // Thêm các ô trống còn lại
+    for (let i = 0; i < 3 - selectedCards.length; i++) {
+        chosenCardsDisplay.innerHTML += '<div class="chosen-card-placeholder"></div>';
+    }
+}
+
+/** Chuyển sang trạng thái xem kết quả (ẩn bộ bài, hiện nút) */
+function transitionToResultsView() {
+    const drawingScreen = document.getElementById('drawing-screen');
+    drawingScreen.classList.add('results-active');
+    
+    getInterpretationButton.style.display = 'inline-block'; 
+    setTimeout(() => {
+        getInterpretationButton.classList.add('visible');
+    }, 300); // Chờ hiệu ứng ẩn bộ bài
+}
+
+/** Lấy luận giải từ AI */
+async function handleGetInterpretation() {
+    mainResultsDisplay.style.display = 'block';
+    
+    /* === (CHỈNH SỬA) THAY THẾ DÒNG TEXT CŨ BẰNG LOADER MỚI === */
+    mainResultsDisplay.innerHTML = `
+        <div class="interpretation-loader">
+            <div class="loader-planet-system">
+                <!-- Hành tinh (bây giờ là ảnh) -->
+                <div class="loader-planet-sphere"></div>
+                
+                <!-- 3 quỹ đạo (vẫn như cũ) -->
+                <div class="loader-orbit orbit-1"></div>
+                <div class="loader-orbit orbit-2"></div>
+                <div class="loader-orbit orbit-3"></div>
+                <!-- (MỚI) Thêm 2 quỹ đạo -->
+                <div class="loader-orbit orbit-4"></div>
+                <div class="loader-orbit orbit-5"></div>
+            </div>
+            <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
+        </div>
+    `;
+    /* === (HẾT CHỈNH SỬA) === */
+
+    // Ẩn nút "Xem ý nghĩa"
+    getInterpretationButton.classList.remove('visible');
+    setTimeout(() => {
+        getInterpretationButton.style.display = 'none';
+    }, 300);
+    
+    const payload = {
+        question: userQuestion,
+        cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
+        readingId: currentReadingId 
+    };
+
+
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
+
+        const result = await response.json();
+        
+        if (result && result.length > 0 && result[0].interpretation) {
+            const converter = new showdown.Converter();
+            const markdownContent = result[0].interpretation; 
+            const htmlContent = converter.makeHtml(markdownContent);
+            mainResultsDisplay.innerHTML = htmlContent; 
+
+            // Chuẩn bị dữ liệu để lưu
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = htmlContent;
+            const plainTextContent = (tempDiv.textContent || tempDiv.innerText || "").trim();
+
+            const fullEntry = { 
+                readingId: currentReadingId, 
+                timestamp: Date.now(), 
+                question: userQuestion, 
+                cards: selectedCards, 
+                html: htmlContent, 
+                text: plainTextContent, 
+                markdown: markdownContent 
+            };
+
+            // Gọi hàm saveHistory() từ common.js
+            // Cần đảm bảo common.js đã được tải trước
+            if (typeof saveHistory === 'function') {
+                saveHistory(fullEntry);
+            } else {
+                console.error("Lỗi: Không tìm thấy hàm saveHistory().");
+            }
+
+        } else {
+            throw new Error("Dữ liệu trả về không đúng định dạng.");
+        }
+    } catch (error) {
+        console.error("Lỗi khi gọi Webhook:", error);
+        mainResultsDisplay.innerHTML = `<p>Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
+    }
+    
+    // Cuộn xuống kết quả và hiện ô hỏi tiếp
+    mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    followUpContainer.style.display = 'block';
+}
+
+/** Tải trạng thái ban đầu (luôn là màn hình câu hỏi) */
+function loadSessionState() {
+    showScreen('question-screen');
+}
+
+
+// === Event Listeners (Game-specific) ===
+document.addEventListener('DOMContentLoaded', async () => {
+    // Chỉ chạy các hàm này nếu các phần tử game tồn tại
+    if (document.getElementById('question-screen')) {
+        // Init game
+        await initialize(); 
+        await loadSuggestedQuestions(); 
+        loadSessionState(); 
+
+        // Auto-grow textareas
+        questionInput.addEventListener('input', () => autoGrow(questionInput));
+        followUpInput.addEventListener('input', () => autoGrow(followUpInput));
+        
+        // Enter key listeners
+        questionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                handleQuestionSubmit();
+            }
+        });
+        
+        followUpInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                handleFollowUpSubmit();
+            }
+        });
+
+        // Button click listeners
+        submitQuestionBtn.addEventListener('click', handleQuestionSubmit);
+        
+        suggestedQuestionsToggle.addEventListener('click', () => {
+            suggestedQuestionsList.classList.toggle('open');
+            suggestedQuestionsToggle.classList.toggle('open');
+        });
+
+        suggestedQuestionsList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-item')) {
+                questionInput.value = e.target.dataset.question;
+                autoGrow(questionInput);
+                suggestedQuestionsList.classList.remove('open');
+                suggestedQuestionsToggle.classList.remove('open');
+            }
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
+                suggestedQuestionsList.classList.remove('open');
+                suggestedQuestionsToggle.classList.remove('open');
+            }
+        });
+
+        getInterpretationButton.addEventListener('click', handleGetInterpretation);
+        followUpSubmitBtn.addEventListener('click', handleFollowUpSubmit);
+    }
+});
+    </script>
+</body>
+</html>
+
+
+
+
+
+

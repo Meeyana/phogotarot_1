@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- (GIỮ NGUYÊN) Tiêu đề cũ -->
+    <title>Trải Bài Tarot Cùng AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- (GIỮ NGUYÊN) Font cũ -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <!-- (GIỮ NGUYÊN) Thư viện Showdown (mặc dù trang chủ không dùng) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- (GIỮ NGUYÊN) Toàn bộ CSS cũ để giữ giao diện -->
+    <style>
+        
+        #stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        #stars-bg::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 15%;
+            width: 50px; 
+            height: 50px;
+            border-radius: 50%;
+            box-shadow: -10px 5px 0 0px var(--text-color);
+            opacity: 0.5;
+            animation: moon-glow 10s ease-in-out infinite alternate;
+        }
+        #stars-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            width: 200px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, rgba(142, 186, 255, 0.15) 0%, rgba(142, 186, 255, 0) 70%);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            opacity: 0.5;
+            animation: moon-glow 15s ease-in-out infinite alternate;
+        }
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: white;
+            opacity: 0.6;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.2); }
+        }
+         @keyframes moon-glow {
+            from { opacity: 0.3; transform: rotate(-5deg); }
+            to { opacity: 0.6; transform: rotate(5deg); }
+        }
+
+        
+
+        /* --- (MỚI) CSS CHO BỐ CỤC TRANG CHỦ --- */
+        /* Các lớp này được thêm vào để style nội dung mới theo theme cũ */
+        .homepage-section {
+            padding: 4rem 2rem;
+            position: relative; /* Để nằm trên nền sao */
+            z-index: 1;
+            width: 100%;
+        }
+        /* Dùng màu nền mờ cho một số section */
+        .homepage-section.bg-alt {
+            background-color: var(--button-bg); 
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            margin: 2rem auto;
+            max-width: 1200px;
+            border: 1px solid var(--card-back-border);
+        }
+        .container {
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            align-items: center;
+        }
+        @media (min-width: 768px) {
+            .grid-2 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .grid-4 {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        
+        /* Tiêu đề chính (to nhất) */
+        .hero-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(2.5rem, 7vw, 4rem);
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8);
+            margin-bottom: 1.5rem;
+        }
+        /* Tiêu đề các mục */
+        .section-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(2rem, 6vw, 3rem);
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        /* Tiêu đề phụ (nhỏ hơn) */
+        .section-subtitle {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            text-shadow: 0 0 15px rgba(142, 186, 255, 0.8), 0 0 5px rgba(142, 186, 255, 0.6);
+            margin-bottom: 1.5rem;
+        }
+        /* Văn bản thường */
+        .section-text {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            text-shadow: none; /* Xóa shadow cho dễ đọc */
+        }
+
+        /* Nút bấm (style giống nút 'Xem ý nghĩa') */
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-shadow: none;
+        }
+        .btn-primary:hover {
+            background-color: #b8d4ff;
+        }
+        /* Nút viền (style giống nút 'Chia sẻ') */
+        .btn-outline {
+            display: inline-block;
+            background-color: transparent;
+            border: 1px solid var(--card-back-border);
+            color: var(--title-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-shadow: none;
+        }
+        .btn-outline:hover {
+            background-color: var(--button-hover-bg);
+        }
+
+        /* Thẻ Dịch vụ, Thẻ Blog */
+        .service-card, .blog-card {
+            border: 1px solid var(--card-back-border);
+            background-color: var(--button-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            text-align: center;
+            height: 100%; /* (MỚI) Cho các thẻ cao bằng nhau */
+        }
+        .service-card:hover, .blog-card:hover {
+            box-shadow: 0 0 20px var(--card-back-border);
+            transform: translateY(-5px);
+        }
+        .service-card .service-price {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 1rem 0 1.5rem;
+        }
+        /* Hình ảnh */
+        .section-image {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1px solid var(--card-back-border);
+        }
+        .blog-card .section-image {
+            height: 200px; /* Cố định chiều cao ảnh blog */
+            margin-bottom: 1.5rem;
+        }
+        .blog-card .section-subtitle { text-align: left; }
+        .blog-card .section-text { text-align: left; opacity: 0.8; }
+        .blog-card .btn-outline { float: left; }
+
+        /* Đường kẻ ngang */
+        .divider {
+            height: 1px;
+            background-color: var(--card-back-border);
+            opacity: 0.5;
+            margin: 2rem 0;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        .main-footer {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid var(--card-back-border);
+            margin-top: 2rem;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap; /* (MỚI) Cho reponsive */
+        }
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .footer-links a:hover {
+            color: var(--title-color);
+            text-shadow: 0 0 20px var(--title-color);
+        }
+        .footer-copyright {
+            margin-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        /* === (MỚI) CSS CHO HIỆU ỨNG XOAY === */
+        @keyframes spin-clockwise {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .spinning-wheel {
+            animation: spin-clockwise 20s linear infinite;
+        }
+        /* === (HẾT) CSS CHO HIỆU ỨNG XOAY === */
+               
+    </style>
+</head>
+<body>
+
+    <!-- (GIỮ NGUYÊN) Nền sao cũ -->
+    <div id="stars-bg"></div>
+    <script>      
+    </script>
+    
+    <!-- (GIỮ NGUYÊN) Menu cũ -->
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <!-- (CHỈNH SỬA) Đổi tên logo cho hợp trang chủ -->
+            <a href="#" class="nav-link logo-link">PHỞ GÕ TAROT</a>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <!-- (CHỈNH SỬA) Cập nhật link cho trang chủ -->
+            <a href="#home" class="nav-link">Trang Chủ</a>
+            <a href="tarot.html" class="nav-link">Bói tarot</a>
+            <a href="#" class="nav-link">Về chúng tôi</a>
+            <a href="#" class="nav-link">Blogs</a>
+            <a href="#" class="nav-link">Đặt lịch</a>
+            <a href="#" class="nav-link">Liên hệ</a>
+            <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+            
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+    </nav>
+
+
+    <!-- ============================================= -->
+    <!-- === (MỚI) NỘI DUNG TRANG CHỦ ĐÃ ĐƯỢC THAY THẾ === -->
+    <!-- ============================================= -->
+    
+    <main id="homepage-content">
+
+        <!-- 1. Hero Section -->
+        <section id="home" class="homepage-section" style="padding-top: 6rem; min-height: 80vh; display: flex; align-items: center;">
+            <div class="container">
+                <div class="grid-2">
+                    <div class="text-center" style="md:text-align: left;">
+                        <h2 class="hero-title">Phở Gõ Tarot</h2>
+                        <p class="section-text" style="font-size: 1.25rem; margin-bottom: 2rem;">
+                            Khám phá ý nghĩa của các lá bài tarot và cách chúng có thể soi sáng con đường của bạn. Nhận các bài đọc sâu sắc và hướng dẫn cá nhân.
+                        </p>
+                        <a href="#services" class="btn-primary">Xem Dịch Vụ</a>
+                    </div>
+                    <div>
+                        <!-- (CHỈNH SỬA) Đã thêm class 'spinning-wheel' vào đây -->
+                        <img src="wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel" style="max-width: 400px; margin: auto; border-radius: 50%;">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="container"><div class="divider"></div></div>
+
+        <!-- 2. About Tarot Section -->
+        <section id="about" class="homepage-section">
+            <div class="container">
+                <div class="grid-2">
+                    <div>
+                        <img src="introduce.png" alt="Tarot Reader" class="section-image">
+                    </div>
+                    <div class="text-center" style="md:text-align: left;">
+                        <h2 class="section-subtitle">Tarot Là Gì?</h2>
+                        <p class="section-text text-left">
+                            Tarot là một bộ 78 lá bài, mỗi lá mang một ý nghĩa biểu tượng riêng. Nó không phải để dự đoán tương lai một cách chính xác, mà là một công cụ để tự suy ngẫm, khám phá bản thân và cung cấp một góc nhìn mới về các tình huống trong cuộc sống.
+                        </p>
+                        <p class="section-text text-left">
+                            Một buổi đọc bài tarot có thể giúp bạn hiểu rõ hơn về những thách thức, cơ hội và tiềm năng ẩn giấu bên trong bạn.
+                        </p>
+                        <a href="#contact" class="btn-outline">Đặt Lịch Đọc Bài</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Services Section -->
+        <section id="services" class="homepage-section bg-alt">
+            <div class="container">
+                <h2 class="section-title">Các Gói Dịch Vụ Tarot</h2>
+                <div class="grid-4">
+                    <!-- Service Card 1 -->
+                    <div class="service-card">
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Cơ Bản</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Trải bài nhanh 3 lá về một câu hỏi cụ thể. (Tình yêu, Sự nghiệp, v.v.)</p>
+                        <p class="service-price">300.000 VNĐ</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                    </div>
+                    <!-- Service Card 2 -->
+                    <div class="service-card">
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Toàn Diện</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Trải bài Celtic Cross (10 lá) để xem xét sâu một vấn đề.</p>
+                        <p class="service-price">700.000 VNĐ</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                    </div>
+                    <!-- Service Card 3 -->
+                    <div class="service-card">
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Năm Mới</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Trải bài 12 lá cho 12 tháng, xem tổng quan vận hạn năm.</p>
+                        <p class="service-price">1.200.000 VNĐ</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                    </div>
+                    <!-- Service Card 4 -->
+                    <div class="service-card">
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Cặp Đôi</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Phân tích mối quan hệ, xem xét sự tương thích và trở ngại.</p>
+                        <p class="service-price">900.000 VNĐ</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Blog Section -->
+        <section id="blog" class="homepage-section">
+            <div class="container">
+                <h2 class="section-title">Bài Viết Mới</h2>
+                <div class="grid-3">
+                    <!-- Blog Post 1 -->
+                    <div class="blog-card">
+                        <img src="introduce.png" alt="Bài viết 1" class="section-image">
+                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Ý nghĩa lá The Fool</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Bắt đầu một hành trình mới, sự ngây thơ, và niềm tin vào vũ trụ...</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
+                    </div>
+                    <!-- Blog Post 2 -->
+                    <div class="blog-card">
+                        <img src="introduce.png" alt="Bài viết 2" class="section-image">
+                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Làm thế nào để thanh tẩy bài?</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Các phương pháp phổ biến để làm sạch năng lượng cho bộ bài tarot của bạn...</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
+                    </div>
+                    <!-- Blog Post 3 -->
+                    <div class="blog-card">
+                        <img src="introduce.png" alt="Bài viết 3" class="section-image">
+                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Oracle và Tarot khác nhau?</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Phân biệt hai công cụ huyền học mạnh mẽ này và cách sử dụng chúng...</p>
+                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Oracle Reading Section -->
+        <section id="oracle" class="homepage-section bg-alt">
+            <div class="container">
+                <div class="grid-2">
+                    <div class="text-center" style="md:text-align: left;">
+                        <h2 class="section-subtitle">Oracle Reading</h2>
+                        <p class="section-text text-left">
+                            Không chỉ dừng lại ở Tarot, chúng tôi còn cung cấp các buổi đọc bài Oracle để mang đến thông điệp chữa lành và hướng dẫn từ các đấng thiêng liêng.
+                        </p>
+                        <a href="#services" class="btn-primary">Khám Phá Oracle</a>
+                    </div>
+                    <div>
+                        <img src="introduce.png" alt="Oracle Cards" class="section-image">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Footer -->
+        <footer id="contact" class="main-footer">
+            <div class="container">
+                <h2 class="section-subtitle" style="font-size: 2rem;">Phở Gõ Tarot</h2>
+                <p class="section-text" style="max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Hãy kết nối để đặt lịch đọc bài cá nhân hoặc nếu bạn có bất kỳ câu hỏi nào.
+                </p>
+                
+                <div class="footer-links">
+                    <a href="#">Facebook</a>
+                    <a href="#">Instagram</a>
+                    <a href="#">Email</a>
+                </div>
+                
+                <p class="footer-copyright">
+                    &copy; 2025 Tarot Reader. Mọi quyền được bảo lưu.
+                </p>
+            </div>
+        </footer>
+
+    </main>
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        <div class="modal-header">
+            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+            <h2>Lịch sử trải bài</h2>
+        </div>
+        <div id="history-list-wrapper" class="modal-scroll-wrapper">
+            <div id="history-list">
+                </div>
+        </div>
+    </div>
+    
+    <script src="common.js" defer></script>
+</body>
+</html>

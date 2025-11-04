@@ -1,0 +1,1051 @@
+/* (CHỈNH SỬA) Cập nhật biến màu cho chủ đề mới */
+        :root {
+            --bg-color: #0b132b; /* Màu nền tối nhất */
+            --text-color: #f0f0ff; /* Màu text trắng hơi xanh */
+            --title-color: #f0f0ff; /* (CHỈNH SỬA) Màu tím từ text-shadow */
+            
+            /* Màu nền cho các box, dùng alpha để có độ trong suốt */
+            --card-back-bg: rgba(20, 40, 80, 0.7);
+            /* Viền màu tím nhạt, hơi trong */
+            --card-back-border: rgba(142, 186, 255, 0.3);
+            
+            --button-bg: rgba(20, 40, 80, 0.5);
+            --button-hover-bg: rgba(40, 60, 100, 0.7);
+            
+            --font-title: 'Playfair Display', serif;
+            --font-body: 'Quicksand', sans-serif;
+        }
+
+        /* --- Cài đặt chung --- */
+        * { box-sizing: border-box; }
+
+        body {
+            /* (CHỈNH SỬA) Thay nền cũ bằng gradient mới */
+            background-color: var(--bg-color); /* Fallback */
+            background-image: radial-gradient(circle at top, #142850 0%, #0a1f44 40%, #0b132b 100%);
+            
+            color: var(--text-color);
+            font-family: var(--font-body);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            text-align: center;
+            overflow-x: hidden; /* Ngăn cuộn ngang */
+            
+            /* (CHỈNH SỬA) Áp dụng text-shadow chung */
+            text-shadow: 0 0 15px rgba(142, 186, 255, 0.6);
+            
+            /* (MỚI) Fix lỗi 2 background trên mobile */
+            background-attachment: fixed;
+        }
+/* (MỚI) CSS để khóa cuộn khi mở menu mobile */
+        body.nav-open {
+            overflow: hidden;
+        }
+        
+        /* (MỚI) CSS cho nền sao lấp lánh */
+        #stars-bg {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden;
+    z-index: 0;
+}
+
+#stars-bg::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 15%;
+            width: 50px; /* Kích thước mặt trăng */
+            height: 50px;
+            border-radius: 50%;
+            /* Tạo hình trăng khuyết bằng box-shadow */
+            box-shadow: -10px 5px 0 0px var(--text-color);
+            opacity: 0.5;
+            /* Thêm animation mờ ảo */
+            animation: moon-glow 10s ease-in-out infinite alternate;
+        }
+ #stars-bg::before {
+            content: '';
+            position: absolute;
+            bottom: 5%;
+            left: 10%;
+            width: 200px;
+            height: 100px;
+            background: radial-gradient(ellipse at center, rgba(142, 186, 255, 0.15) 0%, rgba(142, 186, 255, 0) 70%);
+            border-radius: 50%;
+            transform: rotate(-30deg);
+            opacity: 0.5;
+            animation: moon-glow 15s ease-in-out infinite alternate;
+        }
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.6;
+    animation: twinkle 3s infinite ease-in-out;
+}
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+}
+
+        @keyframes sparkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        /* (MỚI) CSS cho Menu điều hướng */
+        .main-nav {
+            position: relative; 
+            z-index: 1001; /* (CHỈNH SỬA) Cao hơn sao và nội dung */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 1rem 2rem;
+            /* Nền mờ */
+            background: rgba(11, 19, 43, 0.3); 
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--card-back-border);
+        }
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            font-weight: 600;
+            transition: color 0.3s, text-shadow 0.3s;
+        }
+        .nav-link:hover {
+            color: var(--title-color);
+            text-shadow: 0 0 20px var(--title-color);
+        }
+        .nav-link.logo-link {
+            font-family: var(--font-title);
+            font-size: 1.25rem;
+            color: var(--title-color);
+            padding-left: 0;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+        .nav-toggle {
+            display: none; /* Ẩn trên desktop */
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            z-index: 1002; /* Trên cả nav-links khi nó mở */
+        }
+        .hamburger {
+            display: block;
+            position: relative;
+            width: 25px;
+            height: 3px;
+            background: var(--text-color);
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        .hamburger::before, .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 3px;
+            background: var(--text-color);
+            border-radius: 3px;
+            transition: all 0.3s;
+            left: 0;
+        }
+        .hamburger::before { transform: translateY(-8px); }
+        .hamburger::after { transform: translateY(8px); }
+
+        /* (MỚI) CSS cho mobile menu */
+        @media (max-width: 768px) {
+            .main-nav {
+                padding: 1rem;
+            }
+            .nav-links {
+                position: fixed;
+                top: 0; right: 0;
+                height: 100vh;
+                width: 70%;
+                max-width: 300px;
+                background: #0b132b; /* Nền đặc */
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 1.5rem;
+                transform: translateX(100%);
+                transition: transform 0.3s ease-out;
+                border-left: 1px solid var(--card-back-border);
+            }
+            .nav-links.open {
+                transform: translateX(0);
+            }
+            .nav-toggle {
+                display: block; /* Hiện trên mobile */
+            }
+            .nav-toggle.open .hamburger {
+                background: transparent; /* Ẩn vạch giữa */
+            }
+            .nav-toggle.open .hamburger::before {
+                transform: translateY(0) rotate(45deg);
+                background: var(--title-color); /* Đổi màu khi mở */
+            }
+            .nav-toggle.open .hamburger::after {
+                transform: translateY(0) rotate(-45deg);
+                background: var(--title-color); /* Đổi màu khi mở */
+            }
+        }
+        
+        /* --- (MỚI) CSS CHO SPINNER --- */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* --- NÚT LỊCH SỬ --- */
+        /* (XÓA) Xóa toàn bộ CSS cho #history-btn cũ */
+        /* #history-btn { ... } */
+        /* @media (max-width: 768px) { #history-btn { ... } } */
+
+
+        /* --- (CHỈNH SỬA) MODAL LỊCH SỬ --- */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            /* (CHỈNH SỬA) z-index */
+            z-index: 2001;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            display: none;
+            position: fixed;
+            
+            /* (SỬA LỖI MOBILE) Căn giữa bằng cách set lề */
+            top: 10vh; /* Cách top 10% viewport height */
+            left: 5vw; /* Cách left 5% viewport width */
+            right: 5vw; /* Cách right 5% viewport width */
+            margin-left: auto; /* Tự động căn nếu max-width áp dụng */
+            margin-right: auto; /* Tự động căn nếu max-width áp dụng */
+            
+            /* Xóa kiểu cũ:
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90vw; 
+            */
+
+            /* (CHỈNH SỬA) z-index */
+            z-index: 2002;
+            background-color: var(--card-back-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 12px;
+            
+            max-width: 600px; /* Giới hạn chiều rộng tối đa */
+            max-height: 80vh; /* Giới hạn chiều cao tối đa */
+
+            color: var(--text-color);
+            flex-direction: column;
+            overflow: hidden; 
+            padding: 0; 
+        }
+        
+        .modal-header {
+            position: relative;
+            padding: 1.5rem 1.5rem 0 1.5rem;
+            flex-shrink: 0; 
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 0.75rem; 
+            right: 1rem; 
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            opacity: 0.7;
+            /* (MỚI) Xóa text shadow cho nút X */
+            text-shadow: none;
+        }
+        .modal-close-btn:hover { opacity: 1; }
+        .modal-content h2 {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .modal-scroll-wrapper {
+            overflow-y: auto; 
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        #history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .history-item {
+            border-bottom: 1px solid var(--card-back-border);
+            padding-bottom: 1.5rem;
+            text-align: left; 
+        }
+        .history-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        .history-item h3 {
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin: 0 0 0.5rem 0;
+        }
+        .history-item .history-date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+        .history-cards-container {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            justify-content: center; 
+        }
+        .history-card-item {
+            width: 80px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+        .history-card-item img {
+            width: 100%;
+            border-radius: 5px;
+        }
+        .history-card-item img.reversed {
+            transform: rotate(180deg);
+        }
+        .history-card-item .card-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+            word-wrap: break-word;
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+        .history-card-item .card-orientation {
+            font-size: 0.7rem;
+            color: var(--title-color);
+            opacity: 0.9;
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+
+        .history-share-btn {
+            display: inline-block;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            color: var(--title-color);
+            padding: 0.5rem 1rem;
+            margin-top: 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .history-share-btn:hover {
+            background-color: var(--button-hover-bg);
+        }
+        .history-share-btn.success {
+            background-color: #22c55e; 
+            border-color: #16a34a;
+            color: var(--bg-color);
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+         .history-share-btn.error {
+            background-color: #ef4444; 
+            border-color: #dc2626;
+            color: var(--bg-color);
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+
+
+        /* --- Quản lý các màn hình --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            width: 100%;
+            /* (CHỈNH SỬA) Thêm z-index để nằm trên sao */
+            position: relative;
+            z-index: 1;
+        }
+        .screen.active {
+            display: flex;
+        }
+        
+        /* --- Tiêu đề câu hỏi --- */
+        .question-display-header {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 1rem;
+            padding: 0 1rem;
+            position: absolute;
+            top: 3rem; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 800px;
+            line-height: 1.3;
+            /* (MỚI) Shadow rõ hơn */
+            text-shadow: 0 0 15px rgba(142, 186, 255, 0.8), 0 0 5px rgba(142, 186, 255, 0.6);
+        }
+        
+        /* (CHỈNH SỬA) Giảm padding top cho màn hình 3 để chừa chỗ cho nav */
+        #drawing-screen {
+            padding-top: 8rem; /* Giảm bớt 4rem */
+        }
+
+
+        /* --- Màn hình 1: Đặt câu hỏi --- */
+        #question-screen .title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(2rem, 6vw, 3.5rem);
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+             /* (MỚI) Shadow rõ hơn */
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8); /* (CHỈNH SỬA) */
+        }
+
+        .question-input-area {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--button-bg);
+            border-radius: 12px;
+            padding: 8px;
+            border: 1px solid var(--card-back-border);
+            position: relative; 
+            /* (MỚI) Thêm hiệu ứng mờ */
+            backdrop-filter: blur(5px);
+            /* (MỚI) Thêm Flexbox để căn chỉnh */
+            display: flex;
+            align-items: center;
+        }
+
+        .question-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            resize: none;
+            overflow: hidden;
+            /* (XÓA) Thuộc tính này không dùng ở đây */
+            align-content: center;
+            /* (MỚI) Xóa text shadow khỏi input */
+            text-shadow: none;
+            /* (CHỈNH SỬA) Giảm padding-right, không cần 50px nữa */
+            padding-right: 8px; /* Chừa một chút chỗ */
+            min-height: 56px; /* Chiều cao tối thiểu */
+            /* (MỚI) Thêm flex-grow để lấp đầy không gian */
+            flex-grow: 1;
+        }
+        .question-input:focus { outline: none; }
+        .question-input::placeholder {
+            color: var(--text-color);
+            opacity: 0.5;
+            text-shadow: none;
+        }
+
+        #submit-question-btn {
+            /* (XÓA) Bỏ position: absolute */
+            /* position: absolute; */
+            /* right: 0.75rem;  */
+            /* bottom: 0.75rem;  */
+
+            /* (MỚI) Thêm flex-shrink để nút không bị bóp */
+            flex-shrink: 0;
+            
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            /* (CHỈNH SỬA) Đổi màu nút */
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            padding: 0;
+            margin: 0;
+            text-decoration: none; 
+        }
+        #submit-question-btn:hover {
+            background-color: #b8d4ff; /* (CHỈNH SỬA) Màu xanh sáng hơn */
+        }
+        #submit-question-btn:disabled { 
+            background-color: var(--button-hover-bg);
+            cursor: not-allowed;
+            color: var(--text-color);
+        }
+        
+        .dropdown-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin: 1.5rem 0;
+        }
+        .dropdown-toggle {
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            color: var(--text-color);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-radius 0.3s;
+            font-family: var(--font-body);
+            font-size: 1rem; 
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            text-align: left;
+            /* (MỚI) Thêm hiệu ứng mờ */
+            backdrop-filter: blur(5px);
+        }
+        .dropdown-toggle:hover {
+            background-color: var(--button-hover-bg);
+        }
+        .dropdown-toggle.open {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .dropdown-toggle.open svg {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% - 1px); 
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: var(--button-bg); 
+            border: 1px solid var(--card-back-border);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height:300px;
+            overflow-y: auto;
+            padding: 0.5rem;
+            /* (MỚI) Thêm hiệu ứng mờ */
+            backdrop-filter: blur(5px);
+        }
+        .dropdown-menu.open {
+            display: block;
+        }
+        .category-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 0.75rem 0.5rem 0.25rem;
+            margin: 0;
+            margin-top: 0.5rem;
+        }
+        .category-title:first-child {
+            margin-top: 0;
+        }
+        .suggestion-item {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-color);
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+            text-shadow: none; /* (MỚI) Xóa shadow cho dễ đọc */
+        }
+        .suggestion-item:hover {
+            background-color: var(--button-hover-bg);
+        }
+        
+        /* --- Màn hình 2: Xáo bài --- */
+        #shuffling-screen {
+            justify-content: center;
+        }
+        /* (CHỈNH SỬA) Tăng margin-top để không bị che bởi header câu hỏi */
+        .shuffling-animation-container {
+            position: relative;
+            width: 100px;
+            height: 150px;
+            margin-top: 8rem; 
+        }
+
+        .shuffling-instruction {
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin-top: 2rem; 
+            max-width: 500px; 
+            line-height: 1.6;
+            padding: 0 1rem;
+        }
+
+        .shuffle-card {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
+            background-color: rgb(20, 40, 80);
+            border: 1px solid var(--card-back-border);
+            border-radius: 8px;
+            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+            animation: shuffle 1.5s ease-in-out infinite;
+        }
+
+        .shuffle-card:nth-child(1) { animation-delay: 0s; }
+        .shuffle-card:nth-child(2) { animation-delay: -0.5s; }
+        .shuffle-card:nth-child(3) { animation-delay: -1s; }
+        
+        @keyframes shuffle {
+            0%, 100% { transform: translateX(-30px) rotate(-5deg); z-index: 1;}
+            50% { transform: translateX(30px) rotate(5deg); z-index: 3;}
+        }
+
+
+        /* --- Màn hình 3: Chọn bài --- */
+        .drawing-subheader {
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 2rem; 
+            font-size: 1.2rem;
+            transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease, margin 0.5s ease;
+        }
+
+        #chosen-cards-display {
+            display: flex;
+            gap: 1.5rem;
+            height: 250px;
+            align-items: flex-start;
+            justify-content: center;
+            margin-bottom: 2.5rem; 
+            transition: all 0.8s ease;
+        }
+        
+        .chosen-card-placeholder {
+            width: 120px;
+            height: 180px;
+            border: 2px dashed var(--card-back-border);
+            border-radius: 10px;
+            transition: all 1s ease;
+        }
+
+        .chosen-card-item {
+            text-align: center;
+            width: 120px; 
+            transition: width 1s ease-in-out; 
+        }
+        @keyframes revealCard {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chosen-card-item img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transition: width 1s ease-in-out;
+        }
+ 
+        .chosen-card-item img.reversed { 
+            transform: rotate(180deg)!important; 
+        }
+        
+        .chosen-card-item .card-info { 
+            margin-top: 0.75rem; 
+            word-wrap: break-word; 
+        }
+        /* (MỚI) Xóa shadow cho text nhỏ */
+        .chosen-card-item .card-name { font-weight: 600; text-shadow: none; }
+        .chosen-card-item .card-orientation { font-size: 0.8rem; color: var(--title-color); text-shadow: none; }
+        
+        /* --- CSS Cho Hiệu Ứng Bay Của Lá Bài --- */
+        .flying-card-animator {
+            position: absolute; 
+            /* (CHỈNH SỬA) z-index 1000, dưới nav */
+            z-index: 1000;
+            transition: all 1s ease-in-out;
+            transform-style: preserve-3d;
+        }
+
+        .flying-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 1s ease-in-out;
+            transform: translateZ(0); 
+        }
+
+        .flying-card-back,
+        .flying-card-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden; /* Safari */
+            backface-visibility: hidden;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        /* (CHỈNH SỬA) Mặt sau lá bài */
+        .flying-card-back {
+            /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
+            background-color: rgb(20, 40, 80);
+            border: 1px solid var(--card-back-border);
+            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+            transform: translateZ(0); 
+        }
+
+        .flying-card-front {
+            background-color: var(--card-back-bg); 
+            transform: rotateY(180deg) translateZ(0); 
+        }
+        .flying-card-front img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .flying-card-front img.reversed {
+            transform: rotate(180deg);
+        }
+        
+        /* --- Bộ bài --- */
+        #card-spread-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2.5rem; 
+            transition: opacity 0.5s ease, transform 0.5s ease, height 0.5s ease, margin 0.5s ease;
+        }
+        .card-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0 10%; 
+        }
+         .facedown-card {
+            flex-shrink: 0;
+            width: 80px;
+            aspect-ratio: 2/3;
+            /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
+            background-color: rgb(20, 40, 80);
+            border: 1px solid var(--card-back-border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
+            margin-left: -55px;
+            position: relative;
+            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
+            background-size: 50%;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            transform: translateY(30px) scale(0.8) translateZ(0); 
+        }
+        .facedown-card:first-child { margin-left: 0; }
+
+        .facedown-card.is-dealt {
+            opacity: 1;
+            transform: translateY(0) scale(1) translateZ(0);
+        }
+
+        @media (min-width: 768px){
+                .facedown-card:hover {
+                transform: translateY(-15px)!important; 
+                border-color: var(--title-color);
+            }
+        }
+
+        .facedown-card.is-chosen {
+            opacity: 0!important; 
+            pointer-events: none;
+        }
+        
+        @keyframes dealCardIn {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1) translateZ(0);
+            }
+        }
+        
+        .mobile-row {
+            display: none;
+        }
+
+        /* --- Nút CTA và Kết quả --- */
+        #action-button-container {
+            height: 60px;
+            margin-top: 1rem;
+        }
+
+        .action-button {
+            display: none;
+            /* (CHỈNH SỬA) Đổi màu nút */
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.8s ease, transform 0.8s ease, background-color 0.3s;
+            transform: scale(0.9);
+            opacity: 0;
+            /* (MỚI) Xóa text shadow */
+            text-shadow: none;
+        }
+        /* (MỚI) Thêm hover cho nút */
+        .action-button:hover {
+            background-color: #b8d4ff;
+        }
+
+        .action-button.visible {
+            display: inline-block;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        /* Nơi hiển thị kết quả */
+        #interpretation-results-display {
+            display: none;
+            background-color: var(--button-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: left;
+            line-height: 1.8;
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem 0;
+            /* (MỚI) Thêm mờ */
+            backdrop-filter: blur(5px);
+        }
+        /* (MỚI) Xóa shadow cho text kết quả để dễ đọc */
+        #interpretation-results-display p,
+        #interpretation-results-display li,
+        #interpretation-results-display strong {
+            text-shadow: none;
+        }
+        
+        #interpretation-results-display h1, 
+        #interpretation-results-display h2, 
+        #interpretation-results-display h3 {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            /* (MỚI) Shadow rõ hơn */
+            text-shadow: 0 0 15px rgba(142, 186, 255, 0.8), 0 0 5px rgba(142, 186, 255, 0.6);
+        }
+
+        /* CSS cho trạng thái xem kết quả */
+        #drawing-screen.results-active .drawing-subheader {
+            opacity: 0;
+            transform: translateY(-20px);
+            height: 0; 
+            margin-bottom: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        #drawing-screen.results-active #card-spread-container {
+            opacity: 0;
+            transform: translateY(30px);
+            pointer-events: none;
+            height: 0; 
+            margin-bottom: 0;
+            overflow: hidden;
+        }
+        
+        #drawing-screen.results-active #chosen-cards-display {
+            height: auto; 
+            margin-bottom: 1.5rem; 
+        }
+        
+        #drawing-screen.results-active .chosen-card-placeholder {
+            width: 0;
+            height: 0;
+            border: none;
+            margin: 0;
+            padding: 0;
+            opacity: 0;
+        }
+        
+        #drawing-screen.results-active .chosen-card-item {
+            width: 150px; 
+            animation: none; 
+            opacity: 1; 
+            transform: none; 
+        }
+        #drawing-screen.results-active .chosen-card-item img {
+            width: 100%;
+            animation: none; 
+        }
+
+        /* --- CSS CHO KHU VỰC HỎI TIẾP --- */
+        #follow-up-question-container {
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 2.5rem;
+            text-align: center;
+        }
+        #follow-up-question-container h3 {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+        #submit-follow-up-btn {
+            /* (XÓA) Bỏ position: absolute */
+            /* position: absolute; */
+            /* right: 0.75rem; */
+            /* bottom: 0.75rem;  */
+            
+            /* (MỚI) Thêm flex-shrink để nút không bị bóp */
+            flex-shrink: 0;
+
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            padding: 0;
+            margin: 0;
+            text-decoration: none;
+        }
+        #submit-follow-up-btn:hover {
+             background-color: #b8d4ff;
+        }
+        #submit-follow-up-btn:disabled {
+            background-color: var(--button-hover-bg);
+            cursor: not-allowed;
+            color: var(--text-color);
+        }
+        
+        #follow-up-input-area {
+            position: relative; /* Thêm để định vị nút */
+        }
+        
+        /* (MỚI) CSS cho lỗi */
+        #question-error-display, #follow-up-error-display {
+            color: #ff8a8a; /* (CHỈNH SỬA) Đổi màu lỗi cho hợp theme */
+            min-height: 1.2em; 
+            font-weight: 600;
+            text-shadow: 0 0 10px #ff8a8a;
+        }
+
+
+        /* =================================== */
+        /* === MEDIA QUERY FOR MOBILE ======== */
+        /* =================================== */
+        @media (max-width: 768px) {
+            .facedown-card {
+                width: 50px;
+                margin-left: -35px;
+            }
+            
+            #card-row-1, #card-row-2 {
+                display: none;
+            }
+            .mobile-row {
+                display: flex;
+            }
+            
+            #chosen-cards-display {
+                margin-bottom: 2rem;
+                width: 100%; 
+                transform: none; 
+                gap: 0.5rem; 
+                padding: 0 0.5rem; 
+            }
+
+            .chosen-card-item, .chosen-card-placeholder {
+                width: 100px; 
+                flex-shrink: 0; 
+            }
+            
+            .chosen-card-placeholder {
+                height: 150px; 
+            }
+            
+            .chosen-card-item:not(:first-child),
+            .chosen-card-placeholder:not(:first-child) {
+                margin-left: 0; 
+            }
+
+            #drawing-screen.results-active #chosen-cards-display {
+                width: 100%; 
+                transform: none; 
+                margin-bottom: 2rem;
+                gap: 0.5rem; 
+            }
+            #drawing-screen.results-active .chosen-card-item {
+                width: 100px; 
+            }
+            #drawing-screen.results-active .chosen-card-item:not(:first-child) {
+                margin-left: 0; 
+            }
+            
+            #drawing-screen.results-active .chosen-card-item .card-info {
+                width: 100px; 
+            }
+            
+            /* (CHỈNH SỬA) Xóa CSS cũ cho #history-btn, đã gộp ở trên */
+        }
+
+        /* --- Nền sao ngẫu nhiên, giữ nguyên phần JS sinh sao --- */
