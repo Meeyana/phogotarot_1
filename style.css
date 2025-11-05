@@ -43,6 +43,9 @@
         html.nav-open {
             overflow: hidden;
         }
+	    html.modal-open {
+            overflow: hidden;
+        }
         
         /* (MỚI) CSS cho nền sao lấp lánh */
         #stars-bg {

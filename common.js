@@ -99,12 +99,16 @@ function openHistoryModal() {
     renderHistoryList(); // Cập nhật nội dung trước khi mở
     if (historyBackdrop) historyBackdrop.style.display = 'block';
     if (historyModal) historyModal.style.display = 'flex'; 
+    // (MỚI) Khóa cuộn khi modal mở
+    document.documentElement.classList.add('modal-open'); 
 }
 
 /** Đóng modal lịch sử */
 function closeHistoryModal() {
     if (historyBackdrop) historyBackdrop.style.display = 'none';
     if (historyModal) historyModal.style.display = 'none';
+    // (MỚI) Mở lại cuộn khi modal đóng
+    document.documentElement.classList.remove('modal-open'); 
 }
 
 /** Xử lý khi click vào các nút trong danh sách lịch sử (vd: nút Chia sẻ) */
@@ -199,13 +203,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (historyBtn) {
         historyBtn.addEventListener('click', (e) => {
             e.preventDefault(); // Ngăn link <a> điều hướng
-            openHistoryModal();
+            openHistoryModal(); // Hàm này sẽ thêm class 'modal-open'
+            
             // Đóng menu mobile (nếu đang mở)
             if (navLinks.classList.contains('open')) {
                 navLinks.classList.remove('open');
                 navToggle.classList.remove('open');
-                // (MỚI) Mở cuộn body
-                document.documentElement.classList.remove('nav-open');
+                // Giữ nguyên class 'nav-open' để khóa cuộn nền
             }
         });
     }
