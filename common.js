@@ -171,6 +171,7 @@ function updateShareButtonState(button, message, state) {
 
 // --- Event Listeners (Chạy ngay khi file được tải) ---
 document.addEventListener('DOMContentLoaded', () => {
+    document.documentElement.classList.add('js-ready');
     // 1. Tải lịch sử ngay khi trang mở
     loadHistory();
 
