@@ -173,7 +173,8 @@
             }
             .nav-links {
                 position: fixed;
-                top: 0; right: 0;
+                top: 0; 
+                right: 0; /* Menu luôn ở vị trí 70% bên phải */
                 height: 100vh;
                 width: 70%;
                 max-width: 300px;
@@ -182,40 +183,27 @@
                 align-items: center;
                 justify-content: center;
                 gap: 1.5rem;
-                
-                /* === (BẮT ĐẦU SỬA LỖI) === */
-                
-                /* 1. Mặc định: VỪA VÔ HÌNH, VỪA ở ngoài màn hình */
-                visibility: hidden;
-                transform: translateX(100%); /* <-- KHÔNG ĐƯỢC BỎ DÒNG NÀY */
-                
-                /* 2. Hiệu ứng khi ĐÓNG (từ 'open' về đây):
-                   - Trượt (transform) mất 0.3s
-                   - Ẩn (visibility) sẽ CHỜ 0.3s rồi mới ẩn 
-                */
-                transition: transform 0.3s ease-out, visibility 0s 0.3s;
-                
-                /* === (KẾT THÚC SỬA LỖI) === */
-                
                 border-left: 1px solid var(--card-back-border);
-		        z-index: 1000;
+                z-index: 1000;
+
+                /* 1. Mặc định: VÔ HÌNH và KHÔNG THỂ CLICK */
+                opacity: 0;
+                pointer-events: none; /* Rất quan trọng: Ngăn click xuyên qua */
+                
+                /* 2. Hiệu ứng: Chỉ làm mờ (fade) trong 0.3s */
+                transition: opacity 0.3s ease-out;
+                
+                /* 3. ĐÃ XÓA BỎ: transform và visibility */
             }
 
             .nav-links.open {
-                /* 1. Trạng thái khi MỞ: 
-                   - HIỆN RA NGAY LẬP TỨC
-                */
-                visibility: visible;
-                
-                /* 2. Di chuyển vào màn hình */
-                transform: translateX(0);
-
-                /* 3. Hiệu ứng khi MỞ:
-                   - Trượt (transform) mất 0.3s
-                   - Hiện (visibility) NGAY LẬP TỨC (không delay)
-                */
-                transition: transform 0.3s ease-out, visibility 0s 0s;
+                /* 1. Khi mở: HIỆN RA và CÓ THỂ CLICK */
+                opacity: 1;
+                pointer-events: auto; /* Rất quan trọng: Cho phép click */
             }
+            
+            /* === (KẾT THÚC GIẢI PHÁP OPACITY MỚI) === */
+
             .nav-toggle {
                 display: block; /* Hiện trên mobile */
             }
