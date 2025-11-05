@@ -182,17 +182,38 @@
                 align-items: center;
                 justify-content: center;
                 gap: 1.5rem;
+                
+                /* === (BẮT ĐẦU SỬA LỖI TRIỆT ĐỂ) === */
+                
+                /* 1. Mặc định là VÔ HÌNH và ở BÊN PHẢI */
+                visibility: hidden;
                 transform: translateX(100%);
-                /* transition: transform 0.3s ease-out; */
+                
+                /* 2. Thiết lập hiệu ứng:
+                   - Chuyển động (transform) mất 0.3s
+                   - Ẩn/hiện (visibility) sẽ bị delay 0.3s KHI ĐÓNG
+                */
+                transition: transform 0.3s ease-out, visibility 0s 0.3s;
+                
+                /* === (KẾT THÚC SỬA LỖI) === */
+                
                 border-left: 1px solid var(--card-back-border);
-		z-index: 1000;
+		        z-index: 1000;
             }
 
-	    html.js-ready .nav-links {
+            /* (XÓA) Bỏ phần .js-ready không cần thiết nữa
+            html.js-ready .nav-links {
                 transition: transform 0.3s ease-out;
             }
+            */
+            
             .nav-links.open {
+                /* 1. Hiển thị NGAY LẬP TỨC */
+                visibility: visible;
+                /* 2. Di chuyển vào vị trí 0 */
                 transform: translateX(0);
+                /* 3. Cập nhật transition: Bỏ delay của visibility */
+                transition: transform 0.3s ease-out, visibility 0s 0s;
             }
             .nav-toggle {
                 display: block; /* Hiện trên mobile */
