@@ -225,6 +225,9 @@
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
         
         /* --- NÚT LỊCH SỬ --- */
         /* (XÓA) Xóa toàn bộ CSS cho #history-btn cũ */
