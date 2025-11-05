@@ -40,10 +40,10 @@
             background-attachment: fixed;
         }
 /* (MỚI) CSS để khóa cuộn khi mở menu mobile */
-        html.nav-open {
+        body.nav-open {
             overflow: hidden;
         }
-	    html.modal-open {
+	    body.modal-open {
             overflow: hidden;
         }
         
