@@ -2,16 +2,18 @@
 /* === COMMON.JS (Menu & History Logic) === */
 /* ============================================= */
 const starContainer = document.getElementById('stars-bg');
-for (let i = 0; i < 300; i++) {
-    const star = document.createElement('div');
-    const size = Math.random() * 2 + 1; // 1-3px
-    star.classList.add('star');
-    star.style.width = `${size}px`;
-    star.style.height = `${size}px`;
-    star.style.top = `${Math.random() * 100}%`;
-    star.style.left = `${Math.random() * 100}%`;
-    star.style.animationDuration = `${2 + Math.random() * 3}s`;
-    starContainer.appendChild(star);
+if (starContainer) {
+    for (let i = 0; i < 300; i++) {
+        const star = document.createElement('div');
+        const size = Math.random() * 2 + 1; // 1-3px
+        star.classList.add('star');
+        star.style.width = `${size}px`;
+        star.style.height = `${size}px`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${2 + Math.random() * 3}s`;
+        starContainer.appendChild(star);
+    }
 }
 // --- State ---
 let readingHistory = [];
@@ -108,7 +110,9 @@ function closeHistoryModal() {
     if (historyBackdrop) historyBackdrop.style.display = 'none';
     if (historyModal) historyModal.style.display = 'none';
     // (MỚI) Mở lại cuộn khi modal đóng
-    document.documentElement.classList.remove('modal-open'); 
+    
+    // (MỚI) FIX LỖI DESYNC: Gỡ CẢ nav-open khi đóng modal
+    document.documentElement.classList.remove('nav-open'); 
 }
 
 /** Xử lý khi click vào các nút trong danh sách lịch sử (vd: nút Chia sẻ) */
