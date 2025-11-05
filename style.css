@@ -183,15 +183,15 @@
                 justify-content: center;
                 gap: 1.5rem;
                 
-                /* === (BẮT ĐẦU SỬA LỖI TRIỆT ĐỂ) === */
+                /* === (BẮT ĐẦU SỬA LỖI) === */
                 
-                /* 1. Mặc định là VÔ HÌNH và ở BÊN PHẢI */
+                /* 1. Mặc định: VỪA VÔ HÌNH, VỪA ở ngoài màn hình */
                 visibility: hidden;
-                transform: translateX(100%);
+                transform: translateX(100%); /* <-- KHÔNG ĐƯỢC BỎ DÒNG NÀY */
                 
-                /* 2. Thiết lập hiệu ứng:
-                   - Chuyển động (transform) mất 0.3s
-                   - Ẩn/hiện (visibility) sẽ bị delay 0.3s KHI ĐÓNG
+                /* 2. Hiệu ứng khi ĐÓNG (từ 'open' về đây):
+                   - Trượt (transform) mất 0.3s
+                   - Ẩn (visibility) sẽ CHỜ 0.3s rồi mới ẩn 
                 */
                 transition: transform 0.3s ease-out, visibility 0s 0.3s;
                 
@@ -201,18 +201,19 @@
 		        z-index: 1000;
             }
 
-            /* (XÓA) Bỏ phần .js-ready không cần thiết nữa
-            html.js-ready .nav-links {
-                transition: transform 0.3s ease-out;
-            }
-            */
-            
             .nav-links.open {
-                /* 1. Hiển thị NGAY LẬP TỨC */
+                /* 1. Trạng thái khi MỞ: 
+                   - HIỆN RA NGAY LẬP TỨC
+                */
                 visibility: visible;
-                /* 2. Di chuyển vào vị trí 0 */
+                
+                /* 2. Di chuyển vào màn hình */
                 transform: translateX(0);
-                /* 3. Cập nhật transition: Bỏ delay của visibility */
+
+                /* 3. Hiệu ứng khi MỞ:
+                   - Trượt (transform) mất 0.3s
+                   - Hiện (visibility) NGAY LẬP TỨC (không delay)
+                */
                 transition: transform 0.3s ease-out, visibility 0s 0s;
             }
             .nav-toggle {
