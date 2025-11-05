@@ -11,9 +11,6 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
         /* --- (MỚI) CSS CHO LOADER HÀNH TINH 3D --- */
         .interpretation-loader {
             display: flex;
@@ -726,8 +723,6 @@ function populateCardDeck() {
     followUpContainer.style.display = 'none';
     followUpInput.value = ''; 
     questionInput.value = ''; 
-    if (questionErrorDisplay) questionErrorDisplay.textContent = '';
-    if (followUpErrorDisplay) followUpErrorDisplay.textContent = '';
 
     // Tạo 78 lá bài
     for (let i = 0; i < 78; i++) {
@@ -942,6 +937,7 @@ function transitionToResultsView() {
 }
 
 /** Lấy luận giải từ AI */
+/** Lấy luận giải từ AI */
 async function handleGetInterpretation() {
     mainResultsDisplay.style.display = 'block';
     
@@ -949,14 +945,11 @@ async function handleGetInterpretation() {
     mainResultsDisplay.innerHTML = `
         <div class="interpretation-loader">
             <div class="loader-planet-system">
-                <!-- Hành tinh (bây giờ là ảnh) -->
                 <div class="loader-planet-sphere"></div>
                 
-                <!-- 3 quỹ đạo (vẫn như cũ) -->
                 <div class="loader-orbit orbit-1"></div>
                 <div class="loader-orbit orbit-2"></div>
                 <div class="loader-orbit orbit-3"></div>
-                <!-- (MỚI) Thêm 2 quỹ đạo -->
                 <div class="loader-orbit orbit-4"></div>
                 <div class="loader-orbit orbit-5"></div>
             </div>
@@ -986,11 +979,16 @@ async function handleGetInterpretation() {
         });
         if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
 
-        const result = await response.json();
+        const result = await response.json(); // result BÂY GIỜ LÀ: { interpretation: "..." }
         
-        if (result && result.length > 0 && result[0].interpretation) {
+        // === (BẮT ĐẦU CHỈNH SỬA LOGIC) ===
+        // Kiểm tra trực tiếp thuộc tính 'interpretation' của object 'result'
+        // thay vì kiểm tra result[0]
+        if (result && result.interpretation) {
             const converter = new showdown.Converter();
-            const markdownContent = result[0].interpretation; 
+            
+            // Lấy nội dung markdown trực tiếp từ result.interpretation
+            const markdownContent = result.interpretation; 
             const htmlContent = converter.makeHtml(markdownContent);
             mainResultsDisplay.innerHTML = htmlContent; 
 
@@ -1006,8 +1004,9 @@ async function handleGetInterpretation() {
                 cards: selectedCards, 
                 html: htmlContent, 
                 text: plainTextContent, 
-                markdown: markdownContent 
+                markdown: markdownContent // Đảm bảo sử dụng biến markdownContent đã lấy
             };
+        // === (KẾT THÚC CHỈNH SỬA LOGIC) ===
 
             // Gọi hàm saveHistory() từ common.js
             // Cần đảm bảo common.js đã được tải trước
@@ -1018,6 +1017,7 @@ async function handleGetInterpretation() {
             }
 
         } else {
+            // Ném lỗi nếu object result không có thuộc tính 'interpretation'
             throw new Error("Dữ liệu trả về không đúng định dạng.");
         }
     } catch (error) {
