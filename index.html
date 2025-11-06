@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- (GIỮ NGUYÊN) Tiêu đề cũ -->
     <title>Trải Bài Tarot Cùng AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- (GIỮ NGUYÊN) Font cũ -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    <!-- (GIỮ NGUYÊN) Thư viện Showdown (mặc dù trang chủ không dùng) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -21,9 +17,9 @@
 
       gtag('config', 'G-CF1CK7N9BR');
     </script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <!-- (GIỮ NGUYÊN) Toàn bộ CSS cũ để giữ giao diện -->
     <style>
         
         #stars-bg {
@@ -144,7 +140,7 @@
             font-family: var(--font-title);
             color: var(--title-color);
             font-size: clamp(2.5rem, 7vw, 4rem);
-            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8);
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142 186 255, 0.8);
             margin-bottom: 1.5rem;
         }
         /* Tiêu đề các mục */
@@ -152,7 +148,7 @@
             font-family: var(--font-title);
             color: var(--title-color);
             font-size: clamp(2rem, 6vw, 3rem);
-            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8);
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142 186 255, 0.8);
             margin-bottom: 3rem;
             text-align: center;
         }
@@ -257,8 +253,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
-        
         
         /* === (MỚI) CSS CHO HIỆU ỨNG XOAY === */
         @keyframes spin-clockwise {
@@ -279,12 +273,10 @@
 </head>
 <body>
 
-    <!-- (GIỮ NGUYÊN) Nền sao cũ -->
     <div id="stars-bg"></div>
     <script>      
     </script>
     
-    <!-- (GIỮ NGUYÊN) Menu cũ -->
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="index.html#" class="nav-link logo-link">PHỞ GÕ TAROT</a>
@@ -301,8 +293,8 @@
                 </a>
                 <div class="dropdown-submenu">
                     <a href="tarot.html" class="nav-link submenu-link">Trải bài 3 lá</a>
-                    <a href="#" class="nav-link submenu-link">Câu hỏi Yes/No</a>
-                    <a href="#" class="nav-link submenu-link">Zodiac Tarot</a>
+                    <a href="one-card-reading.html" class="nav-link submenu-link">Câu hỏi Yes/No</a>
+                    <a href="daily.html" class="nav-link submenu-link">Zodiac Tarot</a>
                 </div>
             </div>
             <a href="#" class="nav-link">Về chúng tôi</a>
@@ -317,13 +309,8 @@
     </nav>
 
 
-    <!-- ============================================= -->
-    <!-- === (MỚI) NỘI DUNG TRANG CHỦ ĐÃ ĐƯỢC THAY THẾ === -->
-    <!-- ============================================= -->
-    
     <main id="homepage-content">
 
-        <!-- 1. Hero Section -->
         <section id="home" class="homepage-section" style="padding-top: 6rem; min-height: 80vh; display: flex; align-items: center;">
             <div class="container">
                 <div class="grid-2">
@@ -335,7 +322,6 @@
                         <a href="#services" class="btn-primary">Xem Dịch Vụ</a>
                     </div>
                     <div>
-                        <!-- (CHỈNH SỬA) Đã thêm class 'spinning-wheel' vào đây -->
                         <img src="wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel" style="max-width: 400px; margin: auto; border-radius: 50%;">
                     </div>
                 </div>
@@ -344,7 +330,6 @@
 
         <div class="container"><div class="divider"></div></div>
 
-        <!-- 2. About Tarot Section -->
         <section id="about" class="homepage-section">
             <div class="container">
                 <div class="grid-2">
@@ -365,63 +350,47 @@
             </div>
         </section>
 
-        <!-- 3. Services Section -->
         <section id="services" class="homepage-section bg-alt">
             <div class="container">
-                <h2 class="section-title">Các Gói Dịch Vụ Tarot</h2>
-                <div class="grid-4">
-                    <!-- Service Card 1 -->
+                <h2 class="section-title">Các Tính Năng Trải Bài</h2>
+                <div class="grid-3">
                     <div class="service-card">
-                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Cơ Bản</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Trải bài nhanh 3 lá về một câu hỏi cụ thể. (Tình yêu, Sự nghiệp, v.v.)</p>
-                        <p class="service-price">300.000 VNĐ</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Trải Bài 3 Lá</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Nhận một cái nhìn tổng quan về Tình yêu, Sự nghiệp hoặc một câu hỏi cụ thể. Một trải bài nhanh chóng và sâu sắc.</p>
+                        <a href="tarot.html" class="btn-outline" style="font-size: 0.9rem; margin-top: 1.5rem;">Xem ngay</a>
                     </div>
-                    <!-- Service Card 2 -->
+                    
                     <div class="service-card">
-                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Toàn Diện</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Trải bài Celtic Cross (10 lá) để xem xét sâu một vấn đề.</p>
-                        <p class="service-price">700.000 VNĐ</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Câu Hỏi Yes/No</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Cần một câu trả lời nhanh và rõ ràng? Rút một lá bài để nhận được hướng dẫn 'Có' hoặc 'Không' cho vấn đề của bạn.</p>
+                        <a href="one-card-reading.html" class="btn-outline" style="font-size: 0.9rem; margin-top: 1.5rem;">Xem ngay</a>
                     </div>
-                    <!-- Service Card 3 -->
+                    
                     <div class="service-card">
-                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Năm Mới</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Trải bài 12 lá cho 12 tháng, xem tổng quan vận hạn năm.</p>
-                        <p class="service-price">1.200.000 VNĐ</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
-                    </div>
-                    <!-- Service Card 4 -->
-                    <div class="service-card">
-                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Gói Cặp Đôi</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Phân tích mối quan hệ, xem xét sự tương thích và trở ngại.</p>
-                        <p class="service-price">900.000 VNĐ</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Chọn Gói Này</a>
+                        <h3 class="section-subtitle" style="font-size: 1.5rem;">Zodiac Tarot</h3>
+                        <p class="section-text" style="font-size: 0.9rem;">Khám phá lá bài đại diện cho cung hoàng đạo của bạn hôm nay và nhận thông điệp đặc biệt từ vũ trụ.</p>
+                        <a href="daily.html" class="btn-outline" style="font-size: 0.9rem; margin-top: 1.5rem;">Xem ngay</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. Blog Section -->
         <section id="blog" class="homepage-section">
             <div class="container">
                 <h2 class="section-title">Bài Viết Mới</h2>
                 <div class="grid-3">
-                    <!-- Blog Post 1 -->
                     <div class="blog-card">
                         <img src="introduce.png" alt="Bài viết 1" class="section-image">
                         <h3 class="section-subtitle" style="font-size: 1.25rem;">Ý nghĩa lá The Fool</h3>
                         <p class="section-text" style="font-size: 0.9rem;">Bắt đầu một hành trình mới, sự ngây thơ, và niềm tin vào vũ trụ...</p>
                         <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
                     </div>
-                    <!-- Blog Post 2 -->
                     <div class="blog-card">
                         <img src="introduce.png" alt="Bài viết 2" class="section-image">
                         <h3 class="section-subtitle" style="font-size: 1.25rem;">Làm thế nào để thanh tẩy bài?</h3>
                         <p class="section-text" style="font-size: 0.9rem;">Các phương pháp phổ biến để làm sạch năng lượng cho bộ bài tarot của bạn...</p>
                         <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
                     </div>
-                    <!-- Blog Post 3 -->
                     <div class="blog-card">
                         <img src="introduce.png" alt="Bài viết 3" class="section-image">
                         <h3 class="section-subtitle" style="font-size: 1.25rem;">Oracle và Tarot khác nhau?</h3>
@@ -432,7 +401,6 @@
             </div>
         </section>
 
-        <!-- 5. Oracle Reading Section -->
         <section id="oracle" class="homepage-section bg-alt">
             <div class="container">
                 <div class="grid-2">
@@ -450,8 +418,20 @@
             </div>
         </section>
 
-        <!-- 6. Footer -->
-        <footer class="main-footer">
+    </main>
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        <div class="modal-header">
+            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+            <h2>Lịch sử trải bài</h2>
+        </div>
+        <div id="history-list-wrapper" class="modal-scroll-wrapper">
+            <div id="history-list">
+                </div>
+        </div>
+    </div>
+    
+    <footer class="main-footer">
             <div class="footer-container">
                 <div class="footer-column brand">
                     <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
@@ -519,20 +499,6 @@
                 &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
             </div>
         </footer>
-
-    </main>
-    <div id="history-modal-backdrop" class="modal-backdrop"></div>
-    <div id="history-modal-content" class="modal-content">
-        <div class="modal-header">
-            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
-            <h2>Lịch sử trải bài</h2>
-        </div>
-        <div id="history-list-wrapper" class="modal-scroll-wrapper">
-            <div id="history-list">
-                </div>
-        </div>
-    </div>
-    
     <script src="common.js" defer></script>
 </body>
 </html>
