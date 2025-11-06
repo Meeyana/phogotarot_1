@@ -29,6 +29,9 @@ const historyModal = document.getElementById('history-modal-content');
 const historyCloseBtn = document.getElementById('history-modal-close-btn');
 const historyList = document.getElementById('history-list');
 
+// (MỚI) Thêm element cho dropdown tarot
+const tarotToggle = document.getElementById('tarot-dropdown-toggle');
+
 // --- History Functions ---
 
 /** Tải lịch sử từ localStorage */
@@ -183,27 +186,42 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.classList.toggle('nav-open');
         });
     }
+
+    // (MỚI) 3. Gắn logic cho nút dropdown "Bói tarot" (chỉ trên mobile)
+    if (tarotToggle) {
+        tarotToggle.addEventListener('click', (e) => {
+            // Chỉ chạy logic này trên mobile
+            if (window.innerWidth <= 768) {
+                e.preventDefault(); // Ngăn <a> điều hướng
+                // Toggle class 'open' trên thẻ cha (.nav-dropdown)
+                tarotToggle.parentElement.classList.toggle('open');
+            }
+            // Trên desktop (width > 768), sự kiện click mặc định (điều hướng) sẽ diễn ra
+        });
+    }
     
-    // 3. Gắn logic cho các link trong Menu (để đóng menu khi click)
+    // (CHỈNH SỬA) 4. Gắn logic cho các link trong Menu (để đóng menu khi click)
     if (navLinks) {
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
-                // Không làm gì nếu click vào nút Lịch sử
-                // (nó đã có listener riêng bên dưới)
-                if (e.target.id === 'history-nav-link') {
-                    // Để listener của historyBtn xử lý
+                
+                // (CHỈNH SỬA) Không làm gì nếu click vào nút Lịch sử HOẶC nút dropdown Tarot
+                // (chúng đã có listener riêng)
+                if (e.currentTarget.id === 'history-nav-link' || e.currentTarget.id === 'tarot-dropdown-toggle') {
+                    // Để các listener riêng của chúng xử lý
                 } else if (navLinks.classList.contains('open')) { 
-                    // Nếu là link khác, đóng menu
+                    // Nếu là link khác (VD: Trang Chủ, Về chúng tôi, HOẶC link trong submenu),
+                    // thì đóng menu chính
                     navLinks.classList.remove('open');
                     navToggle.classList.remove('open');
                     // (MỚI) Mở cuộn body
-                    document.documentElement.classList.remove('nav-open'); 
+                    document.body.classList.remove('nav-open');
                 }
             });
         });
     }
 
-    // 4. Gắn logic cho Modal Lịch sử
+    // 5. Gắn logic cho Modal Lịch sử
     if (historyBtn) {
         historyBtn.addEventListener('click', (e) => {
             e.preventDefault(); // Ngăn link <a> điều hướng
