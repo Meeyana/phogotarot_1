@@ -115,7 +115,10 @@ function closeHistoryModal() {
     // (MỚI) Mở lại cuộn khi modal đóng
     
     // (MỚI) FIX LỖI DESYNC: Gỡ CẢ nav-open khi đóng modal
-    document.body.classList.remove('modal-open'); 
+    document.body.classList.remove('modal-open');
+    document.documentElement.classList.remove('modal-open');
+    document.body.classList.remove('nav-open');
+    document.documentElement.classList.remove('nav-open');
 }
 
 /** Xử lý khi click vào các nút trong danh sách lịch sử (vd: nút Chia sẻ) */
@@ -183,7 +186,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.classList.toggle('open');
             navToggle.classList.toggle('open');
             // (MỚI) Khóa/mở cuộn body
-            document.body.classList.toggle('nav-open');
+            document.body.classList.toggle('nav-open');\
+            document.documentElement.classList.toggle('nav-open');
         });
     }
 
@@ -216,6 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     navToggle.classList.remove('open');
                     // (MỚI) Mở cuộn body
                     document.body.classList.remove('nav-open');
+                    document.documentElement.classList.remove('nav-open');
                 }
             });
         });
