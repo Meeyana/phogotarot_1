@@ -137,7 +137,7 @@
             text-shadow: none;
             opacity: 1;
         }
-        /* === (HẾT) CSS CHO NÚT CHỌN === */
+        <!-- === (HẾT) CSS CHO NÚT CHỌN === -->
 
         /* === (CHỈNH SỬA) CSS CHO KHU VỰC TRA CỨU BÀI === */
         #card-lookup-container {
@@ -278,6 +278,19 @@
         }
 
         /* (CHỈNH SỬA) Phân bổ lại độ rộng các cột */
+        /* (CHỈNH SỬA) Ẩn cột ảnh và gộp header trên mobile */
+        @media (max-width: 768px) {
+            #card-lookup-container th:first-child,
+            #card-lookup-container td:first-child {
+                display: none; /* Ẩn cột ảnh */
+            }
+            
+            /* Gộp header cho tên lá bài */
+            #card-lookup-container th:nth-child(2) {
+                /* (Nội dung này có thể không cần nếu bạn dùng colspan) */
+            }
+        }
+        
         #card-lookup-container td:nth-child(1) { /* Cột Ảnh */
             width: 8%;
             text-align: center;
@@ -352,12 +365,13 @@
             </button>
         </div>
         
+        <!-- (CHỈNH SỬA) Đảo vị trí nút và đổi 'active' -->
         <div id="reading-options-container">
-            <button class="reading-option-btn active" data-value="3">
-                Chọn 3 lá (Tổng quan)
-            </button>
-            <button class="reading-option-btn" data-value="1">
+            <button class="reading-option-btn active" data-value="1">
                 Chọn 1 lá (Hỏi nhanh)
+            </button>
+            <button class="reading-option-btn" data-value="3">
+                Chọn 3 lá (Tổng quan)
             </button>
         </div>
 
@@ -375,22 +389,8 @@
         
         <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
 
-        <!-- === (CHỈNH SỬA) KHU VỰC TRA CỨU BÀI === -->
-        <div id="card-lookup-container">
-            <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
-            
-            <!-- (CHỈNH SỬA) Thêm wrapper và icon cho thanh tìm kiếm -->
-            <div id="card-search-wrapper">
-                <i class="fa-solid fa-search" id="card-search-icon"></i>
-                <input type="text" id="card-search-input" placeholder="Tìm kiếm bài Tarot...">
-            </div>
-            
-            <div id="card-lookup-table">
-                <!-- Nội dung sẽ được tải bằng JS -->
-                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
-            </div>
-        </div>
-        <!-- === (HẾT) KHU VỰC TRA CỨU BÀI === -->
+        <!-- === (ĐÃ DI CHUYỂN) KHU VỰC TRA CỨU BÀI đã được chuyển sang #drawing-screen === -->
+        <!-- <div id="card-lookup-container"> ... </div> -->
 
     </div>
 
@@ -448,6 +448,24 @@
             </div>
             <p id="follow-up-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
         </div>
+
+        <!-- === (ĐÃ DI CHUYỂN) KHU VỰC TRA CỨU BÀI === -->
+        <!-- (CHỈNH SỬA) Bảng tra cứu được chuyển xuống đây, ẩn mặc định -->
+        <div id="card-lookup-container" style="display: none;">
+            <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
+            
+            <div id="card-search-wrapper">
+                <i class="fa-solid fa-search" id="card-search-icon"></i>
+                <input type="text" id="card-search-input" placeholder="Gõ tên lá bài (ít nhất 3 ký tự) để lọc...">
+            </div>
+            
+            <div id="card-lookup-table">
+                <!-- Nội dung sẽ được tải bằng JS -->
+                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
+            </div>
+        </div>
+        <!-- === (HẾT) KHU VỰC TRA CỨU BÀI === -->
+
     </div>
     
     <!-- MODAL LỊCH SỬ (Giữ nguyên) -->
@@ -558,7 +576,7 @@ let userQuestion = '';
 let isAnimating = false; 
 let allCardImagesLoaded = false;
 let currentReadingId = null; 
-let numCardsToChoose = 3; 
+let numCardsToChoose = 1; // (CHỈNH SỬA) Đổi mặc định sang 1 lá
 
 // === Functions ===
 
@@ -668,7 +686,7 @@ async function loadCardMeanings() {
             
             html += `
                 <tr>
-                    <td><img src="${imageUrl}" alt="${cardName}" class="lookup-card-image" loading="lazy"></td> <!-- (MỚI) Thêm loading="lazy" -->
+                    <td><img src="${imageUrl}" alt="${cardName}" class="lookup-card-image" loading="lazy"></td>
                     <td><strong>${cardName}</strong></td>
                     <td>${yesNo}</td>
                     <td>${upright}</td>
@@ -982,6 +1000,13 @@ function populateCardDeck() {
     followUpErrorDisplay.textContent = ''; 
     questionInput.value = ''; 
 
+    // (MỚI) Ẩn bảng tra cứu khi bắt đầu vòng mới
+    const lookupContainer = document.getElementById('card-lookup-container');
+    if (lookupContainer) {
+        lookupContainer.style.display = 'none';
+    }
+
+    // Tạo 78 lá bài
     for (let i = 0; i < 78; i++) {
         const cardElementDesktop = document.createElement('div');
         cardElementDesktop.className = 'facedown-card';
@@ -1248,6 +1273,12 @@ async function handleGetInterpretation() {
     
     mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
     followUpContainer.style.display = 'block';
+
+    // (MỚI) Hiển thị bảng tra cứu cùng lúc với nút "hỏi tiếp"
+    const lookupContainer = document.getElementById('card-lookup-container');
+    if (lookupContainer) {
+        lookupContainer.style.display = 'block';
+    }
 }
 
 /** Tải trạng thái ban đầu */
