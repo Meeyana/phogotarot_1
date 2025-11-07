@@ -452,7 +452,7 @@ async function loadSuggestedQuestions() {
     if (!suggestedQuestionsList) return; 
     
     try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=YnQuestions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const text = await response.text();
