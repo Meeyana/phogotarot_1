@@ -698,6 +698,7 @@
             padding: 0.75rem 0.5rem 0.25rem;
             margin: 0;
             margin-top: 0.5rem;
+            text-align: left;
         }
         .category-title:first-child {
             margin-top: 0;

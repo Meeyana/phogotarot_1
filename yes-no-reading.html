@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- (CHỈNH SỬA) Thay đổi Title -->
     <title>Trải Bài Tarot (1 Lá / 3 Lá)</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     
-    <!-- Giả định style.css ở cùng thư mục -->
     <link rel="stylesheet" href="style.css">
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
@@ -97,34 +95,34 @@
         /* --- (HẾT) CSS CHO LOADER --- */
         
 
-        /* === (MỚI) CSS CHO NÚT CHỌN SỐ LÁ BÀI (DẠNG BOX) === */
+        /* === CSS CHO NÚT CHỌN SỐ LÁ BÀI === */
         #reading-options-container {
             width: 100%;
             max-width: 600px;
-            margin: 1.5rem 0 0 0; /* (CHỈNH SỬA) Vị trí mới */
+            margin: 1.5rem 0 0 0; 
             display: flex;
             background-color: var(--button-bg);
             border: 1px solid var(--card-back-border);
             border-radius: 8px;
             padding: 0.5rem;
             backdrop-filter: blur(5px);
-            gap: 0.5rem; /* Khoảng cách giữa 2 nút */
+            gap: 0.5rem; 
         }
         
         .reading-option-btn {
-            flex: 1; /* Hai nút rộng bằng nhau */
+            flex: 1; 
             background: transparent;
             border: none;
             color: var(--text-color);
             padding: 0.75rem 1rem;
-            border-radius: 6px; /* Bo góc nút bên trong */
+            border-radius: 6px; 
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: var(--font-body);
             font-size: 0.9rem;
             font-weight: 600;
             text-align: center;
-            text-shadow: none; /* Tắt text shadow cho dễ đọc */
+            text-shadow: none; 
             opacity: 0.8;
         }
         
@@ -134,12 +132,171 @@
         }
         
         .reading-option-btn.active {
-            background-color: var(--title-color); /* Màu nền khi được chọn */
-            color: var(--bg-color); /* Màu text khi được chọn */
+            background-color: var(--title-color); 
+            color: var(--bg-color); 
             text-shadow: none;
             opacity: 1;
         }
         /* === (HẾT) CSS CHO NÚT CHỌN === */
+
+        /* === (CHỈNH SỬA) CSS CHO KHU VỰC TRA CỨU BÀI === */
+        #card-lookup-container {
+            width: 100%;
+            max-width: 1100px; 
+            margin: 2.5rem auto 0 auto; 
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+            text-align: left; 
+        }
+        
+        #card-lookup-container h2 {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            text-align: center; 
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* (MỚI) CSS cho wrapper thanh tìm kiếm */
+        #card-search-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 1.5rem; /* Chuyển margin từ input sang wrapper */
+        }
+        
+        /* (MỚI) CSS cho icon tìm kiếm */
+        #card-search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-color);
+            opacity: 0.5;
+            pointer-events: none; /* Để có thể click xuyên qua icon */
+            font-size: 0.9rem; /* Kích thước icon */
+            text-shadow: none; /* Tắt shadow cho icon */
+        }
+
+        /* (CHỈNH SỬA) CSS cho thanh tìm kiếm tra cứu */
+        #card-search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem; /* (CHỈNH SỬA) Tăng padding-left */
+            /* margin-bottom: 1.5rem; */ /* (XÓA) Đã chuyển ra wrapper */
+            background-color: var(--bg-color); /* Nền tối hơn 1 chút */
+            border: 1px solid var(--card-back-border);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            text-shadow: none;
+        }
+        #card-search-input:focus {
+            outline: none;
+            border-color: var(--title-color);
+            box-shadow: 0 0 10px rgba(142, 186, 255, 0.3);
+        }
+        #card-search-input::placeholder {
+            color: var(--text-color);
+            opacity: 0.5;
+        }
+
+        /* Wrapper để cuộn */
+        .card-lookup-table-wrapper {
+            max-height: 400px; 
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--card-back-border) var(--bg-color);
+        }
+        
+        .card-lookup-table-wrapper::-webkit-scrollbar {
+            width: 8px;
+        }
+        .card-lookup-table-wrapper::-webkit-scrollbar-track {
+            background: rgba(11, 19, 43, 0.5); 
+            border-radius: 4px;
+        }
+        .card-lookup-table-wrapper::-webkit-scrollbar-thumb {
+            background-color: var(--card-back-border);
+            border-radius: 4px;
+            border: 2px solid rgba(11, 19, 43, 0.5);
+        }
+        
+         @media (max-width: 768px) {
+            .card-lookup-table-wrapper {
+                overflow-x: auto;
+            }
+         }
+
+
+        #card-lookup-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        @media (max-width: 768px) {
+            #card-lookup-container table {
+                min-width: 850px; 
+            }
+        }
+        
+        #card-lookup-container th,
+        #card-lookup-container td {
+            padding: 0.85rem 0.75rem; 
+            border-bottom: 1px solid var(--card-back-border);
+            text-shadow: none; 
+            line-height: 1.5;
+            font-size: 0.95rem; 
+            vertical-align: middle; 
+        }
+
+        #card-lookup-container th {
+            font-family: var(--font-body); 
+            font-weight: 600;
+            color: var(--title-color);
+            position: sticky; 
+            top: 0;
+            background: rgb(20, 40, 80); /* Nền đặc */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+            z-index: 1; 
+        }
+        
+        #card-lookup-container tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .lookup-card-image {
+            width: 60px; 
+            height: auto;
+            aspect-ratio: 2/3; 
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto; 
+        }
+
+        /* (CHỈNH SỬA) Phân bổ lại độ rộng các cột */
+        #card-lookup-container td:nth-child(1) { /* Cột Ảnh */
+            width: 8%;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        #card-lookup-container td:nth-child(2) { /* Cột Tên lá bài */
+            width: 22%;
+            font-weight: 600;
+        }
+        #card-lookup-container td:nth-child(3) { /* Cột Yes/No */
+            width: 15%;
+        }
+        #card-lookup-container td:nth-child(4) { /* Cột Xuôi */
+            width: 27.5%;
+        }
+        #card-lookup-container td:nth-child(5) { /* Cột Ngược */
+            width: 27.5%;
+        }
+        /* === (HẾT) CSS TRA CỨU === */
         
     </style>
 </head>
@@ -149,7 +306,7 @@
         <!-- Các ngôi sao được tạo bởi common.js -->
     </div>
     
-    <!-- NAV BAR (Giữ nguyên từ file cũ) -->
+    <!-- NAV BAR (Giữ nguyên) -->
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="index.html#" class="nav-link logo-link">PHỞ GÕ TAROT</a>
@@ -184,7 +341,6 @@
 
     <!-- MÀN HÌNH 1: CÂU HỎI -->
     <div id="question-screen" class="screen active">
-        <!-- (CHỈNH SỬA) Thay đổi H1 -->
         <h1 class="title">Bạn muốn hỏi điều gì?</h1>
         
         <div id="question-input-area" class="question-input-area">
@@ -196,7 +352,6 @@
             </button>
         </div>
         
-        <!-- === (MỚI) KHU VỰC CHỌN SỐ LÁ BÀI (ĐÃ DI CHUYỂN LÊN ĐÂY) === -->
         <div id="reading-options-container">
             <button class="reading-option-btn active" data-value="3">
                 Chọn 3 lá (Tổng quan)
@@ -205,9 +360,8 @@
                 Chọn 1 lá (Hỏi nhanh)
             </button>
         </div>
-        <!-- === (HẾT) KHU VỰC MỚI === -->
 
-        <div class="dropdown-container"> <!-- (CHỈNH SỬA) Đã di chuyển xuống dưới khu vực chọn lá -->
+        <div class="dropdown-container">
             <button id="suggested-questions-toggle" class="dropdown-toggle">
                 <span>Gợi ý câu hỏi</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
@@ -218,10 +372,26 @@
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
             </div>
         </div>
-
-        <!-- (XÓA) Đã xóa khu vực radio button cũ ở đây -->
         
         <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+
+        <!-- === (CHỈNH SỬA) KHU VỰC TRA CỨU BÀI === -->
+        <div id="card-lookup-container">
+            <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
+            
+            <!-- (CHỈNH SỬA) Thêm wrapper và icon cho thanh tìm kiếm -->
+            <div id="card-search-wrapper">
+                <i class="fa-solid fa-search" id="card-search-icon"></i>
+                <input type="text" id="card-search-input" placeholder="Tìm kiếm bài Tarot...">
+            </div>
+            
+            <div id="card-lookup-table">
+                <!-- Nội dung sẽ được tải bằng JS -->
+                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
+            </div>
+        </div>
+        <!-- === (HẾT) KHU VỰC TRA CỨU BÀI === -->
+
     </div>
 
     <!-- MÀN HÌNH 2: XÁO BÀI (Giữ nguyên) -->
@@ -239,21 +409,18 @@
         </p>
     </div>
 
-    <!-- MÀN HÌNH 3: CHỌN BÀI (Thay đổi logic) -->
+    <!-- MÀN HÌNH 3: CHỌN BÀI (Giữ nguyên) -->
     <div id="drawing-screen" class="screen">
         <div id="drawing-question-display" class="question-display-header"></div>
         
-        <!-- (CHỈNH SỬA) Tiêu đề này sẽ được JS cập nhật -->
         <h2 class="drawing-subheader">Hãy chọn 3 lá bài</h2>
         
-        <!-- (CHỈNH SỬA) Nội dung này sẽ được JS cập nhật -->
         <div id="chosen-cards-display">
             <div class="chosen-card-placeholder"></div>
             <div class="chosen-card-placeholder"></div>
             <div class="chosen-card-placeholder"></div>
         </div>
         
-        <!-- Bộ bài (Giữ nguyên) -->
         <div id="card-spread-container">
             <div class="card-row" id="card-row-1"></div>
             <div class="card-row" id="card-row-2"></div>
@@ -263,7 +430,6 @@
             <div class="card-row mobile-row" id="card-row-6"></div>
         </div>
         
-        <!-- Nút và Kết quả (Giữ nguyên) -->
         <div id="action-button-container">
             <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
         </div>
@@ -338,7 +504,6 @@
         </footer>
 
     <!-- (QUAN TRỌNG) Tải common.js trước logic của trang -->
-    <!-- Giả định common.js ở cùng thư mục -->
     <script src="common.js" defer></script>
 
 
@@ -348,27 +513,19 @@
 /* === TAROT.JS (Logic cho trang 1/3 lá) === */
 /* ============================================= */
 
-// (QUAN TRỌNG) URL Webhook để *luận giải*
-const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d'; // !!! THAY THẾ URL CỦA BẠN !!!
-
-// (MỚI - QUAN TRỌNG) URL Webhook để *kiểm tra* câu hỏi
-const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2b074c1e-6465-4114-872d-c0dcd9278b62'; // !!! BẠN PHẢI THAY THẾ URL NÀY !!!
-
-// (MỚI) Di chuyển SHEET_ID ra ngoài để dùng chung
+const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d'; 
+const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2b074c1e-6465-4114-872d-c0dcd9278b62'; 
 const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
 
-// DOM Elements (Game-specific)
+// DOM Elements
 const screens = document.querySelectorAll('.screen');
 const questionInput = document.getElementById('question-input');
 const submitQuestionBtn = document.getElementById('submit-question-btn');
 const questionErrorDisplay = document.getElementById('question-error-display'); 
-
+const cardLookupTable = document.getElementById('card-lookup-table'); 
 const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
 const suggestedQuestionsList = document.getElementById('suggested-questions-list');
-
-// (MỚI) DOM cho các nút CHỌN SỐ LÁ BÀI
 const readingOptionBtns = document.querySelectorAll('.reading-option-btn');
-
 const cardRow1 = document.getElementById('card-row-1');
 const cardRow2 = document.getElementById('card-row-2');
 const cardRow3 = document.getElementById('card-row-3'); 
@@ -378,7 +535,7 @@ const cardRow6 = document.getElementById('card-row-6');
 const chosenCardsDisplay = document.getElementById('chosen-cards-display'); 
 const shufflingQuestionDisplay = document.getElementById('shuffling-question-display');
 const drawingQuestionDisplay = document.getElementById('drawing-question-display');
-const drawingSubheader = document.querySelector('.drawing-subheader'); // (MỚI) Lấy tiêu đề phụ
+const drawingSubheader = document.querySelector('.drawing-subheader'); 
 const getInterpretationButton = document.getElementById('get-interpretation-button');
 const mainResultsDisplay = document.getElementById('interpretation-results-display');
 const followUpContainer = document.getElementById('follow-up-question-container');
@@ -386,7 +543,7 @@ const followUpInput = document.getElementById('follow-up-question-input');
 const followUpSubmitBtn = document.getElementById('submit-follow-up-btn');
 const followUpErrorDisplay = document.getElementById('follow-up-error-display'); 
 
-// (MỚI) HTML cho các icon của nút
+// Icon HTML
 const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
     <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
 </svg>`;
@@ -394,23 +551,23 @@ const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
     <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
 </svg>`;
 
-// State (Game-specific)
+// State
 let cardData = [];
 let selectedCards = [];
 let userQuestion = '';
 let isAnimating = false; 
 let allCardImagesLoaded = false;
 let currentReadingId = null; 
-let numCardsToChoose = 3; // (MỚI) Biến trạng thái, mặc định là 3 (phải khớp với nút .active trong HTML)
+let numCardsToChoose = 3; 
 
-// === (MỚI) Chức năng Auto-Grow Textarea ===
+// === Functions ===
+
+/** Auto-grow textarea */
 function autoGrow(element) {
     if (!element) return;
     element.style.height = 'auto'; 
     element.style.height = Math.max(56, element.scrollHeight) + 'px'; 
 }
-
-// === Functions ===
 
 /** Chuyển màn hình */
 function showScreen(screenId) {
@@ -421,7 +578,7 @@ function showScreen(screenId) {
     }
 }
 
-/** Tải dữ liệu 78 lá bài từ Google Sheet */
+/** Tải dữ liệu 78 lá bài */
 async function initialize() {
     try {
         const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
@@ -447,7 +604,125 @@ async function initialize() {
     }
 }
 
-/** Tải câu hỏi gợi ý từ Google Sheet */
+/** (CHỈNH SỬA) Tải dữ liệu tra cứu (gộp header) */
+async function loadCardMeanings() {
+    if (!cardLookupTable) return; 
+    
+    cardLookupTable.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>';
+
+    try {
+        const sheetName = 'YesNo_Meaning'; 
+        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${sheetName}&tqx=out:json&tq=SELECT%20A,%20B,%20C,%20D,%20E%20OFFSET%201`;
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}. Lỗi khi tải tab '${sheetName}'.`);
+        
+        const text = await response.text();
+        
+        if (text.startsWith('<!DOCTYPE html>')) {
+            throw new Error(`Không tìm thấy tab '${sheetName}' hoặc lỗi truy cập Google Sheet.`);
+        }
+        
+        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
+        const data = JSON.parse(jsonText);
+
+        if (data.status === 'error') {
+            let errorMsg = data.errors.map(e => e.detailed_message).join(', ');
+            if (errorMsg.includes('Unable to parse query') || errorMsg.includes('Invalid sheet')) {
+                 throw new Error(`Lỗi GVIZ: Không tìm thấy tab tên là '${sheetName}'. Vui lòng kiểm tra lại tên tab trong Google Sheet.`);
+            }
+             if (errorMsg.includes('SELECT_E')) {
+                 throw new Error(`Lỗi GVIZ: Không tìm thấy Cột E trong tab '${sheetName}'. Vui lòng thêm cột E chứa URL hình ảnh.`);
+            }
+            throw new Error(`Lỗi GVIZ: ${errorMsg}`);
+        }
+
+        const table = data.table;
+        const rows = table.rows;
+
+        if (rows.length === 0) {
+            cardLookupTable.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Không có dữ liệu tra cứu.</p>';
+            return;
+        }
+
+        let html = '<div class="card-lookup-table-wrapper"><table>'; 
+        html += `
+            <thead>
+                <tr>
+                    <!-- (CHỈNH SỬA) Gộp 2 cột đầu tiên -->
+                    <th colspan="2">Lá bài Tarot</th> 
+                    <th>Ý nghĩa Yes/No</th>
+                    <th>Ý nghĩa Xuôi</th>
+                    <th>Ý nghĩa Ngược</th>
+                </tr>
+            </thead>
+            <tbody>
+        `; // <tbody> được thêm ở đây
+
+        rows.forEach(row => {
+            const cardName = row.c[0]?.v || 'N/A';
+            const yesNo = row.c[1]?.v || 'N/A';
+            const upright = row.c[2]?.v || 'N/A';
+            const reversed = row.c[3]?.v || 'N/A';
+            const imageUrl = row.c[4]?.v || 'https://placehold.co/60x100?text=?'; 
+            
+            html += `
+                <tr>
+                    <td><img src="${imageUrl}" alt="${cardName}" class="lookup-card-image" loading="lazy"></td> <!-- (MỚI) Thêm loading="lazy" -->
+                    <td><strong>${cardName}</strong></td>
+                    <td>${yesNo}</td>
+                    <td>${upright}</td>
+                    <td>${reversed}</td>
+                </tr>
+            `;
+        });
+
+        html += '</tbody></table></div>'; // Đóng </tbody>, <table>, <div>
+        cardLookupTable.innerHTML = html;
+
+    } catch (error) {
+        console.error("Lỗi khi tải dữ liệu tra cứu bài:", error);
+        cardLookupTable.innerHTML = `<p style="padding: 1rem; opacity: 0.7; text-align: center; color: #ff8a8a;">Lỗi tải dữ liệu tra cứu: ${error.message}<br>Vui lòng đảm bảo Google Sheet có một tab tên là 'Meanings' (đã thêm Cột E) và đã được chia sẻ công khai.</p>`;
+    }
+}
+
+/** (MỚI) Hàm lọc bảng tra cứu */
+function filterCardTable() {
+    const searchInput = document.getElementById('card-search-input');
+    if (!searchInput) return;
+    
+    // 1. Lấy cụm từ tìm kiếm (chuyển về chữ thường, bỏ khoảng trắng thừa)
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    // 2. Tìm tất cả các hàng <tr> trong <tbody>
+    const tableRows = document.querySelectorAll('#card-lookup-table tbody tr');
+
+    // 3. Kiểm tra điều kiện (ít nhất 3 ký tự)
+    if (searchTerm.length >= 3) {
+        // 4. Lặp qua từng hàng
+        tableRows.forEach(row => {
+            // Cột Tên lá bài là cột thứ 2 (td:nth-child(2))
+            const cardNameCell = row.querySelector('td:nth-child(2)'); 
+            if (cardNameCell) {
+                const cardName = cardNameCell.textContent.toLowerCase();
+                
+                // 5. So sánh: Nếu tên lá bài CHỨA cụm từ tìm kiếm
+                if (cardName.includes(searchTerm)) {
+                    row.style.display = ""; // Hiện hàng này
+                } else {
+                    row.style.display = "none"; // Ẩn hàng này
+                }
+            }
+        });
+    } else {
+        // 6. Nếu dưới 3 ký tự, hiện tất cả các hàng
+        tableRows.forEach(row => {
+            row.style.display = "";
+        });
+    }
+}
+
+
+/** Tải câu hỏi gợi ý */
 async function loadSuggestedQuestions() {
     if (!suggestedQuestionsList) return; 
     
@@ -652,7 +927,7 @@ styleSheet.innerText = `@keyframes shake { 0%, 100% { transform: translateX(0); 
 document.head.appendChild(styleSheet);
 
 
-/** Bắt đầu một lượt trải bài mới (chuyển qua màn hình xáo bài) */
+/** Bắt đầu một lượt trải bài mới */
 function startNewReadingFlow() {
     sessionStorage.removeItem('tarotSession'); 
     
@@ -681,7 +956,6 @@ function startNewReadingFlow() {
 
 /** Tạo bộ bài 78 lá úp */
 function populateCardDeck() {
-    // Dọn dẹp
     cardRow1.innerHTML = '';
     cardRow2.innerHTML = '';
     cardRow3.innerHTML = '';
@@ -692,11 +966,10 @@ function populateCardDeck() {
     mainResultsDisplay.style.display = 'none';
     mainResultsDisplay.innerHTML = '';
 
-    // (CHỈNH SỬA) Cập nhật tiêu đề và ô trống dựa trên numCardsToChoose
     if (drawingSubheader) {
         drawingSubheader.textContent = `Hãy chọn ${numCardsToChoose} lá bài`;
     }
-    updateChosenCardsDisplay(); // <-- Gọi hàm này để tạo ô trống chính xác
+    updateChosenCardsDisplay(); 
 
     const drawingScreen = document.getElementById('drawing-screen');
     drawingScreen.classList.remove('results-active');
@@ -709,7 +982,6 @@ function populateCardDeck() {
     followUpErrorDisplay.textContent = ''; 
     questionInput.value = ''; 
 
-    // Tạo 78 lá bài
     for (let i = 0; i < 78; i++) {
         const cardElementDesktop = document.createElement('div');
         cardElementDesktop.className = 'facedown-card';
@@ -734,7 +1006,6 @@ function populateCardDeck() {
         cardElementDesktop.addEventListener('touchstart', clickHandler);
         cardElementMobile.addEventListener('touchstart', clickHandler);
 
-        // Phân phối vào các hàng
         if (i < 39) {
             cardRow1.appendChild(cardElementDesktop);
         } else {
@@ -757,7 +1028,6 @@ function populateCardDeck() {
 function handleCardSelection(event, clickedElement) {
     event.preventDefault();
     
-    // (CHỈNH SỬA) Kiểm tra với numCardsToChoose
     if (selectedCards.length >= numCardsToChoose || isAnimating) return; 
 
     const posIndex = clickedElement.dataset.positionIndex;
@@ -781,7 +1051,6 @@ function handleCardSelection(event, clickedElement) {
     const orientation = isReversed ? 'Ngược' : 'Xuôi';
     const chosenCard = { ...randomCard, isReversed, orientation };
 
-    // Tìm ô trống tiếp theo
     const targetPlaceholder = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
     
     if (targetPlaceholder) {
@@ -791,7 +1060,7 @@ function handleCardSelection(event, clickedElement) {
     }
 }
 
-/** Hiệu ứng lá bài bay từ bộ bài đến ô đã chọn và lật ra */
+/** Hiệu ứng lá bài bay */
 function animateCardFlight(startEl, endEl, cardData) {
     
     const img = new Image();
@@ -845,7 +1114,6 @@ function animateCardFlight(startEl, endEl, cardData) {
             selectedCards.push(cardData);
             updateChosenCardsDisplay(); 
 
-            // (CHỈNH SỬA) Kiểm tra với numCardsToChoose
             if (selectedCards.length === numCardsToChoose) {
                 transitionToResultsView(); 
             }
@@ -889,13 +1157,12 @@ function updateChosenCardsDisplay() {
         }, 0);
     });
 
-    // (CHỈNH SỬA) Thêm số ô trống chính xác
     for (let i = 0; i < numCardsToChoose - selectedCards.length; i++) {
         chosenCardsDisplay.innerHTML += '<div class="chosen-card-placeholder"></div>';
     }
 }
 
-/** Chuyển sang trạng thái xem kết quả (ẩn bộ bài, hiện nút) */
+/** Chuyển sang trạng thái xem kết quả */
 function transitionToResultsView() {
     const drawingScreen = document.getElementById('drawing-screen');
     drawingScreen.classList.add('results-active');
@@ -965,7 +1232,6 @@ async function handleGetInterpretation() {
                 markdown: markdownContent 
             };
 
-            // Gọi hàm saveHistory() từ common.js
             if (typeof saveHistory === 'function') {
                 saveHistory(fullEntry);
             } else {
@@ -992,17 +1258,24 @@ function loadSessionState() {
 
 // === Event Listeners (Game-specific) ===
 document.addEventListener('DOMContentLoaded', async () => {
-    // Chỉ chạy các hàm này nếu các phần tử game tồn tại
     if (document.getElementById('question-screen')) {
         // Init game
         await initialize(); 
         await loadSuggestedQuestions(); 
+        await loadCardMeanings(); // Tải bảng tra cứu
         loadSessionState(); 
 
         // Auto-grow textareas
         questionInput.addEventListener('input', () => autoGrow(questionInput));
         followUpInput.addEventListener('input', () => autoGrow(followUpInput));
         
+        // (MỚI) Gắn listener cho thanh tìm kiếm
+        const cardSearchInput = document.getElementById('card-search-input');
+        if (cardSearchInput) {
+            // Dùng 'input' để lọc ngay cả khi dán (paste) hoặc xóa
+            cardSearchInput.addEventListener('input', filterCardTable);
+        }
+
         // Enter key listeners
         questionInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -1035,14 +1308,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         });
         
-        // (MỚI) Gắn listener cho các nút CHỌN SỐ LÁ BÀI
         readingOptionBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                // 1. Xóa 'active' khỏi tất cả các nút
                 readingOptionBtns.forEach(b => b.classList.remove('active'));
-                // 2. Thêm 'active' vào nút vừa click
                 btn.classList.add('active');
-                // 3. Cập nhật biến trạng thái
                 numCardsToChoose = parseInt(btn.dataset.value, 10);
                 console.log("Số lá bài được chọn: ", numCardsToChoose);
             });
@@ -1050,7 +1319,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Đóng dropdown khi click ra ngoài
         document.addEventListener('click', (e) => {
-            if (!suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
+            if (suggestedQuestionsToggle && !suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
                 suggestedQuestionsList.classList.remove('open');
                 suggestedQuestionsToggle.classList.remove('open');
             }
