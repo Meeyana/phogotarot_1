@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trải Bài Tarot Cùng AI</title>
+    <!-- (CHỈNH SỬA) Thay đổi Title -->
+    <title>Trải Bài Tarot (1 Lá / 3 Lá)</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    
+    <!-- Giả định style.css ở cùng thư mục -->
     <link rel="stylesheet" href="style.css">
+    
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -17,21 +22,19 @@
 
       gtag('config', 'G-CF1CK7N9BR');
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
-        /* --- (MỚI) CSS CHO LOADER HÀNH TINH 3D --- */
+        /* --- CSS CHO LOADER HÀNH TINH 3D (Giữ nguyên) --- */
         .interpretation-loader {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 1.5rem 1rem; /* (CHỈNH SỬA) Giảm padding cho gọn hơn */
-            /* min-height: 250px; (XÓA) Bỏ min-height */
+            padding: 1.5rem 1rem; 
             overflow: hidden; 
-            perspective: 800px; /* (MỚI) Thêm perspective cho 3D */
+            perspective: 800px; 
         }
-
         .loader-planet-system {
             position: relative;
             width: 200px;
@@ -40,30 +43,19 @@
             align-items: center;
             justify-content: center;
             transform-style: preserve-3d;
-            /* Hiệu ứng xoay nhẹ toàn hệ thống */
             animation: system-wobble 15s infinite ease-in-out;
         }
-
         .loader-planet-sphere {
-            width: 100px; /* (MỚI) Tăng kích thước cho ảnh */
-            height: 100px; /* (MỚI) Tăng kích thước cho ảnh */
+            width: 100px; 
+            height: 100px; 
             border-radius: 50%;
-            
-            /* === (CHỈNH SỬA) SỬ DỤNG ẢNH PNG === */
-            /* !!! THAY URL ẢNH PNG CỦA BẠN VÀO ĐÂY !!! */
-            /* Ví dụ: background-image: url('hinh-hanh-tinh.png'); */
-            background-image: url('planet.png'); /* (CHỈNH SỬA) Đổi sang ảnh local */
-            
-            background-size: cover; /* Hiển thị toàn bộ ảnh */
+            background-image: url('planet.png'); 
+            background-size: cover; 
             background-position: center;
-            background-color: transparent; /* Đảm bảo không có nền */
-            
-            /* (MỚI) Thêm lại hiệu ứng phát sáng (nhấp nháy) */
+            background-color: transparent; 
             animation: planet-glow 2.5s infinite ease-in-out;
-            
             position: absolute;
         }
-
         .loader-orbit {
             position: absolute;
             top: 0;
@@ -72,108 +64,19 @@
             height: 100%;
             border-radius: 50%;
             transform-style: preserve-3d;
-            /* Hiệu ứng xoay 360 độ */
             animation-iteration-count: infinite;
             animation-timing-function: linear;
         }
-
-        /* Quỹ đạo 1 (Sao trắng) */
-        .orbit-1 {
-            animation-name: orbit-spin-1;
-            animation-duration: 3s; /* (CHỈNH SỬA) Tăng tốc từ 5s */
-        }
-        .orbit-1::before {
-            content: '';
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #fff;
-            box-shadow: 0 0 15px #fff;
-            top: 50%; /* Đặt ở giữa */
-            left: 0; /* Đặt ở cạnh trái */
-            transform: translate(-50%, -50%); /* Căn giữa vào quỹ đạo */
-            filter: blur(3px);
-        }
-
-        /* Quỹ đạo 2 (Sao vàng) */
-        .orbit-2 {
-            animation-name: orbit-spin-2;
-            animation-duration: 5s; /* (CHỈNH SỬA) Tăng tốc từ 8s */
-        }
-        .orbit-2::before {
-            content: '';
-            position: absolute;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #ffc;
-            box-shadow: 0 0 15px #ffc;
-            top: 50%;
-            left: 0;
-            transform: translate(-50%, -50%);
-            filter: blur(3px);
-        }
-
-        /* Quỹ đạo 3 (Sao đỏ) */
-        .orbit-3 {
-            animation-name: orbit-spin-3;
-            animation-duration: 7s; /* (CHỈNH SỬA) Tăng tốc từ 12s */
-        }
-        .orbit-3::before {
-            content: '';
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #fcc;
-            box-shadow: 0 0 15px #fcc;
-            top: 50%;
-            left: 0;
-            transform: translate(-50%, -50%);
-            filter: blur(3px);
-        }
-
-
-        /* (MỚI) Quỹ đạo 4 (Cyan) */
-        .orbit-4 {
-            animation-name: orbit-spin-4;
-            animation-duration: 10s;
-        }
-        .orbit-4::before {
-            content: '';
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #0ff;
-            box-shadow: 0 0 15px #0ff;
-            top: 50%;
-            left: 0;
-            transform: translate(-50%, -50%);
-            filter: blur(3px);
-        }
-
-        /* (MỚI) Quỹ đạo 5 (Tím) */
-        .orbit-5 {
-            animation-name: orbit-spin-5;
-            animation-duration: 14s;
-        }
-        .orbit-5::before {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #f0f;
-            box-shadow: 0 0 15px #f0f;
-            top: 50%;
-            left: 0;
-            transform: translate(-50%, -50%);
-            filter: blur(3px);
-        }
-
-
+        .orbit-1 { animation-name: orbit-spin-1; animation-duration: 3s; }
+        .orbit-1::before { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 15px #fff; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
+        .orbit-2 { animation-name: orbit-spin-2; animation-duration: 5s; }
+        .orbit-2::before { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #ffc; box-shadow: 0 0 15px #ffc; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
+        .orbit-3 { animation-name: orbit-spin-3; animation-duration: 7s; }
+        .orbit-3::before { content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fcc; box-shadow: 0 0 15px #fcc; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
+        .orbit-4 { animation-name: orbit-spin-4; animation-duration: 10s; }
+        .orbit-4::before { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #0ff; box-shadow: 0 0 15px #0ff; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
+        .orbit-5 { animation-name: orbit-spin-5; animation-duration: 14s; }
+        .orbit-5::before { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #f0f; box-shadow: 0 0 15px #f0f; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
         .loader-text {
             margin-top: 1.5rem;
             font-size: 1.1rem;
@@ -183,71 +86,70 @@
             text-shadow: 0 0 10px var(--text-color);
             animation: text-fade 2s infinite ease-in-out;
         }
+        @keyframes system-wobble { 0% { transform: rotateY(-10deg) rotateX(5deg); } 50% { transform: rotateY(10deg) rotateX(-5deg); } 100% { transform: rotateY(-10deg) rotateX(5deg); } }
+        @keyframes orbit-spin-1 { from { transform: rotateX(65deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-2 { from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-3 { from { transform: rotateX(65deg) rotateY(-60deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(-60deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-4 { from { transform: rotateX(65deg) rotateY(-45deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(-45deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-5 { from { transform: rotateX(65deg) rotateY(30deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(30deg) rotateZ(360deg); } }
+        @keyframes text-fade { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
+        @keyframes planet-glow { 0% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } 50% { filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 25px #c1c8ff); } 100% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } }
+        /* --- (HẾT) CSS CHO LOADER --- */
+        
 
-        /* Keyframes cho hiệu ứng */
-        @keyframes system-wobble {
-            0% { transform: rotateY(-10deg) rotateX(5deg); }
-            50% { transform: rotateY(10deg) rotateX(-5deg); }
-            100% { transform: rotateY(-10deg) rotateX(5deg); }
-        }
-
-        /* (CHỈNH SỬA) Giảm góc nghiêng rotateX để quỹ đạo nhìn tròn hơn */
-        @keyframes orbit-spin-1 {
-            from { transform: rotateX(65deg) rotateZ(0deg); }
-            to   { transform: rotateX(65deg) rotateZ(360deg); }
-        }
-        @keyframes orbit-spin-2 {
-            from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); }
-            to   { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); }
-        }
-        @keyframes orbit-spin-3 {
-            from { transform: rotateX(65deg) rotateY(-60deg) rotateZ(0deg); }
-            to   { transform: rotateX(65deg) rotateY(-60deg) rotateZ(360deg); }
-        }
-
-        /* (CHỈNH SỬA) Thêm keyframes cho 2 quỹ đạo mới */
-        @keyframes orbit-spin-4 {
-            from { transform: rotateX(65deg) rotateY(-45deg) rotateZ(0deg); }
-            to   { transform: rotateX(65deg) rotateY(-45deg) rotateZ(360deg); }
-        }
-        @keyframes orbit-spin-5 {
-            from { transform: rotateX(65deg) rotateY(30deg) rotateZ(0deg); }
-            to   { transform: rotateX(65deg) rotateY(30deg) rotateZ(360deg); }
-        }
-
-        @keyframes text-fade {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        /* === (MỚI) CSS CHO NÚT CHỌN SỐ LÁ BÀI (DẠNG BOX) === */
+        #reading-options-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 1.5rem 0 0 0; /* (CHỈNH SỬA) Vị trí mới */
+            display: flex;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            backdrop-filter: blur(5px);
+            gap: 0.5rem; /* Khoảng cách giữa 2 nút */
         }
         
-        /* (MỚI) Keyframes cho hiệu ứng ảnh phát sáng (sử dụng filter) */
-        @keyframes planet-glow {
-            0% {
-                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff);
-            }
-            50% {
-                filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 25px #c1c8ff);
-            }
-            100% {
-                filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff);
-            }
+        .reading-option-btn {
+            flex: 1; /* Hai nút rộng bằng nhau */
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            border-radius: 6px; /* Bo góc nút bên trong */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: none; /* Tắt text shadow cho dễ đọc */
+            opacity: 0.8;
         }
-        /* --- (HẾT) CSS CHO LOADER --- */
+        
+        .reading-option-btn:hover:not(.active) {
+            background-color: var(--button-hover-bg);
+            opacity: 1;
+        }
+        
+        .reading-option-btn.active {
+            background-color: var(--title-color); /* Màu nền khi được chọn */
+            color: var(--bg-color); /* Màu text khi được chọn */
+            text-shadow: none;
+            opacity: 1;
+        }
+        /* === (HẾT) CSS CHO NÚT CHỌN === */
         
     </style>
 </head>
 <body>
 
     <div id="stars-bg">
-        <div id="stars1"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
-        <div id="stars4"></div>
+        <!-- Các ngôi sao được tạo bởi common.js -->
     </div>
     
-
-
-    
+    <!-- NAV BAR (Giữ nguyên từ file cũ) -->
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="index.html#" class="nav-link logo-link">PHỞ GÕ TAROT</a>
@@ -263,8 +165,8 @@
                     </svg>
                 </div>
                 <div class="dropdown-submenu">
-                    <a href="tarot.html" class="nav-link submenu-link">Trải bài 3 lá</a>
-                    <a href="yes-no-reading.html" class="nav-link submenu-link">Câu hỏi Yes/No</a>
+                    <a href="tarot.html" class="nav-link submenu-link">Trải bài 3 lá</a> 
+                    <a href="yes-no-reading.html" class="nav-link submenu-link">Yes/No Question</a>
                     <a href="#" class="nav-link submenu-link">Zodiac Tarot</a>
                 </div>
             </div>
@@ -280,11 +182,13 @@
     </nav>
 
 
+    <!-- MÀN HÌNH 1: CÂU HỎI -->
     <div id="question-screen" class="screen active">
-        <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
+        <!-- (CHỈNH SỬA) Thay đổi H1 -->
+        <h1 class="title">Bạn muốn hỏi điều gì?</h1>
         
         <div id="question-input-area" class="question-input-area">
-            <textarea id="question-input" class="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" style="min-height: 56px;"></textarea>
+            <textarea id="question-input" class="question-input" placeholder="Viết câu hỏi của bạn ở đây..." style="min-height: 56px;"></textarea>
             <button id="submit-question-btn" title="Gửi câu hỏi">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                     <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
@@ -292,7 +196,18 @@
             </button>
         </div>
         
-        <div class="dropdown-container">
+        <!-- === (MỚI) KHU VỰC CHỌN SỐ LÁ BÀI (ĐÃ DI CHUYỂN LÊN ĐÂY) === -->
+        <div id="reading-options-container">
+            <button class="reading-option-btn active" data-value="3">
+                Chọn 3 lá (Tổng quan)
+            </button>
+            <button class="reading-option-btn" data-value="1">
+                Chọn 1 lá (Hỏi nhanh)
+            </button>
+        </div>
+        <!-- === (HẾT) KHU VỰC MỚI === -->
+
+        <div class="dropdown-container"> <!-- (CHỈNH SỬA) Đã di chuyển xuống dưới khu vực chọn lá -->
             <button id="suggested-questions-toggle" class="dropdown-toggle">
                 <span>Gợi ý câu hỏi</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
@@ -303,10 +218,13 @@
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
             </div>
         </div>
+
+        <!-- (XÓA) Đã xóa khu vực radio button cũ ở đây -->
         
         <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
     </div>
 
+    <!-- MÀN HÌNH 2: XÁO BÀI (Giữ nguyên) -->
     <div id="shuffling-screen" class="screen">
         <div id="shuffling-question-display" class="question-display-header"></div>
         <div class="shuffling-animation-container">
@@ -321,16 +239,21 @@
         </p>
     </div>
 
+    <!-- MÀN HÌNH 3: CHỌN BÀI (Thay đổi logic) -->
     <div id="drawing-screen" class="screen">
         <div id="drawing-question-display" class="question-display-header"></div>
+        
+        <!-- (CHỈNH SỬA) Tiêu đề này sẽ được JS cập nhật -->
         <h2 class="drawing-subheader">Hãy chọn 3 lá bài</h2>
         
+        <!-- (CHỈNH SỬA) Nội dung này sẽ được JS cập nhật -->
         <div id="chosen-cards-display">
             <div class="chosen-card-placeholder"></div>
             <div class="chosen-card-placeholder"></div>
             <div class="chosen-card-placeholder"></div>
         </div>
         
+        <!-- Bộ bài (Giữ nguyên) -->
         <div id="card-spread-container">
             <div class="card-row" id="card-row-1"></div>
             <div class="card-row" id="card-row-2"></div>
@@ -340,6 +263,7 @@
             <div class="card-row mobile-row" id="card-row-6"></div>
         </div>
         
+        <!-- Nút và Kết quả (Giữ nguyên) -->
         <div id="action-button-container">
             <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
         </div>
@@ -360,6 +284,7 @@
         </div>
     </div>
     
+    <!-- MODAL LỊCH SỬ (Giữ nguyên) -->
     <div id="history-modal-backdrop" class="modal-backdrop"></div>
     <div id="history-modal-content" class="modal-content">
         <div class="modal-header">
@@ -368,10 +293,12 @@
         </div>
         <div id="history-list-wrapper" class="modal-scroll-wrapper">
             <div id="history-list">
-                </div>
+                <!-- Nội dung được tạo bởi common.js -->
+            </div>
         </div>
     </div>
 
+    <!-- FOOTER (Giữ nguyên) -->
     <footer class="main-footer">
             <div class="footer-container">
                 <div class="footer-column brand">
@@ -380,79 +307,52 @@
                         Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
                     </p>
                     <div class="footer-social-links">
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <i class="fa-brands fa-facebook"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                     </div>
                 </div>
-                
                 <div class="footer-column links">
                     <h3 class="footer-title">Chính sách</h3>
                     <ul class="footer-link-list">
-                        <li>
-                            <a href="index.html#about">Giới thiệu</a>
-                        </li>
-                        <li>
-                            <a href="index.html#contact">Liên hệ</a>
-                        </li>
-                        <li>
-                            <a href="#">Chính sách bảo mật</a>
-                        </li>
-                        <li>
-                            <a href="#">Miễn trừ trách nhiệm</a>
-                        </li>
+                        <li><a href="index.html#about">Giới thiệu</a></li>
+                        <li><a href="index.html#contact">Liên hệ</a></li>
+                        <li><a href="#">Chính sách bảo mật</a></li>
+                        <li><a href="#">Miễn trừ trách nhiệm</a></li>
                     </ul>
                 </div>
-                
                 <div class="footer-column contact">
                     <h3 class="footer-title">Thông tin liên hệ</h3>
                     <ul class="footer-link-list">
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-phone"></i>
-                            <a href="tel:0931881420">0352 677 543</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:tarotmienphi@gmail.com">bebluetotrue@gmail.com</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-globe"></i>
-                            <a href="https://tarotmienphi.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
-                        </li>
+                        <li><i class="fa-solid fa-location-dot"></i><span>Quận Bình Thạnh, Hồ Chí Minh, VN</span></li>
+                        <li><i class="fa-solid fa-phone"></i><a href="tel:0931881420">0352 677 543</a></li>
+                        <li><i class="fa-solid fa-envelope"></i><a href="mailto:tarotmienphi@gmail.com">bebluetotrue@gmail.com</a></li>
+                        <li><i class="fa-solid fa-globe"></i><a href="https://tarotmienphi.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a></li>
                     </ul>
                 </div>
             </div>
-            
             <div class="footer-copyright">
                 &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
             </div>
         </footer>
 
+    <!-- (QUAN TRỌNG) Tải common.js trước logic của trang -->
+    <!-- Giả định common.js ở cùng thư mục -->
     <script src="common.js" defer></script>
 
+
+    <!-- SCRIPT LOGIC CỦA TRANG (ĐÃ CHỈNH SỬA) -->
     <script>
-        /* ============================================= */
-/* === TAROT.JS (Tarot Game Logic) === */
+/* ============================================= */
+/* === TAROT.JS (Logic cho trang 1/3 lá) === */
 /* ============================================= */
 
 // (QUAN TRỌNG) URL Webhook để *luận giải*
-const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2a1c95d5-dd30-4710-9f1c-f9c45686f218'; // !!! THAY THẾ URL CỦA BẠN !!!
+const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d'; // !!! THAY THẾ URL CỦA BẠN !!!
 
 // (MỚI - QUAN TRỌNG) URL Webhook để *kiểm tra* câu hỏi
-const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/fe3c376f-62f2-472d-ac01-d39ba5496e75'; // !!! BẠN PHẢI THAY THẾ URL NÀY !!!
+const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2b074c1e-6465-4114-872d-c0dcd9278b62'; // !!! BẠN PHẢI THAY THẾ URL NÀY !!!
 
 // (MỚI) Di chuyển SHEET_ID ra ngoài để dùng chung
 const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
@@ -466,6 +366,9 @@ const questionErrorDisplay = document.getElementById('question-error-display');
 const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
 const suggestedQuestionsList = document.getElementById('suggested-questions-list');
 
+// (MỚI) DOM cho các nút CHỌN SỐ LÁ BÀI
+const readingOptionBtns = document.querySelectorAll('.reading-option-btn');
+
 const cardRow1 = document.getElementById('card-row-1');
 const cardRow2 = document.getElementById('card-row-2');
 const cardRow3 = document.getElementById('card-row-3'); 
@@ -475,6 +378,7 @@ const cardRow6 = document.getElementById('card-row-6');
 const chosenCardsDisplay = document.getElementById('chosen-cards-display'); 
 const shufflingQuestionDisplay = document.getElementById('shuffling-question-display');
 const drawingQuestionDisplay = document.getElementById('drawing-question-display');
+const drawingSubheader = document.querySelector('.drawing-subheader'); // (MỚI) Lấy tiêu đề phụ
 const getInterpretationButton = document.getElementById('get-interpretation-button');
 const mainResultsDisplay = document.getElementById('interpretation-results-display');
 const followUpContainer = document.getElementById('follow-up-question-container');
@@ -497,12 +401,12 @@ let userQuestion = '';
 let isAnimating = false; 
 let allCardImagesLoaded = false;
 let currentReadingId = null; 
+let numCardsToChoose = 3; // (MỚI) Biến trạng thái, mặc định là 3 (phải khớp với nút .active trong HTML)
 
 // === (MỚI) Chức năng Auto-Grow Textarea ===
 function autoGrow(element) {
     if (!element) return;
     element.style.height = 'auto'; 
-    // (CHỈNH SỬA) Đảm bảo chiều cao không nhỏ hơn 56px
     element.style.height = Math.max(56, element.scrollHeight) + 'px'; 
 }
 
@@ -533,7 +437,7 @@ async function initialize() {
             image: row.c[1]?.v || 'https://placehold.co/200x340'
         }));
 
-        preloadAllCardImages(); // (MỚI) Bắt đầu tải trước ảnh
+        preloadAllCardImages();
     } catch (error)
     {
         console.error("Lỗi khi tải lá bài:", error);
@@ -545,7 +449,7 @@ async function initialize() {
 
 /** Tải câu hỏi gợi ý từ Google Sheet */
 async function loadSuggestedQuestions() {
-    if (!suggestedQuestionsList) return; // Không làm gì nếu không có phần gợi ý
+    if (!suggestedQuestionsList) return; 
     
     try {
         const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
@@ -601,7 +505,7 @@ function preloadAllCardImages() {
             const img = new Image();
             img.src = card.image;
             img.onload = resolve;
-            img.onerror = resolve; // Vẫn resolve dù lỗi để không bị kẹt
+            img.onerror = resolve; 
         });
     });
 
@@ -612,7 +516,7 @@ function preloadAllCardImages() {
         })
         .catch(err => {
             console.error("Lỗi trong quá trình tải trước hình ảnh:", err);
-            allCardImagesLoaded = true; // Vẫn tiếp tục dù lỗi
+            allCardImagesLoaded = true; 
         });
 }
 
@@ -759,7 +663,6 @@ function startNewReadingFlow() {
     const shuffleTime = 2500; 
     const startTime = Date.now();
 
-    // Chờ cho đến khi ảnh được tải xong VÀ hết thời gian xáo bài
     function checkAndProceed() {
         const elapsedTime = Date.now() - startTime;
         const timeRemaining = shuffleTime - elapsedTime;
@@ -768,8 +671,6 @@ function startNewReadingFlow() {
             populateCardDeck();
             showScreen('drawing-screen');
         } else {
-            // Nếu ảnh đã tải xong, chỉ cần chờ hết thời gian
-            // Nếu ảnh chưa xong, kiểm tra lại sau 100ms
             const nextCheck = allCardImagesLoaded ? timeRemaining : 100;
             setTimeout(checkAndProceed, Math.max(nextCheck, 0)); 
         }
@@ -790,7 +691,12 @@ function populateCardDeck() {
     selectedCards = []; 
     mainResultsDisplay.style.display = 'none';
     mainResultsDisplay.innerHTML = '';
-    updateChosenCardsDisplay();
+
+    // (CHỈNH SỬA) Cập nhật tiêu đề và ô trống dựa trên numCardsToChoose
+    if (drawingSubheader) {
+        drawingSubheader.textContent = `Hãy chọn ${numCardsToChoose} lá bài`;
+    }
+    updateChosenCardsDisplay(); // <-- Gọi hàm này để tạo ô trống chính xác
 
     const drawingScreen = document.getElementById('drawing-screen');
     drawingScreen.classList.remove('results-active');
@@ -808,7 +714,6 @@ function populateCardDeck() {
         const cardElementDesktop = document.createElement('div');
         cardElementDesktop.className = 'facedown-card';
         cardElementDesktop.dataset.positionIndex = i;
-        // Hiệu ứng chia bài
         cardElementDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 30}ms`;
         
         const cardElementMobile = cardElementDesktop.cloneNode(true);
@@ -822,7 +727,6 @@ function populateCardDeck() {
         cardElementDesktop.addEventListener('animationend', animationEndCallback);
         cardElementMobile.addEventListener('animationend', animationEndCallback);
         
-        // Gắn listener click
         const clickHandler = (e) => handleCardSelection(e, e.currentTarget);
         cardElementDesktop.addEventListener('click', clickHandler);
         cardElementMobile.addEventListener('click', clickHandler);
@@ -853,10 +757,10 @@ function populateCardDeck() {
 function handleCardSelection(event, clickedElement) {
     event.preventDefault();
     
-    if (selectedCards.length >= 3 || isAnimating) return; // Đã chọn đủ hoặc đang lật
+    // (CHỈNH SỬA) Kiểm tra với numCardsToChoose
+    if (selectedCards.length >= numCardsToChoose || isAnimating) return; 
 
     const posIndex = clickedElement.dataset.positionIndex;
-    // Tìm cả 2 lá (desktop/mobile) có cùng index
     const allCardsWithIndex = document.querySelectorAll(`.facedown-card[data-position-index="${posIndex}"]`);
 
     let alreadyChosen = false;
@@ -869,10 +773,8 @@ function handleCardSelection(event, clickedElement) {
 
     isAnimating = true; 
 
-    // Đánh dấu cả 2 lá là đã chọn
     allCardsWithIndex.forEach(card => card.classList.add('is-chosen'));
 
-    // Chọn ngẫu nhiên 1 lá bài từ bộ bài (chưa được chọn)
     const availableCards = cardData.filter(card => !selectedCards.some(sc => sc.id === card.id));
     const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
     const isReversed = Math.random() < 0.5;
@@ -883,7 +785,6 @@ function handleCardSelection(event, clickedElement) {
     const targetPlaceholder = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
     
     if (targetPlaceholder) {
-        // Chạy hiệu ứng bay và lật bài
         animateCardFlight(clickedElement, targetPlaceholder, chosenCard);
     } else {
         isAnimating = false;
@@ -895,13 +796,10 @@ function animateCardFlight(startEl, endEl, cardData) {
     
     const img = new Image();
     
-    // Phải chờ ảnh mặt trước tải xong thì mới bắt đầu hiệu ứng
-    // để đảm bảo khi lật ra là có ảnh
     const onImageLoaded = () => {
         const startRect = startEl.getBoundingClientRect();
         const endRect = endEl.getBoundingClientRect();
         
-        // Tạo 1 lá bài giả để bay
         const flyingCard = document.createElement('div');
         flyingCard.className = 'flying-card-animator';
         
@@ -915,7 +813,6 @@ function animateCardFlight(startEl, endEl, cardData) {
             </div>
         `;
         
-        // Đặt lá bài giả lên vị trí lá bài thật
         flyingCard.style.top = `${startRect.top + window.scrollY}px`;
         flyingCard.style.left = `${startRect.left}px`;
         flyingCard.style.width = `${startRect.width}px`;
@@ -923,23 +820,19 @@ function animateCardFlight(startEl, endEl, cardData) {
         
         document.body.appendChild(flyingCard);
         
-        // Chạy hiệu ứng
         requestAnimationFrame(() => {
             const inner = flyingCard.querySelector('.flying-card-inner');
             
-            // 1. Bay đến vị trí mới
             flyingCard.style.top = `${endRect.top + window.scrollY}px`;
             flyingCard.style.left = `${endRect.left}px`;
             flyingCard.style.width = `${endRect.width}px`;
             flyingCard.style.height = `${endRect.height}px`;
             
-            // 2. Lật lá bài
             inner.style.transform = 'rotateY(180deg) translateZ(0)';
         });
 
         let flightHasEnded = false;
         
-        // Khi hiệu ứng kết thúc
         const onFlightEnd = (event) => {
             if (event.target !== flyingCard || flightHasEnded) {
                 return;
@@ -947,34 +840,33 @@ function animateCardFlight(startEl, endEl, cardData) {
             flightHasEnded = true; 
 
             flyingCard.removeEventListener('transitionend', onFlightEnd);
-            flyingCard.remove(); // Xóa lá bài giả
+            flyingCard.remove(); 
             
-            // Cập nhật mảng state và hiển thị lá bài thật
             selectedCards.push(cardData);
             updateChosenCardsDisplay(); 
 
-            if (selectedCards.length === 3) {
-                transitionToResultsView(); // Đã chọn đủ 3 lá
+            // (CHỈNH SỬA) Kiểm tra với numCardsToChoose
+            if (selectedCards.length === numCardsToChoose) {
+                transitionToResultsView(); 
             }
             
-            isAnimating = false; // Cho phép chọn lá tiếp theo
+            isAnimating = false; 
         };
         
         flyingCard.addEventListener('transitionend', onFlightEnd);
     };
 
     img.onload = onImageLoaded; 
-    img.onerror = onImageLoaded; // Vẫn chạy dù ảnh lỗi
+    img.onerror = onImageLoaded; 
     img.src = cardData.image; 
 }
 
 
-/** Cập nhật khu vực 3 lá bài đã chọn */
+/** Cập nhật khu vực các lá bài đã chọn */
 function updateChosenCardsDisplay() {
     chosenCardsDisplay.innerHTML = '';
     let cardItemElements = []; 
     
-    // Tạo các lá bài đã chọn
     selectedCards.forEach(card => {
         const cardItem = document.createElement('div');
         cardItem.className = 'chosen-card-item';
@@ -990,7 +882,6 @@ function updateChosenCardsDisplay() {
         cardItemElements.push(cardItem); 
     });
     
-    // Thêm các lá bài vào (với hiệu ứng mờ)
     cardItemElements.forEach(item => {
         chosenCardsDisplay.appendChild(item);
         setTimeout(() => {
@@ -998,8 +889,8 @@ function updateChosenCardsDisplay() {
         }, 0);
     });
 
-    // Thêm các ô trống còn lại
-    for (let i = 0; i < 3 - selectedCards.length; i++) {
+    // (CHỈNH SỬA) Thêm số ô trống chính xác
+    for (let i = 0; i < numCardsToChoose - selectedCards.length; i++) {
         chosenCardsDisplay.innerHTML += '<div class="chosen-card-placeholder"></div>';
     }
 }
@@ -1012,19 +903,17 @@ function transitionToResultsView() {
     getInterpretationButton.style.display = 'inline-block'; 
     setTimeout(() => {
         getInterpretationButton.classList.add('visible');
-    }, 300); // Chờ hiệu ứng ẩn bộ bài
+    }, 300); 
 }
 
 /** Lấy luận giải từ AI */
 async function handleGetInterpretation() {
     mainResultsDisplay.style.display = 'block';
     
-    /* === (CHỈNH SỬA) THAY THẾ DÒNG TEXT CŨ BẰNG LOADER MỚI === */
     mainResultsDisplay.innerHTML = `
         <div class="interpretation-loader">
             <div class="loader-planet-system">
                 <div class="loader-planet-sphere"></div>
-                
                 <div class="loader-orbit orbit-1"></div>
                 <div class="loader-orbit orbit-2"></div>
                 <div class="loader-orbit orbit-3"></div>
@@ -1034,9 +923,7 @@ async function handleGetInterpretation() {
             <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
         </div>
     `;
-    /* === (HẾT CHỈNH SỬA) === */
 
-    // Ẩn nút "Xem ý nghĩa"
     getInterpretationButton.classList.remove('visible');
     setTimeout(() => {
         getInterpretationButton.style.display = 'none';
@@ -1048,7 +935,6 @@ async function handleGetInterpretation() {
         readingId: currentReadingId 
     };
 
-
     try {
         const response = await fetch(N8N_WEBHOOK_URL, {
             method: 'POST',
@@ -1057,20 +943,14 @@ async function handleGetInterpretation() {
         });
         if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
 
-        const result = await response.json(); // result BÂY GIỜ LÀ: { interpretation: "..." }
+        const result = await response.json(); 
         
-        // === (BẮT ĐẦU CHỈNH SỬA LOGIC) ===
-        // Kiểm tra trực tiếp thuộc tính 'interpretation' của object 'result'
-        // thay vì kiểm tra result[0]
         if (result && result.interpretation) {
             const converter = new showdown.Converter();
-            
-            // Lấy nội dung markdown trực tiếp từ result.interpretation
             const markdownContent = result.interpretation; 
             const htmlContent = converter.makeHtml(markdownContent);
             mainResultsDisplay.innerHTML = htmlContent; 
 
-            // Chuẩn bị dữ liệu để lưu
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = htmlContent;
             const plainTextContent = (tempDiv.textContent || tempDiv.innerText || "").trim();
@@ -1082,12 +962,10 @@ async function handleGetInterpretation() {
                 cards: selectedCards, 
                 html: htmlContent, 
                 text: plainTextContent, 
-                markdown: markdownContent // Đảm bảo sử dụng biến markdownContent đã lấy
+                markdown: markdownContent 
             };
-        // === (KẾT THÚC CHỈNH SỬA LOGIC) ===
 
             // Gọi hàm saveHistory() từ common.js
-            // Cần đảm bảo common.js đã được tải trước
             if (typeof saveHistory === 'function') {
                 saveHistory(fullEntry);
             } else {
@@ -1095,7 +973,6 @@ async function handleGetInterpretation() {
             }
 
         } else {
-            // Ném lỗi nếu object result không có thuộc tính 'interpretation'
             throw new Error("Dữ liệu trả về không đúng định dạng.");
         }
     } catch (error) {
@@ -1103,12 +980,11 @@ async function handleGetInterpretation() {
         mainResultsDisplay.innerHTML = `<p>Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
     }
     
-    // Cuộn xuống kết quả và hiện ô hỏi tiếp
     mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
     followUpContainer.style.display = 'block';
 }
 
-/** Tải trạng thái ban đầu (luôn là màn hình câu hỏi) */
+/** Tải trạng thái ban đầu */
 function loadSessionState() {
     showScreen('question-screen');
 }
@@ -1157,6 +1033,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                 suggestedQuestionsList.classList.remove('open');
                 suggestedQuestionsToggle.classList.remove('open');
             }
+        });
+        
+        // (MỚI) Gắn listener cho các nút CHỌN SỐ LÁ BÀI
+        readingOptionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // 1. Xóa 'active' khỏi tất cả các nút
+                readingOptionBtns.forEach(b => b.classList.remove('active'));
+                // 2. Thêm 'active' vào nút vừa click
+                btn.classList.add('active');
+                // 3. Cập nhật biến trạng thái
+                numCardsToChoose = parseInt(btn.dataset.value, 10);
+                console.log("Số lá bài được chọn: ", numCardsToChoose);
+            });
         });
 
         // Đóng dropdown khi click ra ngoài
