@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lá bài Tarot của bạn hôm nay</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CF1CK7N9BR');
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        
+
+        /* ============================================
+        === CSS riêng cho trang Zodiac (Nhúng trực tiếp) 
+        ============================================
+        Sử dụng các biến màu từ style.css để đồng bộ
+        */
+
+        #zodiac-page-content {
+            /* Đảm bảo nội dung nằm trên nền sao */
+            position: relative;
+            z-index: 1;
+            padding-top: 5rem; /* Khoảng cách với menu */
+            padding-bottom: 3rem;
+            color: var(--text-color);
+        }
+
+        .zodiac-container {
+            max-width: 800px; /* Giới hạn chiều rộng nội dung */
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .zodiac-main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* --- Header (Tên cung, Nút Share) --- */
+        .zodiac-header {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .zodiac-title-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .zodiac-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: clamp(2rem, 6vw, 2.5rem);
+            text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142 186 255, 0.8);
+            margin: 0;
+        }
+
+        .zodiac-share-btn {
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-shadow: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .zodiac-share-btn:hover {
+            background-color: #b8d4ff;
+        }
+
+        .zodiac-date {
+            font-size: 1.25rem;
+            font-weight: 600;
+            opacity: 0.8;
+        }
+
+        @media (min-width: 640px) {
+            .zodiac-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        /* --- Lưới chọn cung --- */
+        .zodiac-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .zodiac-btn {
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            color: var(--text-color);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-shadow: none; /* Tắt shadow cho nút */
+        }
+        .zodiac-btn:hover {
+            background-color: var(--button-hover-bg);
+            border-color: var(--title-color);
+        }
+        .zodiac-btn.active {
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border-color: var(--title-color);
+            font-weight: 700;
+        }
+        .zodiac-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--button-bg);
+        }
+
+        .zodiac-icon {
+            font-size: 1.25rem;
+        }
+
+        @media (min-width: 640px) {
+            .zodiac-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* --- Khối hiển thị lá bài --- */
+        .zodiac-card-display {
+            background-color: var(--card-back-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+            min-height: 300px; /* Chiều cao tối thiểu cho loading */
+        }
+
+        .zodiac-card-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .zodiac-card-image-wrapper {
+            flex-shrink: 0;
+            width: 100%;
+        }
+
+        .zodiac-card-image-aspect {
+            /* Tỷ lệ 10:16 cho ảnh lá bài */
+            position: relative;
+            width: 100%;
+            padding-top: 160%; /* 16 / 10 = 1.6 */
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--card-back-border);
+        }
+
+        .zodiac-card-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            background-color: var(--bg-color);
+        }
+
+        .zodiac-card-details {
+            flex-grow: 1;
+        }
+
+        .zodiac-card-header {
+            display: flex;
+            align-items: baseline;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-prefix {
+            font-family: var(--font-title);
+            font-size: clamp(3rem, 10vw, 4rem);
+            font-weight: 700;
+            color: var(--text-color);
+            opacity: 0.5;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .card-name {
+            font-family: var(--font-title);
+            font-size: clamp(2.5rem, 8vw, 3rem);
+            font-weight: 700;
+            color: var(--title-color);
+            margin: 0;
+            line-height: 1;
+        }
+
+        .card-tagline {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--title-color);
+            opacity: 0.8;
+            margin: 0;
+            text-shadow: 0 0 10px var(--title-color);
+        }
+
+        .card-advice-group {
+            margin-top: 1rem;
+        }
+        .card-advice-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.7;
+            text-shadow: none;
+        }
+        .card-advice {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.25rem 0 0 0;
+        }
+
+        .card-summary {
+            margin-top: 1rem;
+            line-height: 1.7;
+        }
+        .card-summary p {
+            margin: 0;
+            text-shadow: none; /* Tắt shadow cho đoạn văn dài */
+        }
+
+        @media (min-width: 768px) {
+            .zodiac-card-layout {
+                flex-direction: row;
+                gap: 2rem;
+            }
+            .zodiac-card-image-wrapper {
+                width: 33.33%;
+            }
+            .zodiac-card-details {
+                width: 66.67%;
+            }
+        }
+
+        /* --- Phân tích Tình cảm, Công việc... --- */
+        .zodiac-card-analysis {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-back-border);
+        }
+
+        .analysis-item {
+            line-height: 1.7;
+        }
+        .analysis-item p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            text-shadow: none; /* Tắt shadow cho đoạn văn dài */
+        }
+        /* (MỚI) Hỗ trợ hiển thị list từ GSheet */
+        .analysis-item ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+
+        .analysis-title {
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin: 0 0 0.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .analysis-icon {
+            font-size: 1.25rem;
+        }
+
+        /* --- Chi tiết may mắn --- */
+        .card-lucky-details {
+            margin-top: 2rem;
+        }
+        .lucky-items-list {
+            margin-left: 2rem; /* Thụt vào so với icon */
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        .lucky-items-list p {
+            margin: 0;
+            text-shadow: none;
+        }
+        .lucky-items-list strong {
+            opacity: 0.8;
+        }
+        .lucky-items-list span {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* --- Nút hành động --- */
+        .zodiac-card-action {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--card-back-border);
+            text-align: center;
+        }
+
+        .zodiac-action-btn {
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-shadow: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .zodiac-action-btn:hover {
+            background-color: #b8d4ff;
+        }
+        .zodiac-action-note {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin: 0.5rem 0 0 0;
+            text-shadow: none;
+        }
+
+        @media (min-width: 640px) {
+            .zodiac-action-btn {
+                width: auto; /* Không full-width trên desktop */
+            }
+        }
+
+        /* --- Khối đăng ký --- */
+        .zodiac-subscribe-box {
+            background-color: var(--card-back-bg);
+            border: 1px solid rgba(142, 186, 255, 0.3); /* Border mờ hơn */
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+        .subscribe-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.5rem;
+            text-align: center;
+            margin: 0 0 1.5rem 0;
+        }
+        .subscribe-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .subscribe-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            opacity: 0.8;
+            margin-bottom: 0.25rem;
+            display: block;
+            text-shadow: none;
+        }
+        .subscribe-input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 8px;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            color: var(--text-color);
+            font-family: var(--font-body);
+            font-size: 1rem;
+            text-shadow: none;
+        }
+        .subscribe-input:focus {
+            outline: none;
+            border-color: var(--title-color);
+        }
+        .subscribe-btn {
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-shadow: none;
+        }
+        .subscribe-btn:hover {
+            background-color: #b8d4ff;
+        }
+        .subscribe-note {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin: 1rem 0 0 0;
+            text-shadow: none;
+        }
+
+        /* (MỚI) Khối trải bài chi tiết (NỔI BẬT) */
+        .zodiac-detailed-reading-box {
+            background-color: var(--card-back-bg); /* Nền màu xanh nổi bật */
+            border: 1px solid rgba(142, 186, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem 1.5rem 2rem 1.5rem; /* Thêm padding bottom */
+            backdrop-filter: blur(5px);
+            text-align: center; /* Căn giữa các nút */
+        }
+
+        /* Chỉnh lại title trong box này */
+        .zodiac-detailed-reading-box .subscribe-title {
+            color: var(--font-title); /* Chữ màu nền (sáng) */
+            text-shadow: none;
+        }
+        
+        /* Đảo ngược màu nút CTA trong box này */
+        .zodiac-detailed-reading-box .zodiac-action-btn {
+            background-color: #474585; /* Nền nút màu sáng */
+            color: var(--title-color); /* Chữ nút màu xanh */
+            font-weight: 700;
+        }
+
+        /* (THAY ĐỔI) Thêm hiệu ứng hover cho nút chi tiết */
+        .zodiac-detailed-reading-box .zodiac-action-btn:hover {
+            background-color: #5a58a9; /* Sáng hơn màu #474585 */
+        }
+
+        /* === (MỚI) CSS CHO DROPDOWN ZODIAC TRÊN MOBILE === */
+        /* Các class sao chép từ file tarot.html để đảm bảo đồng bộ */
+        .zodiac-dropdown-container {
+            display: none; /* Ẩn trên desktop */
+            position: relative;
+        }
+
+        .zodiac-dropdown-toggle {
+            width: 100%;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.1rem; /* Làm to hơn 1 chút */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-shadow: none;
+        }
+        .zodiac-dropdown-toggle:hover {
+            border-color: var(--title-color);
+        }
+        .zodiac-dropdown-toggle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: var(--button-bg);
+        }
+        .zodiac-dropdown-toggle .dropdown-arrow {
+            transition: transform 0.3s;
+        }
+        .zodiac-dropdown-toggle.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        #zodiac-dropdown-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* Icon trong label */
+        #zodiac-dropdown-label .zodiac-icon {
+            font-size: 1.25rem;
+        }
+
+        .zodiac-dropdown-menu {
+            display: none; /* Ẩn ban đầu */
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            max-height: 250px;
+            overflow-y: auto;
+            
+            /* Hiệu ứng giống tarot.html */
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .zodiac-dropdown-menu.open {
+            display: block;
+        }
+
+        .zodiac-btn-dropdown {
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: none;
+            width: 100%; /* Full width */
+            text-align: left;
+        }
+        .zodiac-btn-dropdown:hover {
+            background-color: var(--button-hover-bg);
+        }
+        .zodiac-btn-dropdown.active {
+            background-color: var(--title-color);
+            color: var(--bg-color);
+            font-weight: 700;
+        }
+        .zodiac-btn-dropdown:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+        
+        /* --- (MỚI) Responsive cho Lưới / Dropdown --- */
+        @media (max-width: 639px) {
+            .zodiac-grid {
+                display: none; /* Ẩn lưới trên mobile */
+            }
+            .zodiac-dropdown-container {
+                display: block; /* Hiện dropdown trên mobile */
+            }
+        }
+
+        /* === (MỚI) Khối Lời khuyên nổi bật === */
+        .zodiac-advice-box {
+            margin-top: 2rem;
+            background-color: rgba(253, 216, 53, 0.05); /* Nền vàng rất nhạt */
+            border: 1px solid rgba(253, 216, 53, 0.3); /* Viền vàng */
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        .zodiac-advice-box .analysis-title {
+            margin-bottom: 1rem; /* Thêm khoảng cách dưới title */
+        }
+        .advice-columns {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .advice-subtitle {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .advice-do .advice-subtitle {
+            color: #a5d6a7; /* Màu xanh lá */
+        }
+        .advice-dont .advice-subtitle {
+            color: #ff8a8a; /* Màu đỏ */
+        }
+        /* CSS cho danh sách ul */
+        .zodiac-advice-box ul {
+            margin: 0;
+            padding-left: 1.5rem; /* Thụt đầu dòng cho list */
+            font-size: 0.95rem;
+            line-height: 1.7;
+            text-shadow: none;
+            opacity: 0.9;
+        }
+        /* CSS cho danh sách ul */
+        .zodiac-advice-box ul,
+        .zodiac-advice-box ul li {
+           margin-bottom: 0.25rem;
+        }
+        
+        /* (THAY ĐỔI) Bỏ các style .advice-do/dont cụ thể */
+        .zodiac-advice-box .advice-content-simple p {
+            margin: 0;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            text-shadow: none;
+            line-height: 1.7;
+        }
+        /* Hỗ trợ list nếu JS chèn vào */
+        .zodiac-advice-box .advice-content-simple ul {
+            margin: 0.5rem 0 0 1.5rem;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="stars-bg"></div>
+    
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html#" class="nav-link logo-link">PHỞ GÕ TAROT</a>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="index.html" class="nav-link">Trang Chủ</a>
+            
+            <div class="nav-item nav-dropdown">
+                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer;">
+                    <span>Bói Tarot Free</span>
+                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="dropdown-submenu">
+                    <a href="tarot.html" class="nav-link submenu-link">Trải bài 3 lá</a>
+                    <a href="yes-no-reading.html" class="nav-link submenu-link">Câu hỏi Yes/No</a>
+                    <a href="zodiac.html" class="nav-link submenu-link" style="color: var(--title-color);">Zodiac Tarot</a>
+                </div>
+            </div>
+            <a href="#" class="nav-link">Về chúng tôi</a>
+            <a href="#" class="nav-link">Blogs</a>
+            <a href="#" class="nav-link">Đặt lịch</a>
+            <a href="#" class="nav-link">Liên hệ</a>
+            <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+    </nav>
+
+
+    <main id="zodiac-page-content">
+        <div class="zodiac-container">
+            <div class="zodiac-main-content">
+
+                <div class="zodiac-header">
+                    <div class="zodiac-title-group">
+                        <h2 id="main-zodiac-name" class="zodiac-title">Bạch Dương</h2>
+                        </div>
+                    <!-- Ngày sẽ được cập nhật bằng JS -->
+                    <span id="main-zodiac-date" class="zodiac-date"></span>
+                </div>
+
+                <div class="zodiac-dropdown-container">
+                    <button id="zodiac-dropdown-toggle" class="zodiac-dropdown-toggle">
+                        <span id="zodiac-dropdown-label">
+                            <span class="zodiac-icon">♈</span> Bạch Dương
+                        </span>
+                        <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <div id="zodiac-dropdown-list" class="zodiac-dropdown-menu">
+                        <!-- data-date sẽ bị xóa vì không còn dùng -->
+                        <button class="zodiac-btn-dropdown active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
+                    </div>
+                </div>
+
+                <div id="zodiac-selector" class="zodiac-grid">
+                    <button class="zodiac-btn active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
+                    <button class="zodiac-btn" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
+                    <button class="zodiac-btn" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
+                    <button class="zodiac-btn" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
+                    <button class="zodiac-btn" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
+                    <button class="zodiac-btn" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
+                    <button class="zodiac-btn" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
+                    <button class="zodiac-btn" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
+                    <button class="zodiac-btn" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
+                    <button class="zodiac-btn" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
+                    <button class="zodiac-btn" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
+                    <button class="zodiac-btn" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
+                </div>
+
+                <div id="card-display" class="zodiac-card-display">
+                    
+                    <!-- Nội dung sẽ được JS chèn vào -->
+                    <div class="zodiac-card-layout">
+                        
+                        <div class="zodiac-card-image-wrapper">
+                            <div class="zodiac-card-image-aspect">
+                                <img id="card-image" 
+                                     src="https://placehold.co/300x500/142850/f0f0ff?text=Loading" 
+                                     alt="Hình ảnh lá bài Tarot" 
+                                     class="zodiac-card-image">
+                            </div>
+                        </div>
+
+                        <div class="zodiac-card-details">
+                            <div class="zodiac-card-header">
+                                <h3 id="card-prefix" class="card-prefix"></h3>
+                                <h2 id="card-name" class="card-name"></h2>
+                            </div>
+                            <div class="card-advice-group">
+                                <span class="card-advice-label">Từ khóa hôm nay:</span>
+                                <p id="card-advice" class="card-advice"></p>
+                            </div>
+
+                            <!-- (ĐÃ BỊ ẨN) Không có dữ liệu 'summary' từ GSheet của bạn -->
+                            <div id="card-summary" class="card-summary" style="display: none;">
+                                <p></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="zodiac-card-analysis">
+                        
+                        <div id="card-love" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-heart analysis-icon" style="color: #ff8a8a;"></i>
+                                Tình cảm
+                            </h4>
+                            <p></p>
+                        </div>
+                        <div id="card-work" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-briefcase analysis-icon" style="color: #82aaff;"></i>
+                                Công việc
+                            </h4>
+                            <p></p>
+                        </div>
+                        <div id="card-finance" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-money-bill-wave analysis-icon" style="color: #a5d6a7;"></i>
+                                Tài chính
+                            </h4>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div id="card-lucky-details" class="card-lucky-details">
+                        <h4 class="analysis-title">
+                            <i class="fa-solid fa-wand-magic-sparkles analysis-icon" style="color: #ffd700;"></i>
+                            Chi Tiết May Mắn
+                        </h4>
+                        <div class="lucky-items-list">
+                            <p><strong>Màu sắc may mắn:</strong> <span id="lucky-color"></span></p>
+                            <p><strong>Đồ vật may mắn:</strong> <span id="lucky-item"></span></p>
+                            <p><strong>Địa điểm may mắn:</strong> <span id="lucky-place"></span></p>
+                        </div>
+                    </div>
+
+                    <div id="card-advice-box" class="zodiac-advice-box">
+                        <h4 class="analysis-title">
+                            <i class="fa-solid fa-lightbulb analysis-icon" style="color: #fdd835;"></i>
+                            Lời khuyên cho hôm nay
+                        </h4>
+                        <div id="card-advice-content" class="advice-content-simple">
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--card-back-border);">
+                        <button class="zodiac-share-btn">
+                            <i class="fa-solid fa-share-alt"></i>
+                            Chia sẻ
+                        </button>
+                    </div>
+                    
+                </div>
+
+                <div class="zodiac-detailed-reading-box">
+                    <h3 class="subscribe-title">Xem chi tiết về ngày hôm nay của bạn thế nào?</h3>
+                    <button class="zodiac-action-btn">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Yêu cầu trải bài chi tiết
+                    </button>
+                    </div>
+
+                <div class="zodiac-subscribe-box">
+                    <h3 class="subscribe-title">Nhận Tarot hàng ngày</h3>
+                    <form class="subscribe-form">
+                        <div>
+                            <label for="email" class="subscribe-label">Email của bạn</label>
+                            <input type="email" id="email" placeholder="you@example.com" class="subscribe-input">
+                        </div>
+                        <button type="submit" class="subscribe-btn">Subscribe</button>
+                    </form>
+                    </div>
+            </div>
+        </div>
+    </main>
+    
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        <div class="modal-header">
+            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+            <h2>Lịch sử trải bài</h2>
+        </div>
+        <div id="history-list-wrapper" class="modal-scroll-wrapper">
+            <div id="history-list">
+                </div>
+        </div>
+    </div>
+    
+    <footer class="main-footer">
+            <div class="footer-container">
+                <div class="footer-column brand">
+                    <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
+                    <p class="footer-description">
+                        Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
+                    </p>
+                    <div class="footer-social-links">
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                            <i class="fa-brands fa-youtube"></i>
+                        </a>
+                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column links">
+                    <h3 class="footer-title">Chính sách</h3>
+                    <ul class="footer-link-list">
+                        <li>
+                            <a href="index.html#about">Giới thiệu</a>
+                        </li>
+                        <li>
+                            <a href="index.html#contact">Liên hệ</a>
+                        </li>
+                        <li>
+                            <a href="#">Chính sách bảo mật</a>
+                        </li>
+                        <li>
+                            <a href="#">Miễn trừ trách nhiệm</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column contact">
+                    <h3 class="footer-title">Thông tin liên hệ</h3>
+                    <ul class="footer-link-list">
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <a href="tel:0931881420">0352 677 543</a>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <a href="mailto:tarotmienphi@gmail.com">bebluetotrue@gmail.com</a>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-globe"></i>
+                            <a href="https://tarotmienphi.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-copyright">
+                &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
+            </div>
+        </footer>
+
+    <!-- Giả sử common.js tồn tại ở thư mục gốc -->
+    <script src="common.js" defer></script>
+    
+    <script>
+        /* ============================================
+        === JS riêng cho trang Zodiac (Nhúng trực tiếp) 
+        ============================================
+        */
+
+        // (MỚI) Biến toàn cục để lưu trữ dữ liệu
+        let tarotData = {};
+
+        // (MỚI) Cấu hình Google Sheet
+        // !!! QUAN TRỌNG: Thay thế các giá trị này
+        const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
+        const SHEET_NAME = 'Zodiac'; // Tên trang tính của bạn
+        
+        // (MỚI) Hàm fetch và xử lý dữ liệu từ Google Sheet
+        async function fetchZodiacData() {
+            const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+
+            // Hiển thị trạng thái đang tải
+            setLoadingState(true);
+
+            try {
+                const response = await fetch(gvizUrl);
+                if (!response.ok) {
+                    throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+                }
+                let text = await response.text();
+                
+                // Xử lý chuỗi JSONP trả về từ Google
+                const jsonpData = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/s);
+                if (!jsonpData || !jsonpData[1]) {
+                    throw new Error("Không thể phân tích phản hồi JSONP từ Google.");
+                }
+
+                const data = JSON.parse(jsonpData[1]);
+                
+                // Xử lý dữ liệu bảng
+                const rows = data.table.rows;
+                const processedData = {};
+
+                // Bỏ qua hàng tiêu đề, bắt đầu từ i = 1 (hoặc 0 nếu sheet không có tiêu đề)
+                // Giả sử hàng đầu tiên là tiêu đề nên bắt đầu từ 1
+                for (let i = 1; i < rows.length; i++) {
+                    const row = rows[i].c;
+                    
+                    // Lấy tên cung hoàng đạo (Cột A - index 0)
+                    const zodiacSign = row[0]?.v;
+                    if (!zodiacSign) continue; // Bỏ qua nếu hàng không có tên cung
+
+                    // Ánh xạ các cột dựa trên danh sách bạn cung cấp
+                    // 0: zodiacsign, 1: cardname, 2: url, 3: keyword, 4: love, 5: job, 
+                    // 6: finance, 7: color, 8: objects, 9: locations, 10: advice
+                    processedData[zodiacSign] = {
+                        cardname: row[1]?.v || "N/A",
+                        url: row[2]?.v || "https://placehold.co/300x500/142850/f0f0ff?text=No+Image",
+                        keyword: row[3]?.v || "",
+                        love: row[4]?.v || "<p>Chưa có thông tin.</p>",
+                        job: row[5]?.v || "<p>Chưa có thông tin.</p>",
+                        finance: row[6]?.v || "<p>Chưa có thông tin.</p>",
+                        color: row[7]?.v || "N/A",
+                        objects: row[8]?.v || "N/A",
+                        locations: row[9]?.v || "N/A",
+                        advice: row[10]?.v || "<p>Chưa có thông tin.</p>",
+                    };
+                }
+
+                tarotData = processedData; // Lưu vào biến toàn cục
+                console.log("Tải dữ liệu thành công:", tarotData);
+                setLoadingState(false);
+                return true;
+
+            } catch (error) {
+                console.error("Lỗi khi tải dữ liệu từ Google Sheet:", error);
+                setLoadingState(false, true); // Báo lỗi
+                return false;
+            }
+        }
+        
+        // (MỚI) Hàm set trạng thái loading
+        function setLoadingState(isLoading, isError = false) {
+            const gridButtons = document.querySelectorAll('.zodiac-btn');
+            const dropdownButtons = document.querySelectorAll('.zodiac-btn-dropdown');
+            const dropdownToggle = document.getElementById('zodiac-dropdown-toggle');
+            const mainZodiacName = document.getElementById('main-zodiac-name');
+            const cardDisplay = document.getElementById('card-display');
+
+            if (isLoading) {
+                mainZodiacName.textContent = 'Đang tải...';
+                cardDisplay.style.opacity = '0.5';
+                gridButtons.forEach(btn => btn.disabled = true);
+                dropdownButtons.forEach(btn => btn.disabled = true);
+                if (dropdownToggle) dropdownToggle.disabled = true;
+            } else {
+                cardDisplay.style.opacity = '1';
+                gridButtons.forEach(btn => btn.disabled = false);
+                dropdownButtons.forEach(btn => btn.disabled = false);
+                if (dropdownToggle) dropdownToggle.disabled = false;
+                
+                if (isError) {
+                    mainZodiacName.textContent = 'Lỗi Tải Dữ Liệu';
+                    cardDisplay.innerHTML = `<p style="text-align: center; font-size: 1.1rem; color: #ff8a8a;">Không thể tải dữ liệu. Vui lòng kiểm tra lại SHEET_ID, GID và đảm bảo trang tính đã được chia sẻ công khai (cho bất kỳ ai có đường liên kết).</p>`;
+                } else {
+                    // Tải thành công, reset về cung đầu tiên
+                    mainZodiacName.textContent = 'Bạch Dương'; 
+                }
+            }
+        }
+
+
+        // (ĐÃ CẬP NHẬT) Xử lý việc chọn cung hoàng đạo
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Đảm bảo code chỉ chạy khi các element của trang zodiac tồn tại
+            const zodiacSelector = document.getElementById('zodiac-selector');
+            if (!zodiacSelector) {
+                return; // Không phải trang zodiac, không chạy gì cả
+            }
+
+            // Lấy các element cho dropdown
+            const zodiacDropdownContainer = document.querySelector('.zodiac-dropdown-container');
+            const zodiacDropdownToggle = document.getElementById('zodiac-dropdown-toggle');
+            const zodiacDropdownLabel = document.getElementById('zodiac-dropdown-label');
+            const zodiacDropdownList = document.getElementById('zodiac-dropdown-list');
+            const dropdownButtons = document.querySelectorAll('.zodiac-btn-dropdown');
+            
+            const gridButtons = document.querySelectorAll('.zodiac-btn');
+            const mainZodiacName = document.getElementById('main-zodiac-name');
+            const mainZodiacDate = document.getElementById('main-zodiac-date');
+            
+            // Lấy các element nội dung card
+            const cardImage = document.getElementById('card-image');
+            const cardPrefix = document.getElementById('card-prefix');
+            const cardName = document.getElementById('card-name');
+            const cardAdvice = document.getElementById('card-advice'); // Đây là keyword
+            const cardLove = document.getElementById('card-love').querySelector('p');
+            const cardWork = document.getElementById('card-work').querySelector('p');
+            const cardFinance = document.getElementById('card-finance').querySelector('p');
+            const cardSummary = document.getElementById('card-summary'); // Đây là thẻ div
+            const luckyColor = document.getElementById('lucky-color');
+            const luckyItem = document.getElementById('lucky-item');
+            const luckyPlace = document.getElementById('lucky-place');
+            const cardAdviceContent = document.getElementById('card-advice-content');
+
+            // Cập nhật ngày hôm nay
+            mainZodiacDate.textContent = new Date().toLocaleDateString('vi-VN');
+
+            // (MỚI) Tải dữ liệu trước
+            const success = await fetchZodiacData();
+            if (!success) {
+                return; // Dừng nếu tải lỗi
+            }
+
+            // (CẬP NHẬT) Hàm dùng chung để cập nhật nội dung
+            function updateZodiacContent(zodiacName) {
+                const data = tarotData[zodiacName];
+
+                // Cập nhật tiêu đề chính
+                mainZodiacName.textContent = zodiacName;
+
+                if (data) {
+                    // Tách tên lá bài (ví dụ: "The Devil" -> "The" và "Devil")
+                    const parts = (data.cardname || "").split(' ');
+                    let prefix = '';
+                    let name = data.cardname || "N/A";
+
+                    if (parts.length > 1 && parts[0].toLowerCase() === 'the') {
+                        prefix = parts[0];
+                        name = parts.slice(1).join(' ');
+                    }
+
+                    cardImage.src = data.url;
+                    cardImage.alt = `Hình ảnh lá bài ${data.cardname}`;
+                    cardPrefix.textContent = prefix;
+                    cardName.textContent = name;
+                    
+                    // Cập nhật các trường dữ liệu từ GSheet
+                    cardAdvice.textContent = data.keyword; // Keyword
+                    cardLove.innerHTML = data.love;
+                    cardWork.innerHTML = data.job;
+                    cardFinance.innerHTML = data.finance;
+                    luckyColor.textContent = data.color;
+                    luckyItem.textContent = data.objects;
+                    luckyPlace.textContent = data.locations;
+                    cardAdviceContent.innerHTML = data.advice; // Lời khuyên chi tiết
+
+                    // Ẩn mục summary vì không có dữ liệu
+                    if (cardSummary) {
+                        cardSummary.style.display = 'none';
+                    }
+
+                } else {
+                    // Reset nếu không tìm thấy data (lỗi)
+                    cardImage.src = "https://placehold.co/300x500/142850/f0f0ff?text=Error";
+                    cardImage.alt = "Không tìm thấy dữ liệu cho cung này";
+                    cardPrefix.textContent = "";
+                    cardName.textContent = "Lỗi";
+                    cardAdvice.textContent = "Không tìm thấy dữ liệu.";
+                    cardLove.innerHTML = "<p>Không tìm thấy dữ liệu.</p>";
+                    cardWork.innerHTML = "<p>Không tìm thấy dữ liệu.</p>";
+                    cardFinance.innerHTML = "<p>Không tìm thấy dữ liệu.</p>";
+                    luckyColor.textContent = "N/A";
+                    luckyItem.textContent = "N/A";
+                    luckyPlace.textContent = "N/A";
+                    cardAdviceContent.innerHTML = "<p>Không tìm thấy dữ liệu.</a";
+                }
+            }
+            
+            // Hàm dùng chung để cập nhật trạng thái
+            function setActiveZodiac(zodiacName) {
+                // Bỏ active tất cả các nút
+                gridButtons.forEach(btn => btn.classList.remove('active'));
+                dropdownButtons.forEach(btn => btn.classList.remove('active'));
+
+                // Active nút grid
+                const matchingGridBtn = document.querySelector(`.zodiac-btn[data-zodiac="${zodiacName}"]`);
+                if (matchingGridBtn) {
+                    matchingGridBtn.classList.add('active');
+                }
+
+                // Active nút dropdown
+                const matchingDropdownBtn = document.querySelector(`.zodiac-btn-dropdown[data-zodiac="${zodiacName}"]`);
+                if (matchingDropdownBtn) {
+                    matchingDropdownBtn.classList.add('active');
+                    // Cập nhật label của nút toggle
+                    if (zodiacDropdownLabel) {
+                        zodiacDropdownLabel.innerHTML = matchingDropdownBtn.innerHTML;
+                    }
+                }
+            }
+
+            // Gắn logic cho các nút grid (desktop)
+            gridButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const zodiacName = button.dataset.zodiac;
+                    setActiveZodiac(zodiacName);
+                    updateZodiacContent(zodiacName);
+                });
+            });
+
+            // Gắn logic cho các nút dropdown (mobile)
+            if (zodiacDropdownToggle) {
+                // Mở/đóng dropdown
+                zodiacDropdownToggle.addEventListener('click', () => {
+                    zodiacDropdownList.classList.toggle('open');
+                    zodiacDropdownToggle.classList.toggle('open');
+                });
+
+                // Xử lý khi click vào 1 item trong dropdown
+                dropdownButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const zodiacName = button.dataset.zodiac;
+                        setActiveZodiac(zodiacName);
+                        updateZodiacContent(zodiacName);
+                        // Đóng dropdown
+                        zodiacDropdownList.classList.remove('open');
+                        zodiacDropdownToggle.classList.remove('open');
+                    });
+                });
+                
+                // Đóng dropdown khi click ra ngoài
+                document.addEventListener('click', (e) => {
+                    if (zodiacDropdownContainer && !zodiacDropdownContainer.contains(e.target) && !zodiacDropdownToggle.contains(e.target)) {
+                        zodiacDropdownList.classList.remove('open');
+                        zodiacDropdownToggle.classList.remove('open');
+                    }
+                });
+            }
+
+            // (MỚI) Tải nội dung cho cung đầu tiên (Bạch Dương) ngay khi xong
+            updateZodiacContent('Bạch Dương');
+            setActiveZodiac('Bạch Dương');
+
+        });
+
+        // (MỚI) Giả lập hàm cho common.js (nếu có)
+        // Nếu bạn có file common.js, hãy đảm bảo nó được tải
+        document.addEventListener('DOMContentLoaded', () => {
+            // Giả lập logic menu mobile
+            const navToggle = document.getElementById('nav-toggle');
+            const navLinks = document.getElementById('nav-links');
+            if (navToggle && navLinks) {
+                navToggle.addEventListener('click', () => {
+                    navLinks.classList.toggle('active'); // Giả sử class 'active' sẽ hiện menu
+                });
+            }
+
+            // Giả lập logic dropdown menu
+            const tarotDropdownToggle = document.getElementById('tarot-dropdown-toggle');
+            if (tarotDropdownToggle) {
+                tarotDropdownToggle.addEventListener('click', () => {
+                    const submenu = tarotDropdownToggle.nextElementSibling;
+                    if (submenu) {
+                        submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+                    }
+                });
+            }
+            
+            // Giả lập logic modal
+            const historyLink = document.getElementById('history-nav-link');
+            const modalBackdrop = document.getElementById('history-modal-backdrop');
+            const modalContent = document.getElementById('history-modal-content');
+            const closeModalBtn = document.getElementById('history-modal-close-btn');
+
+            if (historyLink && modalBackdrop && modalContent && closeModalBtn) {
+                historyLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    modalBackdrop.style.display = 'block';
+                    modalContent.style.display = 'block';
+                });
+                closeModalBtn.addEventListener('click', () => {
+                    modalBackdrop.style.display = 'none';
+                    modalContent.style.display = 'none';
+                });
+                modalBackdrop.addEventListener('click', () => {
+                    modalBackdrop.style.display = 'none';
+                    modalContent.style.display = 'none';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
