@@ -448,7 +448,7 @@
             <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
         </div>
         
-        <div id="interpretation-results-display"></div>
+        <div is:inline id="interpretation-results-display"></div>
         
         <div id="follow-up-question-container">
             <h3>Bạn có câu hỏi nào khác không?</h3>
@@ -1236,7 +1236,87 @@ function transitionToResultsView() {
     }, 300); 
 }
 
+/** Lấy luận giải từ AI */
+async function handleGetInterpretation() {
+    mainResultsDisplay.style.display = 'block';
+    
+    mainResultsDisplay.innerHTML = `
+        <div class="interpretation-loader">
+            <div class="loader-planet-system">
+                <div class="loader-planet-sphere"></div>
+                <div class="loader-orbit orbit-1"></div>
+                <div class="loader-orbit orbit-2"></div>
+                <div class="loader-orbit orbit-3"></div>
+                <div class="loader-orbit orbit-4"></div>
+                <div class="loader-orbit orbit-5"></div>
+            </div>
+            <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
+        </div>
+    `;
 
+    getInterpretationButton.classList.remove('visible');
+    setTimeout(() => {
+        getInterpretationButton.style.display = 'none';
+    }, 300);
+    
+    const payload = {
+        question: userQuestion,
+        cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
+        readingId: currentReadingId 
+    };
+
+    try {
+        const response = await fetch(N8N_WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
+
+        const result = await response.json(); 
+        
+        if (result && result.interpretation) {
+            const converter = new showdown.Converter();
+            const markdownContent = result.interpretation; 
+            const htmlContent = converter.makeHtml(markdownContent);
+            mainResultsDisplay.innerHTML = htmlContent; 
+
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = htmlContent;
+            const plainTextContent = (tempDiv.textContent || tempDiv.innerText || "").trim();
+
+            const fullEntry = { 
+                readingId: currentReadingId, 
+                timestamp: Date.now(), 
+                question: userQuestion, 
+                cards: selectedCards, 
+                html: htmlContent, 
+                text: plainTextContent, 
+                markdown: markdownContent 
+            };
+
+            if (typeof saveHistory === 'function') {
+                saveHistory(fullEntry);
+            } else {
+                console.error("Lỗi: Không tìm thấy hàm saveHistory().");
+            }
+
+        } else {
+            throw new Error("Dữ liệu trả về không đúng định dạng.");
+        }
+    } catch (error) {
+        console.error("Lỗi khi gọi Webhook:", error);
+        mainResultsDisplay.innerHTML = `<p>Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
+    }
+    
+    mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    followUpContainer.style.display = 'block';
+    
+    // (MỚI) Hiển thị bảng tra cứu cùng lúc với kết quả và câu hỏi tiếp
+    if (cardLookupContainerResults) {
+        cardLookupContainerResults.style.display = 'block';
+    }
+}
 
 /** Tải trạng thái ban đầu */
 function loadSessionState() {
@@ -1323,89 +1403,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         followUpSubmitBtn.addEventListener('click', handleFollowUpSubmit);
     }
 });
-    </script>
-    <script is:inline>
-        /** Lấy luận giải từ AI */
-async function handleGetInterpretation() {
-    mainResultsDisplay.style.display = 'block';
-    
-    mainResultsDisplay.innerHTML = `
-        <div class="interpretation-loader">
-            <div class="loader-planet-system">
-                <div class="loader-planet-sphere"></div>
-                <div class="loader-orbit orbit-1"></div>
-                <div class="loader-orbit orbit-2"></div>
-                <div class="loader-orbit orbit-3"></div>
-                <div class="loader-orbit orbit-4"></div>
-                <div class="loader-orbit orbit-5"></div>
-            </div>
-            <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
-        </div>
-    `;
-
-    getInterpretationButton.classList.remove('visible');
-    setTimeout(() => {
-        getInterpretationButton.style.display = 'none';
-    }, 300);
-    
-    const payload = {
-        question: userQuestion,
-        cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
-        readingId: currentReadingId 
-    };
-
-    try {
-        const response = await fetch(N8N_WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
-
-        const result = await response.json(); 
-        
-        if (result && result.interpretation) {
-            const converter = new showdown.Converter();
-            const markdownContent = result.interpretation; 
-            const htmlContent = converter.makeHtml(markdownContent);
-            mainResultsDisplay.innerHTML = htmlContent; 
-
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = htmlContent;
-            const plainTextContent = (tempDiv.textContent || tempDiv.innerText || "").trim();
-
-            const fullEntry = { 
-                readingId: currentReadingId, 
-                timestamp: Date.now(), 
-                question: userQuestion, 
-                cards: selectedCards, 
-                html: htmlContent, 
-                text: plainTextContent, 
-                markdown: markdownContent 
-            };
-
-            if (typeof saveHistory === 'function') {
-                saveHistory(fullEntry);
-            } else {
-                console.error("Lỗi: Không tìm thấy hàm saveHistory().");
-            }
-
-        } else {
-            throw new Error("Dữ liệu trả về không đúng định dạng.");
-        }
-    } catch (error) {
-        console.error("Lỗi khi gọi Webhook:", error);
-        mainResultsDisplay.innerHTML = `<p>Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
-    }
-    
-    mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    followUpContainer.style.display = 'block';
-    
-    // (MỚI) Hiển thị bảng tra cứu cùng lúc với kết quả và câu hỏi tiếp
-    if (cardLookupContainerResults) {
-        cardLookupContainerResults.style.display = 'block';
-    }
-}
     </script>
 </body>
 </html>

@@ -345,7 +345,7 @@
             <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
         </div>
         
-        <div id="interpretation-results-display"></div>
+        <div is:inline id="interpretation-results-display"></div>
         
         <div id="follow-up-question-container">
             <h3>Bạn có câu hỏi nào khác không?</h3>
@@ -1016,72 +1016,7 @@ function transitionToResultsView() {
     }, 300); // Chờ hiệu ứng ẩn bộ bài
 }
 
-/** Tải trạng thái ban đầu (luôn là màn hình câu hỏi) */
-function loadSessionState() {
-    showScreen('question-screen');
-}
-
-
-// === Event Listeners (Game-specific) ===
-document.addEventListener('DOMContentLoaded', async () => {
-    // Chỉ chạy các hàm này nếu các phần tử game tồn tại
-    if (document.getElementById('question-screen')) {
-        // Init game
-        await initialize(); 
-        await loadSuggestedQuestions(); 
-        loadSessionState(); 
-
-        // Auto-grow textareas
-        questionInput.addEventListener('input', () => autoGrow(questionInput));
-        followUpInput.addEventListener('input', () => autoGrow(followUpInput));
-        
-        // Enter key listeners
-        questionInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); 
-                handleQuestionSubmit();
-            }
-        });
-        
-        followUpInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); 
-                handleFollowUpSubmit();
-            }
-        });
-
-        // Button click listeners
-        submitQuestionBtn.addEventListener('click', handleQuestionSubmit);
-        
-        suggestedQuestionsToggle.addEventListener('click', () => {
-            suggestedQuestionsList.classList.toggle('open');
-            suggestedQuestionsToggle.classList.toggle('open');
-        });
-
-        suggestedQuestionsList.addEventListener('click', (e) => {
-            if (e.target.classList.contains('suggestion-item')) {
-                questionInput.value = e.target.dataset.question;
-                autoGrow(questionInput);
-                suggestedQuestionsList.classList.remove('open');
-                suggestedQuestionsToggle.classList.remove('open');
-            }
-        });
-
-        // Đóng dropdown khi click ra ngoài
-        document.addEventListener('click', (e) => {
-            if (!suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
-                suggestedQuestionsList.classList.remove('open');
-                suggestedQuestionsToggle.classList.remove('open');
-            }
-        });
-
-        getInterpretationButton.addEventListener('click', handleGetInterpretation);
-        followUpSubmitBtn.addEventListener('click', handleFollowUpSubmit);
-    }
-});
-    </script>
-    <script is:inline>
-        /** Lấy luận giải từ AI */
+/** Lấy luận giải từ AI */
 async function handleGetInterpretation() {
     mainResultsDisplay.style.display = 'block';
     
@@ -1173,6 +1108,70 @@ async function handleGetInterpretation() {
     mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
     followUpContainer.style.display = 'block';
 }
+
+/** Tải trạng thái ban đầu (luôn là màn hình câu hỏi) */
+function loadSessionState() {
+    showScreen('question-screen');
+}
+
+
+// === Event Listeners (Game-specific) ===
+document.addEventListener('DOMContentLoaded', async () => {
+    // Chỉ chạy các hàm này nếu các phần tử game tồn tại
+    if (document.getElementById('question-screen')) {
+        // Init game
+        await initialize(); 
+        await loadSuggestedQuestions(); 
+        loadSessionState(); 
+
+        // Auto-grow textareas
+        questionInput.addEventListener('input', () => autoGrow(questionInput));
+        followUpInput.addEventListener('input', () => autoGrow(followUpInput));
+        
+        // Enter key listeners
+        questionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                handleQuestionSubmit();
+            }
+        });
+        
+        followUpInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); 
+                handleFollowUpSubmit();
+            }
+        });
+
+        // Button click listeners
+        submitQuestionBtn.addEventListener('click', handleQuestionSubmit);
+        
+        suggestedQuestionsToggle.addEventListener('click', () => {
+            suggestedQuestionsList.classList.toggle('open');
+            suggestedQuestionsToggle.classList.toggle('open');
+        });
+
+        suggestedQuestionsList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('suggestion-item')) {
+                questionInput.value = e.target.dataset.question;
+                autoGrow(questionInput);
+                suggestedQuestionsList.classList.remove('open');
+                suggestedQuestionsToggle.classList.remove('open');
+            }
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', (e) => {
+            if (!suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
+                suggestedQuestionsList.classList.remove('open');
+                suggestedQuestionsToggle.classList.remove('open');
+            }
+        });
+
+        getInterpretationButton.addEventListener('click', handleGetInterpretation);
+        followUpSubmitBtn.addEventListener('click', handleFollowUpSubmit);
+    }
+});
     </script>
 </body>
 </html>
