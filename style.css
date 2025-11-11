@@ -556,6 +556,7 @@
             margin-bottom: 2rem;
              /* (MỚI) Shadow rõ hơn */
             text-shadow: 0 0 20px rgb(142 186 255), 0 0 8px rgba(142, 186, 255, 0.8); /* (CHỈNH SỬA) */
+            text-align: center;
         }
 
         .question-input-area {
