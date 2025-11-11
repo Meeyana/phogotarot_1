@@ -23,53 +23,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" xintegrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="preload" href="/card-back.jpg" as="image">
 
-    <style>          
-        /* === CSS CHO NÚT CHỌN SỐ LÁ BÀI === */
-        #reading-options-container {
-            width: 100%;
-            max-width: 600px;
-            margin: 1.5rem 0 0 0; 
-            display: flex;
-            background-color: var(--button-bg);
-            border: 1px solid var(--card-back-border);
-            border-radius: 8px;
-            padding: 0.5rem;
-            backdrop-filter: blur(5px);
-            gap: 0.5rem; 
-        }
+    <style is:inline> 
         
-        .reading-option-btn {
-            flex: 1; 
-            background: transparent;
-            border: none;
-            color: var(--text-color);
-            padding: 0.75rem 1rem;
-            border-radius: 6px; 
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: var(--font-body);
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-align: center;
-            text-shadow: none; 
-            opacity: 0.8;
-        }
-        
-        .reading-option-btn:hover:not(.active) {
-            background-color: var(--button-hover-bg);
-            opacity: 1;
-        }
-        
-        .reading-option-btn.active {
-            background-color: var(--title-color); 
-            color: var(--bg-color); 
-            text-shadow: none;
-            opacity: 1;
-        }
-        /* === (HẾT) CSS CHO NÚT CHỌN === */
-        </style>
-        <style is:inline>
-
         /* --- CSS CHO LOADER HÀNH TINH 3D (Giữ nguyên) --- */
         .interpretation-loader {
             display: flex;
@@ -140,6 +95,53 @@
         @keyframes text-fade { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
         @keyframes planet-glow { 0% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } 50% { filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 25px #c1c8ff); } 100% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } }
         /* --- (HẾT) CSS CHO LOADER --- */
+
+
+        /* === CSS CHO NÚT CHỌN SỐ LÁ BÀI === */
+        #reading-options-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 1.5rem 0 0 0; 
+            display: flex;
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 8px;
+            padding: 0.5rem;
+            backdrop-filter: blur(5px);
+            gap: 0.5rem; 
+        }
+        
+        .reading-option-btn {
+            flex: 1; 
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 0.75rem 1rem;
+            border-radius: 6px; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: none; 
+            opacity: 0.8;
+        }
+        
+        .reading-option-btn:hover:not(.active) {
+            background-color: var(--button-hover-bg);
+            opacity: 1;
+        }
+        
+        .reading-option-btn.active {
+            background-color: var(--title-color); 
+            color: var(--bg-color); 
+            text-shadow: none;
+            opacity: 1;
+        }
+        /* === (HẾT) CSS CHO NÚT CHỌN === */
+
+        
 
         /* === (CHỈNH SỬA) CSS CHO KHU VỰC TRA CỨU BÀI === */
         .card-lookup-container { /* (ĐỔI) ID -> Class */
