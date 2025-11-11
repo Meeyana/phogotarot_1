@@ -910,7 +910,7 @@
             aspect-ratio: 2/3;
             /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
             background-color: rgb(20, 40, 80);
-            border: 1px solid var(--card-back-border);
+/*            border: 1px solid var(--card-back-border);*/
             border-radius: 5px;
             cursor: pointer;
             transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
