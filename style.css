@@ -752,7 +752,6 @@
             width: 100px;
             height: 150px;
             /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
-            background-color: rgb(20, 40, 80);
             border: 1px solid var(--card-back-border);
             border-radius: 8px;
             /* === (THAY ĐỔI) Thay thế icon SVG bằng hình ảnh card-back.jpg === */
