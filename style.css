@@ -755,11 +755,12 @@
             background-color: rgb(20, 40, 80);
             border: 1px solid var(--card-back-border);
             border-radius: 8px;
-            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-            background-size: 50%;
+            /* === (THAY ĐỔI) Thay thế icon SVG bằng hình ảnh card-back.jpg === */
+            background-image: url('card-back.jpg');
+            background-size: cover; /* Đảm bảo hình ảnh lấp đầy lá bài */
             background-repeat: no-repeat;
             background-position: center;
+            /* === (HẾT THAY ĐỔI) === */
             animation: shuffle 1.5s ease-in-out infinite;
         }
 
@@ -863,11 +864,12 @@
             /* (CHỈNH SỬA) Tăng độ đậm của lá bài, không nhìn xuyên */
             background-color: rgb(20, 40, 80);
             border: 1px solid var(--card-back-border);
-            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-            background-size: 50%;
+            /* === (THAY ĐỔI) Thay thế icon SVG bằng hình ảnh card-back.jpg === */
+            background-image: url('card-back.jpg');
+            background-size: cover; /* Đảm bảo hình ảnh lấp đầy lá bài */
             background-repeat: no-repeat;
             background-position: center;
+            /* === (HẾT THAY ĐỔI) === */
             transform: translateZ(0); 
         }
 
@@ -914,11 +916,12 @@
             transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.3s ease;
             margin-left: -55px;
             position: relative;
-            /* (CHỈNH SỬA) Đổi icon mặt sau lá bài từ sao sang mặt trời */
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238ebaff' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Cline x1='12' y1='1' x2='12' y2='3'/%3E%3Cline x1='12' y1='21' x2='12' y2='23'/%3E%3Cline x1='4.22' y1='4.22' x2='5.64' y2='5.64'/%3E%3Cline x1='18.36' y1='18.36' x2='19.78' y2='19.78'/%3E%3Cline x1='1' y1='12' x2='3' y2='12'/%3E%3Cline x1='21' y1='12' x2='23' y2='12'/%3E%3Cline x1='4.22' y1='19.78' x2='5.64' y2='18.36'/%3E%3Cline x1='18.36' y1='5.64' x2='19.78' y2='4.22'/%3E%3C/svg%3E");
-            background-size: 50%;
+            /* === (THAY ĐỔI) Thay thế icon SVG bằng hình ảnh card-back.jpg === */
+            background-image: url('card-back.jpg');
+            background-size: cover; /* Đảm bảo hình ảnh lấp đầy lá bài */
             background-repeat: no-repeat;
             background-position: center;
+            /* === (HẾT THAY ĐỔI) === */
             opacity: 0;
             transform: translateY(30px) scale(0.8) translateZ(0); 
         }
