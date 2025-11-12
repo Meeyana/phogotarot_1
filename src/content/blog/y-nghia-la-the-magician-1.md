@@ -2,6 +2,7 @@
 title: "Ý nghĩa của lá bài The magician 1"
 image: "/images/visionary.jpg"
 excerpt: "Mô tả ngắn của bài viết magic ..."
+pubDate: 2025-11-13
 ---
 
 Đây là đoạn văn đầu tiên của bài viết.

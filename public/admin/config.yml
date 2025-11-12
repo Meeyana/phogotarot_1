@@ -24,6 +24,9 @@ collections:
       # Ô nhập Tiêu đề (giống 'title' của bạn)
       - { label: "Tiêu đề", name: "title", widget: "string" }
 
+      # (MỚI) Ô Ngày đăng - Tự động điền ngày hiện tại
+      - { label: "Ngày đăng", name: "pubDate", widget: "datetime", default: "{{now}}", format: "YYYY-MM-DD" }
+
       # Ô tải Ảnh đại diện (giống 'image' của bạn)
       - { label: "Ảnh đại diện (Thumbnail)", name: "image", widget: "image" }
 

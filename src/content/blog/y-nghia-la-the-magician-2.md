@@ -2,6 +2,7 @@
 title: "Bài viết mới của tôi"
 image: "/images/visionary.jpg"
 excerpt: "Mô tả ngắn của bài viết..."
+pubDate: 2025-11-13
 ---
 
 Đây là đoạn văn đầu tiên của bài viết.
