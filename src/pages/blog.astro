@@ -39,8 +39,18 @@ const schema = {
                 <div class="grid-3">
                     {allPosts.map(post => (
                         <div class="blog-card">
-                            <img src={post.data.image} alt={post.data.title} class="section-image" />
-                            <h3 class="section-subtitle">{post.data.title}</h3>
+                            <!-- (CHỈNH SỬA) Bọc wrapper hình ảnh bằng thẻ <a> -->
+                            <a href={`/blog/${post.slug}`} class="image-link-wrapper">
+                                <div class="image-wrapper-4-3">
+                                    <img src={post.data.image} alt={post.data.title} class="section-image" />
+                                </div>
+                            </a>
+                            
+                            <!-- (CHỈNH SỬA) Bọc tiêu đề bằng thẻ <a> -->
+                            <a href={`/blog/${post.slug}`} class="title-link">
+                                <h3 class="section-subtitle">{post.data.title}</h3>
+                            </a>
+                            
                             <p class="section-text">{post.data.excerpt}</p>
                             <a href={`/blog/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
                         </div>
@@ -57,16 +67,106 @@ const schema = {
     />
 
     <style>
-        .homepage-section { padding: 4rem 2rem; position: relative;}
+        /* (CHỈNH SỬA) Giảm padding 2 bên cho mobile (từ 2rem xuống 1rem) */
+        .homepage-section { padding: 4rem 1rem; position: relative;}
         .homepage-content { z-index: 1;}
-        .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
+
+        /* (CHỈNH SỬA) Tăng max-width để giảm margin 2 bên trên desktop (từ 1200px lên 1400px) */
+        /* (CHỈNH SỬA) Bỏ padding 2 bên (từ 0 1rem xuống 0) để dùng padding của .homepage-section */
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0; /* Đã bỏ padding: 0 1rem; */
+        }
+        
         .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .blog-card { border: 1px solid var(--card-back-border); background-color: var(--button-bg); padding: 1.5rem; border-radius: 12px; text-align: left; height: 100%; }
-        .section-image { width: 100%; height: 200px; border-radius: 12px; object-fit: cover; margin-bottom: 1.5rem; }
-        .section-subtitle { font-family: var(--font-title); color: var(--title-color); font-size: 1.25rem; margin-bottom: 1rem; }
-        .section-text { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.5rem; text-shadow: none; }
-        .btn-outline { display: inline-block; background: transparent; border: 1px solid var(--card-back-border); color: var(--title-color); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-shadow: none; }
+
+        /* (CHỈNH SỬA) Tăng kích thước cột tối thiểu để thẻ bài lớn hơn (từ 300px lên 380px) */
+        .grid-3 { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
+            gap: 1.5rem; 
+        }
+
+        .blog-card { 
+            border: 1px solid var(--card-back-border); 
+            background-color: var(--button-bg); 
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            text-align: left; 
+            height: 100%; 
+            display: flex; /* (MỚI) Thêm flex để dễ quản lý */
+            flex-direction: column; /* (MỚI) Xếp các phần tử theo chiều dọc */
+        }
+        
+        /* (MỚI) Thêm wrapper cho link hình ảnh */
+        .image-link-wrapper {
+            display: block;
+            margin-bottom: 1.5rem;
+            border-radius: 12px; /* (MỚI) Di chuyển border-radius ra ngoài wrapper */
+            overflow: hidden; /* (MỚI) Đảm bảo hiệu ứng zoom không tràn */
+        }
+
+        /* (MỚI) Thêm wrapper để giữ tỷ lệ 4:3 */
+        .image-wrapper-4-3 {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            /* overflow: hidden; */ /* (CHỈNH SỬA) Bỏ overflow ở đây */
+            /* border-radius: 12px; */ /* (CHỈNH SỬA) Bỏ radius ở đây */
+            /* margin-bottom: 1.5rem; */ /* (CHỈNH SỬA) Bỏ margin ở đây */
+            flex-shrink: 0; /* Không co wrapper */
+        }
+
+        /* (CHỈNH SỬA) Bỏ height, width 100% và height 100% của wrapper */
+        /* Thêm height: 100% và object-fit: cover để lấp đầy khung 4:3 */
+        .section-image { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            border-radius: 0; 
+            margin-bottom: 0;
+            transition: transform 0.3s ease; /* (MỚI) Thêm transition cho hiệu ứng zoom */
+        }
+
+        /* (MỚI) Hiệu ứng zoom khi hover vào link hình ảnh */
+        .image-link-wrapper:hover .section-image {
+            transform: scale(1.05);
+        }
+        
+        /* (MỚI) CSS cho link tiêu đề */
+        .title-link {
+            text-decoration: none!important;
+            color: inherit; /* Kế thừa màu từ .section-subtitle */
+        }
+        
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.25rem; 
+            margin-bottom: 1rem;
+            margin-top: 0; /* (MỚI) Reset margin-top cho h3 */
+        }
+        
+        .section-text { 
+            font-size: 0.9rem; 
+            opacity: 0.8; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            flex-grow: 1; /* (MỚI) Đẩy nút "Đọc tiếp" xuống dưới cùng */
+        }
+        
+        .btn-outline { 
+            display: inline-block; 
+            background: transparent; 
+            border: 1px solid var(--card-back-border); 
+            color: var(--title-color); 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            text-decoration: none; 
+            text-shadow: none; 
+            align-self: flex-start; /* (MỚI) Nút tự co lại theo nội dung */
+        }
         .btn-outline:hover { background-color: var(--button-hover-bg); }
     </style>
 </BaseLayout>
