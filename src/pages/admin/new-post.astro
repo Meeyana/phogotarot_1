@@ -1,0 +1,101 @@
+---
+---
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>📝 Viết bài mới</title>
+    <style>
+      body {
+        background: #f5f6fa;
+        font-family: sans-serif;
+        padding: 40px;
+      }
+      .container {
+        background: white;
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+      }
+      input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+      button {
+        background: #0070f3;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #005bb5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>🪶 Tạo bài viết mới</h2>
+
+      <input id="title" placeholder="Tiêu đề bài viết" />
+      <input id="image" placeholder="/images/visionary.jpg" />
+      <input id="excerpt" placeholder="Mô tả ngắn..." />
+      <textarea id="content" rows="10" placeholder="Nội dung bài viết (Markdown)..."></textarea>
+
+      <button id="submit">Tạo bài viết</button>
+      <p id="msg"></p>
+    </div>
+
+    <script>
+      document.getElementById("submit").addEventListener("click", async () => {
+        const title = document.getElementById("title").value.trim();
+        const image = document.getElementById("image").value.trim();
+        const excerpt = document.getElementById("excerpt").value.trim();
+        const content = document.getElementById("content").value.trim();
+        const msg = document.getElementById("msg");
+
+        if (!title || !content) {
+          msg.style.color = "red";
+          msg.textContent = "❌ Vui lòng nhập tiêu đề và nội dung!";
+          return;
+        }
+
+        const adminKey = prompt("Nhập ADMIN_KEY (giống trong .env):");
+        if (!adminKey) {
+          msg.style.color = "red";
+          msg.textContent = "⚠️ Bạn chưa nhập ADMIN_KEY!";
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/create-post", {
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title,
+              image,
+              excerpt,
+              content,
+              adminKey
+            }),
+          });
+
+          const text = await res.text();
+          msg.textContent = text;
+          msg.style.color = res.ok ? "green" : "red";
+        } catch (err) {
+          msg.textContent = "❌ Lỗi gửi request: " + err;
+          msg.style.color = "red";
+        }
+      });
+    </script>
+  </body>
+</html>

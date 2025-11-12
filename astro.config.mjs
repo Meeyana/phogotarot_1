@@ -1,6 +1,8 @@
+import 'dotenv/config';
+
 // @ts-check
 import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://phogotarot.com',});
+  site: 'https://phogotarot.com',output: 'server',});

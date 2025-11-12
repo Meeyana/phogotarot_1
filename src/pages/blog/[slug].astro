@@ -13,6 +13,28 @@ export async function getStaticPaths() {
 }
 const { post } = Astro.props;
 const { Content } = await post.render();
+
+// 3. (THÊM PHẦN NÀY) TẠO SCHEMA JSON-LD Ở ĐÂY
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": post.data.title, // <-- Biến được xử lý chính xác ở đây
+  "description": post.data.excerpt, // <-- Biến được xử lý chính xác ở đây
+  "image": new URL(post.data.image, Astro.site).href, // <-- Lấy URL đầy đủ
+  "author": {
+    "@type": "Organization",
+    "name": "Phở Gõ Tarot"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Phở Gõ Tarot",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://phogotarot.com/images/logo.png"
+    }
+  }
+  // (Bạn có thể thêm "datePublished": post.data.pubDate nếu có)
+};
 ---
 
 <BaseLayout
@@ -34,28 +56,11 @@ const { Content } = await post.render();
     </section>
   </main>
     
-    <script type="application/ld+json" is:inline slot="head">
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": {post.data.title},
-      "description": {post.data.excerpt},
-      "image": {post.data.image},
-      "author": {
-        "@type": "Organization",
-        "name": "Phở Gõ Tarot"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Phở Gõ Tarot",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://phogotarot.com/images/logo.png"
-        }
-      }
-      /* (Bạn có thể thêm "datePublished": post.data.pubDate nếu có) */
-    }
-    </script>
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
 
     <style>
         .homepage-section { padding: 4rem 2rem; position: relative; z-index: 1; }
