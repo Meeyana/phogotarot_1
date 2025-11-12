@@ -73,7 +73,7 @@
         }
 
         try {
-          const res = await fetch("/api/create-post", {
+          const res = await fetch(`${window.location.origin}/api/create-post`, {
             method: "POST",
             headers: {
               "Accept": "application/json",
