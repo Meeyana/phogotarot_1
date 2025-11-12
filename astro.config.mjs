@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import { defineConfig } from 'astro/config';
-import netlify from '@astrojs/netlify/functions';
-// https://astro.build/config
+import netlify from '@astrojs/netlify'; // ✅ đúng cho Astro v5
+
 export default defineConfig({
   site: 'https://phogotarot.com',
-  output: 'hybrid',
-  adapter: netlify(),
+  output: 'server', // ✅ chỉ còn static hoặc server
+  adapter: netlify(), // ✅ dùng gói mới
 });
