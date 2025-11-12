@@ -1,0 +1,36 @@
+# public/admin/config.yml
+
+# Cấu hình backend (Nơi lưu code)
+backend:
+  name: git-gateway # Dùng cổng Git của Netlify (đã bật ở Bước 1)
+  branch: main # Tên nhánh GitHub chính của bạn. (Có thể là 'master', hãy kiểm tra lại)
+
+# Cấu hình nơi tải ảnh lên
+media_folder: "public/images/uploads" # Khi bạn tải ảnh, nó sẽ lưu vào đây
+public_folder: "/images/uploads" # Đường dẫn public để chèn vào bài viết
+
+# Định nghĩa các loại nội dung
+collections:
+  - name: "blog" # Tên của bộ sưu tập (để phân biệt)
+    label: "Bài Viết" # Nhãn hiển thị trên giao diện admin
+    folder: "src/content/blog" # <<< RẤT QUAN TRỌNG: Thư mục chứa các file .md của bạn
+    create: true # Cho phép tạo file mới
+    slug: "{{slug}}" # Tên file .md sẽ được tự động tạo (ví dụ: bai-viet-moi.md)
+    extension: "md" # Định dạng file
+    format: "frontmatter" # Dùng frontmatter (cái dấu --- ở đầu file)
+
+    # Đây là các ô nhập liệu sẽ xuất hiện trên giao diện
+    fields:
+      # Ô nhập Tiêu đề (giống 'title' của bạn)
+      - { label: "Tiêu đề", name: "title", widget: "string" }
+
+      # Ô tải Ảnh đại diện (giống 'image' của bạn)
+      - { label: "Ảnh đại diện (Thumbnail)", name: "image", widget: "image" }
+
+      # Ô nhập Mô tả ngắn (giống 'excerpt' của bạn)
+      - { label: "Mô tả ngắn (Excerpt)", name: "excerpt", widget: "string" }
+
+      # Ô soạn thảo Nội dung chính (phần dưới dấu ---)
+      # 'widget: markdown' sẽ cho bạn trình soạn thảo trực quan
+      # cho phép chèn ảnh, in đậm, tiêu đề phụ (##)...
+      - { label: "Nội dung chính", name: "body", widget: "markdown" }
