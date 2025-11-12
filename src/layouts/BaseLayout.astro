@@ -1,0 +1,117 @@
+---
+// 1. Nhận "props" (tiêu đề, mô tả) từ các trang con
+export interface Props {
+  title: string;
+  description: string;
+  ogImage?: string; // Ảnh Open Graph, nếu không có sẽ dùng ảnh mặc định
+}
+
+const { 
+  title, 
+  description, 
+  ogImage = '/images/phogotarot-og-image.jpg' // Đặt ảnh OG mặc định ở đây
+} = Astro.props;
+
+// 2. Lấy URL chuẩn của trang
+// (QUAN TRỌNG: Cần thêm "site" vào astro.config.mjs, xem Bước 2)
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+---
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:type" content="website" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-CF1CK7N9BR');
+    </script>
+    
+    {Astro.url.pathname === '/' && (
+      <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Phở Gõ Tarot",
+        "url": "https://phogotarot.com/",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Phở Gõ Tarot",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://phogotarot.com/images/logo.png"
+          }
+        }
+      }
+      </script>
+    )}
+</head>
+<body>
+    <div id="stars-bg"></div>
+
+    <nav class="main-nav">
+        <div class="nav-logo">
+            <a href="/" class="nav-link logo-link">PHỞ GÕ TAROT</a>
+        </div>
+        <div class="nav-links" id="nav-links">
+            <a href="/" class="nav-link">Trang Chủ</a>
+            <div class="nav-item nav-dropdown">
+                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer;">
+                    <span>Bói Tarot Free</span>
+                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                 <div class="dropdown-submenu">
+                    <a href="/tarot" class="nav-link submenu-link">Trải bài 3 lá</a>
+                    <a href="/yes-no-reading" class="nav-link submenu-link">Câu hỏi Yes/No</a>
+                    <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
+                 </div>
+            </div>
+            <a href="/#about" class="nav-link">Về chúng tôi</a> <a href="/blog" class="nav-link">Blogs</a>
+            <a href="/#contact" class="nav-link">Liên hệ</a> <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+        </div>
+        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
+            <span class="hamburger"></span>
+        </button>
+    </nav>
+    
+    <slot />
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            </div>
+        <div class="footer-copyright">
+            &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
+        </div>
+    </footer>
+
+    <script src="/common.js" defer></script>
+
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        </div>
+</body>
+</html>

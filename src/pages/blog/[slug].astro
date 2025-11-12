@@ -1,83 +1,84 @@
 ---
+// 1. Import Layout
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 1. Hàm này tạo ra các trang
+// 2. Code logic cũ của bạn (Giữ nguyên)
 export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
-  return allPosts.map(post => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+ const allPosts = await getCollection('blog');
+ return allPosts.map(post => ({
+  params: { slug: post.slug },
+  props: { post },
+ }));
 }
-
-// 2. Lấy đúng bài viết cho trang này
 const { post } = Astro.props;
-
-// 3. Lấy nội dung .md đã được chuyển sang HTML
 const { Content } = await post.render();
 ---
 
-<html lang="vi">
-<head>
-    <title>{post.data.title} - Phở Gõ Tarot</title>
-
-    <meta name="description" content={post.data.excerpt}>
-    <meta property="og:title" content={post.data.title} />
-    <meta property="og:description" content={post.data.excerpt} />
-    <meta property="og:type" content="article" />    
-    <meta property="og:url" content={Astro.url.href} />   
-    <meta property="og:image" content={new URL(post.data.image, Astro.url.origin).href} />    
-    <link rel="canonical" href={Astro.url.href} />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/style.css">
-    <style>
-        .homepage-section { padding: 4rem 2rem; position: relative; z-index: 1; }
-        .container { max-width: 800px; margin: auto; padding: 0 1rem; }
-        .hero-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 1.5rem; text-align: center; }
-        .section-image { width: 100%; height: auto; max-height: 400px; border-radius: 12px; object-fit: cover; margin-bottom: 2.5rem; }
-
-        /* CSS cho nội dung bài viết */
-        #post-content {
-            font-size: 1.1rem; line-height: 1.8; text-shadow: none;
-            text-align: left;
-        }
-        #post-content h2, #post-content h3 {
-            font-family: var(--font-title); color: var(--title-color);
-            margin-top: 2.5rem; margin-bottom: 1rem;
-        }
-        #post-content p { margin-bottom: 1.5rem; }
-        #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
-        #post-content :global(img) {
-        width: 100%; /* Tự động co dãn theo chiều rộng */
-        max-width: 100%; /* Không bao giờ to hơn thẻ cha */
-        height: auto; /* Giữ đúng tỷ lệ */
-        border-radius: 8px; /* (Tùy chọn) Bo góc cho đẹp */
-        margin: 2rem 0; /* (Tùy chọn) Tạo khoảng cách trên dưới */
-        border: 1px solid var(--card-back-border); /* (Tùy chọn) Thêm viền */
-    }
-    </style>
-</head>
-
-<body>
-    <div id="stars-bg"></div>
-
+<BaseLayout
+  title={`${post.data.title} - Phở Gõ Tarot`}
+  description={post.data.excerpt}
+  ogImage={post.data.image}
+>
     <main id="homepage-content">
-        <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
-            <div class="container">
+    <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
+      <div class="container" style="max-width: 800px;">         <h1 class="hero-title">{post.data.title}</h1>
+        <img src={post.data.image} alt={post.data.title} class="section-image" />
 
-                <h1 class="hero-title">{post.data.title}</h1>
-                <img src={post.data.image} alt={post.data.title} class="section-image" />
+        <div id="post-content">
+          <Content />
+        </div>
 
-                <div id="post-content">
-                    <Content />
-                </div>
+        <a href="/blog" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách Blog</a>
+      </div>
+    </section>
+  </main>
+    
+    <script type="application/ld+json" is:inline slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": {post.data.title},
+      "description": {post.data.excerpt},
+      "image": {post.data.image},
+      "author": {
+        "@type": "Organization",
+        "name": "Phở Gõ Tarot"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Phở Gõ Tarot",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://phogotarot.com/images/logo.png"
+        }
+      }
+      /* (Bạn có thể thêm "datePublished": post.data.pubDate nếu có) */
+    }
+    </script>
 
-                <a href="/blog" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách Blog</a>
-            </div>
-        </section>
-    </main>
+    <style>
+    .hero-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 1.5rem; text-align: center; }
+    .section-image { width: 100%; height: auto; max-height: 400px; border-radius: 12px; object-fit: cover; margin-bottom: 2.5rem; }
+        .btn-outline { display: inline-block; background: transparent; border: 1px solid var(--card-back-border); color: var(--title-color); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-shadow: none; }
 
-    <script src="/common.js" defer></script>
-</body>
-</html>
+    #post-content {
+      font-size: 1.1rem; line-height: 1.8; text-shadow: none;
+      text-align: left;
+    }
+    #post-content h2, #post-content h3 {
+      font-family: var(--font-title); color: var(--title-color);
+      margin-top: 2.5rem; margin-bottom: 1rem;
+    }
+    #post-content p { margin-bottom: 1.5rem; }
+    #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
+    #post-content :global(img) {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: 2rem 0;
+        border: 1px solid var(--card-back-border);
+    }
+  </style>
+</BaseLayout>
