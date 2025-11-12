@@ -5,5 +5,5 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'static',
-  adapter: netlify({ edge: false }).
+  adapter: netlify({ edge: false }),
 });
