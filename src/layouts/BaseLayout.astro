@@ -101,6 +101,18 @@ const ogImageURL = new URL(ogImage, Astro.site);
     
     <slot />
 
+    <div id="history-modal-backdrop" class="modal-backdrop"></div>
+    <div id="history-modal-content" class="modal-content">
+        <div class="modal-header">
+            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
+            <h2>Lịch sử trải bài</h2>
+        </div>
+        <div id="history-list-wrapper" class="modal-scroll-wrapper">
+            <div id="history-list">
+                </div>
+        </div>
+    </div>
+
     <footer class="main-footer">
             <div class="footer-container">
                 <div class="footer-column brand">
