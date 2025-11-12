@@ -1,0 +1,54 @@
+---
+// 1. Import hàm để lấy bài viết
+import { getCollection } from 'astro:content';
+
+// 2. Lấy TẤT CẢ bài viết từ thư mục "blog"
+const allPosts = await getCollection('blog');
+---
+
+<html lang="vi">
+<head>
+    <title>Blog - Phở Gõ Tarot</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .homepage-section { padding: 4rem 2rem; position: relative; z-index: 1; }
+        .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
+        .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .blog-card { border: 1px solid var(--card-back-border); background-color: var(--button-bg); padding: 1.5rem; border-radius: 12px; text-align: left; height: 100%; }
+        .section-image { width: 100%; height: 200px; border-radius: 12px; object-fit: cover; margin-bottom: 1.5rem; }
+        .section-subtitle { font-family: var(--font-title); color: var(--title-color); font-size: 1.25rem; margin-bottom: 1rem; }
+        .section-text { font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.5rem; text-shadow: none; }
+        .btn-outline { display: inline-block; background: transparent; border: 1px solid var(--card-back-border); color: var(--title-color); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-shadow: none; }
+        .btn-outline:hover { background-color: var(--button-hover-bg); }
+    </style>
+</head>
+
+<body>
+    <div id="stars-bg"></div>
+
+    <main id="homepage-content">
+        <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
+            <div class="container">
+                <h2 class="section-title">Kiến Thức Tarot</h2>
+
+                <div class="grid-3">
+                    {allPosts.map(post => (
+                        <div class="blog-card">
+                            <img src={post.data.image} alt={post.data.title} class="section-image" />
+                            <h3 class="section-subtitle">{post.data.title}</h3>
+                            <p class="section-text">{post.data.excerpt}</p>
+                            <a href={`/blog/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/common.js" defer></script>
+</body>
+</html>
