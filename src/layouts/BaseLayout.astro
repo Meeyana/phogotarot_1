@@ -67,6 +67,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
       }
       </script>
     )}
+    <slot name="head" />
 </head>
 <body>
     <div id="stars-bg"></div>
@@ -101,12 +102,73 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <slot />
 
     <footer class="main-footer">
-        <div class="footer-container">
+            <div class="footer-container">
+                <div class="footer-column brand">
+                    <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
+                    <p class="footer-description">
+                        Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
+                    </p>
+                    <div class="footer-social-links">
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                            <i class="fa-brands fa-facebook"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                            <i class="fa-brands fa-youtube"></i>
+                        </a>
+                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                            <i class="fa-brands fa-tiktok"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="footer-column links">
+                    <h3 class="footer-title">Chính sách</h3>
+                    <ul class="footer-link-list">
+                        <li>
+                            <a href="index.html#about">Giới thiệu</a>
+                        </li>
+                        <li>
+                            <a href="index.html#contact">Liên hệ</a>
+                        </li>
+                        <li>
+                            <a href="#">Chính sách bảo mật</a>
+                        </li>
+                        <li>
+                            <a href="#">Miễn trừ trách nhiệm</a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column contact">
+                    <h3 class="footer-title">Thông tin liên hệ</h3>
+                    <ul class="footer-link-list">
+                        <li>
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-phone"></i>
+                            <a href="tel:0352677543">0352 677 543</a>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-envelope"></i>
+                            <a href="mailto:bebluetotrue@gmail.com">bebluetotrue@gmail.com</a>
+                        </li>
+                        <li>
+                            <i class="fa-solid fa-globe"></i>
+                            <a href="https://phogotarot.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        <div class="footer-copyright">
-            &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
-        </div>
-    </footer>
+            
+            <div class="footer-copyright">
+                &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
+            </div>
+        </footer>
 
     <script src="/common.js" defer></script>
 

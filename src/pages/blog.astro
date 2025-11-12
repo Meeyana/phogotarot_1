@@ -6,14 +6,25 @@ import { getCollection } from 'astro:content';
 // 2. LẤY DỮ LIỆU (Giữ nguyên)
 const allPosts = await getCollection('blog');
 
-// 3. (MỚI) Tạo dữ liệu cho JSON-LD (cho AI)
-// Chúng ta tạo một danh sách các bài blog để báo cho AI biết
-const blogPostListForAI = allPosts.map(post => ({
-  "@type": "BlogPosting", // Loại nội dung là "Bài đăng Blog"
-  "headline": post.data.title,
-  "url": new URL(`/blog/${post.slug}`, Astro.site).href, // URL đầy đủ
-  "image": new URL(post.data.image, Astro.site).href // URL ảnh bìa đầy đủ
-}));
+// 3. (SỬA LẠI) TẠO TOÀN BỘ JSON-LD TRONG FRONTMATTER
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "Blog - Kiến Thức Tarot | Phở Gõ Tarot",
+  "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
+  "url": new URL('/blog', Astro.site).href, // Lấy URL đầy đủ
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": "https://phogotarot.com/"
+  },
+  // Tự động tạo danh sách bài viết cho AI
+  "blogPost": allPosts.map(post => ({
+    "@type": "BlogPosting",
+    "headline": post.data.title,
+    "url": new URL(`/blog/${post.slug}`, Astro.site).href,
+    "image": new URL(post.data.image, Astro.site).href
+  }))
+};
 ---
 
 <BaseLayout
@@ -39,22 +50,16 @@ const blogPostListForAI = allPosts.map(post => ({
         </section>
     </main>
     
-    <script type="application/ld+json" is:inline slot="head">
-    {
-      "@context": "https://schema.org",
-      "@type": "Blog", // Báo cho AI biết đây là một trang Blog
-      "name": "Blog - Kiến Thức Tarot | Phở Gõ Tarot",
-      "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
-      "url": "https://phogotarot.com/blog",
-      "isPartOf": { // Là một phần của website chính
-        "@type": "WebSite",
-        "url": "https://phogotarot.com/"
-      },
-      "blogPost": ${JSON.stringify(blogPostListForAI)} // Liệt kê các bài viết có trên trang
-    }
-    </script>
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
 
     <style>
+        .homepage-section { padding: 4rem 2rem; position: relative;}
+        .homepage-content { z-index: 1;}
+        .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
         .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
         .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
         .blog-card { border: 1px solid var(--card-back-border); background-color: var(--button-bg); padding: 1.5rem; border-radius: 12px; text-align: left; height: 100%; }
