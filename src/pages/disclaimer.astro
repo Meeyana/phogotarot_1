@@ -1,0 +1,133 @@
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Disclaimer - Miễn Trừ Trách Nhiệm | Phở Gõ Tarot";
+const pageDesc = "Đọc kỹ các điều khoản miễn trừ trách nhiệm khi sử dụng dịch vụ và nội dung tại Phở Gõ Tarot.";
+const pageUrl = new URL('/disclaimer', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage", // Hoặc LegalNotice
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <main id="disclaimer-content">
+        <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
+            <div class="container text-content-container">
+                
+                <!-- Yêu cầu: Heading lớn, căn trái -->
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                    Disclaimer - Miễn Trừ Trách Nhiệm
+                </h2>
+                
+                <!-- Bỏ class "disclaimer-box" -->
+                <div>
+                    <p class="section-text">Bằng việc truy cập và sử dụng website Phở Gõ Tarot, bạn xác nhận đã đọc, hiểu và đồng ý tuân thủ các điều khoản miễn trừ trách nhiệm dưới đây:</p>
+
+                    <!-- Đổi h4.disclaimer-subtitle thành h3.section-subtitle -->
+                    <h3 class="section-subtitle">1. Giới Hạn Độ Tuổi</h3>
+                    <p class="section-text">Các dịch vụ và nội dung trên trang web này không dành cho người dưới 18 tuổi. Chúng tôi không khuyến khích và không chịu trách nhiệm nếu người dùng dưới 18 tuổi truy cập và sử dụng thông tin từ trang web này.</p>
+
+                    <h3 class="section-subtitle">2. Chỉ Dành Cho Mục Đích Tham Khảo & Giải Trí</h3>
+                    <p class="section-text">Tất cả các nội dung, bài viết, và các trải bài Tarot (dù là tự động hay có người giải) đều chỉ nhằm mục đích giải trí, tham khảo và chiêm nghiệm cá nhân. Chúng không mang tính chất khẳng định hay tiên tri tuyệt đối.</p>
+
+                    <h3 class="section-subtitle">3. Tarot Là Công Cụ Hướng Dẫn, Không Phải Quyết Định</h3>
+                    <p class="section-text">Các lá bài Tarot là một công cụ soi chiếu nội tâm và cung cấp góc nhìn. Chúng không phải là một cỗ máy ra quyết định và không bao giờ thay thế được ý chí tự do của bạn. Bạn và chỉ bạn mới là người chịu trách nhiệm 100% cho mọi hành động và quyết định của mình trong cuộc sống, bất kể bạn có tham khảo trải bài Tarot hay không.</p>
+
+                    <h3 class="section-subtitle">4. Không Thay Thế Lời Khuyên Chuyên Gia</h3>
+                    <p class="section-text">Nội dung trên trang web này hoàn toàn không thể thay thế cho lời khuyên, chẩn đoán, hoặc điều trị từ các chuyên gia đã được cấp bằng.</p>
+                    <ul class="section-list">
+                        <li><strong>Y tế & Tâm lý:</strong> Nếu bạn có vấn đề về sức khỏe thể chất hoặc tinh thần, hãy tìm đến bác sĩ hoặc chuyên gia tâm lý.</li>
+                        <li><strong>Pháp lý & Tài chính:</strong> Nếu bạn cần lời khuyên về luật pháp hoặc tài chính, hãy tìm đến luật sư hoặc chuyên gia tài chính.</li>
+                    </ul>
+                    <p class="section-text">Chúng tôi không cung cấp bất kỳ lời khuyên y tế, pháp lý, tài chính hay tâm lý trị liệu chuyên nghiệp nào.</p>
+
+                    <h3 class="section-subtitle">5. Không Đảm Bảo Tính Chính Xác</h3>
+                    <p class="section-text">Chúng tôi nỗ lực để cung cấp thông tin chính xác nhất có thể, tuy nhiên, chúng tôi không đưa ra bất kỳ cam kết hay đảm bảo nào về tính chính xác, đầy đủ, hoặc sự phù hợp của các trải bài và thông tin trên trang web đối với bất kỳ tình huống cụ thể nào của bạn.</p>
+                    
+                    <!-- Bỏ class "disclaimer-final", dùng style của P cuối cùng -->
+                    <p class="section-text" style="margin-top: 2rem; border-top: 1px solid var(--card-back-border); padding-top: 1.5rem; font-style: italic; font-weight: 600;">
+                        Bằng cách tiếp tục sử dụng trang web, bạn đồng ý miễn trừ Phở Gõ Tarot và những người điều hành khỏi mọi trách nhiệm pháp lý hoặc tổn thất có thể phát sinh từ việc bạn sử dụng thông tin trên trang web này.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+    </main>
+    
+    <!-- Thêm JSON-LD schema vào <head> -->
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <!-- Lấy các style cần thiết từ about-us.astro -->
+    <style>
+        .homepage-section { 
+            padding: 4rem 1rem; 
+            position: relative;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0;
+        }
+        
+        .section-title { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 3rem; 
+            margin-bottom: 3rem; 
+            text-align: center; /* Mặc định là center, nhưng bị override inline */
+        }
+
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-text { 
+            font-size: 1rem;
+            opacity: 0.9; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            line-height: 1.8;
+        }
+
+        .text-content-container {
+            max-width: 900px;
+            padding: 0 1rem;
+            text-align: left;
+        }
+
+        .section-list {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .section-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        /* Bỏ các style cho box */
+    </style>
+</BaseLayout>

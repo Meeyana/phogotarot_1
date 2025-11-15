@@ -36,7 +36,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -91,7 +91,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
                  </div>
             </div>
-            <a href="/#about" class="nav-link">Về chúng tôi</a> <a href="/blog" class="nav-link">Blogs</a>
+            <a href="/about-us" class="nav-link">Về chúng tôi</a> <a href="/blog" class="nav-link">Blogs</a>
             <a href="/#contact" class="nav-link">Liên hệ</a> <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
         </div>
         <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
@@ -140,16 +140,16 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     <h3 class="footer-title">Chính sách</h3>
                     <ul class="footer-link-list">
                         <li>
-                            <a href="index.html#about">Giới thiệu</a>
+                            <a href="/about-us">Giới thiệu</a>
                         </li>
                         <li>
                             <a href="index.html#contact">Liên hệ</a>
                         </li>
                         <li>
-                            <a href="#">Chính sách bảo mật</a>
+                            <a href="/privacy-policy">Chính sách bảo mật</a>
                         </li>
                         <li>
-                            <a href="#">Miễn trừ trách nhiệm</a>
+                            <a href="/disclaimer">Miễn trừ trách nhiệm</a>
                         </li>
                     </ul>
                 </div>
@@ -167,7 +167,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                         </li>
                         <li>
                             <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:bebluetotrue@gmail.com">bebluetotrue@gmail.com</a>
+                            <a href="mailto:contact@phogotarot.com">contact@phogotarot.com</a>
                         </li>
                         <li>
                             <i class="fa-solid fa-globe"></i>

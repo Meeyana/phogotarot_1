@@ -1,49 +1,115 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-    <title>Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | Phở Gõ Tarot</title>
-    <meta name="description" content="Sử dụng trải bài 3 lá (Quá khứ, Hiện tại, Tương lai) để nhận luận giải AI sâu sắc về các câu hỏi tình yêu, sự nghiệp và cuộc sống của bạn.">
-    <link rel="canonical" href="https://phogotarot.com/tarot">
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | Phở Gõ Tarot";
+const pageDesc = "Sử dụng trải bài 3 lá (Quá khứ, Hiện tại, Tương lai) để nhận luận giải sâu sắc về các câu hỏi tình yêu, sự nghiệp và cuộc sống của bạn.";
+const pageUrl = new URL('/tarot', Astro.site).href;
 
-    <meta property="og:title" content="Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | Phở Gõ Tarot" />
-    <meta property="og:description" content="Nhận luận giải AI sâu sắc cho trải bài 3 lá về tình yêu, sự nghiệp và cuộc sống." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://phogotarot.com/tarot" />
-    <meta property="og:image" content="https://phogotarot.com/images/tarot-og-image.jpg" />
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <div id="question-screen" class="screen active">
+        <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
+        
+        <div id="question-input-area" class="question-input-area">
+            <textarea id="question-input" class="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" style="min-height: 56px;"></textarea>
+            <button id="submit-question-btn" title="Gửi câu hỏi">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                </svg>
+            </button>
+        </div>
+        
+        <div class="dropdown-container">
+            <button id="suggested-questions-toggle" class="dropdown-toggle">
+                <span>Gợi ý câu hỏi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div id="suggested-questions-list" class="dropdown-menu">
+                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
+            </div>
+        </div>
+        
+        <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+    </div>
 
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <div id="shuffling-screen" class="screen">
+        <div id="shuffling-question-display" class="question-display-header"></div>
+        <div class="shuffling-animation-container">
+            <div class="shuffle-card"></div>
+            <div class="shuffle-card"></div>
+            <div class="shuffle-card"></div>
+        </div>
+        <p class="shuffling-instruction">
+            Hãy giữ tập trung vào câu hỏi của bạn.
+            <br>
+            Để có kết quả tốt nhất, bạn không nên làm việc riêng trong lúc này.
+        </p>
+    </div>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-CF1CK7N9BR');
-    </script>
-    
-    <script type="application/ld+json" is:inline>
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp",
-      "description": "Sử dụng trải bài 3 lá (Quá khứ, Hiện tại, Tương lai) để nhận luận giải AI sâu sắc về các câu hỏi tình yêu, sự nghiệp và cuộc sống của bạn.",
-      "url": "https://phogotarot.com/tarot",
-      "isPartOf": {
-        "@type": "WebSite",
-        "url": "https://phogotarot.com/"
-      }
-    }
-    </script>
+    <div id="drawing-screen" class="screen">
+        <div id="drawing-question-display" class="question-display-header"></div>
+        <h2 class="drawing-subheader">Hãy chọn 3 lá bài</h2>
+        
+        <div id="chosen-cards-display">
+            <div class="chosen-card-placeholder"></div>
+            <div class="chosen-card-placeholder"></div>
+            <div class="chosen-card-placeholder"></div>
+        </div>
+        
+        <div id="card-spread-container">
+            <div class="card-row" id="card-row-1"></div>
+            <div class="card-row" id="card-row-2"></div>
+            <div class="card-row mobile-row" id="card-row-3"></div>
+            <div class="card-row mobile-row" id="card-row-4"></div>
+            <div class="card-row mobile-row" id="card-row-5"></div>
+            <div class="card-row mobile-row" id="card-row-6"></div>
+        </div>
+        
+        <div id="action-button-container">
+            <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
+        </div>
+        
+        <div is:inline id="interpretation-results-display"></div>
+        
+        <div id="follow-up-question-container">
+            <h3>Bạn có câu hỏi nào khác không?</h3>
+            <div id="follow-up-input-area" class="question-input-area">
+                <textarea id="follow-up-question-input" class="question-input" placeholder="Đặt câu hỏi tiếp theo..." style="min-height: 56px;"></textarea>
+                <button id="submit-follow-up-btn" title="Gửi câu hỏi mới">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                    </svg>
+                </button>
+            </div>
+            <p id="follow-up-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+        </div>
+    </div>
+
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
     <link rel="preload" href="/card-back.jpg" as="image">
 
     <style is:inline>
@@ -262,214 +328,8 @@
         /* --- (HẾT) CSS CHO LOADER --- */
         
     </style>
-</head>
-<body>
-
-    <div id="stars-bg">
-        <div id="stars1"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
-        <div id="stars4"></div>
-    </div>
-    
-
 
     
-    <nav class="main-nav">
-        <div class="nav-logo">
-            <a href="/" class="nav-link logo-link">PHỞ GÕ TAROT</a>
-        </div>
-        <div class="nav-links" id="nav-links">
-            <a href="/" class="nav-link">Trang Chủ</a>
-            
-            <div class="nav-item nav-dropdown">
-                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer;">
-                    <span>Bói Tarot Free</span>
-                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="dropdown-submenu">
-                    <a href="/tarot" class="nav-link submenu-link">Trải bài 3 lá</a>
-                    <a href="/yes-no-reading" class="nav-link submenu-link">Câu hỏi Yes/No</a>
-                    <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
-                </div>
-            </div>
-            <a href="/" class="nav-link">Về chúng tôi</a>
-            <a href="/" class="nav-link">Blogs</a>
-            <a href="/" class="nav-link">Đặt lịch</a>
-            <a href="/" class="nav-link">Liên hệ</a>
-            <a href="/" id="history-nav-link" class="nav-link">Lịch sử</a>
-        </div>
-        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
-            <span class="hamburger"></span>
-        </button>
-    </nav>
-
-
-    <div id="question-screen" class="screen active">
-        <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
-        
-        <div id="question-input-area" class="question-input-area">
-            <textarea id="question-input" class="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" style="min-height: 56px;"></textarea>
-            <button id="submit-question-btn" title="Gửi câu hỏi">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                </svg>
-            </button>
-        </div>
-        
-        <div class="dropdown-container">
-            <button id="suggested-questions-toggle" class="dropdown-toggle">
-                <span>Gợi ý câu hỏi</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
-                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <div id="suggested-questions-list" class="dropdown-menu">
-                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
-            </div>
-        </div>
-        
-        <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
-    </div>
-
-    <div id="shuffling-screen" class="screen">
-        <div id="shuffling-question-display" class="question-display-header"></div>
-        <div class="shuffling-animation-container">
-            <div class="shuffle-card"></div>
-            <div class="shuffle-card"></div>
-            <div class="shuffle-card"></div>
-        </div>
-        <p class="shuffling-instruction">
-            Hãy giữ tập trung vào câu hỏi của bạn.
-            <br>
-            Để có kết quả tốt nhất, bạn không nên làm việc riêng trong lúc này.
-        </p>
-    </div>
-
-    <div id="drawing-screen" class="screen">
-        <div id="drawing-question-display" class="question-display-header"></div>
-        <h2 class="drawing-subheader">Hãy chọn 3 lá bài</h2>
-        
-        <div id="chosen-cards-display">
-            <div class="chosen-card-placeholder"></div>
-            <div class="chosen-card-placeholder"></div>
-            <div class="chosen-card-placeholder"></div>
-        </div>
-        
-        <div id="card-spread-container">
-            <div class="card-row" id="card-row-1"></div>
-            <div class="card-row" id="card-row-2"></div>
-            <div class="card-row mobile-row" id="card-row-3"></div>
-            <div class="card-row mobile-row" id="card-row-4"></div>
-            <div class="card-row mobile-row" id="card-row-5"></div>
-            <div class="card-row mobile-row" id="card-row-6"></div>
-        </div>
-        
-        <div id="action-button-container">
-            <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
-        </div>
-        
-        <div is:inline id="interpretation-results-display"></div>
-        
-        <div id="follow-up-question-container">
-            <h3>Bạn có câu hỏi nào khác không?</h3>
-            <div id="follow-up-input-area" class="question-input-area">
-                <textarea id="follow-up-question-input" class="question-input" placeholder="Đặt câu hỏi tiếp theo..." style="min-height: 56px;"></textarea>
-                <button id="submit-follow-up-btn" title="Gửi câu hỏi mới">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                        <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                    </svg>
-                </button>
-            </div>
-            <p id="follow-up-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
-        </div>
-    </div>
-    
-    <div id="history-modal-backdrop" class="modal-backdrop"></div>
-    <div id="history-modal-content" class="modal-content">
-        <div class="modal-header">
-            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
-            <h2>Lịch sử trải bài</h2>
-        </div>
-        <div id="history-list-wrapper" class="modal-scroll-wrapper">
-            <div id="history-list">
-                </div>
-        </div>
-    </div>
-
-    <footer class="main-footer">
-            <div class="footer-container">
-                <div class="footer-column brand">
-                    <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
-                    <p class="footer-description">
-                        Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
-                    </p>
-                    <div class="footer-social-links">
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <i class="fa-brands fa-facebook"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="footer-column links">
-                    <h3 class="footer-title">Chính sách</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <a href="index.html#about">Giới thiệu</a>
-                        </li>
-                        <li>
-                            <a href="index.html#contact">Liên hệ</a>
-                        </li>
-                        <li>
-                            <a href="#">Chính sách bảo mật</a>
-                        </li>
-                        <li>
-                            <a href="#">Miễn trừ trách nhiệm</a>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column contact">
-                    <h3 class="footer-title">Thông tin liên hệ</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-phone"></i>
-                            <a href="tel:0352677543">0352 677 543</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:bebluetotrue@gmail.com">bebluetotrue@gmail.com</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-globe"></i>
-                            <a href="https://phogotarot.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-copyright">
-                &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
-            </div>
-        </footer>
-
-    <script src="/common.js" defer></script>
-
     <script>
         /* ============================================= */
 /* === TAROT.JS (Tarot Game Logic) === */
@@ -1199,5 +1059,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
     </script>
-</body>
-</html>
+</BaseLayout>

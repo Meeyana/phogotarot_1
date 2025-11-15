@@ -1,47 +1,200 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
 
-    <title>Zodiac Tarot Hàng Ngày - Lá Bài Cung Hoàng Đạo | Phở Gõ Tarot</title>
-    <meta name="description" content="Khám phá lá bài Tarot hàng ngày cho 12 cung hoàng đạo. Nhận thông điệp và lời khuyên từ vũ trụ cho Bạch Dương, Kim Ngưu, Song Tử, v.v.">
-    <link rel="canonical" href="https://phogotarot.com/zodiac-daily">
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Zodiac Tarot Hàng Ngày - Lá Bài Cung Hoàng Đạo | Phở Gõ Tarot";
+const pageDesc = "Khám phá lá bài Tarot hàng ngày cho 12 cung hoàng đạo. Nhận thông điệp và lời khuyên từ vũ trụ cho Bạch Dương, Kim Ngưu, Song Tử, v.v.";
+const pageUrl = new URL('/zodiac-daily', Astro.site).href;
 
-    <meta property="og:title" content="Zodiac Tarot Hàng Ngày - Lá Bài Cung Hoàng Đạo | Phở Gõ Tarot" />
-    <meta property="og:description" content="Khám phá lá bài Tarot hàng ngày cho 12 cung hoàng đạo." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://phogotarot.com/zodiac-daily" />
-    <meta property="og:image" content="https://phogotarot.com/images/zodiac-og-image.jpg" />
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-CF1CK7N9BR');
-    </script>
-    
-    <script type="application/ld+json" is:inline>
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "Zodiac Tarot Hàng Ngày - Lá Bài Cung Hoàng Đạo",
-      "description": "Khám phá lá bài Tarot hàng ngày cho 12 cung hoàng đạo. Nhận thông điệp và lời khuyên từ vũ trụ.",
-      "url": "https://phogotarot.com/zodiac-daily",
-      "isPartOf": {
-        "@type": "WebSite",
-        "url": "https://phogotarot.com/"
-      }
-    }
-    </script>
+    <main id="zodiac-page-content">
+        <div class="zodiac-container">
+            <div class="zodiac-main-content">
+
+                <div class="zodiac-header">
+                    <div class="zodiac-title-group">
+                        <h2 id="main-zodiac-name" class="zodiac-title">Bạch Dương</h2>
+                        </div>
+                    <!-- Ngày sẽ được cập nhật bằng JS -->
+                    <span id="main-zodiac-date" class="zodiac-date"></span>
+                </div>
+
+                <div class="zodiac-dropdown-container">
+                    <button id="zodiac-dropdown-toggle" class="zodiac-dropdown-toggle">
+                        <span id="zodiac-dropdown-label">
+                            <span class="zodiac-icon">♈</span> Bạch Dương
+                        </span>
+                        <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                    <div id="zodiac-dropdown-list" class="zodiac-dropdown-menu">
+                        <!-- data-date sẽ bị xóa vì không còn dùng -->
+                        <button class="zodiac-btn-dropdown active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
+                        <button class="zodiac-btn-dropdown" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
+                    </div>
+                </div>
+
+                <div id="zodiac-selector" class="zodiac-grid">
+                    <button class="zodiac-btn active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
+                    <button class="zodiac-btn" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
+                    <button class="zodiac-btn" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
+                    <button class="zodiac-btn" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
+                    <button class="zodiac-btn" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
+                    <button class="zodiac-btn" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
+                    <button class="zodiac-btn" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
+                    <button class="zodiac-btn" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
+                    <button class="zodiac-btn" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
+                    <button class="zodiac-btn" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
+                    <button class="zodiac-btn" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
+                    <button class="zodiac-btn" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
+                </div>
+
+                <div id="card-display" class="zodiac-card-display">
+                    
+                    <!-- Nội dung sẽ được JS chèn vào -->
+                    <div class="zodiac-card-layout">
+                        
+                        <div class="zodiac-card-image-wrapper">
+                            <div class="zodiac-card-image-aspect">
+                                <img id="card-image" 
+                                     src="https://placehold.co/300x500/142850/f0f0ff?text=Loading" 
+                                     alt="Hình ảnh lá bài Tarot" 
+                                     class="zodiac-card-image">
+                            </div>
+                        </div>
+
+                        <div class="zodiac-card-details">
+                            <div class="zodiac-card-header">
+                                <h3 id="card-prefix" class="card-prefix"></h3>
+                                <h2 id="card-name" class="card-name"></h2>
+                            </div>
+                            <div class="card-advice-group">
+                                <span class="card-advice-label">Từ khóa hôm nay:</span>
+                                <p id="card-advice" class="card-advice"></p>
+                            </div>
+
+                            <!-- (ĐÃ BỊ ẨN) Không có dữ liệu 'summary' từ GSheet của bạn -->
+                            <div id="card-summary" class="card-summary" style="display: none;">
+                                <p></p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="zodiac-card-analysis">
+                        
+                        <div id="card-love" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-heart analysis-icon" style="color: #ff8a8a;"></i>
+                                Tình cảm
+                            </h4>
+                            <p></p>
+                        </div>
+                        <div id="card-work" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-briefcase analysis-icon" style="color: #82aaff;"></i>
+                                Công việc
+                            </h4>
+                            <p></p>
+                        </div>
+                        <div id="card-finance" class="analysis-item">
+                            <h4 class="analysis-title">
+                                <i class="fa-solid fa-money-bill-wave analysis-icon" style="color: #a5d6a7;"></i>
+                                Tài chính
+                            </h4>
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div id="card-lucky-details" class="card-lucky-details">
+                        <h4 class="analysis-title">
+                            <i class="fa-solid fa-wand-magic-sparkles analysis-icon" style="color: #ffd700;"></i>
+                            Chi Tiết May Mắn
+                        </h4>
+                        <div class="lucky-items-list">
+                            <p><strong>Màu sắc may mắn:</strong> <span id="lucky-color"></span></p>
+                            <p><strong>Đồ vật may mắn:</strong> <span id="lucky-item"></span></p>
+                            <p><strong>Địa điểm may mắn:</strong> <span id="lucky-place"></span></p>
+                        </div>
+                    </div>
+
+                    <div id="card-advice-box" class="zodiac-advice-box">
+                        <h4 class="analysis-title">
+                            <i class="fa-solid fa-lightbulb analysis-icon" style="color: #fdd835;"></i>
+                            Lời khuyên cho hôm nay
+                        </h4>
+                        <div id="card-advice-content" class="advice-content-simple">
+                            <p></p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--card-back-border);">
+                        <button class="zodiac-share-btn">
+                            <i class="fa-solid fa-share-alt"></i>
+                            Chia sẻ
+                        </button>
+                    </div>
+                    
+                </div>
+
+                <div class="zodiac-detailed-reading-box">
+                    <h3 class="subscribe-title">Xem chi tiết về ngày hôm nay của bạn thế nào?</h3>
+                    <a href="/tarot" class="zodiac-action-btn">
+                        <i class="fa-solid fa-layer-group"></i>
+                        Yêu cầu trải bài chi tiết
+                    </a>
+                    </div>
+
+                <div class="zodiac-subscribe-box">
+                    <h3 class="subscribe-title">Nhận Tarot hàng ngày</h3>
+                    <form class="subscribe-form">
+                        <div>
+                            <label for="email" class="subscribe-label">Email của bạn</label>
+                            <input type="email" id="email" placeholder="you@example.com" class="subscribe-input">
+                        </div>
+                        <button type="submit" class="subscribe-btn">Subscribe</button>
+                    </form>
+                    </div>
+            </div>
+        </div>
+    </main>
+
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+
 
     <style>
         
@@ -670,289 +823,11 @@
             padding: 0;
         }
     </style>
-</head>
-<body>
 
-    <div id="stars-bg"></div>
+
     
-    <nav class="main-nav">
-        <div class="nav-logo">
-            <a href="/" class="nav-link logo-link">PHỞ GÕ TAROT</a>
-        </div>
-        <div class="nav-links" id="nav-links">
-            <a href="/" class="nav-link">Trang Chủ</a>
-            
-            <div class="nav-item nav-dropdown">
-                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer;">
-                    <span>Bói Tarot Free</span>
-                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                    </svg>
-                </div>
-                <div class="dropdown-submenu">
-                    <a href="/tarot" class="nav-link submenu-link">Trải bài 3 lá</a>
-                    <a href="/yes-no-reading" class="nav-link submenu-link">Câu hỏi Yes/No</a>
-                    <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
-                </div>
-            </div>
-            <a href="/" class="nav-link">Về chúng tôi</a>
-            <a href="/" class="nav-link">Blogs</a>
-            <a href="/" class="nav-link">Đặt lịch</a>
-            <a href="/" class="nav-link">Liên hệ</a>
-            <a href="/" id="history-nav-link" class="nav-link">Lịch sử</a>
-        </div>
-        <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
-            <span class="hamburger"></span>
-        </button>
-    </nav>
-
-
-    <main id="zodiac-page-content">
-        <div class="zodiac-container">
-            <div class="zodiac-main-content">
-
-                <div class="zodiac-header">
-                    <div class="zodiac-title-group">
-                        <h2 id="main-zodiac-name" class="zodiac-title">Bạch Dương</h2>
-                        </div>
-                    <!-- Ngày sẽ được cập nhật bằng JS -->
-                    <span id="main-zodiac-date" class="zodiac-date"></span>
-                </div>
-
-                <div class="zodiac-dropdown-container">
-                    <button id="zodiac-dropdown-toggle" class="zodiac-dropdown-toggle">
-                        <span id="zodiac-dropdown-label">
-                            <span class="zodiac-icon">♈</span> Bạch Dương
-                        </span>
-                        <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
-                        </svg>
-                    </button>
-                    <div id="zodiac-dropdown-list" class="zodiac-dropdown-menu">
-                        <!-- data-date sẽ bị xóa vì không còn dùng -->
-                        <button class="zodiac-btn-dropdown active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
-                        <button class="zodiac-btn-dropdown" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
-                    </div>
-                </div>
-
-                <div id="zodiac-selector" class="zodiac-grid">
-                    <button class="zodiac-btn active" data-zodiac="Bạch Dương"><span class="zodiac-icon">♈</span> Bạch Dương</button>
-                    <button class="zodiac-btn" data-zodiac="Kim Ngưu"><span class="zodiac-icon">♉</span> Kim Ngưu</button>
-                    <button class="zodiac-btn" data-zodiac="Song Tử"><span class="zodiac-icon">♊</span> Song Tử</button>
-                    <button class="zodiac-btn" data-zodiac="Cự Giải"><span class="zodiac-icon">♋</span> Cự Giải</button>
-                    <button class="zodiac-btn" data-zodiac="Sư Tử"><span class="zodiac-icon">♌</span> Sư Tử</button>
-                    <button class="zodiac-btn" data-zodiac="Xử Nữ"><span class="zodiac-icon">♍</span> Xử Nữ</button>
-                    <button class="zodiac-btn" data-zodiac="Thiên Bình"><span class="zodiac-icon">♎</span> Thiên Bình</button>
-                    <button class="zodiac-btn" data-zodiac="Bọ Cạp"><span class="zodiac-icon">♏</span> Bọ Cạp</button>
-                    <button class="zodiac-btn" data-zodiac="Nhân Mã"><span class="zodiac-icon">♐</span> Nhân Mã</button>
-                    <button class="zodiac-btn" data-zodiac="Ma Kết"><span class="zodiac-icon">♑</span> Ma Kết</button>
-                    <button class="zodiac-btn" data-zodiac="Bảo Bình"><span class="zodiac-icon">♒</span> Bảo Bình</button>
-                    <button class="zodiac-btn" data-zodiac="Song Ngư"><span class="zodiac-icon">♓</span> Song Ngư</button>
-                </div>
-
-                <div id="card-display" class="zodiac-card-display">
-                    
-                    <!-- Nội dung sẽ được JS chèn vào -->
-                    <div class="zodiac-card-layout">
-                        
-                        <div class="zodiac-card-image-wrapper">
-                            <div class="zodiac-card-image-aspect">
-                                <img id="card-image" 
-                                     src="https://placehold.co/300x500/142850/f0f0ff?text=Loading" 
-                                     alt="Hình ảnh lá bài Tarot" 
-                                     class="zodiac-card-image">
-                            </div>
-                        </div>
-
-                        <div class="zodiac-card-details">
-                            <div class="zodiac-card-header">
-                                <h3 id="card-prefix" class="card-prefix"></h3>
-                                <h2 id="card-name" class="card-name"></h2>
-                            </div>
-                            <div class="card-advice-group">
-                                <span class="card-advice-label">Từ khóa hôm nay:</span>
-                                <p id="card-advice" class="card-advice"></p>
-                            </div>
-
-                            <!-- (ĐÃ BỊ ẨN) Không có dữ liệu 'summary' từ GSheet của bạn -->
-                            <div id="card-summary" class="card-summary" style="display: none;">
-                                <p></p>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="zodiac-card-analysis">
-                        
-                        <div id="card-love" class="analysis-item">
-                            <h4 class="analysis-title">
-                                <i class="fa-solid fa-heart analysis-icon" style="color: #ff8a8a;"></i>
-                                Tình cảm
-                            </h4>
-                            <p></p>
-                        </div>
-                        <div id="card-work" class="analysis-item">
-                            <h4 class="analysis-title">
-                                <i class="fa-solid fa-briefcase analysis-icon" style="color: #82aaff;"></i>
-                                Công việc
-                            </h4>
-                            <p></p>
-                        </div>
-                        <div id="card-finance" class="analysis-item">
-                            <h4 class="analysis-title">
-                                <i class="fa-solid fa-money-bill-wave analysis-icon" style="color: #a5d6a7;"></i>
-                                Tài chính
-                            </h4>
-                            <p></p>
-                        </div>
-                    </div>
-
-                    <div id="card-lucky-details" class="card-lucky-details">
-                        <h4 class="analysis-title">
-                            <i class="fa-solid fa-wand-magic-sparkles analysis-icon" style="color: #ffd700;"></i>
-                            Chi Tiết May Mắn
-                        </h4>
-                        <div class="lucky-items-list">
-                            <p><strong>Màu sắc may mắn:</strong> <span id="lucky-color"></span></p>
-                            <p><strong>Đồ vật may mắn:</strong> <span id="lucky-item"></span></p>
-                            <p><strong>Địa điểm may mắn:</strong> <span id="lucky-place"></span></p>
-                        </div>
-                    </div>
-
-                    <div id="card-advice-box" class="zodiac-advice-box">
-                        <h4 class="analysis-title">
-                            <i class="fa-solid fa-lightbulb analysis-icon" style="color: #fdd835;"></i>
-                            Lời khuyên cho hôm nay
-                        </h4>
-                        <div id="card-advice-content" class="advice-content-simple">
-                            <p></p>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--card-back-border);">
-                        <button class="zodiac-share-btn">
-                            <i class="fa-solid fa-share-alt"></i>
-                            Chia sẻ
-                        </button>
-                    </div>
-                    
-                </div>
-
-                <div class="zodiac-detailed-reading-box">
-                    <h3 class="subscribe-title">Xem chi tiết về ngày hôm nay của bạn thế nào?</h3>
-                    <button class="zodiac-action-btn">
-                        <i class="fa-solid fa-layer-group"></i>
-                        Yêu cầu trải bài chi tiết
-                    </button>
-                    </div>
-
-                <div class="zodiac-subscribe-box">
-                    <h3 class="subscribe-title">Nhận Tarot hàng ngày</h3>
-                    <form class="subscribe-form">
-                        <div>
-                            <label for="email" class="subscribe-label">Email của bạn</label>
-                            <input type="email" id="email" placeholder="you@example.com" class="subscribe-input">
-                        </div>
-                        <button type="submit" class="subscribe-btn">Subscribe</button>
-                    </form>
-                    </div>
-            </div>
-        </div>
-    </main>
     
-    <div id="history-modal-backdrop" class="modal-backdrop"></div>
-    <div id="history-modal-content" class="modal-content">
-        <div class="modal-header">
-            <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
-            <h2>Lịch sử trải bài</h2>
-        </div>
-        <div id="history-list-wrapper" class="modal-scroll-wrapper">
-            <div id="history-list">
-                </div>
-        </div>
-    </div>
     
-    <footer class="main-footer">
-            <div class="footer-container">
-                <div class="footer-column brand">
-                    <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
-                    <p class="footer-description">
-                        Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
-                    </p>
-                    <div class="footer-social-links">
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <i class="fa-brands fa-facebook"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="footer-column links">
-                    <h3 class="footer-title">Chính sách</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <a href="index.html#about">Giới thiệu</a>
-                        </li>
-                        <li>
-                            <a href="index.html#contact">Liên hệ</a>
-                        </li>
-                        <li>
-                            <a href="#">Chính sách bảo mật</a>
-                        </li>
-                        <li>
-                            <a href="#">Miễn trừ trách nhiệm</a>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column contact">
-                    <h3 class="footer-title">Thông tin liên hệ</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-phone"></i>
-                            <a href="tel:0352677543">0352 677 543</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:bebluetotrue@gmail.com">bebluetotrue@gmail.com</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-globe"></i>
-                            <a href="https://phogotarot.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-copyright">
-                &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
-            </div>
-        </footer>
-
-    <!-- Giả sử common.js tồn tại ở thư mục gốc -->
-    <script src="/common.js" defer></script>
     
     <script>
         /* ============================================
@@ -1273,5 +1148,4 @@
             }
         });
     </script>
-</body>
-</html>
+</BaseLayout>

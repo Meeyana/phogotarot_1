@@ -1,0 +1,216 @@
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Chính Sách Quyền Riêng Tư | Phở Gõ Tarot";
+const pageDesc = "Tìm hiểu cách Phở Gõ Tarot thu thập, sử dụng và bảo vệ thông tin cá nhân của bạn khi bạn sử dụng dịch vụ xem Tarot online.";
+const pageUrl = new URL('/privacy-policy', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <main id="privacy-policy-content">
+        <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
+            <div class="container text-content-container">
+                
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                    Chính Sách Quyền Riêng Tư
+                </h2>
+
+                <p class="section-text"><em>Cập nhật lần cuối: 15/11/2025</em></p>
+
+                <!-- MỤC LỤC -->
+                <div class="toc-box">
+                    <h3 class="toc-title">Mục lục</h3>
+                    <ul class="toc-list">
+                        <li><a href="#muc-1">1. Giới thiệu</a></li>
+                        <li><a href="#muc-2">2. Thông tin chúng tôi thu thập</a></li>
+                        <li><a href="#muc-3">3. Chúng tôi sử dụng thông tin của bạn như thế nào</a></li>
+                        <li><a href="#muc-4">4. Chia sẻ thông tin</a></li>
+                        <li><a href="#muc-5">5. Cookies và Công nghệ theo dõi</a></li>
+                        <li><a href="#muc-6">6. Bảo mật dữ liệu</a></li>
+                        <li><a href="#muc-7">7. Quyền của bạn</a></li>
+                        <li><a href="#muc-8">8. Quyền riêng tư của trẻ em</a></li>
+                        <li><a href="#muc-9">9. Thay đổi chính sách</a></li>
+                        <li><a href="#muc-10">10. Liên hệ với chúng tôi</a></li>
+                    </ul>
+                </div>
+
+                <!-- NỘI DUNG CHÍNH SÁCH -->
+                
+                <h3 class="section-subtitle" id="muc-1">1. Giới thiệu</h3>
+                <p class="section-text">Chào mừng bạn đến với Phở Gõ Tarot ("chúng tôi"). Chúng tôi cam kết bảo vệ quyền riêng tư của khách truy cập ("bạn"). Chính sách Quyền riêng tư này giải thích cách chúng tôi thu thập, sử dụng, tiết lộ và bảo vệ thông tin của bạn khi bạn truy cập trang web của chúng tôi, bao gồm mọi dịch vụ trải bài Tarot tự động.</p>
+
+                <h3 class="section-subtitle" id="muc-2">2. Thông tin chúng tôi thu thập</h3>
+                <p class="section-text">Chúng tôi có thể thu thập thông tin về bạn theo nhiều cách khác nhau:</p>
+                <ul class="section-list">
+                    <li><strong>Thông tin bạn cung cấp:</strong> Chúng tôi thu thập thông tin cá nhân mà bạn tự nguyện cung cấp cho chúng tôi, chẳng hạn như tên và địa chỉ email khi bạn đăng ký nhận bản tin hoặc liên hệ với chúng tôi.</li>
+                    <li><strong>Thông tin thu thập tự động:</strong> Khi bạn truy cập trang web, chúng tôi có thể tự động thu thập một số thông tin nhất định, bao gồm địa chỉ IP, loại trình duyệt, hệ điều hành, thời gian truy cập và các trang bạn đã xem. Thông tin này chủ yếu cần thiết để duy trì tính bảo mật và hoạt động của trang web, cũng như cho mục đích phân tích nội bộ.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-3">3. Chúng tôi sử dụng thông tin của bạn như thế nào</h3>
+                <p class="section-text">Việc có thông tin chính xác của bạn cho phép chúng tôi cung cấp cho bạn trải nghiệm mượt mà, hiệu quả và tùy chỉnh. Cụ thể, chúng tôi có thể sử dụng thông tin thu thập được về bạn để:</p>
+                <ul class="section-list">
+                    <li>Cung cấp và vận hành các dịch vụ trên trang web (ví dụ: trải bài Zodiac Tarot hàng ngày).</li>
+                    <li>Gửi cho bạn bản tin qua email (nếu bạn đã đăng ký) và các thông tin quảng bá khác.</li>
+                    <li>Phân tích và theo dõi việc sử dụng trang web để cải thiện trải nghiệm của bạn.</li>
+                    <li>Ngăn chặn các hoạt động gian lận, giám sát chống lại hành vi trộm cắp và bảo vệ khỏi các hoạt động tội phạm.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-4">4. Chia sẻ thông tin</h3>
+                <p class="section-text">Chúng tôi không bán, trao đổi hoặc chuyển giao thông tin nhận dạng cá nhân của bạn cho bên ngoài. Điều này không bao gồm các bên thứ ba đáng tin cậy giúp chúng tôi vận hành trang web, tiến hành kinh doanh hoặc phục vụ bạn, miễn là các bên đó đồng ý giữ bí mật thông tin này.</p>
+                <p class="section-text">Chúng tôi có thể chia sẻ thông tin với các nhà cung cấp dịch vụ bên thứ ba, chẳng hạn như Google Analytics, để phân tích việc sử dụng trang web. Chúng tôi cũng có thể tiết lộ thông tin của bạn khi được yêu cầu bởi pháp luật.</p>
+
+                <h3 class="section-subtitle" id="muc-5">5. Cookies và Công nghệ theo dõi</h3>
+                <p class="section-text">Chúng tôi có thể sử dụng cookie, đèn hiệu web và các công nghệ theo dõi khác trên trang web để giúp tùy chỉnh trang web và cải thiện trải nghiệm của bạn. Khi bạn truy cập trang web, thông tin cá nhân của bạn không được thu thập thông qua việc sử dụng công nghệ theo dõi. Hầu hết các trình duyệt được đặt để chấp nhận cookie theo mặc định. Bạn có thể xóa hoặc từ chối cookie, nhưng hãy lưu ý rằng hành động đó có thể ảnh hưởng đến tính khả dụng và chức năng của trang web.</p>
+
+                <h3 class="section-subtitle" id="muc-6">6. Bảo mật dữ liệu</h3>
+                <p class="section-text">Chúng tôi sử dụng các biện pháp bảo mật hành chính, kỹ thuật và vật lý hợp lý để giúp bảo vệ thông tin cá nhân của bạn. Mặc dù chúng tôi đã thực hiện các bước hợp lý để bảo mật thông tin cá nhân bạn cung cấp cho chúng tôi, xin lưu ý rằng không có biện pháp bảo mật nào là hoàn hảo hoặc bất khả xâm phạm, và không có phương thức truyền dữ liệu nào qua Internet có thể đảm bảo chống lại mọi sự can thiệp hoặc lạm dụng khác.</p>
+
+                <h3 class="section-subtitle" id="muc-7">7. Quyền của bạn</h3>
+                <p class="section-text">Tùy thuộc vào khu vực của bạn, bạn có thể có các quyền sau liên quan đến thông tin cá nhân của mình:</p>
+                <ul class="section-list">
+                    <li><strong>Quyền truy cập:</strong> Yêu cầu quyền truy cập vào dữ liệu cá nhân mà chúng tôi lưu giữ về bạn.</li>
+                    <li><strong>Quyền đính chính:</strong> Yêu cầu chúng tôi sửa đổi hoặc cập nhật thông tin cá nhân của bạn nếu thông tin đó không chính xác hoặc không đầy đủ.</li>
+                    <li><strong>Quyền xóa bỏ:</strong> Yêu cầu chúng tôi xóa thông tin cá nhân của bạn.</li>
+                    <li><strong>Quyền hủy đăng ký:</strong> Bạn có thể hủy đăng ký nhận email bản tin từ chúng tôi bất kỳ lúc nào bằng cách nhấp vào liên kết "hủy đăng ký" ở cuối mỗi email.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-8">8. Quyền riêng tư của trẻ em</h3>
+                <p class="section-text">Như đã nêu trong Disclaimer, trang web này không dành cho người dưới 18 tuổi. Chúng tôi không cố ý thu thập thông tin nhận dạng cá nhân từ trẻ em dưới 18 tuổi. Nếu chúng tôi biết rằng chúng tôi đã vô tình thu thập thông tin từ một người dưới 18 tuổi, chúng tôi sẽ ngay lập tức xóa thông tin đó khỏi hồ sơ của mình.</p>
+
+                <h3 class="section-subtitle" id="muc-9">9. Thay đổi chính sách</h3>
+                <p class="section-text">Chúng tôi có thể cập nhật Chính sách Quyền riêng tư này theo thời gian. Phiên bản cập nhật sẽ được chỉ định bằng ngày "Cập nhật lần cuối" và phiên bản cập nhật sẽ có hiệu lực ngay khi được đăng tải. Chúng tôi khuyến khích bạn xem xét Chính sách Quyền riêng tư này thường xuyên để được thông báo về cách chúng tôi đang bảo vệ thông tin của bạn.</p>
+
+                <h3 class="section-subtitle" id="muc-10">10. Liên hệ với chúng tôi</h3>
+                <p class="section-text">Nếu bạn có câu hỏi hoặc nhận xét về Chính sách Quyền riêng tư này, vui lòng liên hệ với chúng tôi qua email: <strong>contact@phogotarot.com</strong> hoặc qua trang Liên hệ của chúng tôi.</p>
+
+            </div>
+        </section>
+    </main>
+    
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <style>
+        /* Lấy style từ disclaimer.astro */
+        .homepage-section { 
+            padding: 4rem 1rem; 
+            position: relative;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0;
+        }
+        
+        .section-title { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 3rem; 
+            margin-bottom: 3rem; 
+            text-align: center;
+        }
+
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            /* (MỚI) Thêm lề trên để anchor link không bị che */
+            scroll-margin-top: 5rem;
+        }
+        
+        .section-text { 
+            font-size: 1rem;
+            opacity: 0.9; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            line-height: 1.8;
+        }
+
+        .text-content-container {
+            max-width: 900px;
+            padding: 0 1rem;
+            text-align: left;
+        }
+
+        .section-list {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .section-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        /* (MỚI) Style cho Mục Lục (TOC) */
+        .toc-box {
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+        .toc-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-back-border);
+            padding-bottom: 1rem;
+        }
+        .toc-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+            columns: 2; /* Hiển thị 2 cột trên desktop */
+        }
+        .toc-list li {
+            margin-bottom: 1rem;
+        }
+        .toc-list a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .toc-list a:hover {
+            color: var(--title-color);
+            opacity: 1;
+        }
+
+        /* Responsive cho TOC trên mobile */
+        @media (max-width: 600px) {
+            .toc-list {
+                columns: 1; /* 1 cột trên mobile */
+            }
+            .section-title {
+                font-size: 2.5rem; /* Giảm cỡ chữ tiêu đề trên mobile */
+            }
+        }
+    </style>
+</BaseLayout>

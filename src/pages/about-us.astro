@@ -1,0 +1,115 @@
+---
+// 1. IMPORT (Chỉ cần BaseLayout)
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 2. (SỬA LẠI) TẠO TOÀN BỘ JSON-LD TRONG FRONTMATTER
+// Định nghĩa các biến meta cho trang này
+const pageTitle = "Về Chúng Tôi | Phở Gõ Tarot";
+const pageDesc = "Tìm hiểu về Phở Gõ Tarot, quan điểm của chúng tôi về Tarot và lý do bạn nên trải nghiệm Tarot online miễn phí mộc mạc tại đây.";
+const pageUrl = new URL('/about-us', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage", // Loại schema cụ thể cho trang "Về chúng tôi"
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/" // Fallback
+  }
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <main id="about-us-content">
+        <section class="homepage-section" style="padding-top: 6rem; min-height: 80vh;">
+            <div class="container text-content-container">
+                
+                <h2 class="section-title">Về chúng tôi</h2>
+                <p class="section-text">Chào mừng bạn đến với Phở Gõ Tarot, không gian dành riêng cho những ai tìm kiếm sự khai sáng qua lăng kính Tarot huyền bí. Chúng tôi mang đến trải nghiệm Tarot online miễn phí mộc mạc, như một tô phở gõ vỗ về tâm hồn, giúp bạn giải đáp những khúc mắc trong tình cảm, công việc và cuộc sống. Hãy khám phá xem vũ trụ đang "gõ cửa" muốn nhắn nhủ điều gì với bạn và để Phở Gõ Tarot giải mã những thông điệp ấy.</p>
+
+                <h3 class="section-subtitle">Tarot là gì? Bộ Bài Tarot Chúng Tôi Sử Dụng: Rider-Waite</h3>
+                <p class="section-text">Mặc dù sẽ tùy từng bộ bài mà Tarot có số lượng lá khác nhau, Phở Gõ Tarot tin tưởng và sử dụng bộ bài Rider-Waite tiêu chuẩn. Bộ bài này gồm 78 lá, được chia thành hai phần chính:</p>
+                
+                <ul class="section-list">
+                    <li><strong>Bộ Ẩn Chính (Major Arcana):</strong> Gồm 22 lá, đại diện cho các bài học lớn và các sự kiện mang tính bước ngoặt trong cuộc đời.</li>
+                    <li><strong>Bộ Ẩn Phụ (Minor Arcana):</strong> Gồm 56 lá, phản ánh những khía cạnh, sự kiện và cảm xúc trong cuộc sống hàng ngày.</li>
+                </ul>
+
+                <h3 class="section-subtitle">Quan Điểm Của Phở Gõ Tarot Về Tarot</h3>
+                <p class="section-text">Đối với chúng tôi, Tarot là một ngôn ngữ biểu tượng sâu sắc, một công cụ mạnh mẽ để thấu hiểu nội tâm và thế giới xung quanh. Nó không phải là một chiếc chìa khóa vạn năng có thể giải quyết mọi vấn đề ngay lập tức. Thay vào đó, Tarot là một người bạn đồng hành thông thái, giúp bạn soi chiếu và tự mình tìm ra câu trả lời vốn đã có sẵn bên trong bạn.</p>
+
+                <h3 class="section-subtitle">Tại Sao Chọn Trải Bài Tarot Online tại Phở Gõ Tarot?</h3>
+                <p class="section-text">Trải nghiệm dịch vụ bói bài Tarot tại Phở Gõ Tarot không chỉ nhanh chóng và tiện lợi, mà còn mang đến cảm giác gần gũi và ấm áp, như một tô phở gõ vỗ về tâm hồn. Nền tảng của chúng tôi cung cấp các trải bài cá nhân hóa, giúp bạn có những giải đáp cho mọi khía cạnh trong đời sống.</p>
+                <p class="section-text">Đặc biệt, Phở Gõ Tarot hỗ trợ trải bài hoàn toàn miễn phí, giúp bạn gỡ rối mọi thắc mắc chỉ trong vài phút ngay tại nhà. Nếu bạn đang tìm kiếm một nơi đáng tin cậy để nhận những thông điệp chân thực, hãy để chúng tôi đồng hành cùng bạn.</p>
+
+            </div>
+        </section>
+    </main>
+    
+    <!-- Thêm JSON-LD schema vào <head> -->
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <style>
+        /* Mượn các style cơ bản từ blog.astro */
+        .homepage-section { 
+            padding: 4rem 1rem; 
+            position: relative;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0;
+        }
+        
+        .section-title { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 3rem; 
+            margin-bottom: 3rem; 
+        }
+
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.75rem; /* To hơn 1 chút cho tiêu đề phụ */
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .section-text { 
+            font-size: 1rem; /* Tăng cỡ chữ 1 chút cho dễ đọc */
+            opacity: 0.9; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            line-height: 1.8; /* Giãn dòng */
+        }
+
+        /* (MỚI) Container giới hạn chiều rộng văn bản cho dễ đọc */
+        .text-content-container {
+            max-width: 900px; /* Giới hạn chiều rộng của khối văn bản */
+            padding: 0 1rem; /* Thêm padding cho mobile */
+            text-align: left; /* Căn lề trái cho văn bản */
+        }
+
+        /* (MỚI) Style cho danh sách */
+        .section-list {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem; /* Thụt đầu dòng cho list */
+        }
+        .section-list li {
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</BaseLayout>
