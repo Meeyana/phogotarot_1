@@ -1,5 +1,5 @@
 ---
-title: "Bạch Dương "Bốc Hỏa" Với Bài Tarot: Hé Lộ Bí Mật Hành Động & Đam Mê!"
+title: "Bạch Dương Bốc Hỏa Với Bài Tarot: Hé Lộ Bí Mật Hành Động & Đam Mê!"
 image: "/images/uploads/trai-bai-tarot-nguoi-cung-bach-duong.png"
 excerpt: "Khám phá sức mạnh thôi thúc hành động và làm chủ đam mê của người SĐ Song Ngư qua lăng kính Tarot. Bản đồ nội tâm cho người tiên phong."
 pubDate: 2025-11-15
