@@ -40,7 +40,9 @@ const schema = {
                         <a href="/tarot" class="btn-primary">Xem Tarot Ngay</a>
                     </div>
                     <div style="display:flex;">
-                        <img src="/wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel" style="max-width: 400px; margin: auto; border-radius: 50%;">
+                        <div class="spinning-wheel-container">
+                            <img src="/wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -362,6 +364,36 @@ const schema = {
             max-width: 1200px;
             margin-left: auto;
             margin-right: auto;
+        }
+
+        /* === (MỚI) CSS KHẮC PHỤC LỖI VÒNG XOAY === */
+        .spinning-wheel-container {
+            /* Lấy lại style từ inline của img cũ  */
+            max-width: 400px;
+            margin: auto;
+            
+            /* Đảm bảo wrapper luôn là hình vuông
+              (Responsive: width 100% của cột, nhưng không bao giờ rộng hơn 400px)
+            */
+            width: 100%; 
+            aspect-ratio: 1 / 1; /* Giữ tỷ lệ 1:1 (vuông) */
+
+            /* === Đây là 2 chìa khóa quan trọng: === */
+            
+            /* 1. Biến wrapper thành hình tròn */
+            border-radius: 50%; 
+            
+            /* 2. Cắt bỏ mọi thứ bị thừa ra ngoài (quan trọng nhất!) */
+            overflow: hidden;   
+        }
+
+        /* Ghi đè lại class .section-image [cite: 76]
+          khi nó nằm BÊN TRONG wrapper.
+          Chúng ta không muốn nó có border hay border-radius 12px nữa.
+        */
+        .spinning-wheel-container .section-image {
+            border-radius: 0;
+            border: none;
         }
         
         /* === (MỚI) CSS CHO HIỆU ỨNG XOAY === */
