@@ -118,7 +118,7 @@ const schema = {
                         1. Thay thế URL_GOOGLE_FORM bên dưới bằng link "action" của form bạn.
                            (Cách lấy: Mở Google Form -> Nút "Gửi" -> Tab "Liên kết" -> Lấy link)
                            NÓ PHẢI Ở ĐỊNH DẠNG ".../formResponse"
-                           VÍ DỤ: https://docs.google.com/forms/d/e/1FAIpQLS.../formResponse
+                           VÍ DỤ: https://docs.google.com/forms/d/e/1FAIpQLS.../    
                            
                         2. Thay thế các "entry.XXXXXX" trong thuộc tính 'name' của mỗi input
                            bằng "entry ID" tương ứng từ Google Form của bạn.
@@ -126,7 +126,7 @@ const schema = {
                            -> Tìm thuộc tính 'name' của input đó)
                         -->
                         <form 
-                            action="URL_GOOGLE_FORM" 
+                            action="https://docs.google.com/forms/d/e/1FAIpQLSfQtaTjRoXJQHW49oL0fOvOcckGvGwR53oghw5JTMsK78k33w/formResponse" 
                             method="POST" 
                             target="hidden_iframe"
                             id="contact-form"
@@ -134,38 +134,38 @@ const schema = {
                             <!-- Tên (Bắt buộc) -->
                             <div class="form-group">
                                 <label for="name" class="form-label">Tên của bạn <span class="required">*</span></label>
-                                <input type="text" id="name" name="entry.XXXXXX" class="form-input" required>
+                                <input type="text" id="name" name="entry.1759243586" class="form-input" required>
                             </div>
                             
                             <!-- Email (Bắt buộc) -->
                             <div class="form-group">
                                 <label for="email" class="form-label">Email <span class="required">*</span></label>
-                                <input type="email" id="email" name="entry.YYYYYY" class="form-input" required>
+                                <input type="email" id="email" name="entry.240015486" class="form-input" required>
                             </div>
                             
                             <!-- Năm sinh (Bắt buộc) -->
                             <div class="form-group">
                                 <label for="birth-year" class="form-label">Năm sinh <span class="required">*</span></label>
-                                <input type="number" id="birth-year" name="entry.ZZZZZZ" class="form-input" placeholder="YYYY" required min="1920" max="2007">
+                                <input type="number" id="birth-year" name="entry.1886627318" class="form-input" placeholder="YYYY" required min="1920" max="2007">
                                 <small class="form-hint">Chúng tôi cần xác nhận bạn trên 18 tuổi.</small>
                             </div>
 
                             <!-- Điện thoại (Tùy chọn) -->
                             <div class="form-group">
                                 <label for="phone" class="form-label">Điện thoại (Tùy chọn)</label>
-                                <input type="tel" id="phone" name="entry.AAAAAA" class="form-input">
+                                <input type="tel" id="phone" name="entry.1415567726" class="form-input">
                             </div>
 
                             <!-- Instagram (Tùy chọn) -->
                             <div class="form-group">
                                 <label for="instagram" class="form-label">Instagram (Tùy chọn)</label>
-                                <input type="text" id="instagram" name="entry.BBBBBB" class="form-input" placeholder="@username">
+                                <input type="text" id="instagram" name="entry.1804120934" class="form-input" placeholder="@username">
                             </div>
                             
                             <!-- Chủ đề (Tùy chọn) -->
                             <div class="form-group">
                                 <label for="question" class="form-label">Chủ đề hoặc câu hỏi muốn hỏi (Tùy chọn)</label>
-                                <textarea id="question" name="entry.CCCCCC" class="form-textarea" rows="5" placeholder="Bạn có thể mô tả ngắn gọn về vấn đề của mình..."></textarea>
+                                <textarea id="question" name="entry.171600570" class="form-textarea" rows="5" placeholder="Bạn có thể mô tả ngắn gọn về vấn đề của mình..."></textarea>
                             </div>
                             
                             <!-- Nút Gửi -->
@@ -212,10 +212,53 @@ const schema = {
             const successMessage = document.getElementById('form-success-message');
             const errorMessage = document.getElementById('form-error-message');
             const submitButton = document.getElementById('submit-button');
+            
+            // (MỚI) Lấy các trường input để xử lý
+            const phoneInput = document.getElementById('phone');
+            const instagramInput = document.getElementById('instagram');
+
             let formSubmitted = false;
 
+            // (MỚI) Tự động lọc ký tự cho SĐT
+            // Chỉ cho phép nhập số (0-9)
+            if (phoneInput) {
+                phoneInput.addEventListener('input', function(e) {
+                    // Xóa bất kỳ ký tự nào không phải là số
+                    e.target.value = e.target.value.replace(/[^\d]/g, '');
+                });
+            }
+
             if (form) {
-                form.addEventListener('submit', function() {
+                form.addEventListener('submit', function(event) {
+                    
+                    // Reset thông báo lỗi chung
+                    errorMessage.style.display = 'none';
+                    errorMessage.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+
+                    // (MỚI) Xử lý logic cho Instagram trước khi gửi
+                    // Lấy giá trị và xóa khoảng trắng thừa
+                    const instagramValue = instagramInput.value.trim();
+                    
+                    if (instagramValue.length > 0) {
+                        // Nếu người dùng nhập gì đó nhưng quên "@"
+                        if (!instagramValue.startsWith('@')) {
+                            // Tự động thêm "@" vào
+                            instagramInput.value = '@' + instagramValue;
+                        } 
+                        // Nếu người dùng chỉ nhập "@" hoặc "@ " (sau khi trim chỉ còn "@")
+                        else if (instagramValue.length === 1 && instagramValue === '@') {
+                            // Coi như không nhập, xóa đi
+                            instagramInput.value = '';
+                        }
+                    }
+                    
+                    // (LOGIC VALIDATION CŨ ĐÃ ĐƯỢC THAY BẰNG AUTO-FORMATTING Ở TRÊN)
+                    // Logic SĐT đã được xử lý bằng 'input' listener
+                    // Logic Instagram đã được xử lý bằng auto-format/auto-clear ở trên
+                    // Do đó không cần event.preventDefault() nữa, form sẽ luôn hợp lệ.
+
+                    // (BẮT ĐẦU LOGIC GỬI FORM GỐC)
+                    
                     // Vô hiệu hóa nút và hiển thị loading
                     submitButton.disabled = true;
                     submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
@@ -223,10 +266,9 @@ const schema = {
                     
                     // Reset trạng thái
                     successMessage.style.display = 'none';
-                    errorMessage.style.display = 'none';
 
-                    // Đặt một bộ đếm thời gian. Nếu iframe load thành công, nó sẽ hủy bộ đếm này
-                    // Nếu không, bộ đếm sẽ kích hoạt lỗi
+                    // Đặt một bộ đếm thời gian. Nếu iframe load thành công (thành công),
+                    // nó sẽ hủy bộ đếm này. Nếu không, bộ đếm sẽ kích hoạt lỗi.
                     const errorTimeout = setTimeout(showError, 8000); // 8 giây timeout
 
                     iframe.onload = function() {
@@ -246,7 +288,11 @@ const schema = {
             }
 
             function showError() {
-                errorMessage.style.display = 'block';
+                // (CẬP NHẬT) Chỉ hiển thị lỗi chung nếu chưa có lỗi validation nào
+                if (errorMessage.style.display !== 'block') {
+                    errorMessage.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại.';
+                    errorMessage.style.display = 'block';
+                }
                 resetButton();
                 formSubmitted = false;
             }
@@ -299,7 +345,7 @@ const schema = {
         }
         @media (min-width: 900px) {
             .contact-layout-grid {
-                grid-template-columns: 1fr 1.5fr; /* Cột form rộng hơn */
+                grid-template-columns: 1fr 1fr; /* Cột form rộng hơn */
             }
         }
         
