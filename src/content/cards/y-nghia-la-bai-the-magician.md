@@ -1,7 +1,9 @@
 ---
 title: "Ý nghĩa lá bài The Magician"
-image: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+image: "../../images/uploads/cards/1-The-Magician.jpg"
 excerpt: "The Magician là biểu tượng của sự biến hóa đầy quyền năng, nơi ý chí, trí tuệ được hòa quyện vào năng lượng sáng tạo không giới hạn. Khi lá bài này xuất hiện, đ..."
+index: 1
+group: "major"
 upright_keywords: ["Hiện thực hóa", "Kỹ năng", "Sáng tạo"]
 reversed_keywords: ["Thao túng", "Tiềm năng lãng phí", "Lừa dối"]
 ---
