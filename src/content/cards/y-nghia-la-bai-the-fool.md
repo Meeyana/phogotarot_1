@@ -1,6 +1,6 @@
 ---
 title: "Ý Nghĩa Lá Bài The Fool: Hành Trình Của Chàng Khờ (Xuôi & Ngược)"
-image: "https://upload.wikimedia.org/wikipedia/commons/d/de/RWS_Tarot_01_Magician.jpg"
+image: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg"
 excerpt: "The Fool là lá bài của khởi đầu, tự do và những bước nhảy đầy niềm tin. Ở chiều xuôi mang năng lượng lạc quan — ở chiều ngược cảnh báo sự liều lĩnh và bốc đồng."
 upright_keywords: ["Khởi đầu", "Ngây thơ", "Tự phát", "Niềm tin"]
 reversed_keywords: ["Liều lĩnh", "Bất cẩn", "Ngờ nghệch", "Sợ hãi"]
