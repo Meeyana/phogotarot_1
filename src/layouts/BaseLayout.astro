@@ -22,6 +22,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="/public/images/favicon.png">
 
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -74,7 +75,9 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
     <nav class="main-nav">
         <div class="nav-logo">
-            <a href="/" class="nav-link logo-link">PHỞ GÕ TAROT</a>
+            <a href="/" class="nav-link logo-link">
+                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image">
+            </a>
         </div>
         <div class="nav-links" id="nav-links">
             <a href="/" class="nav-link">Trang Chủ</a>
@@ -116,7 +119,9 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <footer class="main-footer">
             <div class="footer-container">
                 <div class="footer-column brand">
-                    <a href="index.html" class="footer-logo">Phở Gõ Tarot</a>
+                    <a href="/" class="footer-logo">
+                        <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image">
+                    </a>
                     <p class="footer-description">
                         Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
                     </p>

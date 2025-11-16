@@ -1,0 +1,369 @@
+---
+// 1. Import Layout
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// 2. (SỬA) Lấy từ collection 'cards'
+export async function getStaticPaths() {
+  const allCards = await getCollection('cards'); // Lấy từ 'cards'
+  return allCards.map(card => ({
+    params: { slug: card.slug },
+    props: { card }, // Truyền 'card'
+  }));
+}
+
+// 3. (SỬA) Nhận 'card' và lấy dữ liệu
+const { card } = Astro.props;
+const { Content } = await card.render();
+
+// Lấy các trường dữ liệu từ 'card'
+const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate } = card.data;
+
+// Xử lý ngày đăng (Giữ nguyên logic)
+const postDate = pubDate ? new Date(pubDate) : null;
+const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+}) : null;
+
+// 4. (SỬA) Cập nhật Schema
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": title,
+  "description": excerpt,
+  "image": new URL(image, Astro.site).href,
+  "author": { "@type": "Organization", "name": "Phở Gõ Tarot" },
+  "publisher": { "@type": "Organization", "name": "Phở Gõ Tarot", "logo": { "@type": "ImageObject", "url": "https://phogotarot.com/images/logo.png" }},
+  ...(postDate && { "datePublished": postDate.toISOString() })
+};
+
+// Lấy URL hiện tại để chia sẻ (Giữ nguyên logic)
+const currentUrl = Astro.url.href;
+const shareImage = new URL(image, Astro.site).href;
+---
+
+<BaseLayout
+  title={`${title} - Phở Gõ Tarot`}
+  description={excerpt}
+  ogImage={image}
+>
+  <main id="homepage-content">
+    <section class="homepage-section" style="padding-top: 4rem; min-height: 80vh;">
+      <div class="container">
+        
+        <nav class="breadcrumbs">
+          <a href="/">Trang chủ</a>
+          <span class="divider">&raquo;</span>
+          <a href="/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
+          <span class="current">{title}</span>
+        </nav>
+
+        <div class="card-detail-layout">
+          
+          <aside class="card-sidebar">
+            <img src={image} alt={title} class="card-main-image" />
+            
+            {upright_keywords && upright_keywords.length > 0 && (
+              <div class="keywords-box">
+                <h4>Từ khoá xuôi</h4>
+                <ul class="keywords-list">
+                  {upright_keywords.map(kw => <li>{kw}</li>)}
+                </ul>
+              </div>
+            )}
+
+            {reversed_keywords && reversed_keywords.length > 0 && (
+              <div class="keywords-box">
+                <h4>Từ khoá ngược</h4>
+                <ul class="keywords-list">
+                  {reversed_keywords.map(kw => <li>{kw}</li>)}
+                </ul>
+              </div>
+            )}
+          </aside>
+
+          <article class="post-main-content">
+            <h1 class="hero-title">{title}</h1>
+
+            {displayDate && (
+              <div class="post-meta">
+                <span>Ngày đăng: </span>
+                <time datetime={postDate.toISOString()}>{displayDate}</time>
+              </div>
+            )}
+
+            <div id="post-content">
+              <Content />
+            </div>
+
+            <div class="share-buttons">
+              <span>Chia sẻ:</span>
+              <a 
+                href={`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`} 
+                class="share-btn facebook" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Chia sẻ lên Facebook"
+              >
+                <i class="fa-brands fa-facebook-f"></i>
+              </a>
+              <a 
+                href={`https://pinterest.com/pin/create/button/?url=${currentUrl}&media=${shareImage}&description=${title}`}
+                class="share-btn pinterest" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                aria-label="Ghim lên Pinterest"
+              >
+                <i class="fa-brands fa-pinterest"></i>
+              </a>
+            </div>
+
+            <div class="cta-banner">
+              <div class="cta-content">
+                <h3>Bạn đang tìm kiếm câu trả lời?</h3>
+                <p>Hãy để những lá bài Tarot soi sáng con đường của bạn. Trải nghiệm một phiên đọc bài cá nhân hoá ngay hôm nay.</p>
+              </div>
+              <a href="/tarot" class="cta-button">Trải Bài Ngay</a>
+            </div>
+
+            <a href="/y-nghia-la-bai" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
+          </article>
+
+        </div> </div>
+    </section>
+  </main>
+    
+  <script 
+    type="application/ld+json" 
+    slot="head"
+    set:html={JSON.stringify(schema)}
+  />
+
+  <style>
+    /* --- Cài đặt chung & Layout (Giữ nguyên) --- */
+    .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
+    .container { 
+      max-width: 1200px; /* (SỬA) Tăng max-width cho layout 2 cột */
+      margin: auto; 
+      padding: 0 1rem; 
+    }
+    .btn-outline { 
+      display: inline-block; background: transparent; 
+      border: 1px solid var(--card-back-border); 
+      color: var(--title-color); padding: 0.75rem 1.5rem; 
+      border-radius: 8px; font-weight: 600; 
+      text-decoration: none; text-shadow: none; 
+    }
+
+    /* --- (MỚI) CSS Layout 2 cột --- */
+    .card-detail-layout {
+      display: grid;
+      grid-template-columns: 1fr; /* Mặc định 1 cột mobile */
+      gap: 3rem;
+    }
+    @media (min-width: 768px) {
+      .card-detail-layout {
+        /* Cột 1: 350px, Cột 2: phần còn lại */
+        grid-template-columns: 350px 1fr;
+      }
+    }
+
+    /* --- (MỚI) CSS Cột 1: Sidebar --- */
+    .card-sidebar {
+      width: 100%;
+    }
+    .card-main-image {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--card-back-border);
+    }
+    .keywords-box {
+      border: 1px solid var(--card-back-border);
+      background: var(--button-bg);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    .keywords-box h4 {
+      font-family: var(--font-title);
+      color: var(--title-color);
+      margin: 0 0 0.75rem 0;
+      font-size: 1.2rem;
+      border-bottom: 1px solid var(--card-back-border);
+      padding-bottom: 0.5rem;
+    }
+    .keywords-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .keywords-list li {
+      background: var(--card-back-border);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    /* --- CSS Cột 2: Nội dung chính --- */
+    .post-main-content {
+      width: 100%; 
+    }
+    .hero-title { 
+      font-family: var(--font-title); 
+      color: var(--title-color); 
+      font-size: 3rem; 
+      margin-bottom: 1rem; 
+      text-align: left; 
+      line-height: 1.2;
+      margin-top: 0; /* (MỚI) Reset margin-top */
+    }
+    
+    /* (XÓA) CSS .section-image (đã bỏ) */
+
+    /* --- Breadcrumbs (Giữ nguyên) --- */
+    .breadcrumbs {
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      text-shadow: none;
+    }
+    .breadcrumbs a {
+      color: var(--text-color);
+      text-decoration: none;
+    }
+    .breadcrumbs a:hover {
+      color: var(--title-color);
+      text-decoration: underline;
+    }
+    .breadcrumbs .divider {
+      margin: 0 0.5rem;
+    }
+    .breadcrumbs .current {
+      font-weight: 600;
+      color: var(--title-color);
+    }
+
+    /* --- Meta Ngày đăng (Giữ nguyên) --- */
+    .post-meta {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      margin-bottom: 1.5rem;
+      text-shadow: none;
+    }
+    .post-meta time {
+      font-weight: 600;
+      color: var(--title-color);
+    }
+
+    /* --- CSS Nội dung bài viết (Giữ nguyên) --- */
+    #post-content {
+      font-size: 1.1rem; line-height: 1.8; text-shadow: none;
+      text-align: left;
+    }
+    #post-content h2, #post-content h3 {
+      font-family: var(--font-title); color: var(--title-color);
+      margin-top: 2.5rem; margin-bottom: 1rem;
+    }
+    #post-content p { margin-bottom: 1.5rem; }
+    #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
+    
+    #post-content :global(img) {
+      display: block; 
+      width: 100%;
+      max-width: 600px; /* Giữ nguyên style ảnh trong markdown */
+      height: auto;
+      border-radius: 8px;
+      margin: 2rem auto; 
+      border: 1px solid var(--card-back-border);
+    }
+
+    /* --- Nút chia sẻ Icon (Giữ nguyên) --- */
+    .share-buttons {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      align-items: center;
+      margin: 3rem 0;
+      padding: 1.5rem 0;
+      border-top: 1px solid var(--card-back-border);
+      border-bottom: 1px solid var(--card-back-border);
+    }
+    .share-buttons span {
+      font-weight: 600; font-family: var(--font-title);
+      font-size: 1.1rem; color: var(--title-color);
+      margin-right: 0.5rem;
+    }
+    .share-btn {
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%; 
+      text-decoration: none; text-shadow: none;
+      color: #fff; transition: opacity 0.3s;
+    }
+    .share-btn:hover { opacity: 0.8; }
+    .share-btn.facebook { background-color: #1877F2; }
+    .share-btn.pinterest { background-color: #E60023; }
+
+    /* --- CTA Banner (Giữ nguyên) --- */
+    .cta-banner {
+      background-image: linear-gradient(90deg, rgba(20, 40, 80, 0.9) 0%, rgba(40, 60, 100, 0.7) 100%);
+      border: 1px solid var(--card-back-border);
+      border-radius: 12px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column; 
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+      text-align: center; 
+    }
+    .cta-content h3 {
+      font-family: var(--font-title); color: var(--title-color);
+      font-size: 1.75rem; margin: 0 0 0.75rem 0;
+    }
+    .cta-content p {
+      margin: 0; font-size: 1rem; opacity: 0.9;
+      text-shadow: none; max-width: 500px;
+    }
+    .cta-button {
+      background-color: var(--title-color); color: var(--bg-color);
+      text-decoration: none; font-weight: 700;
+      padding: 0.8rem 2rem; border-radius: 8px;
+      text-shadow: none; transition: background-color 0.3s;
+      flex-shrink: 0; 
+    }
+    .cta-button:hover { background-color: #b8d4ff; }
+    @media (min-width: 768px) {
+      .cta-banner {
+        flex-direction: row; text-align: left;
+      }
+      .cta-content { flex-grow: 1; }
+    }
+
+    /* (XÓA) CSS Bài viết liên quan */
+
+    /* --- Responsive cho Mobile (Giữ nguyên) --- */
+    @media (max-width: 900px) {
+      .hero-title { font-size: 2.5rem; }
+    }
+    
+    @media (max-width: 768px) {
+      /* (XÓA) .related-posts-grid */
+    }
+
+    @media (max-width: 600px) {
+      .homepage-section { padding: 4rem 0.5rem; }
+      .container { padding: 0 0.5rem; }
+      .hero-title { font-size: 2rem; }
+      #post-content { font-size: 18px; }
+      #post-content :global(img) { max-width: 100%; }
+    }
+  </style>
+</BaseLayout>

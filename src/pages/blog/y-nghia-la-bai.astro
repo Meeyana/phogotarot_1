@@ -1,0 +1,200 @@
+---
+// 1. IMPORT
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// 2. (SỬA LẠI) CHỈ LẤY DỮ LIỆU TỪ COLLECTION 'cards'
+const allCardPosts = await getCollection('cards');
+
+// 3. (SỬA LẠI) SẮP XẾP 78 LÁ BÀI
+// Chúng ta sẽ gọi nó là allPosts để HTML bên dưới không phải sửa
+// Sắp xếp theo slug (tên file, ví dụ: 00-the-fool, 01-the-magician...)
+const allPosts = allCardPosts.sort((a, b) => a.slug.localeCompare(b.slug));
+
+// 4. (SỬA LẠI) TẠO JSON-LD CHO TRANG 78 LÁ BÀI
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Ý nghĩa 78 lá bài Tarot | Phở Gõ Tarot",
+  "description": "Khám phá ý nghĩa chi tiết 78 lá bài Tarot, từ bộ Ẩn Chính đến Ẩn Phụ.",
+  "url": new URL('/y-nghia-la-bai', Astro.site).href,
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": allPosts.map((post, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "item": {
+        "@type": "Article",
+        "name": post.data.title,
+        "url": new URL(`/y-nghia-la-bai/${post.slug}`, Astro.site).href
+      }
+    }))
+  }
+};
+---
+<BaseLayout
+  title="Ý nghĩa 78 lá bài Tarot | Phở Gõ Tarot"
+  description="Khám phá ý nghĩa chi tiết 78 lá bài Tarot, từ bộ Ẩn Chính đến Ẩn Phụ."
+>
+  <main id="homepage-content">
+    <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+      <div class="container">
+        
+        <h2 class="section-title">Ý Nghĩa 78 Lá Bài Tarot</h2>
+        
+        <div class="grid-3">
+          
+          {allPosts.map(post => (
+            <div class="blog-card">
+              
+              <a href={`/y-nghia-la-bai/${post.slug}`} class="image-link-wrapper">
+                <div class="image-wrapper-4-3">
+                  <img src={post.data.image} alt={post.data.title} class="section-image" />
+                </div>
+              </a>
+              
+              <a href={`/y-nghia-la-bai/${post.slug}`} class="title-link">
+                <h3 class="section-subtitle">{post.data.title}</h3>
+              </a>
+              
+              <p class="section-text">{post.data.excerpt}</p>
+              
+              <a href={`/y-nghia-la-bai/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+    
+  <script 
+    type="application/ld+json" 
+    slot="head"
+    set:html={JSON.stringify(schema)}
+  />
+
+  <style>
+    /* Giảm padding 2 bên cho mobile */
+    .homepage-section { padding: 4rem 1rem; position: relative;}
+    .homepage-content { z-index: 1;}
+
+    /* Tăng max-width */
+    .container { 
+        max-width: 1200px; 
+        margin: auto; 
+        padding: 0;
+    }
+    
+    .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+
+    /* Grid layout [cite: 130] */
+    .grid-3 { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); 
+        gap: 1.5rem; 
+    }
+
+    /* CSS cho Card [cite: 131-133] */
+    .blog-card { 
+        border: 1px solid var(--card-back-border); 
+        background-color: var(--button-bg); 
+        padding: 1rem; 
+        border-radius: 12px; 
+        text-align: left; 
+        height: 100%; 
+        display: flex;
+        flex-direction: column;
+        position: relative; /* Giữ lại để đảm bảo cấu trúc */
+    }
+    
+    /* CSS Wrapper hình ảnh [cite: 134-135] */
+    .image-link-wrapper {
+        display: block;
+        margin-bottom: 1.5rem;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    /* CSS tỷ lệ 4:3 [cite: 136-139] */
+    .image-wrapper-4-3 {
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        flex-shrink: 0;
+    }
+
+    /* CSS hình ảnh [cite: 140-141] */
+    .section-image { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        border-radius: 0; 
+        margin-bottom: 0;
+        transition: transform 0.3s ease;
+    }
+
+    /* CSS Hover [cite: 142] */
+    .image-link-wrapper:hover .section-image {
+        transform: scale(1.05);
+    }
+    
+    /* CSS link tiêu đề [cite: 143] */
+    .title-link {
+        text-decoration: none!important;
+        color: inherit;
+    }
+    
+    /* CSS tiêu đề [cite: 144] */
+    .section-subtitle { 
+        font-family: var(--font-title); 
+        color: var(--title-color); 
+        font-size: 1.25rem; 
+        margin-bottom: 1rem;
+        margin-top: 0;
+    }
+    
+    /* CSS mô tả [cite: 145] */
+    .section-text { 
+        font-size: 1rem; 
+        opacity: 0.9; 
+        margin-bottom: 1.5rem; 
+        text-shadow: none; 
+        flex-grow: 1;
+    }
+    
+    /* CSS Nút [cite: 146-148] */
+    .btn-outline { 
+        display: inline-block; 
+        background: transparent; 
+        border: 1px solid var(--card-back-border); 
+        color: var(--title-color); 
+        padding: 0.75rem 1.5rem; 
+        border-radius: 8px; 
+        font-weight: 600; 
+        text-decoration: none; 
+        text-shadow: none;
+        align-self: flex-start;
+    }
+    .btn-outline:hover { background-color: var(--button-hover-bg); }
+
+    /* CSS Badge (Giữ lại phòng khi cần) [cite: 150-156] */
+    .category-badge {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      background-color: var(--title-color);
+      color: var(--bg-color);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      z-index: 2;
+      text-shadow: none;
+    }
+    .category-badge.card-badge {
+      background-color: #a67dff;
+    }
+    .category-badge.blog-badge {
+      background-color: #3f83f8;
+    }
+  </style>
+</BaseLayout>

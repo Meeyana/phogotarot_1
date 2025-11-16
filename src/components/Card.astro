@@ -1,0 +1,110 @@
+---
+export interface Props {
+  post: any;
+  url: string;
+  badge?: string; // (MỚI) Thêm prop cho "badge"
+}
+const { post, url, badge } = Astro.props;
+---
+
+<div class="blog-card">
+  
+  {badge && (
+    <span class="category-badge">{badge}</span>
+  )}
+
+  <a href={url} class="image-link-wrapper">
+    <div class="image-wrapper-4-3">
+      <img src={post.data.image} alt={post.data.title} class="section-image" />
+    </div>
+  </a>
+  <a href={url} class="title-link">
+    <h3 class="section-subtitle">{post.data.title}</h3>
+  </a>
+  <p class="section-text">{post.data.excerpt}</p>
+  <a href={url} class="btn-outline">Đọc tiếp &rarr;</a>
+</div>
+
+<style>
+  .blog-card { 
+    border: 1px solid var(--card-back-border); [cite: 95]
+    background-color: var(--button-bg); [cite: 95]
+    padding: 1rem; [cite: 95]
+    border-radius: 12px; [cite: 95]
+    text-align: left; [cite: 95]
+    height: 100%; [cite: 95]
+    display: flex; [cite: 96]
+    flex-direction: column; [cite: 97]
+    position: relative; /* Thêm để định vị badge */
+  }
+  .image-link-wrapper {
+    display: block; [cite: 98]
+    margin-bottom: 1.5rem; [cite: 98]
+    border-radius: 12px; [cite: 98]
+    overflow: hidden; [cite: 99]
+  }
+  .image-wrapper-4-3 {
+    width: 100%; [cite: 100]
+    aspect-ratio: 4 / 3; [cite: 100]
+    flex-shrink: 0; [cite: 103]
+  }
+  .section-image { 
+    width: 100%; [cite: 104]
+    height: 100%; [cite: 104]
+    object-fit: cover; [cite: 104]
+    border-radius: 0; [cite: 104]
+    margin-bottom: 0; [cite: 104]
+    transition: transform 0.3s ease; [cite: 105]
+  }
+  .image-link-wrapper:hover .section-image {
+    transform: scale(1.05); [cite: 106]
+  }
+  .title-link {
+    text-decoration: none!important; [cite: 107]
+    color: inherit; [cite: 107]
+  }
+  .section-subtitle { 
+    font-family: var(--font-title); [cite: 108]
+    color: var(--title-color); [cite: 108]
+    font-size: 1.25rem; [cite: 108]
+    margin-bottom: 1rem; [cite: 108]
+    margin-top: 0; [cite: 108]
+  }
+  .section-text { 
+    font-size: 1rem; [cite: 109]
+    opacity: 0.9; [cite: 109]
+    margin-bottom: 1.5rem; [cite: 109]
+    text-shadow: none; [cite: 109]
+    flex-grow: 1; [cite: 109]
+  }
+  .btn-outline { 
+    display: inline-block; [cite: 110]
+    background: transparent; [cite: 110]
+    border: 1px solid var(--card-back-border); [cite: 110]
+    color: var(--title-color); [cite: 110]
+    padding: 0.75rem 1.5rem; [cite: 110]
+    border-radius: 8px; [cite: 110]
+    font-weight: 600; [cite: 110]
+    text-decoration: none; [cite: 110]
+    text-shadow: none; [cite: 110]
+    align-self: flex-start; [cite: 111]
+  }
+  .btn-outline:hover { 
+    background-color: var(--button-hover-bg); [cite: 112]
+  }
+
+  /* CSS cho Badge (Lấy từ kien-thuc.astro) [cite: 114-120] */
+  .category-badge {
+    position: absolute; [cite: 114]
+    top: 1.5rem; [cite: 114]
+    left: 1.5rem; [cite: 115]
+    background-color: #a67dff; /* Màu tím mặc định [cite: 119] */
+    color: var(--bg-color); [cite: 117]
+    padding: 0.25rem 0.75rem; [cite: 117]
+    border-radius: 20px; [cite: 117]
+    font-size: 0.8rem; [cite: 117]
+    font-weight: 600; [cite: 118]
+    z-index: 2; [cite: 118]
+    text-shadow: none; [cite: 118]
+  }
+</style>

@@ -1,0 +1,222 @@
+---
+// 1. IMPORT (Giữ nguyên)
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// 2. LẤY DỮ LIỆU TỪ COLLECTION 'blog'
+const blogPosts = await getCollection('blog');
+// const cardPosts = await getCollection('cards'); // ĐÃ XÓA
+
+// 3. GẮN "LOẠI" VÀ TRỘN 2 DANH SÁCH
+// const allBlogPosts = ... // ĐÃ XÓA
+// const allCardPosts = ... // ĐÃ XÓA
+
+// 4. TRỘN VÀ SẮP XẾP (CẬP NHẬT)
+// Chỉ lấy, map và sắp xếp blogPosts
+const allPosts = blogPosts.map(post => ({
+  ...post,
+  type: 'blog', // Loại 'blog'
+  url: `/blog/${post.slug}` // Link đến layout blog
+})).sort((a, b) => {
+  const dateA = a.data.pubDate ? new Date(a.data.pubDate) : new Date(0);
+  const dateB = b.data.pubDate ? new Date(b.data.pubDate) : new Date(0);
+  return dateB.getTime() - dateA.getTime(); // Sắp xếp mới -> cũ
+});
+
+// 5. (SỬA LỖI) TẠO JSON-LD AN TOÀN
+// Tạo URL gốc một cách an toàn
+const siteUrl = Astro.site ?
+Astro.site.href : '/';
+// Sửa URL của trang này (từ /blog thành /kien-thuc)
+const pageUrl = new URL('/kien-thuc', siteUrl).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Blog", // Dùng "Blog" hoặc "CollectionPage"
+  "name": "Kiến Thức Tarot | Phở Gõ Tarot",
+  "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
+  "url": pageUrl, // URL đã sửa
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": allPosts.map((post, index) => {
+      // (MỚI) Tạo URL an toàn cho từng mục
+      const postUrl = new URL(post.url, siteUrl).href;
+
+      // (MỚI) Chỉ tạo URL ảnh nếu post.data.image tồn tại
+      const postImage = post.data.image
+                        ? new URL(post.data.image, siteUrl).href
+                        : null;
+
+      return {
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": "Article",
+          "name": post.data.title,
+          "url": postUrl,
+          // (MỚI) Chỉ thêm 'image' vào schema nếu nó không null
+          ...(postImage && { "image": postImage })
+        }
+      };
+    })
+  }
+};
+---
+<BaseLayout
+  title="Blog - Kiến Thức Tarot | Phở Gõ Tarot"
+  description="Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot."
+>
+  <main id="homepage-content">
+    <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+      <div class="container">
+        <h2 class="section-title">Kiến Thức Tarot</h2>
+
+        <div class="grid-3">
+
+          {allPosts.map(post => (
+            <div class="blog-card">
+
+              {/* === PHẦN BADGE ĐÃ ĐƯỢC XÓA === */}
+              {/* {post.type === 'card' && (...)} */}
+              {/* {post.type === 'blog' && (...)} */}
+              {/* === HẾT PHẦN XÓA === */}
+
+              <a href={post.url} class="image-link-wrapper">
+                <div class="image-wrapper-4-3">
+                   <img src={post.data.image} alt={post.data.title} class="section-image" />
+                </div>
+              </a>
+
+              <a href={post.url} class="title-link">
+                <h3 class="section-subtitle">{post.data.title}</h3>
+              </a>
+
+              <p class="section-text">{post.data.excerpt}</p>
+
+              <a href={post.url} class="btn-outline">Đọc tiếp &rarr;</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script
+    type="application/ld+json"
+    slot="head"
+    set:html={JSON.stringify(schema)}
+  />
+
+    <style>
+        /* (CHỈNH SỬA) Giảm padding 2 bên cho mobile (từ 2rem xuống 1rem) */
+        .homepage-section { padding: 4rem 1rem; position: relative;}
+        .homepage-content { z-index: 1;}
+
+        /* (CHỈNH SỬA) Tăng max-width để giảm margin 2 bên trên desktop (từ 1200px lên 1400px) */
+        /* (CHỈNH SỬA) Bỏ padding 2 bên (từ 0 1rem xuống 0) để dùng padding của .homepage-section */
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0; /* Đã bỏ padding: 0 1rem; */
+        }
+
+        .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+
+        /* (CHỈNH SỬA) Tăng kích thước cột tối thiểu để thẻ bài lớn hơn (từ 280px lên 380px) */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+            gap: 1.5rem;
+        }
+
+        .blog-card {
+            border: 1px solid var(--card-back-border);
+            background-color: var(--button-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: left;
+            height: 100%;
+            display: flex; /* (MỚI) Thêm flex để dễ quản lý */
+            flex-direction: column; /* (MỚI) Xếp các phần tử theo chiều dọc */
+            /* position: relative; */ /* ĐÃ XÓA - Không cần cho badge nữa */
+        }
+
+        /* (MỚI) Thêm wrapper cho link hình ảnh */
+        .image-link-wrapper {
+            display: block;
+            margin-bottom: 1.5rem;
+            border-radius: 12px; /* (MỚI) Di chuyển border-radius ra ngoài wrapper */
+            overflow: hidden; /* (MỚI) Đảm bảo hiệu ứng zoom không tràn */
+        }
+
+        /* (MỚI) Thêm wrapper để giữ tỷ lệ 4:3 */
+        .image-wrapper-4-3 {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            /* overflow: hidden; */ /* (CHỈNH SỬA) Bỏ overflow ở đây */
+            /* border-radius: 12px; */ /* (CHỈNH SỬA) Bỏ radius ở đây */
+            /* margin-bottom: 1.5rem; */ /* (CHỈNH SỬA) Bỏ margin ở đây */
+            flex-shrink: 0; /* Không co wrapper */
+        }
+
+        /* (CHỈNH SỬA) Bỏ height, width 100% và height 100% của wrapper */
+        /* Thêm height: 100% và object-fit: cover để lấp đầy khung 4:3 */
+        .section-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            margin-bottom: 0;
+            transition: transform 0.3s ease; /* (MỚI) Thêm transition cho hiệu ứng zoom */
+        }
+
+        /* (MỚI) Hiệu ứng zoom khi hover vào link hình ảnh */
+        .image-link-wrapper:hover .section-image {
+            transform: scale(1.05);
+        }
+
+        /* (MỚI) CSS cho link tiêu đề */
+        .title-link {
+            text-decoration: none!important;
+            color: inherit; /* Kế thừa màu từ .section-subtitle */
+        }
+
+        .section-subtitle {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            margin-top: 0; /* (MỚI) Reset margin-top cho h3 */
+        }
+
+        .section-text {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            text-shadow: none;
+            flex-grow: 1; /* (MỚI) Đẩy nút "Đọc tiếp" xuống dưới cùng */
+        }
+
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--card-back-border);
+            color: var(--title-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            text-shadow: none;
+            align-self: flex-start; /* (MỚI) Nút tự co lại theo nội dung */
+        }
+        .btn-outline:hover { background-color: var(--button-hover-bg); }
+
+        /* === PHẦN CSS CHO BADGE ĐÃ ĐƯỢC XÓA === */
+        /* .category-badge { ... } */
+        /* .category-badge.card-badge { ... } */
+        /* .category-badge.blog-badge { ... } */
+        /* === HẾT PHẦN XÓA === */
+
+    </style>
+</BaseLayout>

@@ -125,6 +125,10 @@
             color: var(--title-color);
             text-shadow: 0 0 20px var(--title-color);
         }
+        .nav-logo-image {
+            height: 50px; /* Điều chỉnh chiều cao logo tùy ý */
+            width: auto;
+        }
         .nav-link.logo-link {
             font-family: var(--font-title);
             font-size: 1.25rem;
@@ -1325,4 +1329,9 @@
     font-size: 0.9rem;
     text-shadow: none;
     text-align: center; /* Copyright căn giữa */
+}
+
+.footer-logo-image{
+    height: 50px;
+    width: auto;
 }
