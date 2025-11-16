@@ -3,23 +3,23 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. (SỬA) Lấy từ collection 'cards'
+// 2. Lấy từ collection 'cards'
 export async function getStaticPaths() {
-  const allCards = await getCollection('cards'); // Lấy từ 'cards'
+  const allCards = await getCollection('cards');
   return allCards.map(card => ({
     params: { slug: card.slug },
     props: { card }, // Truyền 'card'
   }));
 }
 
-// 3. (SỬA) Nhận 'card' và lấy dữ liệu
+// 3. Nhận 'card' và lấy dữ liệu
 const { card } = Astro.props;
 const { Content } = await card.render();
 
-// Lấy các trường dữ liệu từ 'card'
-const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate } = card.data;
+// Lấy các trường dữ liệu từ 'card' (ĐÃ SỬA: Thêm group, index)
+const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate, group, index } = card.data;
 
-// Xử lý ngày đăng (Giữ nguyên logic)
+// Xử lý ngày đăng
 const postDate = pubDate ? new Date(pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -27,7 +27,7 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 4. (SỬA) Cập nhật Schema
+// 4. Cập nhật Schema
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -39,9 +39,21 @@ const schema = {
   ...(postDate && { "datePublished": postDate.toISOString() })
 };
 
-// Lấy URL hiện tại để chia sẻ (Giữ nguyên logic)
+// Lấy URL hiện tại để chia sẻ
 const currentUrl = Astro.url.href;
 const shareImage = new URL(image, Astro.site).href;
+
+// 5. (MỚI) Lấy các lá bài liên quan (cùng group)
+const allCards = await getCollection('cards');
+const relatedCards = allCards
+  .filter(item => 
+    item.data.group === group && // Lọc các lá bài cùng 'group'
+    item.data.index !== index   // Loại bỏ chính lá bài hiện tại
+  )
+  .sort((a, b) => a.data.index - b.data.index); // Sắp xếp theo index
+
+// (MỚI) Tạo tên nhóm để hiển thị (viết hoa chữ cái đầu)
+const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 ---
 
 <BaseLayout
@@ -56,7 +68,7 @@ const shareImage = new URL(image, Astro.site).href;
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          <a href="/blog/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
+          <a href="/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
           <span class="current">{title}</span>
         </nav>
 
@@ -128,6 +140,26 @@ const shareImage = new URL(image, Astro.site).href;
               <a href="/tarot" class="cta-button">Trải Bài Ngay</a>
             </div>
 
+            {relatedCards.length > 0 && (
+              <div class="related-cards-section">
+                <h3>Các Lá Bài Cùng Nhóm {groupName}</h3>
+                <div class="related-cards-grid">
+                  {relatedCards.map(related => (
+                    <a href={`/y-nghia-la-bai/${related.slug}`} class="related-card-item">
+                      <img 
+                        src={related.data.image} 
+                        alt={related.data.title} 
+                        loading="lazy" 
+                        width="150" 
+                        height="255"
+                      />
+                      <span>{related.data.title.replace("Ý nghĩa lá bài ", "")}</span>
+                      
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
             <a href="/y-nghia-la-bai" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
           </article>
 
@@ -142,22 +174,22 @@ const shareImage = new URL(image, Astro.site).href;
   />
 
   <style>
-    /* --- Cài đặt chung & Layout (Giữ nguyên) --- */
+    /* --- Cài đặt chung & Layout --- */
     .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
     .container { 
-      max-width: 1200px; /* (SỬA) Tăng max-width cho layout 2 cột */
+      max-width: 1200px;
       margin: auto; 
-      padding: 0 1rem; 
+      padding: 0 1rem;
     }
     .btn-outline { 
       display: inline-block; background: transparent; 
-      border: 1px solid var(--card-back-border); 
+      border: 1px solid var(--card-back-border);
       color: var(--title-color); padding: 0.75rem 1.5rem; 
       border-radius: 8px; font-weight: 600; 
-      text-decoration: none; text-shadow: none; 
+      text-decoration: none; text-shadow: none;
     }
 
-    /* --- (MỚI) CSS Layout 2 cột --- */
+    /* --- CSS Layout 2 cột --- */
     .card-detail-layout {
       display: grid;
       grid-template-columns: 1fr; /* Mặc định 1 cột mobile */
@@ -165,12 +197,11 @@ const shareImage = new URL(image, Astro.site).href;
     }
     @media (min-width: 768px) {
       .card-detail-layout {
-        /* Cột 1: 350px, Cột 2: phần còn lại */
         grid-template-columns: 350px 1fr;
       }
     }
 
-    /* --- (MỚI) CSS Cột 1: Sidebar --- */
+    /* --- CSS Cột 1: Sidebar --- */
     .card-sidebar {
       width: 100%;
     }
@@ -215,21 +246,19 @@ const shareImage = new URL(image, Astro.site).href;
 
     /* --- CSS Cột 2: Nội dung chính --- */
     .post-main-content {
-      width: 100%; 
+      width: 100%;
     }
     .hero-title { 
       font-family: var(--font-title); 
       color: var(--title-color); 
       font-size: 3rem; 
-      margin-bottom: 1rem; 
+      margin-bottom: 1rem;
       text-align: left; 
       line-height: 1.2;
-      margin-top: 0; /* (MỚI) Reset margin-top */
+      margin-top: 0;
     }
     
-    /* (XÓA) CSS .section-image (đã bỏ) */
-
-    /* --- Breadcrumbs (Giữ nguyên) --- */
+    /* --- Breadcrumbs --- */
     .breadcrumbs {
       margin-bottom: 2rem;
       font-size: 0.9rem;
@@ -252,7 +281,7 @@ const shareImage = new URL(image, Astro.site).href;
       color: var(--title-color);
     }
 
-    /* --- Meta Ngày đăng (Giữ nguyên) --- */
+    /* --- Meta Ngày đăng --- */
     .post-meta {
       font-size: 0.9rem;
       opacity: 0.8;
@@ -264,13 +293,15 @@ const shareImage = new URL(image, Astro.site).href;
       color: var(--title-color);
     }
 
-    /* --- CSS Nội dung bài viết (Giữ nguyên) --- */
+    /* --- CSS Nội dung bài viết --- */
     #post-content {
-      font-size: 1.1rem; line-height: 1.8; text-shadow: none;
+      font-size: 1.1rem;
+      line-height: 1.8; text-shadow: none;
       text-align: left;
     }
     #post-content h2, #post-content h3 {
-      font-family: var(--font-title); color: var(--title-color);
+      font-family: var(--font-title);
+      color: var(--title-color);
       margin-top: 2.5rem; margin-bottom: 1rem;
     }
     #post-content p { margin-bottom: 1.5rem; }
@@ -279,16 +310,17 @@ const shareImage = new URL(image, Astro.site).href;
     #post-content :global(img) {
       display: block; 
       width: 100%;
-      max-width: 600px; /* Giữ nguyên style ảnh trong markdown */
+      max-width: 600px;
       height: auto;
       border-radius: 8px;
       margin: 2rem auto; 
       border: 1px solid var(--card-back-border);
     }
 
-    /* --- Nút chia sẻ Icon (Giữ nguyên) --- */
+    /* --- Nút chia sẻ Icon --- */
     .share-buttons {
-      display: flex; flex-wrap: wrap; gap: 1rem;
+      display: flex;
+      flex-wrap: wrap; gap: 1rem;
       align-items: center;
       margin: 3rem 0;
       padding: 1.5rem 0;
@@ -310,7 +342,7 @@ const shareImage = new URL(image, Astro.site).href;
     .share-btn.facebook { background-color: #1877F2; }
     .share-btn.pinterest { background-color: #E60023; }
 
-    /* --- CTA Banner (Giữ nguyên) --- */
+    /* --- CTA Banner --- */
     .cta-banner {
       background-image: linear-gradient(90deg, rgba(20, 40, 80, 0.9) 0%, rgba(40, 60, 100, 0.7) 100%);
       border: 1px solid var(--card-back-border);
@@ -326,36 +358,103 @@ const shareImage = new URL(image, Astro.site).href;
     }
     .cta-content h3 {
       font-family: var(--font-title); color: var(--title-color);
-      font-size: 1.75rem; margin: 0 0 0.75rem 0;
+      font-size: 1.75rem;
+      margin: 0 0 0.75rem 0;
     }
     .cta-content p {
-      margin: 0; font-size: 1rem; opacity: 0.9;
+      margin: 0;
+      font-size: 1rem; opacity: 0.9;
       text-shadow: none; max-width: 500px;
     }
     .cta-button {
-      background-color: var(--title-color); color: var(--bg-color);
+      background-color: var(--title-color);
+      color: var(--bg-color);
       text-decoration: none; font-weight: 700;
       padding: 0.8rem 2rem; border-radius: 8px;
       text-shadow: none; transition: background-color 0.3s;
-      flex-shrink: 0; 
+      flex-shrink: 0;
     }
     .cta-button:hover { background-color: #b8d4ff; }
     @media (min-width: 768px) {
       .cta-banner {
-        flex-direction: row; text-align: left;
+        flex-direction: row;
+        text-align: left;
       }
       .cta-content { flex-grow: 1; }
     }
 
-    /* (XÓA) CSS Bài viết liên quan */
+    /* --- (MỚI) CSS Bài Viết Liên Quan --- */
+    .related-cards-section {
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+      border-top: 1px solid var(--card-back-border);
+      padding-top: 2.5rem;
+      text-align: left;
+    }
+    .related-cards-section h3 {
+      font-family: var(--font-title);
+      color: var(--title-color);
+      font-size: 1.75rem;
+      margin: 0 0 1.5rem 0;
+    }
+    .related-cards-grid {
+      display: grid;
+      /* (MOBI) 2 cột */
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+    .related-card-item {
+      display: block;
+      text-decoration: none;
+      text-shadow: none;
+      border: 1px solid var(--card-back-border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--button-bg);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .related-card-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    .related-card-item img {
+      width: 100%;
+      height: auto;
+      /* Tỷ lệ khung hình lá bài để đồng bộ */
+      aspect-ratio: 1 / 1.7;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid var(--card-back-border);
+    }
+    .related-card-item span {
+      display: block;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-color);
+      /* Chống vỡ layout nếu tên quá dài */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-    /* --- Responsive cho Mobile (Giữ nguyên) --- */
+    /* (DESKTOP) 5 cột - theo yêu cầu */
+    @media (min-width: 992px) {
+      .related-cards-grid {
+        grid-template-columns: repeat(5, 1fr);
+      }
+    }
+    /* (TABLET) có thể 3-4 cột nếu muốn */
+    @media (min-width: 600px) and (max-width: 991px) {
+      .related-cards-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* --- Responsive cho Mobile --- */
     @media (max-width: 900px) {
       .hero-title { font-size: 2.5rem; }
-    }
-    
-    @media (max-width: 768px) {
-      /* (XÓA) .related-posts-grid */
     }
 
     @media (max-width: 600px) {
