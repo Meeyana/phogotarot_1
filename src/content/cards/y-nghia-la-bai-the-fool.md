@@ -1,5 +1,5 @@
 ---
-title: "Ý Nghĩa Lá Bài The Fool: Hành Trình Của Chàng Khờ (Xuôi & Ngược)"
+title: "Ý nghĩa lá bài The Fool"
 image: "../../images/uploads/cards/0-The-Fool.jpg"
 excerpt: "The Fool là lá bài của khởi đầu, tự do và những bước nhảy đầy niềm tin. Ở chiều xuôi mang năng lượng lạc quan — ở chiều ngược cảnh báo sự liều lĩnh và bốc đồng."
 index: 0
