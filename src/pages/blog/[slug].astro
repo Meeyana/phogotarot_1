@@ -3,21 +3,27 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. Code logic cũ (Giữ nguyên)
-export async function getStaticPaths() {
-  const allPosts = await getCollection('blog');
-  return allPosts.map(post => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
-}
-const { post } = Astro.props;
-const { Content } = await post.render();
+// 2. (ĐÃ XÓA) Bỏ getStaticPaths()
+// export async function getStaticPaths() { ... }
 
-// 3. (MỚI) LẤY TẤT CẢ BÀI VIẾT
+// 3. (MỚI) Lấy 'slug' từ URL của người dùng
+const { slug } = Astro.params;
+
+// 4. (MỚI) Lấy TẤT CẢ bài viết để tìm bài viết hiện tại
 const allPosts = await getCollection('blog');
 
-// (MỚI) Xử lý ngày đăng (Phần này đã an toàn)
+// 5. (MỚI) Tìm bài viết hiện tại dựa trên slug
+const post = allPosts.find(p => p.slug === slug);
+
+// 6. (MỚI) Xử lý 404 nếu không tìm thấy bài viết
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+// 7. (GIỮ NGUYÊN) Render và lấy dữ liệu
+const { Content } = await post.render();
+
+// 8. (GIỮ NGUYÊN) Xử lý ngày đăng
 const postDate = post.data.pubDate ? new Date(post.data.pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -25,12 +31,13 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// (MỚI) Lọc bài viết liên quan
+// 9. (GIỮ NGUYÊN) Lọc bài viết liên quan (Logic này giờ đã tối ưu)
 const relatedPosts = allPosts
   .filter(p => p.slug !== post.slug) // Lọc bài hiện tại
-  .slice(0, 3); // Lấy 3 bài (logic đơn giản)
+  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()) // Sắp xếp liên quan theo ngày
+  .slice(0, 3); // Lấy 3 bài
 
-// 4. (CẬP NHẬT) TẠO SCHEMA JSON-LD
+// 10. (GIỮ NGUYÊN) TẠO SCHEMA JSON-LD
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -49,14 +56,17 @@ const schema = {
       "url": "https://phogotarot.com/images/logo.png"
     }
   },
-  // Thêm ngày đăng nếu có
   ...(postDate && { "datePublished": postDate.toISOString() })
 };
 
-// (MỚI) Lấy URL hiện tại để chia sẻ
+// 11. (GIỮ NGUYÊN) Lấy URL hiện tại để chia sẻ
 const currentUrl = Astro.url.href;
 const shareImage = new URL(post.data.image, Astro.site).href;
 ---
+
+{/* ========================================================== */}
+{/* TOÀN BỘ PHẦN HTML VÀ CSS BÊN DƯỚI ĐƯỢC GIỮ NGUYÊN Y HỆT     */}
+{/* ========================================================== */}
 
 <BaseLayout
   title={`${post.data.title} - Phở Gõ Tarot`}
@@ -70,7 +80,8 @@ const shareImage = new URL(post.data.image, Astro.site).href;
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          <a href="/blog">Blog</a>
+          {/* (SỬA) Sửa link breadcrumb về trang bài viết */}
+          <a href="/bai-viet">Kiến Thức</a> 
           <span class="divider">&raquo;</span>
           <span class="current">{post.data.title}</span>
         </nav>
@@ -101,6 +112,7 @@ const shareImage = new URL(post.data.image, Astro.site).href;
               aria-label="Chia sẻ lên Facebook"
             >
               <i class="fa-brands fa-facebook-f"></i>
+            </a>
             <a 
               href={`https://pinterest.com/pin/create/button/?url=${currentUrl}&media=${shareImage}&description=${post.data.title}`}
               class="share-btn pinterest" 
@@ -135,7 +147,8 @@ const shareImage = new URL(post.data.image, Astro.site).href;
             </div>
           </div>
 
-          <a href="/blog" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách Blog</a>
+          {/* (SỬA) Sửa link nút quay lại */}
+          <a href="/bai-viet" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
         </article>
 
       </div>
@@ -151,42 +164,37 @@ const shareImage = new URL(post.data.image, Astro.site).href;
   <style>
     /* --- Cài đặt chung & Layout --- */
     .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
-    
     .container { 
-      max-width: 1000px; 
+      max-width: 1000px;
       margin: auto; 
       padding: 0 1rem; 
     }
-
     .post-main-content {
-      width: 100%; 
+      width: 100%;
     }
-
     .hero-title { 
       font-family: var(--font-title); 
       color: var(--title-color); 
       font-size: 3rem; 
-      margin-bottom: 1rem; 
+      margin-bottom: 1rem;
       text-align: left; 
       line-height: 1.2;
     }
-    
-    /* (SỬA) Ảnh chính: tăng max-height để rộng hơn */
     .section-image { 
-      width: 100%; 
+      width: 100%;
       height: auto; 
-      max-height: 600px; /* Tăng từ 550px lên 600px */
+      max-height: 600px;
       border-radius: 12px; 
-      object-fit: cover; 
+      object-fit: cover;
       margin-bottom: 2.5rem; 
     }
-    
     .btn-outline { 
-      display: inline-block; background: transparent; 
+      display: inline-block;
+      background: transparent; 
       border: 1px solid var(--card-back-border); 
       color: var(--title-color); padding: 0.75rem 1.5rem; 
       border-radius: 8px; font-weight: 600; 
-      text-decoration: none; text-shadow: none; 
+      text-decoration: none; text-shadow: none;
     }
 
     /* --- Breadcrumbs --- */
@@ -226,47 +234,44 @@ const shareImage = new URL(post.data.image, Astro.site).href;
 
     /* --- CSS Nội dung bài viết --- */
     #post-content {
-      font-size: 1.1rem; line-height: 1.8; text-shadow: none;
+      font-size: 1.1rem;
+      line-height: 1.8; text-shadow: none;
       text-align: left;
     }
     #post-content h2, #post-content h3 {
-      font-family: var(--font-title); color: var(--title-color);
+      font-family: var(--font-title);
+      color: var(--title-color);
       margin-top: 2.5rem; margin-bottom: 1rem;
     }
     #post-content p { margin-bottom: 1.5rem; }
     #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
     
-    /* (SỬA) Hình ảnh trong bài viết: giảm max-width đáng kể */
     #post-content :global(img) {
-      display: block; 
+      display: block;
       width: 100%;
-      max-width: 600px; /* Giảm từ 750px xuống 600px */
+      max-width: 600px;
       height: auto;
       border-radius: 8px;
       margin: 2rem auto; 
       border: 1px solid var(--card-back-border);
     }
-
     #post-content :global(a) {
-      color: #009eff; /* Màu link bạn yêu cầu */
+      color: #009eff;
       text-decoration: none;
       font-weight: 600;
       transition: color 0.3s, text-decoration 0.3s;
     }
-
     #post-content :global(a:hover) {
-      color: orange; /* Đổi sang màu tiêu đề khi hover */
-      text-decoration: underline; /* Bỏ gạch chân khi hover */
+      color: orange;
+      text-decoration: underline;
     }
-
     #post-content :global(.text-center) {
       text-align: center;
     }
 
     /* --- Nút chia sẻ Icon --- */
     .share-buttons {
-      display: flex;
-      flex-wrap: wrap;
+      display: flex; flex-wrap: wrap;
       gap: 1rem;
       align-items: center;
       margin: 3rem 0;
@@ -284,7 +289,7 @@ const shareImage = new URL(post.data.image, Astro.site).href;
     .share-btn {
       display: flex; 
       align-items: center; 
-      justify-content: center; 
+      justify-content: center;
       width: 40px; 
       height: 40px; 
       border-radius: 50%; 
@@ -333,7 +338,7 @@ const shareImage = new URL(post.data.image, Astro.site).href;
       border-radius: 8px;
       text-shadow: none;
       transition: background-color 0.3s;
-      flex-shrink: 0; 
+      flex-shrink: 0;
     }
     .cta-button:hover {
       background-color: #b8d4ff;
@@ -347,7 +352,6 @@ const shareImage = new URL(post.data.image, Astro.site).href;
         flex-grow: 1;
       }
     }
-
 
     /* --- Bài viết liên quan --- */
     .widget-title { 
@@ -375,7 +379,6 @@ const shareImage = new URL(post.data.image, Astro.site).href;
       overflow: hidden;
       transition: border-color 0.3s;
     }
-
     .related-card-img-wrapper {
       width: 100%;
       aspect-ratio: 16 / 10;
@@ -415,17 +418,14 @@ const shareImage = new URL(post.data.image, Astro.site).href;
         font-size: 2.5rem;
       }
     }
-    
     @media (max-width: 768px) { 
       .related-posts-grid {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-
     @media (max-width: 600px) {
       .homepage-section { padding: 4rem 0.5rem; }
       .container { padding: 0 0.5rem; }
-      
       .related-posts-grid {
         grid-template-columns: 1fr;
       }
@@ -435,7 +435,6 @@ const shareImage = new URL(post.data.image, Astro.site).href;
       #post-content {
         font-size: 18px;
       }
-      /* (MỚI) Giảm max-width ảnh trong bài viết */
       #post-content :global(img) {
         max-width: 100%;
       }

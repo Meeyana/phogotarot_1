@@ -1,13 +1,21 @@
 ---
-// 1. IMPORT
+// 1. IMPORT (Giữ nguyên)
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. LẤY DỮ LIỆU
-const allCardPosts = await getCollection('cards');
+// 2. LẤY DỮ LIỆU TỪ COLLECTION 'blog'
+const blogPosts = await getCollection('blog');
 
-// 3. SẮP XẾP 78 LÁ BÀI
-const allPosts = allCardPosts.sort((a, b) => a.data.index - b.data.index);
+// 3. TRỘN VÀ SẮP XẾP (Giữ nguyên)
+const allPosts = blogPosts.map(post => ({
+  ...post,
+  type: 'blog',
+  url: `/blog/${post.slug}`
+})).sort((a, b) => {
+  const dateA = a.data.pubDate ? new Date(a.data.pubDate) : new Date(0);
+  const dateB = b.data.pubDate ? new Date(b.data.pubDate) : new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
 
 // ==========================================================
 // 4. (MỚI) LOGIC PHÂN TRANG NÂNG CAO
@@ -21,16 +29,14 @@ const range = (start: number, end: number) => {
 
 // Hàm (helper) chính để tạo các nút phân trang
 const generatePagination = (currentPage: number, totalPages: number) => {
-  // Số lượng trang hiển thị tối đa (ví dụ: 1 ... 4 5 6 ... 10)
-  const totalVisiblePages = 7; 
+  const totalVisiblePages = 7;
   const DOTS = '...';
 
-  // 1. Nếu tổng số trang ít, hiển thị tất cả
   if (totalPages <= totalVisiblePages) {
     return range(1, totalPages);
   }
 
-  const siblings = 1; // Hiển thị 1 trang bên cạnh trang hiện tại
+  const siblings = 1;
   const leftSiblingIndex = Math.max(currentPage - siblings, 1);
   const rightSiblingIndex = Math.min(currentPage + siblings, totalPages);
 
@@ -40,32 +46,28 @@ const generatePagination = (currentPage: number, totalPages: number) => {
   const firstPageIndex = 1;
   const lastPageIndex = totalPages;
 
-  // 2. Trang hiện tại gần đầu
   if (!showLeftDots && showRightDots) {
     let leftItemCount = 3 + 2 * siblings;
     let leftRange = range(1, leftItemCount);
     return [...leftRange, DOTS, totalPages];
   }
   
-  // 3. Trang hiện tại gần cuối
   if (showLeftDots && !showRightDots) {
     let rightItemCount = 3 + 2 * siblings;
     let rightRange = range(totalPages - rightItemCount + 1, totalPages);
     return [firstPageIndex, DOTS, ...rightRange];
   }
   
-  // 4. Trang hiện tại ở giữa
   if (showLeftDots && showRightDots) {
     let middleRange = range(leftSiblingIndex, rightSiblingIndex);
     return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
   }
 
-  // Trường hợp mặc định (mặc dù ít khi xảy ra)
   return range(1, totalPages);
 };
 
 // ==========================================================
-// 5. ÁP DỤNG LOGIC
+// 5. (MỚI) ÁP DỤNG LOGIC
 // ==========================================================
 const pageSize = 12; // 12 bài viết mỗi trang
 const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
@@ -77,58 +79,68 @@ const postsForThisPage = allPosts.slice(
   currentPage * pageSize      // Vị trí kết thúc
 );
 
-// (MỚI) Tạo ra mảng các nút trang (ví dụ: [1, '...', 4, 5, 6, '...', 10])
+// Tạo ra mảng các nút trang
 const paginationItems = generatePagination(currentPage, totalPages);
 
-// 6. JSON-LD CHO TRANG (Giữ nguyên logic cũ)
+// 6. (CẬP NHẬT) TẠO JSON-LD AN TOÀN
+const siteUrl = Astro.site ? Astro.site.href : '/';
+const pageUrl = new URL(`/bai-viet?page=${currentPage}`, siteUrl).href;
+
 const schema = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage",
-  "name": `Ý nghĩa 78 lá bài Tarot (Trang ${currentPage}) | Phở Gõ Tarot`,
-  "description": "Khám phá ý nghĩa chi tiết 78 lá bài Tarot, từ bộ Ẩn Chính đến Ẩn Phụ.",
-  "url": new URL(`/y-nghia-la-bai?page=${currentPage}`, Astro.site).href,
+  "@type": "Blog",
+  "name": `Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`,
+  "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
+  "url": pageUrl,
   "mainEntity": {
     "@type": "ItemList",
-    "itemListElement": postsForThisPage.map((post, index) => ({
-      "@type": "ListItem",
-      "position": (currentPage - 1) * pageSize + index + 1,
-      "item": {
-        "@type": "Article",
-        "name": post.data.title,
-        "url": new URL(`/y-nghia-la-bai/${post.slug}`, Astro.site).href
-      }
-    }))
+    "itemListElement": postsForThisPage.map((post, index) => { // DÙNG postsForThisPage
+      const postUrl = new URL(post.url, siteUrl).href;
+      const postImage = post.data.image
+                        ? new URL(post.data.image, siteUrl).href
+                        : null;
+
+      return {
+        "@type": "ListItem",
+        "position": (currentPage - 1) * pageSize + index + 1, // Vị trí chính xác
+        "item": {
+          "@type": "Article",
+          "name": post.data.title,
+          "url": postUrl,
+          ...(postImage && { "image": postImage })
+        }
+      };
+    })
   }
 };
 ---
 <BaseLayout
-  title={`Ý nghĩa 78 lá bài Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
-  description="Khám phá ý nghĩa chi tiết 78 lá bài Tarot, từ bộ Ẩn Chính đến Ẩn Phụ."
+  title={`Blog - Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
+  description="Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot."
 >
   <main id="homepage-content">
     <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
       <div class="container">
-        
-        <h2 class="section-title">Ý Nghĩa 78 Lá Bài Tarot</h2>
-        
+        <h2 class="section-title">Bài Viết Tarot</h2>
+
         <div class="grid-3">
-          
-          {/* Vẫn render 12 bài như cũ */}
+
+          {/* (SỬA) Dùng postsForThisPage thay vì allPosts */}
           {postsForThisPage.map(post => (
             <div class="blog-card">
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="image-link-wrapper">
+              <a href={post.url} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
-                  <img src={post.data.image} alt={post.data.title} class="section-image" loading="lazy" />
+                   <img src={post.data.image} alt={post.data.title} class="section-image" loading="lazy" />
                 </div>
               </a>
-              
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="title-link">
-                <h3 class="section-subtitle">{post.data.title.replace("Ý nghĩa lá bài ", "")}</h3>
+
+              <a href={post.url} class="title-link">
+                <h3 class="section-subtitle">{post.data.title}</h3>
               </a>
-              
+
               <p class="section-text">{post.data.excerpt}</p>
-              
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+         
+              <a href={post.url} class="btn-outline">Đọc tiếp &rarr;</a>
             </div>
           ))}
         </div>
@@ -136,7 +148,7 @@ const schema = {
         <nav class="pagination-nav">
           
           <a 
-            href={`/blog/y-nghia-la-bai?page=${currentPage - 1}`} 
+            href={`/blog/bai-viet?page=${currentPage - 1}`} 
             class:list={["page-item", "prev", { "disabled": currentPage === 1 }]}
           >
             &larr;
@@ -153,14 +165,14 @@ const schema = {
             }
             // Là các trang khác
             return (
-              <a href={`/blog/y-nghia-la-bai?page=${item}`} class="page-item">
+              <a href={`/blog/bai-viet?page=${item}`} class="page-item">
                 {item}
               </a>
             );
           })}
 
           <a 
-            href={`/blog/y-nghia-la-bai?page=${currentPage + 1}`} 
+            href={`/blog/bai-viet?page=${currentPage + 1}`} 
             class:list={["page-item", "next", { "disabled": currentPage === totalPages }]}
           >
             &rarr;
@@ -170,32 +182,90 @@ const schema = {
       </div>
     </section>
   </main>
-    
-  <script 
-    type="application/ld+json" 
+
+  <script
+    type="application/ld+json"
     slot="head"
     set:html={JSON.stringify(schema)}
   />
 
   <style>
-    /* ... CSS cũ (từ .homepage-section đến .category-badge.blog-badge) ... */
-    .homepage-section { padding: 4rem 1rem; position: relative;}
-    .container { max-width: 1200px; margin: auto; padding: 0; }
-    .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 1.5rem; }
-    .blog-card { border: 1px solid var(--card-back-border); background-color: var(--button-bg); padding: 1rem; border-radius: 12px; text-align: left; height: 100%; display: flex; flex-direction: column; position: relative; }
-    .image-link-wrapper { display: block; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; }
-    .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; flex-shrink: 0; }
-    .section-image { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin-bottom: 0; transition: transform 0.3s ease; }
-    .image-link-wrapper:hover .section-image { transform: scale(1.05); }
-    .title-link { text-decoration: none!important; color: inherit; }
-    .section-subtitle { font-family: var(--font-title); color: var(--title-color); font-size: 1.25rem; margin-bottom: 1rem; margin-top: 0; }
-    .section-text { font-size: 1rem; opacity: 0.9; margin-bottom: 1.5rem; text-shadow: none; flex-grow: 1; }
-    .btn-outline { display: inline-block; background: transparent; border: 1px solid var(--card-back-border); color: var(--title-color); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-shadow: none; align-self: flex-start; }
-    .btn-outline:hover { background-color: var(--button-hover-bg); }
-    .category-badge { position: absolute; top: 1.5rem; left: 1.5rem; background-color: var(--title-color); color: var(--bg-color); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; z-index: 2; text-shadow: none; }
-    .category-badge.card-badge { background-color: #a67dff; }
-    .category-badge.blog-badge { background-color: #3f83f8; }
+      /* ... CSS cũ cho thẻ bài (giữ nguyên) ... */
+       .homepage-section { padding: 4rem 1rem; position: relative;}
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0;
+        }
+        .section-title { font-family: var(--font-title); color: var(--font-title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+            gap: 1.5rem;
+        }
+        .blog-card {
+            border: 1px solid var(--card-back-border);
+            background-color: var(--button-bg);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: left;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .image-link-wrapper {
+            display: block;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .image-wrapper-4-3 {
+            width: 100%;
+            aspect-ratio: 4 / 3;
+            flex-shrink: 0;
+        }
+        .section-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0;
+            margin-bottom: 0;
+            transition: transform 0.3s ease;
+        }
+        .image-link-wrapper:hover .section-image {
+            transform: scale(1.05);
+        }
+        .title-link {
+            text-decoration: none!important;
+            color: inherit;
+        }
+        .section-subtitle {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            margin-top: 0;
+        }
+        .section-text {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            text-shadow: none;
+            flex-grow: 1;
+        }
+        .btn-outline {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid var(--card-back-border);
+            color: var(--title-color);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            text-shadow: none;
+            align-self: flex-start;
+        }
+        .btn-outline:hover { background-color: var(--button-hover-bg); }
 
     /* --- (MỚI) CSS CHO PHÂN TRANG SỐ --- */
     .pagination-nav {

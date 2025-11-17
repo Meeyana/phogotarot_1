@@ -3,23 +3,31 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. Lấy từ collection 'cards'
-export async function getStaticPaths() {
-  const allCards = await getCollection('cards');
-  return allCards.map(card => ({
-    params: { slug: card.slug },
-    props: { card }, // Truyền 'card'
-  }));
+// 2. (ĐÃ XÓA) Bỏ getStaticPaths()
+// export async function getStaticPaths() { ... }
+
+// 3. (MỚI) Lấy 'slug' từ URL của người dùng
+const { slug } = Astro.params;
+
+// 4. (MỚI) Lấy TẤT CẢ lá bài để tìm lá bài hiện tại
+const allCards = await getCollection('cards');
+
+// 5. (MỚI) Tìm lá bài hiện tại dựa trên slug
+const card = allCards.find(c => c.slug === slug);
+
+// 6. (MỚI) Xử lý 404 nếu không tìm thấy lá bài (VÔ CÙNG QUAN TRỌNG)
+if (!card) {
+  // Nếu người dùng gõ URL sai, chuyển họ về trang 404
+  return Astro.redirect('/404');
+  // Hoặc: return new Response(null, { status: 404, statusText: 'Not Found' });
 }
 
-// 3. Nhận 'card' và lấy dữ liệu
-const { card } = Astro.props;
+// 7. (GIỮ NGUYÊN) Render và lấy dữ liệu
+// Vì đã có 'card', chúng ta không cần "Astro.props" nữa
 const { Content } = await card.render();
-
-// Lấy các trường dữ liệu từ 'card' (ĐÃ SỬA: Thêm group, index)
 const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate, group, index } = card.data;
 
-// Xử lý ngày đăng
+// 8. (GIỮ NGUYÊN) Xử lý ngày đăng
 const postDate = pubDate ? new Date(pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -27,7 +35,7 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 4. Cập nhật Schema
+// 9. (GIỮ NGUYÊN) Cập nhật Schema
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -39,12 +47,13 @@ const schema = {
   ...(postDate && { "datePublished": postDate.toISOString() })
 };
 
-// Lấy URL hiện tại để chia sẻ
+// 10. (GIỮ NGUYÊN) Lấy URL hiện tại để chia sẻ
 const currentUrl = Astro.url.href;
 const shareImage = new URL(image, Astro.site).href;
 
-// 5. (MỚI) Lấy các lá bài liên quan (cùng group)
-const allCards = await getCollection('cards');
+// 11. (TỐI ƯU HÓA) Lấy các lá bài liên quan
+// Chúng ta không cần gọi getCollection() LẦN NỮA
+// vì đã có 'allCards' ở bước 4
 const relatedCards = allCards
   .filter(item => 
     item.data.group === group && // Lọc các lá bài cùng 'group'
@@ -52,9 +61,13 @@ const relatedCards = allCards
   )
   .sort((a, b) => a.data.index - b.data.index); // Sắp xếp theo index
 
-// (MỚI) Tạo tên nhóm để hiển thị (viết hoa chữ cái đầu)
+// 12. (GIỮ NGUYÊN) Tạo tên nhóm
 const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 ---
+
+{/* ========================================================== */}
+{/* TOÀN BỘ PHẦN HTML VÀ CSS BÊN DƯỚI ĐƯỢC GIỮ NGUYÊN         */}
+{/* ========================================================== */}
 
 <BaseLayout
   title={`${title} - Phở Gõ Tarot`}
@@ -68,7 +81,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          <a href="/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
+          <a href="/blog/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
           <span class="current">{title}</span>
         </nav>
 
@@ -178,8 +191,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
     .container { 
       max-width: 1200px;
-      margin: auto; 
-      padding: 0 1rem;
+      margin: auto; padding: 0 1rem;
     }
     .btn-outline { 
       display: inline-block; background: transparent; 
@@ -232,8 +244,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       list-style: none;
       padding: 0;
       margin: 0;
-      display: flex;
-      flex-wrap: wrap;
+      display: flex; flex-wrap: wrap;
       gap: 0.5rem;
     }
     .keywords-list li {
@@ -304,7 +315,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       color: var(--title-color);
       margin-top: 2.5rem; margin-bottom: 1rem;
     }
-    #post-content p { margin-bottom: 1.5rem; }
+    #post-content p { margin-bottom:  1.5rem; }
     #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
     
     #post-content :global(img) {
@@ -319,8 +330,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 
     /* --- Nút chia sẻ Icon --- */
     .share-buttons {
-      display: flex;
-      flex-wrap: wrap; gap: 1rem;
+      display: flex; flex-wrap: wrap; gap: 1rem;
       align-items: center;
       margin: 3rem 0;
       padding: 1.5rem 0;
