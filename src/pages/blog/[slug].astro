@@ -247,6 +247,18 @@ const shareImage = new URL(post.data.image, Astro.site).href;
       border: 1px solid var(--card-back-border);
     }
 
+    #post-content :global(a) {
+      color: #009eff; /* Màu link bạn yêu cầu */
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s, text-decoration 0.3s;
+    }
+
+    #post-content :global(a:hover) {
+      color: orange; /* Đổi sang màu tiêu đề khi hover */
+      text-decoration: underline; /* Bỏ gạch chân khi hover */
+    }
+
     /* --- Nút chia sẻ Icon --- */
     .share-buttons {
       display: flex;
