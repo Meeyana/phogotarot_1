@@ -259,6 +259,10 @@ const shareImage = new URL(post.data.image, Astro.site).href;
       text-decoration: underline; /* Bỏ gạch chân khi hover */
     }
 
+    #post-content :global(.text-center) {
+      text-align: center;
+    }
+
     /* --- Nút chia sẻ Icon --- */
     .share-buttons {
       display: flex;

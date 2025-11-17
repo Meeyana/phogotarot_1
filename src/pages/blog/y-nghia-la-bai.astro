@@ -8,8 +8,8 @@ const allCardPosts = await getCollection('cards');
 
 // 3. (SỬA LẠI) SẮP XẾP 78 LÁ BÀI
 // Chúng ta sẽ gọi nó là allPosts để HTML bên dưới không phải sửa
-// Sắp xếp theo slug (tên file, ví dụ: 00-the-fool, 01-the-magician...)
-const allPosts = allCardPosts.sort((a, b) => a.slug.localeCompare(b.slug));
+// Sắp xếp theo trường 'index' (0-77) đã định nghĩa trong frontmatter
+const allPosts = allCardPosts.sort((a, b) => a.data.index - b.data.index);
 
 // 4. (SỬA LẠI) TẠO JSON-LD CHO TRANG 78 LÁ BÀI
 const schema = {
