@@ -6,6 +6,7 @@ image: /images/uploads/tarot-va-chiem-tinh-hoc-bi-an-nghin-nam-giua-cac-la-bai-v
 excerpt: Từ xa xưa, Tarot và Chiêm tinh (Astrology) đã có mối quan hệ mật thiết,
   rất nhiều bộ bài được xây dựng dựa trên hệ thống Chiêm tinh. Hãy cùng khám phá
   mối liên hệ kỳ diệu này nhé!
+isFeatured: true
 ---
 Bạn có bao giờ thắc mắc tại sao The Emperor trong Tarot lại đại diện cho Bạch Dương và tại sao lại có mối liên hệ chặt chẽ giữa Tarot và Chiêm tinh (Astrology)? 
 

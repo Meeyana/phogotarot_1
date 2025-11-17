@@ -3,11 +3,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 // (ĐÃ XÓA) Không import component Card nữa
 
-// --- 1. SECTION: KIẾN THỨC TAROT (Logic giữ nguyên) ---
-const allBlogPosts = (await getCollection('blog'))
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
-const featuredBlogPost = allBlogPosts[0];
-const otherBlogPosts = allBlogPosts.slice(1, 4);
+// --- 1. SECTION: KIẾN THỨC TAROT (CẬP NHẬT LOGIC) ---
+const allBlogPosts = await getCollection('blog');
+
+// Tìm bài viết được ghim (nếu có)
+let featuredBlogPost = allBlogPosts.find(post => post.data.isFeatured === true);
+
+// Sắp xếp TẤT CẢ bài viết theo ngày mới nhất (để làm dự phòng)
+const sortedBlogPosts = allBlogPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+// (MỚI) Nếu không có bài nào ghim, tự động lấy bài mới nhất làm bài ghim
+// Điều này giúp trang không bao giờ bị lỗi
+if (!featuredBlogPost) {
+  featuredBlogPost = sortedBlogPosts[0];
+}
+
+// (MỚI) Lấy 3 bài viết tiếp theo,
+// đảm bảo loại bỏ bài viết đã ghim ra khỏi danh sách này
+const otherBlogPosts = sortedBlogPosts
+  .filter(post => post.slug !== featuredBlogPost?.slug) // Lọc bỏ bài ghim
+  .slice(0, 3); // Lấy 3 bài tiếp theo
 
 // --- 2. SECTION: Ý NGHĨA LÁ BÀI (Logic giữ nguyên) ---
 const featuredCardPosts = (await getCollection('cards'))
