@@ -15,25 +15,35 @@ collections:
     label: "Bài Viết" # Nhãn hiển thị trên giao diện admin
     folder: "src/content/blog" # <<< RẤT QUAN TRỌNG: Thư mục chứa các file .md của bạn
     create: true # Cho phép tạo file mới
-    slug: "{{slug}}" # Tên file .md sẽ được tự động tạo (ví dụ: bai-viet-moi.md)
+    
+    # (GIỮ NGUYÊN) Tên file .md sẽ lấy từ trường 'slug' bên dưới
+    slug: "{{slug}}" 
+    
     extension: "md" # Định dạng file
     format: "frontmatter" # Dùng frontmatter (cái dấu --- ở đầu file)
 
     # Đây là các ô nhập liệu sẽ xuất hiện trên giao diện
     fields:
-      # Ô nhập Tiêu đề (giống 'title' của bạn)
+      # Ô nhập Tiêu đề (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Tiêu đề", name: "title", widget: "string" }
 
-      # (MỚI) Ô Ngày đăng - Tự động điền ngày hiện tại
+      # (MỚI) Ô SLUG TỰ ĐỘNG - CHỈ Ô NÀY LÀ MẤT DẤU
+      - label: "Slug (URL - Tự động, không dấu)"
+        name: "slug"
+        widget: "slug"
+        based_on: "title"           # 1. Tự động tạo slug từ trường 'title'
+        encoding: "ascii"         # 2. Chuyển 'à' thành 'a', 'ê' thành 'e'
+        clean_accents: true       # 3. (Quan trọng nhất) Xóa bỏ mọi loại dấu
+        sanitize_replacement: "-" # 4. Thay dấu cách ' ' bằng dấu '-'
+
+      # Ô Ngày đăng (GIỮ NGUYÊN)
       - { label: "Ngày đăng", name: "pubDate", widget: "datetime", default: "{{now}}", format: "YYYY-MM-DD" }
 
-      # Ô tải Ảnh đại diện (giống 'image' của bạn)
+      # Ô tải Ảnh đại diện (GIỮ NGUYÊN)
       - { label: "Ảnh đại diện (Thumbnail)", name: "image", widget: "image" }
 
-      # Ô nhập Mô tả ngắn (giống 'excerpt' của bạn)
+      # Ô nhập Mô tả ngắn (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Mô tả ngắn (Excerpt)", name: "excerpt", widget: "string" }
 
-      # Ô soạn thảo Nội dung chính (phần dưới dấu ---)
-      # 'widget: markdown' sẽ cho bạn trình soạn thảo trực quan
-      # cho phép chèn ảnh, in đậm, tiêu đề phụ (##)...
+      # Ô soạn thảo Nội dung chính (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Nội dung chính", name: "body", widget: "markdown" }
