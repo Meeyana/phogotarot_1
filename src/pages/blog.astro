@@ -1,17 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
-// (ĐÃ XÓA) Không import component Card nữa
 
 // --- 1. SECTION: KIẾN THỨC TAROT (CẬP NHẬT LOGIC) ---
 const allBlogPosts = await getCollection('blog');
-
 // Tìm bài viết được ghim (nếu có)
 let featuredBlogPost = allBlogPosts.find(post => post.data.isFeatured === true);
-
 // Sắp xếp TẤT CẢ bài viết theo ngày mới nhất (để làm dự phòng)
 const sortedBlogPosts = allBlogPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
-
 // (MỚI) Nếu không có bài nào ghim, tự động lấy bài mới nhất làm bài ghim
 // Điều này giúp trang không bao giờ bị lỗi
 if (!featuredBlogPost) {
@@ -22,33 +18,36 @@ if (!featuredBlogPost) {
 // đảm bảo loại bỏ bài viết đã ghim ra khỏi danh sách này
 const otherBlogPosts = sortedBlogPosts
   .filter(post => post.slug !== featuredBlogPost?.slug) // Lọc bỏ bài ghim
-  .slice(0, 3); // Lấy 3 bài tiếp theo
+  .slice(0, 3);
+// Lấy 3 bài tiếp theo
 
 // --- 2. SECTION: Ý NGHĨA LÁ BÀI (Logic giữ nguyên) ---
 const featuredCardPosts = (await getCollection('cards'))
   .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
   .slice(0, 3);
-
 // --- 3. SCHEMA CHO TRANG HUB (CẬP NHẬT) ---
 
 // (MỚI) Gộp tất cả các bài viết hiển thị trên trang để đưa vào schema
 const allPostsForSchema = [featuredBlogPost, ...otherBlogPosts, ...featuredCardPosts]
-  .filter(Boolean); // Lọc bỏ 'undefined' nếu featuredBlogPost không tồn tại
+  .filter(Boolean);
+// Lọc bỏ 'undefined' nếu featuredBlogPost không tồn tại
 
 // (MỚI) Tạo URL gốc an toàn
-const siteUrl = Astro.site ? Astro.site.href : '/';
+const siteUrl = Astro.site ?
+Astro.site.href : '/';
 const pageUrl = new URL('/blog', siteUrl).href;
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "Blog", // (CẬP NHẬT) Dùng "Blog" hoặc "CollectionPage"
-  "name": "Blog - Kiến Thức Tarot | Phở Gõ Tarot",
+  "name": "Blog - Bài Viết | Phở Gõ Tarot",
   "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
   "url": pageUrl, // (CẬP NHẬT) Dùng URL an toàn
   
   // (MỚI) Thêm danh sách các bài viết
   "mainEntity": {
     "@type": "ItemList",
+    // === LỖI ĐÃ SỬA Ở ĐÂY ===
     "itemListElement": allPostsForSchema.map((post, index) => {
       // (MỚI) Xử lý URL khác nhau cho 'blog' và 'cards'
       const isCard = post.collection === 'cards';
@@ -62,7 +61,6 @@ const schema = {
       const postImage = post.data.image 
                         ? new URL(post.data.image, siteUrl).href 
                         : null;
-
       return {
         "@type": "ListItem",
         "position": index + 1,
@@ -79,7 +77,7 @@ const schema = {
 };
 ---
 <BaseLayout
-  title="Blog - Kiến Thức Tarot | Phở Gõ Tarot"
+  title="Blog - Bài Viết | Phở Gõ Tarot"
   description="Tổng hợp các bài viết, kiến thức và ý nghĩa các lá bài Tarot."
 >
   <main id="homepage-content">
@@ -88,8 +86,7 @@ const schema = {
       <div class="container">
         
         <div class="section-header">
-          <h2 class="section-title">Kiến Thức Tarot</h2>
-          <a href="/blog/bai-viet" class="btn-outline btn-key">Xem thêm &rarr;</a>
+          <h2 class="section-title">Bài Viết Tarot</h2>
         </div>
 
         {featuredBlogPost && (
@@ -101,7 +98,8 @@ const schema = {
             <div class="featured-content">
               <a href={`/blog/${featuredBlogPost.slug}`} class="title-link">
                 <h3 class="section-subtitle">{featuredBlogPost.data.title}</h3>
-              </a>
+           
+       </a>
  
                <p class="section-text">{featuredBlogPost.data.excerpt}</p>
               <a href={`/blog/${featuredBlogPost.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
@@ -111,14 +109,16 @@ const schema = {
 
         <div class="grid-4">
           {otherBlogPosts.map(post => (
-            <div class="blog-card">
+           
+  <div class="blog-card">
     
            <a href={`/blog/${post.slug}`} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
                   <img src={post.data.image} alt={post.data.title} class="section-image" />
                 </div>
               </a>
-              <a href={`/blog/${post.slug}`} class="title-link">
+            
+   <a href={`/blog/${post.slug}`} class="title-link">
    
                <h3 class="section-subtitle">{post.data.title}</h3>
               </a>
@@ -126,7 +126,13 @@ const schema = {
               <a href={`/blog/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
             </div>
           ))}
+        
+ </div>
+
+        <div class="section-footer-action">
+          <a href="/blog/bai-viet" class="btn-outline btn-key">Xem thêm &rarr;</a>
         </div>
+
       </div>
    
    </section>
@@ -136,7 +142,6 @@ const schema = {
         
         <div class="section-header">
           <h2 class="section-title">Ý Nghĩa Lá Bài</h2>
-          <a href="/blog/y-nghia-la-bai" class="btn-outline btn-key">Xem thêm &rarr;</a>
         </div>
 
         <div class="grid-4">
@@ -148,18 +153,25 @@ const schema = {
               <a href={`/y-nghia-la-bai/${post.slug}`} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
                   <img src={post.data.image} alt={post.data.title} class="section-image" />
-                </div>
+         
+               </div>
        
          </a>
               <a href={`/y-nghia-la-bai/${post.slug}`} class="title-link">
                 <h3 class="section-subtitle">{post.data.title}</h3>
               </a>
               <p class="section-text">{post.data.excerpt}</p>
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+              <a 
+ href={`/y-nghia-la-bai/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
             </div>
  
            ))}
         </div>
+
+        <div class="section-footer-action">
+          <a href="/blog/y-nghia-la-bai" class="btn-outline btn-key">Xem thêm &rarr;</a>
+        </div>
+
       </div>
     </section>
 
@@ -173,7 +185,8 @@ const schema = {
 
   <style>
     /* === CSS CHUNG CHO LAYOUT (Giữ nguyên) === */
-    .homepage-section { padding: 4rem 1rem; position: relative;}
+    .homepage-section { padding: 4rem 1rem;
+ position: relative;}
     .container { 
         max-width: 1200px; 
         margin: auto;
@@ -196,15 +209,17 @@ const schema = {
         text-decoration: none; text-shadow: none;
  align-self: flex-start; 
     }
-    .btn-outline:hover { background-color: var(--button-hover-bg); }
-
-    .btn-key{
-        align-self: center!important;
+    .btn-outline:hover { background-color: var(--button-hover-bg);
  }
 
+    .btn-key{
+        /* align-self: center!important; (Không cần thiết nữa) */
+ }
+
+    /* === (ĐÃ SỬA) CĂN GIỮA TIÊU ĐỀ === */
     .section-header {
       display: flex;
-      justify-content: space-between;
+      justify-content: center; /* <-- SỬA Ở ĐÂY */
       align-items: center;
       margin-bottom: 3rem;
  flex-wrap: wrap; 
@@ -212,7 +227,7 @@ const schema = {
     }
     .section-header .section-title {
       margin-bottom: 0; 
-      text-align: left;
+      text-align: center; /* <-- SỬA Ở ĐÂY */
  font-size: 2.5rem; 
     }
     .grid-4 { 
@@ -224,6 +239,12 @@ const schema = {
       .grid-4 {
         grid-template-columns: repeat(3, 1fr);
  }
+    }
+
+    /* === (MỚI) CSS CHO NÚT XEM THÊM Ở CUỐI === */
+    .section-footer-action {
+      text-align: center;
+      margin-top: 2.5rem; /* Thêm khoảng cách với lưới bài viết */
     }
 
     /* === CSS CHO BÀI VIẾT KEY (Giữ nguyên) === */
@@ -286,7 +307,7 @@ const schema = {
       /* ... CSS responsive cho featured post ... */
     }
 
-    /* === (MỚI) CSS CHO CARD (Copy từ bai-viet.astro) === */
+    /* === CSS CHO CARD (Giữ nguyên) === */
     .blog-card { 
         border: 1px solid var(--card-back-border);
  background-color: var(--button-bg); 
@@ -340,7 +361,7 @@ const schema = {
         flex-grow: 1;
     }
 
-    /* === (MỚI) CSS CHO BADGE (Copy từ bai-viet.astro) === */
+    /* === CSS CHO BADGE (Giữ nguyên) === */
     .category-badge {
       position: absolute;
  top: 1.5rem;
