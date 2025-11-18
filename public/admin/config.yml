@@ -103,13 +103,13 @@ collections:
       - label: "Từ khóa Xuôi (Upright)"
         name: "upright_keywords"
         widget: "list" # Cho phép thêm nhiều dòng
-        field: { label: "Từ khóa", widget: "string" } # Mỗi dòng là 1 chuỗi
+        field: { label: "Từ khóa", name: "keyword", widget: "string" } # Mỗi dòng là 1 chuỗi
 
       # 7. Từ khóa Ngược (List)
       - label: "Từ khóa Ngược (Reversed)"
         name: "reversed_keywords"
         widget: "list"
-        field: { label: "Từ khóa", widget: "string" }
+        field: { label: "Từ khóa", name: "keyword", widget: "string" }
 
       # 8. Mô tả ngắn (Excerpt)
       - { label: "Mô tả ngắn", name: "excerpt", widget: "text" }
