@@ -1,13 +1,15 @@
 import { defineCollection, z } from 'astro:content';
 
-// Định nghĩa "Schema" (cấu trúc) cho bài viết blog
+// 1. Collection 'blog'
 const blogCollection = defineCollection({
   schema: z.object({
     title: z.string(),
-    image: z.string(),
-    excerpt: z.string(),
+    // Nên để optional cho ảnh, phòng khi bạn chưa kịp tìm ảnh bìa
+    image: z.string().optional(), 
+    excerpt: z.string().optional(),
     pubDate: z.date(),
-    isFeatured: z.boolean().optional(),
+    // Nếu không chọn nổi bật, mặc định là false (không lỗi)
+    isFeatured: z.boolean().default(false), 
     category: z.enum([
       "tarot căn bản",
       "kỹ năng đọc bài",
@@ -19,41 +21,36 @@ const blogCollection = defineCollection({
   }),
 });
 
-// 2. (CẬP NHẬT) Định nghĩa collection 'cards' cho 78 lá bài
+// 2. Collection 'cards' (Đã tối ưu)
 const cardsCollection = defineCollection({
   schema: z.object({
-    title: z.string(), // Tên lá bài (ví dụ: The Fool)
-    image: z.string(), // Hình ảnh lá bài
-    excerpt: z.string(), // Mô tả ngắn
+    title: z.string(), 
+    
+    // Bắt buộc có ảnh (vì là xem bài Tarot), nhưng cứ để string là chuẩn với Decap
+    image: z.string(), 
+    
+    excerpt: z.string().optional(), // Có thể để trống mô tả ngắn
 
-    // --- CÁC TRƯỜNG MỚI BẠN YÊU CẦU ---
-
-    /**
-     * Số thứ tự duy nhất của lá bài (từ 0 đến 77).
-     * Dùng làm định danh (ID).
-     */
     index: z.number(),
 
-    /**
-     * Phân loại nhóm lá bài. 
-     * Bắt buộc phải là 1 trong 5 giá trị này.
-     */
+    // Khớp chính xác với giá trị 'value' trong file config.yml
     group: z.enum([
-      'major',     // Ẩn Chính
-      'wands',     // Bộ Gậy
-      'cups',      // Bộ Cốc
-      'swords',    // Bộ Kiếm
-      'pentacles'  // Bộ Tiền
+      'major',     
+      'wands',     
+      'cups',      
+      'swords',    
+      'pentacles'  
     ]),
     
-    // --- CÁC TRƯỜNG CŨ VẪN GIỮ NGUYÊN ---
-    upright_keywords: z.array(z.string()), // Từ khóa xuôi
-    reversed_keywords: z.array(z.string()), // Từ khóa ngược
+    // QUAN TRỌNG: Thêm .default([]) 
+    // Lý do: Nếu bạn lỡ tay xóa hết từ khóa trên CMS, nó sẽ trả về mảng rỗng thay vì làm sập web
+    upright_keywords: z.array(z.string()).default([]), 
+    reversed_keywords: z.array(z.string()).default([]), 
   }),
 });
 
 // 3. Xuất cả hai collection
 export const collections = {
   'blog': blogCollection,
-  'cards': cardsCollection, // Thêm 'cards' vào đây
+  'cards': cardsCollection, 
 };

@@ -60,3 +60,59 @@ collections:
       # Ô soạn thảo Nội dung chính (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Nội dung chính", name: "body", widget: "markdown" }
       - { label: "Bài viết Nổi bật?", name: "isFeatured", widget: "boolean", default: false, required: false }
+
+# --- COLLECTION 2: CARDS (Cấu hình mới dựa trên file .md của bạn) ---
+  - name: "cards"
+    label: "Bộ bài Tarot (Cards)"
+    folder: "src/content/cards"
+    create: true
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      # 1. Tiêu đề
+      - { label: "Tên lá bài", name: "title", widget: "string" }
+
+      # 2. Slug tự động (giống blog)
+      - label: "Slug (URL)"
+        name: "slug"
+        widget: "slug"
+        based_on: "title"
+        encoding: "ascii"
+        clean_accents: true
+        sanitize_replacement: "-"
+
+      # 3. Số thứ tự (index) - Widget Number
+      - { label: "Số thứ tự (Index)", name: "index", widget: "number", value_type: "int" }
+
+      # 4. Nhóm (Group) - Widget Select
+      - label: "Bộ (Group)"
+        name: "group"
+        widget: "select"
+        options:
+          - { label: "Bộ Ẩn Chính (Major)", value: "major" }
+          - { label: "Bộ Cốc (Cups)", value: "cups" }
+          - { label: "Bộ Gậy (Wands)", value: "wands" }
+          - { label: "Bộ Kiếm (Swords)", value: "swords" }
+          - { label: "Bộ Tiền (Pentacles)", value: "pentacles" }
+
+      # 5. Hình ảnh
+      - { label: "Hình ảnh lá bài", name: "image", widget: "image" }
+
+      # 6. Từ khóa Xuôi (List)
+      - label: "Từ khóa Xuôi (Upright)"
+        name: "upright_keywords"
+        widget: "list" # Cho phép thêm nhiều dòng
+        field: { label: "Từ khóa", widget: "string" } # Mỗi dòng là 1 chuỗi
+
+      # 7. Từ khóa Ngược (List)
+      - label: "Từ khóa Ngược (Reversed)"
+        name: "reversed_keywords"
+        widget: "list"
+        field: { label: "Từ khóa", widget: "string" }
+
+      # 8. Mô tả ngắn (Excerpt)
+      - { label: "Mô tả ngắn", name: "excerpt", widget: "text" }
+
+      # 9. Nội dung chính
+      - { label: "Nội dung chi tiết", name: "body", widget: "markdown" }

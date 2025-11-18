@@ -2,6 +2,20 @@
 // 1. IMPORT (Thêm BaseLayout)
 import BaseLayout from '../layouts/BaseLayout.astro'; // (Giả sử đường dẫn layout)
 
+// --- (MỚI) THÊM ĐOẠN NÀY ĐỂ LẤY DATA BLOG ---
+import { getCollection } from "astro:content";
+
+// Lấy tất cả bài viết trong collection 'blog'
+const allPosts = await getCollection("blog");
+
+// Sắp xếp bài viết: Mới nhất lên đầu
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+// Chỉ lấy 3 bài đầu tiên
+const recentPosts = sortedPosts.slice(0, 3);
+
 // 2. (SỬA LẠI) TẠO CÁC BIẾN VÀ SCHEMA
 const pageTitle = "Phở Gõ Tarot - Trải Bài Tarot Miễn Phí & Luận Giải Sâu Sắc";
 const pageDesc = "Khám phá ý nghĩa các lá bài tarot, nhận trải bài 3 lá, Yes/No miễn phí. Phở Gõ Tarot soi sáng con đường của bạn bằng luận giải sâu sắc.";
@@ -98,26 +112,37 @@ const schema = {
         <section id="blog" class="homepage-section">
             <div class="container">
                 <h2 class="section-title">Bài Viết Mới</h2>
+                
                 <div class="grid-3">
-                    <div class="blog-card">
-                        <img src="introduce.png" alt="Bài viết 1" class="section-image">
-                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Ý nghĩa lá The Fool</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Bắt đầu một hành trình mới, sự ngây thơ, và niềm tin vào vũ trụ...</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
-                    </div>
-                    <div class="blog-card">
-                        <img src="introduce.png" alt="Bài viết 2" class="section-image">
-                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Làm thế nào để thanh tẩy bài?</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Các phương pháp phổ biến để làm sạch năng lượng cho bộ bài tarot của bạn...</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
-                    </div>
-                    <div class="blog-card">
-                        <img src="introduce.png" alt="Bài viết 3" class="section-image">
-                        <h3 class="section-subtitle" style="font-size: 1.25rem;">Oracle và Tarot khác nhau?</h3>
-                        <p class="section-text" style="font-size: 0.9rem;">Phân biệt hai công cụ huyền học mạnh mẽ này và cách sử dụng chúng...</p>
-                        <a href="#" class="btn-outline" style="font-size: 0.9rem;">Đọc tiếp &rarr;</a>
-                    </div>
+                    {/* Bắt đầu vòng lặp lấy 3 bài viết */}
+                    {recentPosts.map((post) => (
+                        <div class="blog-card mdf-blog">
+                            {/* Hiển thị ảnh bài viết */}
+                            <img 
+                                src={post.data.image} 
+                                alt={post.data.title} 
+                                class="section-image"
+                                style="object-fit: cover;" 
+                            />
+                            
+                            {/* Tiêu đề bài viết */}
+                            <h3 class="section-subtitle" style="font-size: 1.25rem; text-align: left; padding: 0 1rem;">
+                                {post.data.title}
+                            </h3>
+                            
+                            {/* Mô tả ngắn (nếu có) */}
+                            <p class="section-text" style="font-size: 0.9rem; text-align: left; opacity: 0.8; padding: 0 1rem;">
+                                {post.data.excerpt}
+                            </p>
+                            
+                            {/* Link đến bài viết chi tiết */}
+                            <a href={`/blog/${post.slug}`} class="btn-outline" style="font-size: 0.9rem; float: left; margin: 0 1rem 1rem;">
+                                Đọc tiếp &rarr;
+                            </a>
+                        </div>
+                    ))}
                 </div>
+                
             </div>
         </section>
 
@@ -125,11 +150,11 @@ const schema = {
             <div class="container">
                 <div class="grid-2">
                     <div class="text-center" style="md:text-align: left;">
-                        <h2 class="section-subtitle">Oracle Reading</h2>
+                        <h2 class="section-subtitle">Cần tư vấn từ chuyên gia?</h2>
                         <p class="section-text text-left">
-                            Không chỉ dừng lại ở Tarot, chúng tôi còn cung cấp các buổi đọc bài Oracle để mang đến thông điệp chữa lành và hướng dẫn từ các đấng thiêng liêng.
+                            Nếu trong quá trình đọc bài bạn vẫn còn điều gì băn khoăn hoặc muốn được giải thích chi tiết hơn, cứ thoải mái liên hệ với Phở Gõ nhé. Chúng mình luôn sẵn sàng hỗ trợ để bạn hiểu rõ vấn đề một cách nhanh chóng và chính xác nhất.
                         </p>
-                        <a href="/contact" class="btn-primary">Khám Phá Oracle</a>
+                        <a href="/contact" class="btn-primary">Đặt lịch tư vấn</a>
                     </div>
                     <div>
                         <img src="/img-2.jpg" alt="Oracle Cards" class="section-image">
@@ -410,6 +435,14 @@ const schema = {
             animation: spin-clockwise 20s linear infinite;
         }
         /* === (HẾT) CSS CHO HIỆU ỨNG XOAY === */
+
+        .mdf-blog{
+            padding: 0 !important;
+        }
+
+        .mdf-sub{
+            padding: 0 1rem !important;
+        }
                
     </style>
 </BaseLayout>
