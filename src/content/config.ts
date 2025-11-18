@@ -7,7 +7,7 @@ const blogCollection = defineCollection({
     image: z.string(),
     excerpt: z.string(),
     pubDate: z.date(),
-    isFeatured: z.boolean().optional()
+    isFeatured: z.boolean().optional(),
     category: z.enum([
       "tarot căn bản",
       "kỹ năng đọc bài",
