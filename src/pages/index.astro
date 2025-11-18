@@ -146,6 +146,43 @@ const schema = {
             </div>
         </section>
 
+        <section id="faq" class="homepage-section">
+            <div class="container">
+                <h2 class="section-title">Thắc Mắc Thường Gặp</h2>
+                
+                <div class="faq-container">
+                    <details class="faq-item">
+                        <summary class="faq-question">Xem Tarot online có chính xác như xem trực tiếp không?</summary>
+                        <div class="faq-answer">
+                            <p>Hoàn toàn chính xác. Tarot kết nối dựa trên năng lượng và trực giác, những yếu tố này không bị giới hạn bởi khoảng cách vật lý hay màn hình điện thoại. Chỉ cần bạn tập trung và mở lòng, thông điệp gửi đến bạn vẫn sẽ trọn vẹn.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Mình chưa biết nên hỏi gì thì có xem được không?</summary>
+                        <div class="faq-answer">
+                            <p>Đừng lo nhé! Nếu bạn đang rối bời, Reader của Phở Gõ sẽ giúp bạn gỡ rối và định hình câu hỏi. Chúng mình cũng có những trải bài tổng quan để bạn nắm bắt tình hình chung mà không cần câu hỏi cụ thể.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Thông tin câu chuyện của mình có được bảo mật không?</summary>
+                        <div class="faq-answer">
+                            <p>Tuyệt đối bảo mật. Mọi chia sẻ của bạn với Phở Gõ Tarot đều được giữ kín như "công thức gia truyền". Chúng mình tôn trọng sự riêng tư tuyệt đối của mọi khách hàng.</p>
+                        </div>
+                    </details>
+                    
+                     <details class="faq-item">
+                        <summary class="faq-question">Làm sao để đặt lịch xem bài?</summary>
+                        <div class="faq-answer">
+                            <p>Bạn chỉ cần bấm vào nút "Đặt lịch tư vấn" bên dưới hoặc nhắn tin trực tiếp qua Fanpage. Tụi mình sẽ phản hồi và sắp xếp khung giờ phù hợp nhất cho bạn ngay lập tức.</p>
+                        </div>
+                    </details>
+                </div>
+
+            </div>
+        </section>
+
         <section id="oracle" class="homepage-section bg-alt">
             <div class="container">
                 <div class="grid-2">
@@ -368,7 +405,7 @@ const schema = {
         .section-image {
             width: 100%;
             height: auto;
-            border-radius: 12px;
+            border-radius: 12px 12px 0 0;
             object-fit: cover;
             border: 1px solid var(--card-back-border);
         }
@@ -442,6 +479,82 @@ const schema = {
 
         .mdf-sub{
             padding: 0 1rem !important;
+        }
+
+        /* === STYLE CHO FAQ === */
+        .faq-container {
+            max-width: 800px; /* Giới hạn chiều rộng cho dễ đọc */
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background-color: var(--button-bg); /* Nền tối giống thẻ Card */
+            border: 1px solid var(--card-back-border); /* Viền mỏng */
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 0 15px rgba(142, 186, 255, 0.2);
+            border-color: var(--title-color);
+        }
+
+        /* Phần câu hỏi (luôn hiện) */
+        .faq-question {
+            padding: 1.2rem 1.5rem;
+            font-family: var(--font-title); /* Font tiêu đề cho sang */
+            font-size: 1.1rem;
+            color: var(--title-color); /* Màu chữ tiêu đề */
+            cursor: pointer;
+            list-style: none; /* Ẩn dấu tam giác mặc định */
+            position: relative;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Tạo dấu cộng (+) tùy chỉnh */
+        .faq-question::after {
+            content: '+'; 
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--title-color);
+            transition: transform 0.3s ease;
+        }
+
+        /* Khi mở ra thì xoay dấu cộng thành dấu nhân (x) */
+        details[open] .faq-question::after {
+            transform: rotate(45deg);
+        }
+
+        /* Ẩn dấu tam giác mặc định trên một số trình duyệt */
+        .faq-question::-webkit-details-marker {
+            display: none;
+        }
+
+        /* Phần câu trả lời (ẩn/hiện) */
+        .faq-answer {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: var(--text-color);
+            font-size: 1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            border-top: 1px solid rgba(142, 186, 255, 0.1); /* Đường kẻ mờ ngăn cách */
+            margin-top: 0;
+            padding-top: 1rem;
+        }
+        
+        /* Hiệu ứng xuất hiện nhẹ nhàng */
+        details[open] .faq-answer {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 0.9; transform: translateY(0); }
         }
                
     </style>
