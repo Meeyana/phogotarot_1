@@ -31,11 +31,53 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 9. (GIỮ NGUYÊN) Lọc bài viết liên quan (Logic này giờ đã tối ưu)
-const relatedPosts = allPosts
-  .filter(p => p.slug !== post.slug) // Lọc bài hiện tại
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()) // Sắp xếp liên quan theo ngày
-  .slice(0, 3); // Lấy 3 bài
+// 9. (CẬP NHẬT) Lọc bài viết liên quan thông minh theo 'category'
+
+// Lấy category của bài viết hiện tại
+const currentCategory = post.data.category;
+let relatedPosts = [];
+
+// Kiểm tra xem bài này có category không
+if (currentCategory) {
+  // Lọc Lần 1: Lấy các bài viết CÓ CÙNG CATEGORY
+  const postsInSameCategory = allPosts
+    .filter(p => {
+      // Lọc bỏ chính bài viết hiện tại VÀ
+      // Lọc các bài có cùng category
+      return p.slug !== post.slug && p.data.category === currentCategory;
+    })
+    // Sắp xếp các bài cùng category theo ngày mới nhất
+    .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  
+  if (postsInSameCategory.length >= 3) {
+    // 1. Nếu có đủ 3 (hoặc nhiều hơn) bài cùng chủ đề -> Lấy 3 bài
+    relatedPosts = postsInSameCategory.slice(0, 3);
+  } else {
+    // 2. Nếu không đủ 3 bài (ví dụ: chỉ có 1 bài cùng chủ đề)
+    // Lấy hết các bài cùng chủ đề đó (ví dụ: lấy 1 bài đó)
+    relatedPosts = [...postsInSameCategory];
+  }
+}
+
+// 3. LOGIC LẤP ĐẦY (FILLER)
+// Nếu sau khi lọc category mà vẫn chưa đủ 3 bài
+if (relatedPosts.length < 3) {
+  // Tạo một Set (tập hợp) các slug đã có để tránh trùng lặp
+  const existingSlugs = new Set(relatedPosts.map(p => p.slug));
+  existingSlugs.add(post.slug); // Thêm cả slug của bài hiện tại
+
+  // Lọc Lần 2: Lấy thêm các bài MỚI NHẤT (trừ những bài đã có)
+  const fillerPosts = allPosts
+    .filter(p => !existingSlugs.has(p.slug)) // Lọc những bài đã có
+    .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  // Tính xem cần lấp đầy bao nhiêu bài nữa
+  const needed = 3 - relatedPosts.length;
+  
+  // Thêm các bài "filler" này vào
+  relatedPosts.push(...fillerPosts.slice(0, needed));
+}
 
 // 10. (GIỮ NGUYÊN) TẠO SCHEMA JSON-LD
 const schema = {

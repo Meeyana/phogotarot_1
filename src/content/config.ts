@@ -8,6 +8,14 @@ const blogCollection = defineCollection({
     excerpt: z.string(),
     pubDate: z.date(),
     isFeatured: z.boolean().optional()
+    category: z.enum([
+      "tarot căn bản",
+      "kỹ năng đọc bài",
+      "ý nghĩa lá bài",
+      "tarot theo tình huống",
+      "công cụ trải bài",
+      "tarot mở rộng"
+    ]).optional()
   }),
 });
 

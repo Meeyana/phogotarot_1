@@ -42,8 +42,21 @@ collections:
       # Ô tải Ảnh đại diện (GIỮ NGUYÊN)
       - { label: "Ảnh đại diện (Thumbnail)", name: "image", widget: "image" }
 
+      - label: "Chủ đề (Category)"
+        name: "category"
+        widget: "select"    # <--- Dùng widget 'select'
+        required: true      # <--- Bắt buộc chọn 1 chủ đề
+        options:            # <--- Danh sách 6 lựa chọn
+          - "Chủ đề 1"
+          - "Chủ đề 2"
+          - "Chủ đề 3"
+          - "Chủ đề 4"
+          - "Chủ đề 5"
+          - "Chủ đề 6"
+
       # Ô nhập Mô tả ngắn (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Mô tả ngắn (Excerpt)", name: "excerpt", widget: "string" }
 
       # Ô soạn thảo Nội dung chính (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Nội dung chính", name: "body", widget: "markdown" }
+      - { label: "Bài viết Nổi bật?", name: "isFeatured", widget: "boolean", default: false, required: false }
