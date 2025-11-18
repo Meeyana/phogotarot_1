@@ -47,12 +47,12 @@ collections:
         widget: "select"    # <--- Dùng widget 'select'
         required: true      # <--- Bắt buộc chọn 1 chủ đề
         options:            # <--- Danh sách 6 lựa chọn
-          - "Chủ đề 1"
-          - "Chủ đề 2"
-          - "Chủ đề 3"
-          - "Chủ đề 4"
-          - "Chủ đề 5"
-          - "Chủ đề 6"
+          - "tarot căn bản"
+          - "kỹ năng đọc bài"
+          - "ý nghĩa lá bài"
+          - "tarot theo tình huống"
+          - "công cụ trải bài"
+          - "tarot mở rộng"     
 
       # Ô nhập Mô tả ngắn (GIỮ NGUYÊN - VẪN CÓ DẤU)
       - { label: "Mô tả ngắn (Excerpt)", name: "excerpt", widget: "string" }
