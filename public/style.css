@@ -1,20 +1,25 @@
 /* (CHỈNH SỬA) Cập nhật biến màu cho chủ đề mới */
         :root {
-            --bg-color: #0b132b; /* Màu nền tối nhất */
-            --text-color: #f0f0ff; /* Màu text trắng hơi xanh */
-            --title-color: #f0f0ff; /* (CHỈNH SỬA) Màu tím từ text-shadow */
-            
-            /* Màu nền cho các box, dùng alpha để có độ trong suốt */
-            --card-back-bg: rgba(20, 40, 80, 0.7);
-            /* Viền màu tím nhạt, hơi trong */
-            --card-back-border: rgba(142, 186, 255, 0.3);
-            
-            --button-bg: rgba(20, 40, 80, 0.5);
-            --button-hover-bg: rgba(40, 60, 100, 0.7);
-            
-            --font-title: 'Playfair Display', serif;
-            --font-body: 'Quicksand', sans-serif;
-        }
+    --bg-color: #0b132b;
+    --text-color: #f0f0ff; 
+    
+    /* ĐỔI: Màu vàng chủ đạo mới */
+    --gold-color: #F2C94C; 
+    --gold-shadow: rgba(242, 201, 76, 0.6); /* Ánh vàng */
+    --gold-border: rgba(255,255,255,0.1);
+    --gold-tittle: rgb(242 201 76);
+
+    /* Giữ logic cũ nhưng đổi màu title nếu cần, hoặc giữ trắng */
+    --title-color: #ffffff; 
+    
+    --card-back-bg: rgba(20, 40, 80, 0.7);
+    --card-back-border: rgba(142, 186, 255, 0.3);
+    --button-bg: rgba(20, 40, 80, 0.5);
+    --button-hover-bg: rgba(40, 60, 100, 0.7);
+    
+    --font-title: 'Playfair Display', serif;
+    --font-body: 'Quicksand', sans-serif;
+}
 
         /* --- Cài đặt chung --- */
         * { box-sizing: border-box; }
@@ -33,7 +38,7 @@
         overflow-y: scroll;
             
             /* (CHỈNH SỬA) Áp dụng text-shadow chung */
-            text-shadow: 0 0 15px rgba(142, 186, 255, 0.6);
+            text-shadow: 0 0 15px var(--gold-shadow);
             
             /* (MỚI) Fix lỗi 2 background trên mobile */
             background-attachment: fixed;
