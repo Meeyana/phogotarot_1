@@ -1,1 +1,7 @@
 /api/*   /.netlify/functions/ssr   200
+
+# Redirect trang danh sách
+/y-nghia-la-bai   /cards   301
+
+# Redirect trang chi tiết (Dùng :splat để giữ phần đuôi)
+/y-nghia-la-bai/* /cards/:splat   301

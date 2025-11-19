@@ -45,14 +45,6 @@ export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'server',
   adapter: netlify(),
-  
-  // (TÙY CHỌN) Dù bạn chưa cần SEO, nhưng thêm dòng này giúp Astro hiểu
-  // rằng nếu ai đó lỡ vào link cũ thì tự động nhảy sang link mới cho đỡ lỗi.
-  redirects: {
-    '/y-nghia-la-bai': '/cards',
-    '/y-nghia-la-bai/[...slug]': '/cards/[...slug]',
-  },
-  
   integrations: [
     sitemap({
       customPages: allCustomPages, // Sitemap sẽ chứa link mới (/cards/...)
