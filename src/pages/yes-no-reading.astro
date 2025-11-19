@@ -404,7 +404,7 @@ const schema = {
 
         /* --- LOADER HÀNH TINH 3D --- */
         .interpretation-loader {
-            display: flex; flexDirection: column; align-items: center; justify-content: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 1.5rem 1rem; perspective: 800px; overflow: hidden;
         }
         .loader-planet-system {
@@ -1155,8 +1155,7 @@ function populateCardDeck() {
         cardElementDesktop.addEventListener('click', clickHandler);
         cardElementMobile.addEventListener('click', clickHandler);
         
-        cardElementDesktop.addEventListener('touchstart', clickHandler);
-        cardElementMobile.addEventListener('touchstart', clickHandler);
+
         if (i < 39) {
             cardRow1.appendChild(cardElementDesktop);
         } else {

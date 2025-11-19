@@ -341,7 +341,18 @@ const schema = {
             border-radius: 4px; margin-left: -40px; cursor: pointer; transition: transform 0.3s;
             box-shadow: -2px 0 5px rgba(0,0,0,0.3);
         }
-        .facedown-card:hover { transform: translateY(-15px) scale(1.1); z-index: 10; }
+        /* Chỉ hover khi thiết bị có chuột (Desktop) */
+        @media (hover: hover) {
+            .facedown-card:hover { 
+                transform: translateY(-15px) scale(1.1); 
+                z-index: 10; 
+            }
+        }
+
+        /* Trên mobile: Khi chạm vào (active) thì nhún nhẹ một chút để có phản hồi, nhưng không bay hẳn ra */
+        .facedown-card:active {
+            transform: scale(0.95);
+        }
         .facedown-card.is-chosen { opacity: 0; pointer-events: none; }
         .mobile-row { display: none; }
         @media (max-width: 768px) {
