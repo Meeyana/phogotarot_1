@@ -15,7 +15,7 @@ const cups = sortedCards.filter(card => card.data.group === 'cups');
 const swords = sortedCards.filter(card => card.data.group === 'swords');
 const pentacles = sortedCards.filter(card => card.data.group === 'pentacles');
 
-// 4. (Tùy chọn) Tạo một mảng để lặp qua dễ dàng hơn trong HTML
+// 4. Mảng nhóm để lặp
 const cardGroups = [
   { title: "Ẩn Chính (Major Arcana)", cards: majorArcana },
   { title: "Bộ Gậy (Wands)", cards: wands },
@@ -24,53 +24,44 @@ const cardGroups = [
   { title: "Bộ Tiền (Pentacles)", cards: pentacles },
 ];
 
-// 5. Thông tin SEO cho trang này
+// 5. SEO
 const pageTitle = "Toàn Bộ 78 Lá Bài Tarot | Phở Gõ Tarot";
 const pageDesc = "Khám phá thư viện đầy đủ 78 lá bài Tarot, được sắp xếp theo Ẩn Chính và 4 bộ Ẩn Phụ. Nhấn vào bất kỳ lá bài nào để xem ý nghĩa chi tiết.";
 
-// --- (MỚI) BẮT ĐẦU PHẦN SCHEMA ---
-
-// 6. Lấy URL gốc
+// 6. URL gốc
 const siteUrl = Astro.site ? Astro.site.href : '/';
-// Đường dẫn của trang hiện tại (giả định file này nằm ở src/pages/cards.astro)
 const pageUrl = new URL('/cards', siteUrl).href;
 
-// 7. Tạo Schema
+// 7. Schema
 const schema = {
   "@context": "https://schema.org",
-  "@type": "CollectionPage", // Định nghĩa đây là trang bộ sưu tập
+  "@type": "CollectionPage",
   "name": pageTitle,
   "description": pageDesc,
   "url": pageUrl,
   "mainEntity": {
-    "@type": "ItemList", // Nội dung chính là một danh sách
-    "numberOfItems": sortedCards.length, // Tổng số mục (78)
+    "@type": "ItemList",
+    "numberOfItems": sortedCards.length,
     "itemListElement": sortedCards.map((card, index) => {
-      
-      // Tạo URL tuyệt đối cho lá bài
       const cardUrl = new URL(`/y-nghia-la-bai/${card.slug}`, siteUrl).href;
-      // Tạo URL tuyệt đối cho hình ảnh
       const cardImage = card.data.image ? new URL(card.data.image, siteUrl).href : null;
-
       return {
         "@type": "ListItem",
-        "position": index + 1, // Vị trí từ 1 đến 78
+        "position": index + 1,
         "item": {
-          "@type": "Article", // Mỗi lá bài là một "Bài viết" (giống [slug].astro)
+          "@type": "Article",
           "name": card.data.title,
           "url": cardUrl,
-          ...(cardImage && { "image": cardImage }) // Chỉ thêm ảnh nếu có
+          ...(cardImage && { "image": cardImage })
         }
       };
     })
   }
 };
-// --- (MỚI) KẾT THÚC PHẦN SCHEMA ---
 ---
 
 <BaseLayout title={pageTitle} description={pageDesc}>
   
-  <!-- (MỚI) Thêm thẻ script cho JSON-LD vào <head> -->
   <script 
     type="application/ld+json" 
     slot="head"
@@ -81,29 +72,29 @@ const schema = {
     <section class="homepage-section" style="padding-top: 3rem;">
       <div class="container">
         
-        <!-- Tiêu đề trang -->
+        <!-- Tiêu đề trang (Trắng + Glow) -->
         <h1 class="page-title">{pageTitle}</h1>
         <p class="page-description">{pageDesc}</p>
 
         <!-- Lặp qua từng nhóm bài -->
         {cardGroups.map(group => (
           <div class="card-group-section">
-            <!-- Tiêu đề của nhóm (Ẩn Chính, Gậy, Cốc...) -->
+            <!-- Tiêu đề nhóm (ĐÃ SỬA: Trắng + Glow) -->
             <h2 class="group-title">{group.title}</h2>
             
-            <!-- Lưới hiển thị các lá bài trong nhóm đó -->
             <div class="card-grid">
               {group.cards.map(card => (
                 <a href={`/y-nghia-la-bai/${card.slug}`} class="card-item-link" title={card.data.title}>
-                  <img 
-                    src={card.data.image} 
-                    alt={card.data.title} 
-                    class="card-image"
-                    loading="lazy" 
-                    width="150"
-                    height="255"
-                  />
-                  <!-- Thêm tiêu đề rút gọn bên dưới để dễ nhận diện -->
+                  <div class="card-image-wrapper">
+                      <img 
+                        src={card.data.image} 
+                        alt={card.data.title} 
+                        class="card-image"
+                        loading="lazy" 
+                        width="150"
+                        height="255"
+                      />
+                  </div>
                   <span class="card-item-title">
                     {card.data.title.replace("Ý nghĩa lá bài ", "")}
                   </span>
@@ -119,111 +110,127 @@ const schema = {
 
   <style>
     /* --- CSS Chung --- */
-    .homepage-section { 
-      padding: 3rem 1rem; 
-      position: relative; 
-      z-index: 1; 
-    }
-    .container { 
-      max-width: 1200px; 
-      margin: auto;
-      padding: 0 1rem; 
-    }
+    .homepage-section { padding: 3rem 1rem; position: relative; z-index: 1; }
+    .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
 
-    /* --- Tiêu đề & Mô tả trang --- */
+    /* --- TYPOGRAPHY --- */
     .page-title {
       font-family: var(--font-title);
-      color: var(--title-color);
+      color: #ffffff; /* Chữ trắng */
       font-size: 2.5rem;
       text-align: center;
-      margin-top: 0;
-      margin-bottom: 1rem;
-    }
-    .page-description {
-      font-size: 1.1rem;
-      text-align: center;
-      opacity: 0.9;
-      max-width: 800px;
-      margin: 0 auto 3rem auto;
-      text-shadow: none;
-    }
-
-    /* --- Phân nhóm --- */
-    .card-group-section {
-      margin-bottom: 3rem;
-    }
-    .group-title {
-      font-family: var(--font-title);
-      color: var(--title-color);
-      font-size: 2rem;
-      margin-bottom: 1.5rem;
-      border-bottom: 2px solid var(--card-back-border);
-      padding-bottom: 0.5rem;
-      text-align: left;
-    }
-
-    /* --- Lưới lá bài --- */
-    .card-grid {
-      display: grid;
-      /* Tạo lưới responsive tự động:
-        - Tự động lấp đầy các cột.
-        - Mỗi cột có chiều rộng tối thiểu 120px.
-        - Tự động dãn ra để lấp đầy không gian.
-      */
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 1rem;
+      margin-top: 0; margin-bottom: 1rem;
+      /* Glow Vàng */
+      text-shadow: 
+        0 0 10px rgba(242, 201, 76, 0.5), 
+        0 0 30px rgba(242, 201, 76, 0.2);
     }
     
-    /* --- CSS cho từng lá bài (Tương tự file [slug].astro) --- */
+    .page-description {
+      font-size: 1.1rem; text-align: center; opacity: 0.9;
+      max-width: 800px; margin: 0 auto 4rem auto;
+      text-shadow: none; color: #ccc;
+    }
+
+    /* --- NHÓM BÀI --- */
+    .card-group-section { margin-bottom: 4rem; }
+    
+    /* (ĐÃ CHỈNH SỬA) Group Title: Trắng + Glow Vàng */
+    .group-title {
+      font-family: var(--font-title);
+      color: #ffffff; /* Chuyển về màu trắng */
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      padding-bottom: 0.5rem;
+      text-align: left;
+      /* Thêm Glow Vàng */
+      text-shadow: 
+        0 0 10px rgba(242, 201, 76, 0.5),
+        0 0 20px rgba(242, 201, 76, 0.3);
+    }
+
+    /* --- LƯỚI BÀI --- */
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    /* --- CARD ITEM --- */
     .card-item-link {
       display: block;
       text-decoration: none;
       text-shadow: none;
-      border: 1px solid var(--card-back-border);
-      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.02); 
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       overflow: hidden;
-      background: var(--button-bg);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
     }
+    
     .card-item-link:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transform: translateY(-8px);
+      border-color: var(--gold-color, #F2C94C);
+      box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.4), 
+        0 0 15px rgba(242, 201, 76, 0.3),
+        inset 0 0 10px rgba(242, 201, 76, 0.05);
     }
+
+    .card-image-wrapper {
+        width: 100%;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     .card-image {
       width: 100%;
       height: auto;
-      /* Giữ tỷ lệ khung hình lá bài để đồng bộ */
-      aspect-ratio: 1 / 1.7; 
+      aspect-ratio: 2 / 3.3; 
       object-fit: cover;
       display: block;
-      border-bottom: 1px solid var(--card-back-border);
+      transition: transform 0.6s ease;
     }
+    
+    .card-item-link:hover .card-image {
+        transform: scale(1.08);
+    }
+
     .card-item-title {
       display: block;
-      padding: 0.5rem; /* Ít đệm hơn cho gọn */
+      padding: 0.8rem 0.5rem;
       text-align: center;
-      font-size: 0.8rem; /* Chữ nhỏ hơn */
+      font-size: 0.85rem; 
       font-weight: 600;
-      color: var(--text-color);
-      /* Chống vỡ layout nếu tên quá dài */
+      color: #ddd;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      transition: color 0.3s;
+    }
+    
+    .card-item-link:hover .card-item-title {
+        color: var(--gold-color, #F2C94C);
+        text-shadow: 0 0 8px rgba(242, 201, 76, 0.6);
     }
 
-    /* --- Responsive cho mobile --- */
+    /* --- Responsive --- */
     @media (max-width: 600px) {
       .card-grid {
-        /* Trên mobile, set tối thiểu 3 cột */
-        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
       }
-      .page-title {
-        font-size: 2rem;
-      }
-      .group-title {
-        font-size: 1.5rem;
-      }
+      .page-title { font-size: 2rem; }
+      .group-title { font-size: 1.4rem; margin-top: 1rem; }
+      
+      .card-item-link { border-radius: 8px; }
+      .card-item-title { font-size: 0.75rem; padding: 0.5rem 0.2rem; }
+    }
+    
+    @media (max-width: 400px) {
+        .card-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </BaseLayout>

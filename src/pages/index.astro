@@ -141,7 +141,7 @@ const schema = {
                                 src={post.data.image} 
                                 alt={post.data.title} 
                                 class="section-image"
-                                style="object-fit: cover;" 
+                                style="object-fit: cover; border-radius: 12px 12px 0 0 !imortant;" 
                             />
                             
                             {/* Tiêu đề bài viết */}
@@ -388,7 +388,7 @@ const schema = {
 
         /* === 6. HÌNH ẢNH & VÒNG XOAY (CÓ ÁNH VÀNG) === */
         .section-image {
-            width: 100%; height: auto; border-radius: 12px 12px 0 0;
+            width: 100%; height: auto; border-radius: 12px;
             object-fit: cover; border: 1px solid var(--card-back-border);
         }
         .blog-card .section-image {
