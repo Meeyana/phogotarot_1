@@ -1,7 +1,7 @@
 ---
 title: Có nên tin vào Tarot không? Tarot có đúng (và có nguy hiểm) không?
 pubDate: 2025-11-19
-image: /images/uploads/tin-vao-tarot.png
+image: /images/uploads/co-nen-tin-vao-tarot-khong.png
 category: tarot căn bản
 excerpt: Bạn băn khoăn liệu có nên tin vào Tarot? Khám phá bản chất, cách hoạt
   động và những rủi ro tiềm ẩn để có cái nhìn khách quan nhất.
