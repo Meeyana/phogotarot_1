@@ -36,7 +36,7 @@ const schema = {
   title={pageTitle}
   description={pageDesc}
 >
-    <!-- Thêm Font Awesome cho các icon trong trang này -->
+    <!-- Font Awesome -->
     <link 
       rel="stylesheet" 
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
@@ -47,38 +47,46 @@ const schema = {
     />
 
     <main id="contact-content">
-        <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+        <section class="homepage-section" style="padding-top: 4rem; min-height: 80vh;">
             <div class="container">
-                <h2 class="section-title" style="text-align: left; margin-bottom: 3rem;">
-                    Liên Hệ & Đặt Lịch
-                </h2>
+                
+                <!-- TIÊU ĐỀ LỚN -->
+                <div class="section-header">
+                    <h2 class="section-title">Liên Hệ & Đặt Lịch</h2>
+                </div>
                 
                 <div class="contact-layout-grid">
                     
-                    <!-- CỘT BÊN TRÁI: THÔNG TIN & GÓP Ý -->
+                    <!-- CỘT TRÁI: THÔNG TIN -->
                     <div class="contact-info-col">
                         <h3 class="section-subtitle">Thông tin liên hệ</h3>
                         <p class="section-text">
-                            Bạn có thể liên hệ trực tiếp với chúng tôi qua các kênh dưới đây.
+                            Kết nối với vũ trụ Tarot hoặc gửi lời nhắn cho chúng tôi qua các kênh dưới đây.
                         </p>
                         
                         <ul class="contact-info-list">
                             <li>
-                                <i class="fa-solid fa-envelope info-icon"></i>
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
                                 <div>
                                     <strong>Email</strong>
                                     <a href="mailto:contact@phogotarot.com">contact@phogotarot.com</a>
                                 </div>
                             </li>
                             <li>
-                                <i class="fa-solid fa-phone info-icon"></i>
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-phone"></i>
+                                </div>
                                 <div>
                                     <strong>Điện thoại</strong>
                                     <a href="tel:0352677543">0352 677 543</a>
                                 </div>
                             </li>
                             <li>
-                                <i class="fa-solid fa-location-dot info-icon"></i>
+                                <div class="icon-wrapper">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
                                 <div>
                                     <strong>Địa chỉ</strong>
                                     <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
@@ -86,106 +94,89 @@ const schema = {
                             </li>
                         </ul>
 
+                        <!-- ICON MẠNG XÃ HỘI (ĐÃ CHỈNH SỬA: ĐƠN GIẢN & GLOW) -->
                         <div class="contact-social-links">
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="social-btn">
                                 <i class="fa-brands fa-facebook"></i>
                             </a>
-                            <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                            <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" class="social-btn">
                                 <i class="fa-brands fa-youtube"></i>
                             </a>
-                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-btn">
+                                <i class="fa-brands fa-instagram"></i>
+                            </a>
+                            <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="social-btn">
                                 <i class="fa-brands fa-tiktok"></i>
                             </a>
                         </div>
                         
                         <div class="feedback-box">
-                            <h4 class="feedback-title">Chúng tôi trân trọng ý kiến của bạn</h4>
-                            <p class="section-text" style="font-size: 0.95rem; margin-bottom: 0;">
-                                Mỗi góp ý của bạn là một sự trợ giúp quý giá để Phở Gõ Tarot ngày càng hoàn thiện. Nếu bạn có bất kỳ câu hỏi hoặc đề xuất nào, đừng ngần ngại chia sẻ. Chúng tôi sẽ đọc và phản hồi bạn trong thời gian sớm nhất.
+                            <h4 class="feedback-title">Góc Lắng Nghe</h4>
+                            <p class="section-text" style="font-size: 0.95rem; margin-bottom: 0; color: #ddd;">
+                                Mỗi góp ý của bạn là một lá bài dẫn lối để Phở Gõ Tarot hoàn thiện hơn. Đừng ngần ngại chia sẻ cảm nhận của bạn nhé.
                             </p>
                         </div>
                     </div>
                     
-                    <!-- CỘT BÊN PHẢI: FORM ĐẶT LỊCH -->
+                    <!-- CỘT PHẢI: FORM ĐẶT LỊCH -->
                     <div class="contact-form-col">
-                        <h3 class="section-subtitle">Đặt lịch trải bài cá nhân</h3>
+                        <h3 class="section-subtitle form-header">Đặt lịch trải bài</h3>
                         
-                        <!-- 
-                        !!! QUAN TRỌNG:
-                        1. Thay thế URL_GOOGLE_FORM bên dưới bằng link "action" của form bạn.
-                           (Cách lấy: Mở Google Form -> Nút "Gửi" -> Tab "Liên kết" -> Lấy link)
-                           NÓ PHẢI Ở ĐỊNH DẠNG ".../formResponse"
-                           VÍ DỤ: https://docs.google.com/forms/d/e/1FAIpQLS.../    
-                           
-                        2. Thay thế các "entry.XXXXXX" trong thuộc tính 'name' của mỗi input
-                           bằng "entry ID" tương ứng từ Google Form của bạn.
-                           (Cách lấy: Mở form -> Chuột phải vào ô input -> "Kiểm tra" (Inspect)
-                           -> Tìm thuộc tính 'name' của input đó)
-                        -->
                         <form 
                             action="https://docs.google.com/forms/d/e/1FAIpQLSfQtaTjRoXJQHW49oL0fOvOcckGvGwR53oghw5JTMsK78k33w/formResponse" 
                             method="POST" 
                             target="hidden_iframe"
                             id="contact-form"
                         >
-                            <!-- Tên (Bắt buộc) -->
-                            <div class="form-group">
-                                <label for="name" class="form-label">Tên của bạn <span class="required">*</span></label>
-                                <input type="text" id="name" name="entry.1759243586" class="form-input" required>
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="name" class="form-label">Tên của bạn <span class="required">*</span></label>
+                                    <input type="text" id="name" name="entry.1759243586" class="form-input" placeholder="Nhập tên" required>
+                                </div>
+                                
+                                <div class="form-group half-width">
+                                    <label for="birth-year" class="form-label">Năm sinh <span class="required">*</span></label>
+                                    <input type="number" id="birth-year" name="entry.1886627318" class="form-input" placeholder="YYYY" required min="1920" max="2007">
+                                </div>
                             </div>
                             
-                            <!-- Email (Bắt buộc) -->
                             <div class="form-group">
                                 <label for="email" class="form-label">Email <span class="required">*</span></label>
-                                <input type="email" id="email" name="entry.240015486" class="form-input" required>
-                            </div>
-                            
-                            <!-- Năm sinh (Bắt buộc) -->
-                            <div class="form-group">
-                                <label for="birth-year" class="form-label">Năm sinh <span class="required">*</span></label>
-                                <input type="number" id="birth-year" name="entry.1886627318" class="form-input" placeholder="YYYY" required min="1920" max="2007">
-                                <small class="form-hint">Chúng tôi cần xác nhận bạn trên 18 tuổi.</small>
+                                <input type="email" id="email" name="entry.240015486" class="form-input" placeholder="example@gmail.com" required>
                             </div>
 
-                            <!-- Điện thoại (Tùy chọn) -->
-                            <div class="form-group">
-                                <label for="phone" class="form-label">Điện thoại (Tùy chọn)</label>
-                                <input type="tel" id="phone" name="entry.1415567726" class="form-input">
-                            </div>
+                            <div class="form-row">
+                                <div class="form-group half-width">
+                                    <label for="phone" class="form-label">Điện thoại (Tùy chọn)</label>
+                                    <input type="tel" id="phone" name="entry.1415567726" class="form-input" placeholder="Số ĐT">
+                                </div>
 
-                            <!-- Instagram (Tùy chọn) -->
-                            <div class="form-group">
-                                <label for="instagram" class="form-label">Instagram (Tùy chọn)</label>
-                                <input type="text" id="instagram" name="entry.1804120934" class="form-input" placeholder="@username">
+                                <div class="form-group half-width">
+                                    <label for="instagram" class="form-label">Instagram (Tùy chọn)</label>
+                                    <input type="text" id="instagram" name="entry.1804120934" class="form-input" placeholder="@username">
+                                </div>
                             </div>
                             
-                            <!-- Chủ đề (Tùy chọn) -->
                             <div class="form-group">
-                                <label for="question" class="form-label">Chủ đề hoặc câu hỏi muốn hỏi (Tùy chọn)</label>
-                                <textarea id="question" name="entry.171600570" class="form-textarea" rows="5" placeholder="Bạn có thể mô tả ngắn gọn về vấn đề của mình..."></textarea>
+                                <label for="question" class="form-label">Câu chuyện của bạn (Tùy chọn)</label>
+                                <textarea id="question" name="entry.171600570" class="form-textarea" rows="3" placeholder="Bạn đang băn khoăn về vấn đề gì?"></textarea>
                             </div>
                             
-                            <!-- Nút Gửi -->
-                            <button type="submit" class="btn-primary" id="submit-button">
+                            <button type="submit" class="btn-submit" id="submit-button">
                                 <i class="fa-solid fa-paper-plane"></i> Gửi Đăng Ký
                             </button>
                             
-                            <!-- Thông báo trạng thái -->
                             <div id="form-success-message" class="form-status-message success">
-                                Gửi thành công! Chúng tôi sẽ liên hệ với bạn sớm nhất.
+                                <i class="fa-solid fa-check-circle"></i> Gửi thành công!
                             </div>
                             <div id="form-error-message" class="form-status-message error">
-                                Đã xảy ra lỗi. Vui lòng thử lại.
+                                <i class="fa-solid fa-circle-exclamation"></i> Lỗi. Thử lại sau.
                             </div>
                         </form>
                         
-                        <!-- iFrame ẩn để xử lý form -->
                         <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
 
-                        <!-- Disclaimer -->
+                        <!-- LƯU Ý QUAN TRỌNG -->
                         <div class="disclaimer-note">
                             <strong>Lưu ý quan trọng:</strong>
                             <p>Phở Gõ Tarot không nhận trải bài cho các chủ đề sau: Sức khỏe, Bệnh tật, Pháp lý, Thi cử, Trúng số, hoặc các vấn đề 18+.</p>
@@ -198,82 +189,44 @@ const schema = {
         </section>
     </main>
     
-    <script 
-      type="application/ld+json" 
-      slot="head"
-      set:html={JSON.stringify(schema)}
-    />
+    <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
 
     <script is:inline>
-        // Script xử lý form Google
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.getElementById('contact-form');
             const iframe = document.getElementById('hidden_iframe');
             const successMessage = document.getElementById('form-success-message');
             const errorMessage = document.getElementById('form-error-message');
             const submitButton = document.getElementById('submit-button');
-            
-            // (MỚI) Lấy các trường input để xử lý
             const phoneInput = document.getElementById('phone');
             const instagramInput = document.getElementById('instagram');
-
             let formSubmitted = false;
 
-            // (MỚI) Tự động lọc ký tự cho SĐT
-            // Chỉ cho phép nhập số (0-9)
             if (phoneInput) {
                 phoneInput.addEventListener('input', function(e) {
-                    // Xóa bất kỳ ký tự nào không phải là số
                     e.target.value = e.target.value.replace(/[^\d]/g, '');
                 });
             }
 
             if (form) {
                 form.addEventListener('submit', function(event) {
-                    
-                    // Reset thông báo lỗi chung
                     errorMessage.style.display = 'none';
-                    errorMessage.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại.';
-
-                    // (MỚI) Xử lý logic cho Instagram trước khi gửi
-                    // Lấy giá trị và xóa khoảng trắng thừa
                     const instagramValue = instagramInput.value.trim();
-                    
                     if (instagramValue.length > 0) {
-                        // Nếu người dùng nhập gì đó nhưng quên "@"
                         if (!instagramValue.startsWith('@')) {
-                            // Tự động thêm "@" vào
                             instagramInput.value = '@' + instagramValue;
-                        } 
-                        // Nếu người dùng chỉ nhập "@" hoặc "@ " (sau khi trim chỉ còn "@")
-                        else if (instagramValue.length === 1 && instagramValue === '@') {
-                            // Coi như không nhập, xóa đi
+                        } else if (instagramValue.length === 1 && instagramValue === '@') {
                             instagramInput.value = '';
                         }
                     }
-                    
-                    // (LOGIC VALIDATION CŨ ĐÃ ĐƯỢC THAY BẰNG AUTO-FORMATTING Ở TRÊN)
-                    // Logic SĐT đã được xử lý bằng 'input' listener
-                    // Logic Instagram đã được xử lý bằng auto-format/auto-clear ở trên
-                    // Do đó không cần event.preventDefault() nữa, form sẽ luôn hợp lệ.
-
-                    // (BẮT ĐẦU LOGIC GỬI FORM GỐC)
-                    
-                    // Vô hiệu hóa nút và hiển thị loading
                     submitButton.disabled = true;
                     submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
                     formSubmitted = true;
-                    
-                    // Reset trạng thái
                     successMessage.style.display = 'none';
-
-                    // Đặt một bộ đếm thời gian. Nếu iframe load thành công (thành công),
-                    // nó sẽ hủy bộ đếm này. Nếu không, bộ đếm sẽ kích hoạt lỗi.
-                    const errorTimeout = setTimeout(showError, 8000); // 8 giây timeout
-
+                    const errorTimeout = setTimeout(showError, 8000);
                     iframe.onload = function() {
                         if (formSubmitted) {
-                            clearTimeout(errorTimeout); // Hủy báo lỗi
+                            clearTimeout(errorTimeout);
                             showSuccess();
                         }
                     };
@@ -288,9 +241,7 @@ const schema = {
             }
 
             function showError() {
-                // (CẬP NHẬT) Chỉ hiển thị lỗi chung nếu chưa có lỗi validation nào
                 if (errorMessage.style.display !== 'block') {
-                    errorMessage.textContent = 'Đã xảy ra lỗi. Vui lòng thử lại.';
                     errorMessage.style.display = 'block';
                 }
                 resetButton();
@@ -305,247 +256,139 @@ const schema = {
     </script>
 
     <style>
-        /* Mượn style cơ bản */
-        .homepage-section { 
-            padding: 4rem 1rem; 
-            position: relative;
-        }
-        .container { 
-            max-width: 1200px; 
-            margin: auto; 
-            padding: 0 1rem;
-        }
+        /* === 1. LAYOUT CHUNG === */
+        .homepage-section { padding: 4rem 1rem; position: relative; }
+        .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
+
+        /* === 2. TYPOGRAPHY === */
+        .section-header { margin-bottom: 3rem; }
         .section-title { 
-            font-family: var(--font-title); 
-            color: var(--title-color); 
-            font-size: 3rem; 
-            margin-bottom: 3rem; 
-            text-align: center;
+            font-family: var(--font-title); color: #ffffff; font-size: 3rem; font-weight: 700; margin: 0; text-align: left;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.5), 0 0 40px rgba(242, 201, 76, 0.1);
         }
         .section-subtitle { 
-            font-family: var(--font-title); 
-            color: var(--title-color); 
-            font-size: 1.75rem;
-            margin-top: 0; /* Reset cho cột */
-            margin-bottom: 1.5rem;
+            font-family: var(--font-title); color: var(--gold-color, #F2C94C); 
+            font-size: 1.8rem; margin-top: 0; margin-bottom: 1.5rem;
+            text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
         }
-        .section-text { 
-            font-size: 1rem;
-            opacity: 0.9; 
-            margin-bottom: 1.5rem; 
-            text-shadow: none; 
-            line-height: 1.8;
-        }
+        .section-text { font-size: 1rem; opacity: 0.9; margin-bottom: 2rem; line-height: 1.6; color: #ddd; text-shadow: none; }
         
-        /* (MỚI) Layout 2 cột */
-        .contact-layout-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 3rem;
-        }
-        @media (min-width: 900px) {
-            .contact-layout-grid {
-                grid-template-columns: 1fr 1fr; /* Cột form rộng hơn */
-            }
-        }
+        /* === 3. GRID LAYOUT === */
+        .contact-layout-grid { display: grid; grid-template-columns: 1fr; gap: 3rem; }
+        @media (min-width: 900px) { .contact-layout-grid { grid-template-columns: 1fr 1.2fr; } }
         
-        /* (MỚI) Cột thông tin bên trái */
-        .contact-info-list {
-            list-style: none;
-            padding: 0;
-            margin: 2rem 0;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
+        /* === 4. INFO COLUMN === */
+        .contact-info-col { padding-right: 1rem; }
+        .contact-info-list { list-style: none; padding: 0; margin: 2rem 0; display: flex; flex-direction: column; gap: 2rem; }
+        .contact-info-list li { display: flex; align-items: center; gap: 1.2rem; }
+        .icon-wrapper {
+            width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--gold-color, #F2C94C);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--gold-color, #F2C94C);
+            background: rgba(242, 201, 76, 0.05); box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); flex-shrink: 0; transition: all 0.3s;
         }
-        .contact-info-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
+        .contact-info-list li:hover .icon-wrapper { background: var(--gold-color, #F2C94C); color: #050A1F; box-shadow: 0 0 20px rgba(242, 201, 76, 0.5); }
+        .contact-info-list li strong { font-size: 0.85rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 0.3rem; }
+        .contact-info-list li a, .contact-info-list li span { font-size: 1.1rem; font-weight: 600; color: #fff; text-decoration: none; transition: color 0.3s; }
+        .contact-info-list li a:hover { color: var(--gold-color, #F2C94C); }
+
+        /* === SOCIAL BUTTONS (SIMPLE GLOW STYLE) === */
+        .contact-social-links { display: flex; gap: 2rem; margin-bottom: 3rem; align-items: center; }
+        .social-btn {
+            /* Bỏ border và background tròn, chỉ giữ icon */
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255, 255, 255, 0.8); /* Màu trắng mờ */
+            font-size: 2rem; /* Icon to hơn */
+            text-decoration: none; 
+            transition: all 0.3s ease;
+            width: auto; height: auto;
+            border: none; background: transparent; border-radius: 0;
         }
-        .contact-info-list .info-icon {
-            font-size: 1.25rem;
-            color: var(--title-color);
-            margin-top: 0.25rem;
-            width: 20px;
-            text-align: center;
-        }
-        .contact-info-list li div {
-            display: flex;
-            flex-direction: column;
-        }
-        .contact-info-list li strong {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            text-transform: uppercase;
-        }
-        .contact-info-list li a,
-        .contact-info-list li span {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-color);
-            text-decoration: none;
-        }
-        .contact-info-list li a:hover {
-            color: var(--title-color);
+        .social-btn:hover {
+            transform: translateY(-3px);
+            color: #fff; /* Chuyển sang trắng tinh */
+            /* Hiệu ứng phát sáng màu trắng (White Glow) */
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+            border-color: transparent;
         }
 
-        /* (MỚI) Social links (mượn từ footer) */
-        .contact-social-links {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .contact-social-links a {
-            font-size: 1.75rem;
-            color: var(--text-color);
-            opacity: 0.7;
-            transition: all 0.3s;
-        }
-        .contact-social-links a:hover {
-            opacity: 1;
-            color: var(--title-color);
-            transform: scale(1.1);
-        }
-
-        /* (MỚI) Feedback box */
         .feedback-box {
-            background-color: var(--button-bg);
-            border: 1px solid var(--card-back-border);
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(10px);
         }
-        .feedback-title {
-            font-family: var(--font-title);
-            color: var(--title-color);
-            font-size: 1.25rem;
-            margin-top: 0;
-            margin-bottom: 1rem;
-        }
+        .feedback-title { font-family: var(--font-title); color: #fff; font-size: 1.2rem; margin-top: 0; margin-bottom: 0.5rem; }
 
-        /* (MỚI) Cột form bên phải */
+        /* === 5. FORM COLUMN === */
         .contact-form-col {
-            background-color: var(--card-back-bg);
-            border: 1px solid var(--card-back-border);
-            border-radius: 12px;
-            padding: 2rem;
+            background: rgba(11, 19, 43, 0.6); 
+            border: 1px solid rgba(242, 201, 76, 0.3); 
+            border-radius: 16px; 
+            padding: 1.5rem; 
+            backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden;
+        }
+        .contact-form-col::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 5px;
+            background: linear-gradient(90deg, transparent, var(--gold-color, #F2C94C), transparent); opacity: 0.5;
         }
         
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        .form-label {
-            display: block;
-            font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-            opacity: 0.9;
-        }
-        .form-label .required {
-            color: #ff8a8a; /* Màu đỏ cho dấu * */
-            margin-left: 0.25rem;
-        }
-        .form-input,
-        .form-textarea {
-            width: 100%;
-            padding: 0.85rem 1rem;
-            border-radius: 8px;
-            background-color: var(--button-bg);
-            border: 1px solid var(--card-back-border);
-            color: var(--text-color);
-            font-family: var(--font-body);
-            font-size: 1rem;
-            text-shadow: none;
-            transition: all 0.3s;
-        }
-        .form-input:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: var(--title-color);
-            background-color: var(--bg-color);
-        }
-        .form-textarea {
-            resize: vertical;
-        }
-        .form-hint {
-            font-size: 0.85rem;
-            opacity: 0.7;
-            margin-top: 0.5rem;
-            display: block;
-        }
+        .form-header { font-size: 1.4rem; margin-bottom: 1rem; text-align: center; color: var(--gold-color, #F2C94C); }
         
-        /* Nút Submit (mượn từ index) */
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            background-color: var(--title-color);
-            color: var(--bg-color);
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 8px;
-            font-family: var(--font-body);
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            text-shadow: none;
-            width: 100%; /* Full width */
-            justify-content: center;
-        }
-        .btn-primary:hover {
-            background-color: #b8d4ff;
-        }
-        .btn-primary:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            background-color: var(--title-color);
-        }
+        .form-row { display: flex; gap: 1rem; }
+        .half-width { flex: 1; }
 
-        /* (MỚI) Disclaimer note */
+        .form-group { margin-bottom: 0.8rem; }
+        
+        .form-label { display: block; font-weight: 600; font-size: 0.85rem; margin-bottom: 0.2rem; color: #ccc; }
+        .form-label .required { color: var(--gold-color, #F2C94C); }
+        
+        .form-input, .form-textarea {
+            width: 100%; 
+            padding: 0.6rem 0.8rem; 
+            border-radius: 6px; background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; font-family: var(--font-body); font-size: 0.9rem; transition: all 0.3s;
+        }
+        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.3); font-size: 0.85rem; }
+        
+        .form-input:focus, .form-textarea:focus {
+            outline: none; border-color: var(--gold-color, #F2C94C); background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(242, 201, 76, 0.1);
+        }
+        .form-textarea { resize: vertical; }
+        
+        .btn-submit {
+            display: inline-flex; alignItems: center; justify-content: center; gap: 0.75rem;
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+            color: #050A1F; border: none; 
+            padding: 0.7rem 2rem; 
+            border-radius: 50px; font-family: var(--font-body); font-size: 1rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; width: 100%; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); margin-top: 0.5rem;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px); box-shadow: 0 6px 20px rgba(242, 201, 76, 0.6);
+            background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%);
+        }
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; filter: grayscale(1); }
+
         .disclaimer-note {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            border-left: 3px solid var(--title-color);
-            padding-left: 1rem;
-            margin-top: 2rem;
-            line-height: 1.7;
+            font-size: 0.85rem; color: #ccc;
+            border-left: 3px solid var(--gold-color, #F2C94C);
+            margin-top: 1.5rem; line-height: 1.5;
+            background: rgba(242, 201, 76, 0.05);
+            padding: 0.8rem; border-radius: 0 8px 8px 0;
         }
-        .disclaimer-note p {
-            margin: 0.5rem 0 0 0;
-            text-shadow: none;
-        }
-        .disclaimer-note strong {
-            color: var(--title-color);
-            font-size: 1rem;
-        }
+        .disclaimer-note strong { color: var(--gold-color, #F2C94C); display: block; margin-bottom: 0.3rem; font-size: 0.9rem;}
+        .disclaimer-note p { margin: 0 0 0.3rem 0; }
+        .disclaimer-note p:last-child { margin-bottom: 0; }
 
-        /* (MỚI) Form Status Messages */
-        .form-status-message {
-            display: none;
-            padding: 1rem;
-            border-radius: 8px;
-            margin-top: 1.5rem;
-            font-weight: 600;
-            text-align: center;
-        }
-        .form-status-message.success {
-            background-color: rgba(165, 214, 167, 0.2);
-            border: 1px solid #a5d6a7;
-            color: #a5d6a7;
-        }
-        .form-status-message.error {
-            background-color: rgba(255, 138, 138, 0.2);
-            border: 1px solid #ff8a8a;
-            color: #ff8a8a;
-        }
+        /* Messages */
+        .form-status-message { display: none; padding: 0.8rem; border-radius: 8px; margin-top: 1rem; font-weight: 600; text-align: center; font-size: 0.9rem; }
+        .form-status-message.success { background-color: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; color: #22c55e; }
+        .form-status-message.error { background-color: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; }
         
-        @media (min-width: 600px) {
-            .btn-primary {
-                width: auto; /* Nút co lại trên desktop */
-            }
+        @media (max-width: 600px) {
+            .section-title { font-size: 2.5rem; }
+            .contact-form-col { padding: 1rem; }
+            .form-row { flex-direction: column; gap: 0; } 
         }
     </style>
 </BaseLayout>

@@ -24,14 +24,14 @@ const schema = {
   title={pageTitle}
   description={pageDesc}
 >
-    <!-- MÀN HÌNH 1: CÂU HỎI -->
     <div id="question-screen" class="screen active">
         <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
+        <p class="subtitle">Bạn có thể chọn rút 1 lá để xem nhanh hoặc 3 lá để xem chi tiết.</p>
         
         <div id="question-input-area" class="question-input-area">
-            <textarea id="question-input" class="question-input" placeholder="Viết câu hỏi của bạn ở đây..." style="min-height: 56px;"></textarea>
+            <textarea id="question-input" class="question-input" placeholder="Viết câu hỏi Yes/No của bạn ở đây..." style="min-height: 56px;"></textarea>
             <button id="submit-question-btn" title="Gửi câu hỏi">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                     <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                 </svg>
             </button>
@@ -48,8 +48,8 @@ const schema = {
 
         <div class="dropdown-container">
             <button id="suggested-questions-toggle" class="dropdown-toggle">
-                <span>Gợi ý câu hỏi</span>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" style="transition: transform 0.2s;">
+                <span><i class="fa-regular fa-lightbulb"></i> Gợi ý câu hỏi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" class="arrow-icon">
                     <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                 </svg>
             </button>
@@ -58,31 +58,22 @@ const schema = {
             </div>
         </div>
         
-        <p id="question-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+        <p id="question-error-display" class="error-message"></p>
 
-        <!-- === (CHỈNH SỬA) KHU VỰC TRA CỨU BÀI (MÀN 1) === -->
-        <!-- (QUAN TRỌNG) Đổi ID của các phần tử con để tránh trùng lặp -->
-        <div id="card-lookup-container-start" class="card-lookup-container"> <!-- (ĐỔI) ID + Thêm Class -->
+        <div id="card-lookup-container-start" class="card-lookup-container">
             <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
             
             <div id="card-search-wrapper">
-                <!-- (ĐỔI) Đổi ID thành Class -->
                 <i class="fa-solid fa-search card-search-icon"></i>
-                <!-- (ĐỔI) Đổi ID thành Class, thêm data-target -->
                 <input type="text" class="card-search-input" data-target="card-lookup-table-1" placeholder="Tìm kiếm bài Tarot...">
             </div>
             
-             <!-- (ĐỔI) Đổi ID -->
             <div id="card-lookup-table-1">
-                <!-- Nội dung sẽ được tải bằng JS -->
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
             </div>
         </div>
-        <!-- === (HẾT) KHU VỰC TRA CỨU BÀI (MÀN 1) === -->
+        </div>
 
-    </div>
-
-    <!-- MÀN HÌNH 2: XÁO BÀI (Giữ nguyên) -->
     <div id="shuffling-screen" class="screen">
         <div id="shuffling-question-display" class="question-display-header"></div>
         <div class="shuffling-animation-container">
@@ -97,7 +88,6 @@ const schema = {
         </p>
     </div>
 
-    <!-- MÀN HÌNH 3: CHỌN BÀI (ĐÃ CHỈNH SỬA) -->
     <div id="drawing-screen" class="screen">
         <div id="drawing-question-display" class="question-display-header"></div>
         
@@ -119,46 +109,37 @@ const schema = {
         </div>
         
         <div id="action-button-container">
-            <button id="get-interpretation-button" class="action-button">Xem ý nghĩa</button>
+            <button id="get-interpretation-button" class="action-button btn-gold-glow">Xem ý nghĩa</button>
         </div>
         
-        <div id="interpretation-results-display"></div>
+        <div is:inline id="interpretation-results-display"></div>
         
         <div id="follow-up-question-container">
             <h3>Bạn có câu hỏi nào khác không?</h3>
             <div id="follow-up-input-area" class="question-input-area">
                 <textarea id="follow-up-question-input" class="question-input" placeholder="Đặt câu hỏi tiếp theo..." style="min-height: 56px;"></textarea>
                 <button id="submit-follow-up-btn" title="Gửi câu hỏi mới">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
                         <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                     </svg>
                 </button>
             </div>
-            <p id="follow-up-error-display" style="min-height: 1.2em; font-weight: 600;"></p>
+            <p id="follow-up-error-display" class="error-message"></p>
         </div>
         
-        <!-- === (MỚI) KHU VỰC TRA CỨU BÀI (MÀN 3) === -->
-        <!-- Đây là khối HTML được sao chép từ màn 1 -->
-        <!-- (QUAN TRỌNG) Đổi ID của các phần tử con để tránh trùng lặp -->
-        <div id="card-lookup-container-results" class="card-lookup-container"> <!-- (ĐỔI) ID + Thêm Class -->
+        <div id="card-lookup-container-results" class="card-lookup-container">
             <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
             
-            <div id="card-search-wrapper"> <!-- Giữ nguyên ID wrapper -->
-                <!-- (ĐỔI) Đổi ID thành Class -->
+            <div id="card-search-wrapper">
                 <i class="fa-solid fa-search card-search-icon"></i>
-                 <!-- (ĐỔI) Đổi ID thành Class, thêm data-target -->
                 <input type="text" class="card-search-input" data-target="card-lookup-table-2" placeholder="Tìm kiếm bài Tarot...">
             </div>
             
-            <!-- (ĐỔI) Đổi ID -->
             <div id="card-lookup-table-2">
-                <!-- Nội dung sẽ được tải bằng JS -->
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
             </div>
         </div>
-        <!-- === (HẾT) KHU VỰC TRA CỨU BÀI (MÀN 3) === -->
-        
-    </div>
+        </div>
 
     <script 
       type="application/ld+json" 
@@ -166,309 +147,521 @@ const schema = {
       set:html={JSON.stringify(schema)}
     />
 
-
     <link rel="preload" href="/card-back.jpg" as="image">
 
-    <style is:inline> 
-        
-        /* --- CSS CHO LOADER HÀNH TINH 3D (Giữ nguyên) --- */
-        .interpretation-loader {
-            display: flex;
+    <style is:inline>
+        /* ========================================================== */
+        /* === 1. STYLE CHUNG TỪ TAROT.ASTRO (THEME DARK BLUE/GOLD) === */
+        /* ========================================================== */
+
+        /* === CẤU TRÚC CHUNG === */
+        .screen {
+            display: none;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 1.5rem 1rem; 
-            overflow: hidden; 
-            perspective: 800px; 
+            min-height: 80vh;
+            padding: 2rem 1rem;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        .screen.active { display: flex; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === TYPOGRAPHY === */
+        .title {
+            font-family: var(--font-title);
+            color: #ffffff;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 15px rgba(242, 201, 76, 0.6), 0 0 30px rgba(242, 201, 76, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            color: #ccc; margin-bottom: 2.5rem; text-align: center; text-shadow: none;
+        }
+        
+        .question-display-header {
+            font-family: var(--font-title);
+            color: var(--gold-color, #F2C94C);
+            font-size: 1.5rem; margin-bottom: 1rem; text-align: center;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 1rem; width: 100%; max-width: 800px;
+        }
+
+        /* === INPUT AREA (GLASSMORPHISM) === */
+        #question-screen { padding-top: 6rem; justify-content: flex-start; }
+        
+        .question-input-area {
+            width: 100%;
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 16px;
+            padding: 0.8rem 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s ease;
+        }
+        .question-input-area:focus-within {
+            border-color: var(--gold-color, #F2C94C);
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .question-input {
+            width: 100%;
+            background: transparent; border: none; color: #fff;
+            font-family: var(--font-body); font-size: 1.1rem; resize: none;
+            text-shadow: none; padding: 0.5rem; flex-grow: 1;
+        }
+        .question-input:focus { outline: none; }
+        .question-input::placeholder { color: rgba(255,255,255,0.3); font-size: 1rem; }
+
+        /* Nút Gửi */
+        #submit-question-btn, #submit-follow-up-btn {
+            flex-shrink: 0;
+            width: 48px; height: 48px; border-radius: 50%; border: none;
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+            color: #050A1F; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s; box-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+        }
+        #submit-question-btn:hover, #submit-follow-up-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
+            background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%);
+        }
+        #submit-question-btn:disabled, #submit-follow-up-btn:disabled {
+            opacity: 0.6; cursor: not-allowed; filter: grayscale(1);
+        }
+
+        .error-message { color: #ff6b6b; font-weight: 600; margin-top: 1rem; min-height: 1.5em; text-shadow: none; }
+
+        /* === DROPDOWN GỢI Ý (SOLID STYLE) === */
+        .dropdown-container { width: 100%; max-width: 700px; margin: 1.5rem 0; position: relative; }
+        
+        .dropdown-toggle {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            color: #ddd;
+            padding: 0.8rem 1.2rem; border-radius: 12px;
+            cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-family: var(--font-body); font-size: 1rem; transition: all 0.3s;
+        }
+        .dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .arrow-icon { transition: transform 0.3s; }
+        .dropdown-toggle.open .arrow-icon { transform: rotate(180deg); }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute; top: 110%; left: 0; right: 0;
+            background-color: #0b132b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto; z-index: 100;
+            padding: 0.5rem 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+        .dropdown-menu.open { display: block; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from{opacity:0; transform:translateY(-5px)} to{opacity:1; transform:translateY(0)} }
+
+        .dropdown-menu::-webkit-scrollbar { width: 5px; }
+        .dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+        .dropdown-menu::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
+        .dropdown-menu::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        .category-title {
+            color: var(--gold-color, #F2C94C);
+            font-family: var(--font-title);
+            font-size: 0.95rem; font-weight: 700;
+            padding: 0.8rem 1rem 0.4rem 1rem; margin: 0; 
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .category-title:first-child { border-top: none; padding-top: 0.5rem; }
+
+        .suggestion-item {
+            display: block;
+            width: 100%; text-align: left; background: none; border: none;
+            color: #cbd5e1;
+            padding: 0.6rem 1rem; 
+            cursor: pointer;
+            font-size: 0.95rem; transition: all 0.2s;
+            line-height: 1.5;
+        }
+        .suggestion-item:hover { 
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--gold-color, #F2C94C);
+        }
+
+        /* === SHUFFLING SCREEN === */
+        #shuffling-screen { padding-top: 4rem; justify-content: center; }
+        .shuffling-animation-container { position: relative; width: 120px; height: 180px; margin: 3rem auto; }
+        .shuffle-card {
+            position: absolute;
+            width: 100%; height: 100%;
+            background-image: url('/card-back.jpg'); background-size: cover;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: shuffle 1.5s ease-in-out infinite;
+        }
+        .shuffle-card:nth-child(1) { animation-delay: 0s; }
+        .shuffle-card:nth-child(2) { animation-delay: -0.5s; }
+        .shuffle-card:nth-child(3) { animation-delay: -1s; }
+        @keyframes shuffle {
+            0%, 100% { transform: translateX(-40px) rotate(-10deg); z-index: 1;}
+            50% { transform: translateX(40px) rotate(10deg); z-index: 3;}
+        }
+        .shuffling-instruction {
+            font-size: 1.2rem;
+            color: #ccc; text-align: center; line-height: 1.6;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* === DRAWING SCREEN === */
+        #drawing-screen { padding-top: 3rem; justify-content: flex-start; }
+        .drawing-subheader {
+            font-family: var(--font-body);
+            color: #fff; font-size: 1.3rem;
+            margin-bottom: 2rem; text-align: center; font-weight: 600;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+
+        #chosen-cards-display { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 3rem; min-height: 180px; }
+        .chosen-card-placeholder {
+            width: 110px; height: 170px; border: 2px dashed rgba(242, 201, 76, 0.3);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: rgba(242, 201, 76, 0.3); font-size: 1.5rem; font-weight: 700; background: rgba(255,255,255,0.02);
+        }
+        .chosen-card-item { width: 110px; text-align: center; animation: revealCard 0.8s ease; }
+        .chosen-card-item img { width: 100%; border-radius: 8px; box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); }
+        .chosen-card-item img.reversed { transform: rotate(180deg); }
+        .chosen-card-item .card-name { margin-top: 0.5rem; font-weight: 700; color: #fff; font-size: 0.9rem; text-shadow: none; }
+        .chosen-card-item .card-orientation { font-size: 0.8rem; color: var(--gold-color, #F2C94C); text-shadow: none; }
+
+        #card-spread-container { display: flex; flex-direction: column; gap: 10px; width: 100%; align-items: center; }
+        .card-row { display: flex; justify-content: center; width: 100%; }
+        .facedown-card {
+            width: 60px; height: 90px; background-image: url('/card-back.jpg'); background-size: cover;
+            border-radius: 4px; margin-left: -40px; cursor: pointer; transition: transform 0.3s;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+        }
+        .facedown-card:hover { transform: translateY(-15px) scale(1.1); z-index: 10; }
+        .facedown-card.is-chosen { opacity: 0; pointer-events: none; }
+        .mobile-row { display: none; }
+        @media (max-width: 768px) {
+            #card-row-1, #card-row-2 { display: none; }
+            .mobile-row { display: flex; }
+            .facedown-card { margin-left: -45px; }
+        }
+
+        .action-button {
+            display: none;
+            opacity: 0; transform: scale(0.9);
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+            color: #050A1F; border: none; padding: 1rem 3rem;
+            border-radius: 50px;
+            font-size: 1.1rem; font-weight: 700; box-shadow: 0 0 20px rgba(242, 201, 76, 0.4);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .action-button.visible { display: inline-block; opacity: 1; transform: scale(1); }
+        .action-button:hover { transform: scale(1.05) translateY(-3px); box-shadow: 0 0 30px rgba(242, 201, 76, 0.8); }
+
+        /* === INTERPRETATION RESULT === */
+        #interpretation-results-display {
+            display: none;
+            width: 100%; max-width: 800px; margin: 2rem auto;
+            background: rgba(11, 19, 43, 0.8); border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: left;
+        }
+        #interpretation-results-display h1, #interpretation-results-display h2, #interpretation-results-display h3 {
+            font-family: var(--font-title);
+            color: var(--gold-color, #F2C94C);
+            margin-top: 1.5rem; margin-bottom: 1rem; text-shadow: none;
+        }
+        #interpretation-results-display p, #interpretation-results-display li {
+            color: #e0e0e0; line-height: 1.8; font-size: 1.05rem; text-shadow: none;
+        }
+        #interpretation-results-display strong { color: #fff; }
+
+        /* --- LOADER HÀNH TINH 3D --- */
+        .interpretation-loader {
+            display: flex; flexDirection: column; align-items: center; justify-content: center;
+            padding: 1.5rem 1rem; perspective: 800px; overflow: hidden;
         }
         .loader-planet-system {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transform-style: preserve-3d;
+            position: relative; width: 200px; height: 200px; display: flex;
+            align-items: center; justify-content: center; transform-style: preserve-3d;
             animation: system-wobble 15s infinite ease-in-out;
         }
         .loader-planet-sphere {
-            width: 100px; 
-            height: 100px; 
-            border-radius: 50%;
-            background-image: url('/planet.png'); 
-            background-size: cover; 
-            background-position: center;
-            background-color: transparent; 
-            animation: planet-glow 2.5s infinite ease-in-out;
-            position: absolute;
+            width: 100px; height: 100px; border-radius: 50%;
+            background-image: url('/planet.png'); background-size: cover; background-position: center;
+            position: absolute; animation: planet-glow 2.5s infinite ease-in-out;
         }
         .loader-orbit {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            transform-style: preserve-3d;
-            animation-iteration-count: infinite;
-            animation-timing-function: linear;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; transform-style: preserve-3d;
+            animation-iteration-count: infinite; animation-timing-function: linear;
         }
-        .orbit-1 { animation-name: orbit-spin-1; animation-duration: 3s; }
-        .orbit-1::before { content: ''; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #fff; box-shadow: 0 0 15px #fff; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
-        .orbit-2 { animation-name: orbit-spin-2; animation-duration: 5s; }
-        .orbit-2::before { content: ''; position: absolute; width: 7px; height: 7px; border-radius: 50%; background: #ffc; box-shadow: 0 0 15px #ffc; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
-        .orbit-3 { animation-name: orbit-spin-3; animation-duration: 7s; }
-        .orbit-3::before { content: ''; position: absolute; width: 5px; height: 5px; border-radius: 50%; background: #fcc; box-shadow: 0 0 15px #fcc; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
-        .orbit-4 { animation-name: orbit-spin-4; animation-duration: 10s; }
-        .orbit-4::before { content: ''; position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #0ff; box-shadow: 0 0 15px #0ff; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
-        .orbit-5 { animation-name: orbit-spin-5; animation-duration: 14s; }
-        .orbit-5::before { content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%; background: #f0f; box-shadow: 0 0 15px #f0f; top: 50%; left: 0; transform: translate(-50%, -50%); filter: blur(3px); }
+        .orbit-1 { animation: orbit-spin-1 3s linear infinite; }
+        .orbit-2 { animation: orbit-spin-2 5s linear infinite; }
+        .orbit-3 { animation: orbit-spin-3 7s linear infinite; }
+        .orbit-4 { animation: orbit-spin-4 10s linear infinite; }
+        .orbit-5 { animation: orbit-spin-5 14s linear infinite; }
+        .orbit-1::before, .orbit-2::before, .orbit-3::before, .orbit-4::before, .orbit-5::before {
+            content: ''; position: absolute; border-radius: 50%; top: 50%; left: 0;
+            transform: translate(-50%, -50%); filter: blur(3px);
+        }
+        .orbit-1::before { width: 10px; height: 10px; background: #fff; box-shadow: 0 0 15px #fff; }
+        .orbit-2::before { width: 7px; height: 7px; background: #ffc; box-shadow: 0 0 15px #ffc; }
+        .orbit-3::before { width: 5px; height: 5px; background: #fcc; box-shadow: 0 0 15px #fcc; }
+        .orbit-4::before { width: 6px; height: 6px; background: #0ff; box-shadow: 0 0 15px #0ff; }
+        .orbit-5::before { width: 8px; height: 8px; background: #f0f; box-shadow: 0 0 15px #f0f; }
         .loader-text {
-            margin-top: 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-color);
-            opacity: 0.8;
-            text-shadow: 0 0 10px var(--text-color);
+            margin-top: 1.5rem; font-size: 1.1rem; font-weight: 600;
+            color: var(--gold-color, #F2C94C); text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
             animation: text-fade 2s infinite ease-in-out;
         }
-        @keyframes system-wobble { 0% { transform: rotateY(-10deg) rotateX(5deg); } 50% { transform: rotateY(10deg) rotateX(-5deg); } 100% { transform: rotateY(-10deg) rotateX(5deg); } }
-        @keyframes orbit-spin-1 { from { transform: rotateX(65deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateZ(360deg); } }
-        @keyframes orbit-spin-2 { from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); } }
-        @keyframes orbit-spin-3 { from { transform: rotateX(65deg) rotateY(-60deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(-60deg) rotateZ(360deg); } }
-        @keyframes orbit-spin-4 { from { transform: rotateX(65deg) rotateY(-45deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(-45deg) rotateZ(360deg); } }
-        @keyframes orbit-spin-5 { from { transform: rotateX(65deg) rotateY(30deg) rotateZ(0deg); } to   { transform: rotateX(65deg) rotateY(30deg) rotateZ(360deg); } }
+        @keyframes system-wobble { 0%, 100% { transform: rotateY(-10deg) rotateX(5deg); } 50% { transform: rotateY(10deg) rotateX(-5deg); } }
+        @keyframes orbit-spin-1 { from { transform: rotateX(65deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-2 { from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-3 { from { transform: rotateX(65deg) rotateY(-60deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(-60deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-4 { from { transform: rotateX(65deg) rotateY(-45deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(-45deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-5 { from { transform: rotateX(65deg) rotateY(30deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(30deg) rotateZ(360deg); } }
         @keyframes text-fade { 0%, 100% { opacity: 0.7; } 50% { opacity: 1; } }
-        @keyframes planet-glow { 0% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } 50% { filter: drop-shadow(0 0 15px #fff) drop-shadow(0 0 25px #c1c8ff); } 100% { filter: drop-shadow(0 0 5px #fff) drop-shadow(0 0 10px #8b96ff); } }
-        /* --- (HẾT) CSS CHO LOADER --- */
+        @keyframes planet-glow { 0%, 100% { filter: drop-shadow(0 0 5px #fff); } 50% { filter: drop-shadow(0 0 15px #fff); } }
+
+        /* --- HỎI TIẾP --- */
+        #follow-up-question-container { display: none; width: 100%; max-width: 700px; margin: 3rem auto 0; text-align: center; }
+        #follow-up-question-container h3 { font-family: var(--font-title); color: #fff; margin-bottom: 1rem; }
+
+        /* --- FLYING CARD --- */
+        .flying-card-animator {
+            position: absolute; z-index: 1000; pointer-events: none; width: 60px; height: 90px;
+            transition: all 0.8s ease-in-out; transform-style: preserve-3d;
+        }
+        .flying-card-inner {
+            position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s;
+        }
+        .flying-card-front, .flying-card-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 4px;
+        }
+        .flying-card-back { background-image: url('/card-back.jpg'); background-size: cover; }
+        .flying-card-front { transform: rotateY(180deg); }
+        .flying-card-front img { width: 100%; height: 100%; border-radius: 4px; }
 
 
-        /* === CSS CHO NÚT CHỌN SỐ LÁ BÀI === */
+        /* ================================================================ */
+        /* === 2. STYLE RIÊNG CHO YES/NO (ĐÃ ĐƯỢC CHỈNH THEO THEME MỚI) === */
+        /* ================================================================ */
+
+        /* === BUTTON CHỌN SỐ LÁ BÀI === */
         #reading-options-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px; /* Match max-width của input area */
             margin: 1.5rem 0 0 0; 
             display: flex;
-            background-color: var(--button-bg);
-            border: 1px solid var(--card-back-border);
-            border-radius: 8px;
+            /* Glassmorphism background giống input area */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 16px;
             padding: 0.5rem;
-            backdrop-filter: blur(5px);
             gap: 0.5rem; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
         .reading-option-btn {
-            flex: 1; 
+            flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-color);
+            color: rgba(255,255,255,0.7); /* Màu chữ mờ khi chưa active */
             padding: 0.75rem 1rem;
-            border-radius: 6px; 
+            border-radius: 12px; 
             cursor: pointer;
             transition: all 0.3s ease;
             font-family: var(--font-body);
-            font-size: 0.9rem;
+            font-size: 1rem;
             font-weight: 600;
             text-align: center;
-            text-shadow: none; 
-            opacity: 0.8;
         }
         
         .reading-option-btn:hover:not(.active) {
-            background-color: var(--button-hover-bg);
-            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
         
         .reading-option-btn.active {
-            background-color: var(--title-color); 
-            color: var(--bg-color); 
+            /* Gradient vàng kim giống nút Submit */
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+            color: #050A1F; 
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
             text-shadow: none;
-            opacity: 1;
+            font-weight: 700;
         }
-        /* === (HẾT) CSS CHO NÚT CHỌN === */
 
-        
-
-        /* === (CHỈNH SỬA) CSS CHO KHU VỰC TRA CỨU BÀI === */
-        .card-lookup-container { /* (ĐỔI) ID -> Class */
+        /* === CSS CHO KHU VỰC TRA CỨU BÀI === */
+        .card-lookup-container {
             width: 100%;
             max-width: 1100px; 
-            margin: 2.5rem auto 0 auto; 
-            background-color: var(--button-bg);
-            border: 1px solid var(--card-back-border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            backdrop-filter: blur(5px);
+            margin: 3.5rem auto 0 auto; 
+            /* Glassmorphism Background */
+            background: rgba(11, 19, 43, 0.6);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
             text-align: left; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
         
-        /* (MỚI) Thêm CSS cho container tra cứu ở màn 3 */
-        /* Cần đảm bảo nó có max-width giống như các phần tử khác */
-        #card-lookup-container-results { /* (ĐỔI) ID + CSS Cũ */
-            max-width: 800px; /* Giống với max-width của kết quả */
-            margin-top: 2.5rem; /* Thêm khoảng cách với phần hỏi tiếp */
+        #card-lookup-container-results {
+            max-width: 800px; /* Giống max-width của kết quả */
+            margin-top: 3rem;
+            display: none; /* Mặc định ẩn */
         }
         
-        .card-lookup-container h2 { /* (ĐỔI) ID -> Class */
+        .card-lookup-container h2 {
             font-family: var(--font-title);
-            color: var(--title-color);
+            color: var(--gold-color, #F2C94C);
             text-align: center; 
             margin-top: 0;
             margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
         }
         
-        /* (MỚI) CSS cho wrapper thanh tìm kiếm */
         #card-search-wrapper {
             position: relative;
             width: 100%;
-            margin-bottom: 1.5rem; /* Chuyển margin từ input sang wrapper */
+            margin-bottom: 1.5rem;
         }
         
-        /* (MỚI) CSS cho icon tìm kiếm */
-        .card-search-icon { /* (ĐỔI) Đổi từ ID sang Class */
+        .card-search-icon {
             position: absolute;
             left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-color);
-            opacity: 0.5;
-            pointer-events: none; /* Để có thể click xuyên qua icon */
-            font-size: 0.9rem; /* Kích thước icon */
-            text-shadow: none; /* Tắt shadow cho icon */
-        }
-
-        /* (CHỈNH SỬA) CSS cho thanh tìm kiếm tra cứu */
-        .card-search-input { /* (ĐỔI) Đổi từ ID sang Class */
-            width: 100%;
-            padding: 0.75rem 1rem 0.75rem 2.75rem; /* (CHỈNH SỬA) Tăng padding-left */
-            /* margin-bottom: 1.5rem; */ /* (XÓA) Đã chuyển ra wrapper */
-            background-color: var(--bg-color); /* Nền tối hơn 1 chút */
-            border: 1px solid var(--card-back-border);
-            border-radius: 6px;
-            color: var(--text-color);
-            font-family: var(--font-body);
-            font-size: 0.95rem;
+            color: #F2C94C; /* Icon màu vàng */
+            opacity: 0.8;
+            pointer-events: none;
+            font-size: 1rem;
             text-shadow: none;
         }
 
-        /* Wrapper để cuộn */
+        .card-search-input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.75rem;
+            background-color: rgba(255, 255, 255, 0.05); /* Nền tối/trong suốt */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            text-shadow: none;
+            transition: all 0.3s;
+        }
+        .card-search-input:focus {
+            outline: none;
+            border-color: var(--gold-color, #F2C94C);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.1);
+        }
+
         .card-lookup-table-wrapper {
-            max-height: 400px; 
+            max-height: 400px;
             overflow-y: auto;
             scrollbar-width: thin;
-            scrollbar-color: var(--card-back-border) var(--bg-color);
+            scrollbar-color: rgba(242, 201, 76, 0.5) rgba(11, 19, 43, 0.5);
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
-        .card-lookup-table-wrapper::-webkit-scrollbar {
-            width: 8px;
-        }
-        .card-lookup-table-wrapper::-webkit-scrollbar-track {
-            background: rgba(11, 19, 43, 0.5); 
-            border-radius: 4px;
-        }
+        .card-lookup-table-wrapper::-webkit-scrollbar { width: 8px; }
+        .card-lookup-table-wrapper::-webkit-scrollbar-track { background: rgba(11, 19, 43, 0.5); border-radius: 4px; }
         .card-lookup-table-wrapper::-webkit-scrollbar-thumb {
-            background-color: var(--card-back-border);
+            background-color: rgba(242, 201, 76, 0.5);
             border-radius: 4px;
             border: 2px solid rgba(11, 19, 43, 0.5);
         }
         
-         @media (max-width: 768px) {
-            .card-lookup-table-wrapper {
-                overflow-x: auto;
-            }
-         }
-
-
-        .card-lookup-container table { /* (ĐỔI) ID -> Class */
+        .card-lookup-container table {
             width: 100%;
             border-collapse: collapse;
         }
         
         @media (max-width: 768px) {
-            .card-lookup-container table { /* (ĐỔI) ID -> Class */
-                min-width: 850px; 
-            }
+            .card-lookup-table-wrapper { overflow-x: auto; }
+            .card-lookup-container table { min-width: 850px; }
         }
         
         .card-lookup-container th,
-        .card-lookup-container td { /* (ĐỔI) ID -> Class */
-            padding: 0.85rem 0.75rem; 
-            border-bottom: 1px solid var(--card-back-border);
+        .card-lookup-container td {
+            padding: 1rem 0.75rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             text-shadow: none; 
-            line-height: 1.5;
+            line-height: 1.6;
             font-size: 0.95rem; 
-            vertical-align: middle; 
+            vertical-align: middle;
+            color: #e0e0e0;
         }
 
-        .card-lookup-container th { /* (ĐỔI) ID -> Class */
-            font-family: var(--font-body); 
+        .card-lookup-container th {
+            font-family: var(--font-title); /* Font tiêu đề */
             font-weight: 600;
-            color: var(--title-color);
+            color: var(--gold-color, #F2C94C); /* Màu vàng */
             position: sticky; 
             top: 0;
-            background: rgb(20, 40, 80); /* Nền đặc */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
+            background: #0b132b; /* Nền đặc xanh đậm */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
             z-index: 1; 
+            letter-spacing: 0.5px;
         }
         
-        .card-lookup-container tr:last-child td { /* (ĐỔI) ID -> Class */
-            border-bottom: none;
-        }
+        .card-lookup-container tr:last-child td { border-bottom: none; }
         
         .lookup-card-image {
-            width: 60px; 
-            height: auto;
-            aspect-ratio: 2/3; 
-            object-fit: cover;
-            border-radius: 4px;
-            display: block;
-            margin: 1rem auto; 
+            width: 60px; height: auto; aspect-ratio: 2/3; 
+            object-fit: cover; border-radius: 4px;
+            display: block; margin: 0 auto;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
         }
 
-        /* (CHỈNH SỬA) Phân bổ lại độ rộng các cột */
-        .card-lookup-container td:nth-child(1) { /* (ĐỔI) ID -> Class */
-            width: 8%;
-            text-align: center;
-            padding: 0.5rem;
-        }
-        .card-lookup-container td:nth-child(2) { /* (ĐỔI) ID -> Class */
-            width: 22%;
-            font-weight: 600;
-        }
-        .card-lookup-container td:nth-child(3) { /* (ĐỔI) ID -> Class */
-            width: 15%;
-        }
-        .card-lookup-container td:nth-child(4) { /* (ĐỔI) ID -> Class */
-            width: 27.5%;
-        }
-        .card-lookup-container td:nth-child(5) { /* (ĐỔI) ID -> Class */
-            width: 27.5%;
-        }
-        /* === (HẾT) CSS TRA CỨU === */
-        
-        /* (MỚI) CSS ẨN/HIỆN BẢNG TRA CỨU KẾT QUẢ */
-        #card-lookup-container-results {
-            display: none;
-        }
-        /* (XÓA) Xóa bỏ rule này, chúng ta sẽ dùng JS để hiển thị
-        #drawing-screen.results-active #card-lookup-container-results {
-            display: block;
-        }
-        */
+        /* Table column widths */
+        .card-lookup-container td:nth-child(1) { width: 8%; text-align: center; padding: 0.5rem; }
+        .card-lookup-container td:nth-child(2) { width: 22%; font-weight: 700; color: #fff; }
+        .card-lookup-container td:nth-child(3) { width: 15%; color: var(--gold-color, #F2C94C); font-weight: 600; } /* Cột Yes/No màu vàng */
+        .card-lookup-container td:nth-child(4) { width: 27.5%; }
+        .card-lookup-container td:nth-child(5) { width: 27.5%; }
         
     </style>   
 
 
-    
-
-
-    <!-- SCRIPT LOGIC CỦA TRANG (ĐÃ CHỈNH SỬA) -->
     <script>
 /* ============================================= */
 /* === TAROT.JS (Logic cho trang 1/3 lá) === */
 /* ============================================= */
 
-const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d'; 
+const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d';
 const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2b074c1e-6465-4114-872d-c0dcd9278b62'; 
 const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
 
@@ -477,16 +670,16 @@ const screens = document.querySelectorAll('.screen');
 const questionInput = document.getElementById('question-input');
 const submitQuestionBtn = document.getElementById('submit-question-btn');
 const questionErrorDisplay = document.getElementById('question-error-display'); 
-// (CHỈNH SỬA) Lấy cả 2 bảng tra cứu
-const cardLookupTable1 = document.getElementById('card-lookup-table-1'); 
+// Lấy cả 2 bảng tra cứu
+const cardLookupTable1 = document.getElementById('card-lookup-table-1');
 const cardLookupTable2 = document.getElementById('card-lookup-table-2'); 
-const cardLookupContainerResults = document.getElementById('card-lookup-container-results'); // (MỚI) Thêm container của bảng
+const cardLookupContainerResults = document.getElementById('card-lookup-container-results'); 
 const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
 const suggestedQuestionsList = document.getElementById('suggested-questions-list');
 const readingOptionBtns = document.querySelectorAll('.reading-option-btn');
 const cardRow1 = document.getElementById('card-row-1');
 const cardRow2 = document.getElementById('card-row-2');
-const cardRow3 = document.getElementById('card-row-3'); 
+const cardRow3 = document.getElementById('card-row-3');
 const cardRow4 = document.getElementById('card-row-4');
 const cardRow5 = document.getElementById('card-row-5');
 const cardRow6 = document.getElementById('card-row-6');
@@ -499,7 +692,7 @@ const mainResultsDisplay = document.getElementById('interpretation-results-displ
 const followUpContainer = document.getElementById('follow-up-question-container');
 const followUpInput = document.getElementById('follow-up-question-input');
 const followUpSubmitBtn = document.getElementById('submit-follow-up-btn');
-const followUpErrorDisplay = document.getElementById('follow-up-error-display'); 
+const followUpErrorDisplay = document.getElementById('follow-up-error-display');
 
 // Icon HTML
 const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -513,11 +706,12 @@ const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
 let cardData = [];
 let selectedCards = [];
 let userQuestion = '';
-let isAnimating = false; 
+let isAnimating = false;
 let allCardImagesLoaded = false;
 let currentReadingId = null; 
 let numCardsToChoose = 1; 
-let cardMeaningsHtml = ''; // (MỚI) Biến lưu trữ HTML của bảng
+let cardMeaningsHtml = '';
+// Biến lưu trữ HTML của bảng
 
 // === Functions ===
 
@@ -546,13 +740,11 @@ async function initialize() {
         const text = await response.text();
         const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
         const table = JSON.parse(jsonText).table;
-
         cardData = table.rows.map((row, index) => ({
             id: index,
             name: row.c[0]?.v || 'Unknown Card',
             image: row.c[1]?.v || 'https://placehold.co/200x340'
         }));
-
         preloadAllCardImages();
     } catch (error)
     {
@@ -563,14 +755,13 @@ async function initialize() {
     }
 }
 
-/** (CHỈNH SỬA) Tải và hiển thị dữ liệu tra cứu */
+/** Tải và hiển thị dữ liệu tra cứu */
 async function loadCardMeanings() {
-    // (CHỈNH SỬA) Hiển thị loading ở cả 2 bảng
     const loadingHtml = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>';
     if (cardLookupTable1) cardLookupTable1.innerHTML = loadingHtml;
     if (cardLookupTable2) cardLookupTable2.innerHTML = loadingHtml;
-
-    // (MỚI) Nếu đã tải rồi, chỉ cần hiển thị
+    
+    // Nếu đã tải rồi, chỉ cần hiển thị
     if (cardMeaningsHtml) {
         if (cardLookupTable1) cardLookupTable1.innerHTML = cardMeaningsHtml;
         if (cardLookupTable2) cardLookupTable2.innerHTML = cardMeaningsHtml;
@@ -578,12 +769,11 @@ async function loadCardMeanings() {
     }
 
     try {
-        const sheetName = 'YesNo_Meaning'; 
+        const sheetName = 'YesNo_Meaning';
         const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${sheetName}&tqx=out:json&tq=SELECT%20A,%20B,%20C,%20D,%20E%20OFFSET%201`;
         
         const response = await fetch(url);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}. Lỗi khi tải tab '${sheetName}'.`);
-        
         const text = await response.text();
         
         if (text.startsWith('<!DOCTYPE html>')) {
@@ -606,7 +796,6 @@ async function loadCardMeanings() {
 
         const table = data.table;
         const rows = table.rows;
-
         if (rows.length === 0) {
             cardMeaningsHtml = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Không có dữ liệu tra cứu.</p>';
             if (cardLookupTable1) cardLookupTable1.innerHTML = cardMeaningsHtml;
@@ -614,7 +803,7 @@ async function loadCardMeanings() {
             return;
         }
 
-        let html = '<div class="card-lookup-table-wrapper"><table>'; 
+        let html = '<div class="card-lookup-table-wrapper"><table>';
         html += `
             <thead>
                 <tr>
@@ -625,8 +814,7 @@ async function loadCardMeanings() {
                 </tr>
             </thead>
             <tbody>
-        `; 
-
+        `;
         rows.forEach(row => {
             const cardName = row.c[0]?.v || 'N/A';
             const yesNo = row.c[1]?.v || 'N/A';
@@ -644,13 +832,11 @@ async function loadCardMeanings() {
                 </tr>
             `;
         });
-
         html += '</tbody></table></div>'; 
         
-        // (MỚI) Lưu HTML vào biến cache
+        // Lưu HTML vào biến cache
         cardMeaningsHtml = html;
-        
-        // (CHỈNH SỬA) Hiển thị HTML ở cả 2 bảng
+        // Hiển thị HTML ở cả 2 bảng
         if (cardLookupTable1) cardLookupTable1.innerHTML = cardMeaningsHtml;
         if (cardLookupTable2) cardLookupTable2.innerHTML = cardMeaningsHtml;
 
@@ -662,7 +848,7 @@ async function loadCardMeanings() {
     }
 }
 
-/** (MỚI) Hàm lọc bảng tra cứu (đã cập nhật) */
+/** Hàm lọc bảng tra cứu */
 function filterCardTable(event) {
     const searchInput = event.target;
     if (!searchInput) return;
@@ -673,13 +859,10 @@ function filterCardTable(event) {
     
     const targetTableContainer = document.getElementById(targetTableId);
     if (!targetTableContainer) return;
-
     // 2. Lấy cụm từ tìm kiếm
     const searchTerm = searchInput.value.toLowerCase().trim();
-    
     // 3. Tìm tất cả các hàng <tr> trong <tbody> CỦA BẢNG ĐÓ
     const tableRows = targetTableContainer.querySelectorAll('tbody tr');
-
     // 4. Kiểm tra điều kiện (ít nhất 3 ký tự)
     if (searchTerm.length >= 3) {
         // 5. Lặp qua từng hàng
@@ -706,8 +889,7 @@ function filterCardTable(event) {
 
 /** Tải câu hỏi gợi ý */
 async function loadSuggestedQuestions() {
-    if (!suggestedQuestionsList) return; 
-    
+    if (!suggestedQuestionsList) return;
     try {
         const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=YnQuestions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
         const response = await fetch(url);
@@ -720,7 +902,6 @@ async function loadSuggestedQuestions() {
             category: row.c[0]?.v,
             question: row.c[1]?.v
         }));
-
         const grouped = {};
         rawData.forEach(item => {
             if (!item.category || !item.question) return; 
@@ -729,7 +910,6 @@ async function loadSuggestedQuestions() {
             }
             grouped[item.category].push(item.question);
         });
-        
         renderSuggestedQuestions(grouped);
 
     } catch (error) {
@@ -793,15 +973,13 @@ async function handleQuestionSubmit() {
     submitQuestionBtn.disabled = true;
     submitQuestionBtn.innerHTML = spinnerIcon;
     questionErrorDisplay.textContent = 'Đang kiểm tra câu hỏi của bạn...'; 
-    questionErrorDisplay.style.color = '#d4af37'; 
-    
+    questionErrorDisplay.style.color = '#d4af37';
     try {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: questionFromInput })
         });
-
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
         }
@@ -812,7 +990,6 @@ async function handleQuestionSubmit() {
 
         const n8nResponse = await response.json();
         const validationResult = n8nResponse;
-
         if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
             userQuestion = questionFromInput;
             currentReadingId = crypto.randomUUID(); 
@@ -855,15 +1032,13 @@ async function handleFollowUpSubmit() {
     followUpSubmitBtn.disabled = true;
     followUpSubmitBtn.innerHTML = spinnerIcon;
     followUpErrorDisplay.textContent = 'Đang kiểm tra câu hỏi của bạn...'; 
-    followUpErrorDisplay.style.color = '#d4af37'; 
-
+    followUpErrorDisplay.style.color = '#d4af37';
     try {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: questionFromInput })
         });
-
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
         }
@@ -874,7 +1049,6 @@ async function handleFollowUpSubmit() {
 
         const n8nResponse = await response.json();
         const validationResult = n8nResponse;
-
         if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
             userQuestion = questionFromInput;
             followUpInput.value = '';
@@ -911,15 +1085,13 @@ document.head.appendChild(styleSheet);
 
 /** Bắt đầu một lượt trải bài mới */
 function startNewReadingFlow() {
-    sessionStorage.removeItem('tarotSession'); 
-    
+    sessionStorage.removeItem('tarotSession');
     shufflingQuestionDisplay.textContent = userQuestion;
     drawingQuestionDisplay.textContent = userQuestion;
     showScreen('shuffling-screen');
 
     const shuffleTime = 2500; 
     const startTime = Date.now();
-
     function checkAndProceed() {
         const elapsedTime = Date.now() - startTime;
         const timeRemaining = shuffleTime - elapsedTime;
@@ -971,23 +1143,20 @@ function populateCardDeck() {
         cardElementDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 30}ms`;
         
         const cardElementMobile = cardElementDesktop.cloneNode(true);
-        
         const animationEndCallback = (e) => {
             if (e.animationName === 'dealCardIn') {
-                e.target.classList.add('is-dealt'); 
+                e.target.classList.add('is-dealt');
                 e.target.style.animation = ''; 
             }
         };
         cardElementDesktop.addEventListener('animationend', animationEndCallback);
         cardElementMobile.addEventListener('animationend', animationEndCallback);
-        
         const clickHandler = (e) => handleCardSelection(e, e.currentTarget);
         cardElementDesktop.addEventListener('click', clickHandler);
         cardElementMobile.addEventListener('click', clickHandler);
         
         cardElementDesktop.addEventListener('touchstart', clickHandler);
         cardElementMobile.addEventListener('touchstart', clickHandler);
-
         if (i < 39) {
             cardRow1.appendChild(cardElementDesktop);
         } else {
@@ -1009,7 +1178,6 @@ function populateCardDeck() {
 /** Xử lý khi người dùng chọn 1 lá bài */
 function handleCardSelection(event, clickedElement) {
     event.preventDefault();
-    
     if (selectedCards.length >= numCardsToChoose || isAnimating) return; 
 
     const posIndex = clickedElement.dataset.positionIndex;
@@ -1034,7 +1202,6 @@ function handleCardSelection(event, clickedElement) {
     const chosenCard = { ...randomCard, isReversed, orientation };
 
     const targetPlaceholder = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
-    
     if (targetPlaceholder) {
         animateCardFlight(clickedElement, targetPlaceholder, chosenCard);
     } else {
@@ -1046,7 +1213,6 @@ function handleCardSelection(event, clickedElement) {
 function animateCardFlight(startEl, endEl, cardData) {
     
     const img = new Image();
-    
     const onImageLoaded = () => {
         const startRect = startEl.getBoundingClientRect();
         const endRect = endEl.getBoundingClientRect();
@@ -1061,6 +1227,7 @@ function animateCardFlight(startEl, endEl, cardData) {
                 <div class="flying-card-front">
                     <img src="${cardData.image}" alt="${cardData.name}" class="${reversedClass}">
                 </div>
+            
             </div>
         `;
         
@@ -1081,7 +1248,6 @@ function animateCardFlight(startEl, endEl, cardData) {
             
             inner.style.transform = 'rotateY(180deg) translateZ(0)';
         });
-
         let flightHasEnded = false;
         
         const onFlightEnd = (event) => {
@@ -1094,13 +1260,12 @@ function animateCardFlight(startEl, endEl, cardData) {
             flyingCard.remove(); 
             
             selectedCards.push(cardData);
-            updateChosenCardsDisplay(); 
-
+            updateChosenCardsDisplay();
             if (selectedCards.length === numCardsToChoose) {
-                transitionToResultsView(); 
+                transitionToResultsView();
             }
             
-            isAnimating = false; 
+            isAnimating = false;
         };
         
         flyingCard.addEventListener('transitionend', onFlightEnd);
@@ -1108,7 +1273,7 @@ function animateCardFlight(startEl, endEl, cardData) {
 
     img.onload = onImageLoaded; 
     img.onerror = onImageLoaded; 
-    img.src = cardData.image; 
+    img.src = cardData.image;
 }
 
 
@@ -1131,14 +1296,12 @@ function updateChosenCardsDisplay() {
         `;
         cardItemElements.push(cardItem); 
     });
-    
     cardItemElements.forEach(item => {
         chosenCardsDisplay.appendChild(item);
         setTimeout(() => {
             item.style.opacity = '1';
         }, 0);
     });
-
     for (let i = 0; i < numCardsToChoose - selectedCards.length; i++) {
         chosenCardsDisplay.innerHTML += '<div class="chosen-card-placeholder"></div>';
     }
@@ -1148,17 +1311,15 @@ function updateChosenCardsDisplay() {
 function transitionToResultsView() {
     const drawingScreen = document.getElementById('drawing-screen');
     drawingScreen.classList.add('results-active');
-    
     getInterpretationButton.style.display = 'inline-block'; 
     setTimeout(() => {
         getInterpretationButton.classList.add('visible');
-    }, 300); 
+    }, 300);
 }
 
 /** Lấy luận giải từ AI */
 async function handleGetInterpretation() {
     mainResultsDisplay.style.display = 'block';
-    
     mainResultsDisplay.innerHTML = `
         <div class="interpretation-loader">
             <div class="loader-planet-system">
@@ -1172,18 +1333,15 @@ async function handleGetInterpretation() {
             <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
         </div>
     `;
-
     getInterpretationButton.classList.remove('visible');
     setTimeout(() => {
         getInterpretationButton.style.display = 'none';
     }, 300);
-    
     const payload = {
         question: userQuestion,
         cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
         readingId: currentReadingId 
     };
-
     try {
         const response = await fetch(N8N_WEBHOOK_URL, {
             method: 'POST',
@@ -1192,8 +1350,7 @@ async function handleGetInterpretation() {
         });
         if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
 
-        const result = await response.json(); 
-        
+        const result = await response.json();
         if (result && result.interpretation) {
             const converter = new showdown.Converter();
             const markdownContent = result.interpretation; 
@@ -1213,7 +1370,6 @@ async function handleGetInterpretation() {
                 text: plainTextContent, 
                 markdown: markdownContent 
             };
-
             if (typeof saveHistory === 'function') {
                 saveHistory(fullEntry);
             } else {
@@ -1230,8 +1386,7 @@ async function handleGetInterpretation() {
     
     mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
     followUpContainer.style.display = 'block';
-    
-    // (MỚI) Hiển thị bảng tra cứu cùng lúc với kết quả và câu hỏi tiếp
+    // Hiển thị bảng tra cứu cùng lúc với kết quả và câu hỏi tiếp
     if (cardLookupContainerResults) {
         cardLookupContainerResults.style.display = 'block';
     }
@@ -1249,14 +1404,14 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Init game
         await initialize(); 
         await loadSuggestedQuestions(); 
-        await loadCardMeanings(); // (CHỈNH SỬA) Tải bảng tra cứu (hàm này sẽ tự điền cho cả 2 bảng)
+        await loadCardMeanings(); // Tải bảng tra cứu (hàm này sẽ tự điền cho cả 2 bảng)
         loadSessionState(); 
 
         // Auto-grow textareas
         questionInput.addEventListener('input', () => autoGrow(questionInput));
         followUpInput.addEventListener('input', () => autoGrow(followUpInput));
         
-        // (MỚI) Gắn listener cho TẤT CẢ thanh tìm kiếm
+        // Gắn listener cho TẤT CẢ thanh tìm kiếm
         const cardSearchInputs = document.querySelectorAll('.card-search-input');
         if (cardSearchInputs.length > 0) {
             cardSearchInputs.forEach(input => {
@@ -1267,26 +1422,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Enter key listeners
         questionInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); 
+                e.preventDefault();
                 handleQuestionSubmit();
             }
         });
-        
         followUpInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
                 handleFollowUpSubmit();
             }
         });
-
         // Button click listeners
         submitQuestionBtn.addEventListener('click', handleQuestionSubmit);
-        
         suggestedQuestionsToggle.addEventListener('click', () => {
             suggestedQuestionsList.classList.toggle('open');
             suggestedQuestionsToggle.classList.toggle('open');
         });
-
         suggestedQuestionsList.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-item')) {
                 questionInput.value = e.target.dataset.question;
@@ -1303,13 +1454,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 numCardsToChoose = parseInt(btn.dataset.value, 10);
                 console.log("Số lá bài được chọn: ", numCardsToChoose);
                 
-                // (MỚI) Cập nhật subheader ngay khi chọn
+                // Cập nhật subheader ngay khi chọn
                 if (drawingSubheader) {
                     drawingSubheader.textContent = `Hãy chọn ${numCardsToChoose} lá bài`;
                 }
             });
         });
-
         // Đóng dropdown khi click ra ngoài
         document.addEventListener('click', (e) => {
             if (suggestedQuestionsToggle && !suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
@@ -1317,7 +1467,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 suggestedQuestionsToggle.classList.remove('open');
             }
         });
-
         getInterpretationButton.addEventListener('click', handleGetInterpretation);
         followUpSubmitBtn.addEventListener('click', handleFollowUpSubmit);
     }

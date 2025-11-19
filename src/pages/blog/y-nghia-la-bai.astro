@@ -10,27 +10,23 @@ const allCardPosts = await getCollection('cards');
 const allPosts = allCardPosts.sort((a, b) => a.data.index - b.data.index);
 
 // ==========================================================
-// 4. (MỚI) LOGIC PHÂN TRANG NÂNG CAO
+// 4. LOGIC PHÂN TRANG (Giữ nguyên)
 // ==========================================================
 
-// Hàm (helper) tạo một mảng số
 const range = (start: number, end: number) => {
   let length = end - start + 1;
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
-// Hàm (helper) chính để tạo các nút phân trang
 const generatePagination = (currentPage: number, totalPages: number) => {
-  // Số lượng trang hiển thị tối đa (ví dụ: 1 ... 4 5 6 ... 10)
   const totalVisiblePages = 7; 
   const DOTS = '...';
 
-  // 1. Nếu tổng số trang ít, hiển thị tất cả
   if (totalPages <= totalVisiblePages) {
     return range(1, totalPages);
   }
 
-  const siblings = 1; // Hiển thị 1 trang bên cạnh trang hiện tại
+  const siblings = 1; 
   const leftSiblingIndex = Math.max(currentPage - siblings, 1);
   const rightSiblingIndex = Math.min(currentPage + siblings, totalPages);
 
@@ -40,47 +36,41 @@ const generatePagination = (currentPage: number, totalPages: number) => {
   const firstPageIndex = 1;
   const lastPageIndex = totalPages;
 
-  // 2. Trang hiện tại gần đầu
   if (!showLeftDots && showRightDots) {
     let leftItemCount = 3 + 2 * siblings;
     let leftRange = range(1, leftItemCount);
     return [...leftRange, DOTS, totalPages];
   }
   
-  // 3. Trang hiện tại gần cuối
   if (showLeftDots && !showRightDots) {
     let rightItemCount = 3 + 2 * siblings;
     let rightRange = range(totalPages - rightItemCount + 1, totalPages);
     return [firstPageIndex, DOTS, ...rightRange];
   }
   
-  // 4. Trang hiện tại ở giữa
   if (showLeftDots && showRightDots) {
     let middleRange = range(leftSiblingIndex, rightSiblingIndex);
     return [firstPageIndex, DOTS, ...middleRange, DOTS, lastPageIndex];
   }
 
-  // Trường hợp mặc định (mặc dù ít khi xảy ra)
   return range(1, totalPages);
 };
 
 // ==========================================================
-// 5. ÁP DỤNG LOGIC
+// 5. ÁP DỤNG LOGIC (Giữ nguyên)
 // ==========================================================
-const pageSize = 12; // 12 bài viết mỗi trang
+const pageSize = 12; 
 const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
 const totalPages = Math.ceil(allPosts.length / pageSize);
 
-// Cắt (slice) mảng để chỉ lấy 12 bài cho trang hiện tại
 const postsForThisPage = allPosts.slice(
-  (currentPage - 1) * pageSize, // Vị trí bắt đầu
-  currentPage * pageSize      // Vị trí kết thúc
+  (currentPage - 1) * pageSize, 
+  currentPage * pageSize      
 );
 
-// (MỚI) Tạo ra mảng các nút trang (ví dụ: [1, '...', 4, 5, 6, '...', 10])
 const paginationItems = generatePagination(currentPage, totalPages);
 
-// 6. JSON-LD CHO TRANG (Giữ nguyên logic cũ)
+// 6. JSON-LD (Giữ nguyên)
 const schema = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
@@ -101,6 +91,7 @@ const schema = {
   }
 };
 ---
+
 <BaseLayout
   title={`Ý nghĩa 78 lá bài Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
   description="Khám phá ý nghĩa chi tiết 78 lá bài Tarot, từ bộ Ẩn Chính đến Ẩn Phụ."
@@ -109,11 +100,11 @@ const schema = {
     <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
       <div class="container">
         
-        <h2 class="section-title">Ý Nghĩa 78 Lá Bài Tarot</h2>
+        <div class="section-header">
+            <h2 class="section-title">Ý Nghĩa 78 Lá Bài Tarot</h2>
+        </div>
         
-        <div class="grid-3">
-          
-          {/* Vẫn render 12 bài như cũ */}
+        <div class="grid-4">
           {postsForThisPage.map(post => (
             <div class="blog-card">
               <a href={`/y-nghia-la-bai/${post.slug}`} class="image-link-wrapper">
@@ -134,7 +125,6 @@ const schema = {
         </div>
 
         <nav class="pagination-nav">
-          
           <a 
             href={`/blog/y-nghia-la-bai?page=${currentPage - 1}`} 
             class:list={["page-item", "prev", { "disabled": currentPage === 1 }]}
@@ -143,15 +133,12 @@ const schema = {
           </a>
 
           {paginationItems.map((item) => {
-            // Nếu là dấu "..."
             if (item === '...') {
               return <span class="page-item dots disabled">...</span>;
             }
-            // Nếu là trang hiện tại (active)
             if (item === currentPage) {
               return <span class="page-item active">{item}</span>;
             }
-            // Là các trang khác
             return (
               <a href={`/blog/y-nghia-la-bai?page=${item}`} class="page-item">
                 {item}
@@ -178,76 +165,180 @@ const schema = {
   />
 
   <style>
-    /* ... CSS cũ (từ .homepage-section đến .category-badge.blog-badge) ... */
-    .homepage-section { padding: 4rem 1rem; position: relative;}
+    /* === 1. CẤU TRÚC CHUNG === */
+    .homepage-section { padding: 4rem 1rem; position: relative; }
     .container { max-width: 1200px; margin: auto; padding: 0; }
-    .section-title { font-family: var(--font-title); color: var(--title-color); font-size: 3rem; margin-bottom: 3rem; text-align: center; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit,minmax(300px,1fr)); gap: 1.5rem; }
-    .blog-card { border: 1px solid var(--card-back-border); background-color: var(--button-bg); padding: 1rem; border-radius: 12px; text-align: left; height: 100%; display: flex; flex-direction: column; position: relative; }
-    .image-link-wrapper { display: block; margin-bottom: 1.5rem; border-radius: 12px; overflow: hidden; }
-    .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; flex-shrink: 0; }
-    .section-image { width: 100%; height: 100%; object-fit: cover; border-radius: 0; margin-bottom: 0; transition: transform 0.3s ease; }
-    .image-link-wrapper:hover .section-image { transform: scale(1.05); }
+    
+    /* Grid 4 cột responsive */
+    .grid-4 { 
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); 
+        gap: 2rem;
+    }
+    @media (min-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(4, 1fr); } 
+    }
+
+    /* === 2. TYPOGRAPHY === */
+    .section-header {
+      display: flex; justify-content: center; align-items: center;
+      margin-bottom: 3.5rem; 
+    }
+    
+    .section-title { 
+        font-family: var(--font-title); 
+        color: #ffffff; 
+        font-size: 3rem; 
+        font-weight: 700; 
+        margin: 0; text-align: center;
+        text-shadow: 
+            0 0 10px rgba(242, 201, 76, 0.5),
+            0 0 20px rgba(242, 201, 76, 0.3),
+            0 0 40px rgba(242, 201, 76, 0.1);
+    }
+
+    /* === 3. CARD STYLE === */
+    .blog-card { 
+        background-color: rgba(255, 255, 255, 0.02); 
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 0; 
+        border-radius: 16px; 
+        text-align: left; height: 100%; 
+        display: flex; flex-direction: column; position: relative;
+        transition: all 0.4s ease;
+        overflow: hidden;
+    }
+    .blog-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(242, 201, 76, 0.6);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(242, 201, 76, 0.1);
+    }
+
+    /* Ảnh đại diện */
+    .image-link-wrapper {
+        display: block; width: 100%; margin-bottom: 0; 
+        border-radius: 0; overflow: hidden; position: relative;
+    }
+    .image-link-wrapper::after {
+        content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+        height: 1px; background: rgba(255,255,255,0.1);
+    }
+
+    /* === (QUAN TRỌNG) ĐIỀU CHỈNH TỈ LỆ ẢNH === */
+    .image-wrapper-4-3 {
+        width: 100%;
+        /* Mặc định (Mobile): Tỷ lệ 4/3 (ngang) cho gọn, giống bài viết thường */
+        aspect-ratio: 4 / 3; 
+        flex-shrink: 0;
+    }
+    
+    /* Desktop (Màn hình lớn): Đổi về tỷ lệ dọc (dáng bài Tarot) cho đẹp */
+    @media (min-width: 768px) {
+        .image-wrapper-4-3 {
+             aspect-ratio: 3 / 4; 
+        }
+    }
+
+    .section-image { 
+        width: 100%; height: 100%; object-fit: cover; 
+        /* Chỉnh vị trí ảnh để khi cắt (crop) trên mobile vẫn thấy trọng tâm */
+        object-position: top center; 
+        transition: transform 0.6s ease;
+    }
+    .blog-card:hover .section-image {
+        transform: scale(1.1);
+    }
+    
+    /* Nội dung card */
+    .blog-card .title-link, 
+    .blog-card .section-text, 
+    .blog-card .btn-outline {
+        margin-left: 1.2rem; margin-right: 1.2rem;
+    }
+    .blog-card .title-link { margin-top: 1.2rem; display: block; }
+    .blog-card .btn-outline { margin-bottom: 1.5rem; margin-left: 1.2rem;}
+
     .title-link { text-decoration: none!important; color: inherit; }
-    .section-subtitle { font-family: var(--font-title); color: var(--title-color); font-size: 1.25rem; margin-bottom: 1rem; margin-top: 0; }
-    .section-text { font-size: 1rem; opacity: 0.9; margin-bottom: 1.5rem; text-shadow: none; flex-grow: 1; }
-    .btn-outline { display: inline-block; background: transparent; border: 1px solid var(--card-back-border); color: var(--title-color); padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-shadow: none; align-self: flex-start; }
-    .btn-outline:hover { background-color: var(--button-hover-bg); }
-    .category-badge { position: absolute; top: 1.5rem; left: 1.5rem; background-color: var(--title-color); color: var(--bg-color); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.8rem; font-weight: 600; z-index: 2; text-shadow: none; }
-    .category-badge.card-badge { background-color: #a67dff; }
-    .category-badge.blog-badge { background-color: #3f83f8; }
+    
+    .section-subtitle { 
+        font-family: var(--font-title);
+        color: #fff; 
+        font-size: 1.2rem; 
+        font-weight: 700;
+        margin-bottom: 0.5rem; margin-top: 0;
+        line-height: 1.3;
+        transition: all 0.3s ease;
+    }
+    .blog-card:hover .section-subtitle {
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(242, 201, 76, 0.4);
+    }
 
-    /* --- (MỚI) CSS CHO PHÂN TRANG SỐ --- */
+    .section-text { 
+        font-size: 0.9rem; opacity: 0.8; margin-bottom: 1.2rem; 
+        text-shadow: none; flex-grow: 1; color: #ccc; line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; 
+        -webkit-box-orient: vertical;  
+        overflow: hidden;
+    }
+
+    /* === 4. BUTTON STYLE === */
+    .btn-outline { 
+        display: inline-block;
+        background: transparent; 
+        border: 1px solid var(--gold-color, #F2C94C); 
+        color: var(--gold-color, #F2C94C); 
+        padding: 0.5rem 1.2rem; 
+        border-radius: 8px; font-weight: 600; 
+        text-decoration: none; text-shadow: none;
+        align-self: flex-start; 
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+    }
+    .btn-outline:hover { 
+        background-color: rgba(242, 201, 76, 0.1);
+        box-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+
+    /* === 5. PAGINATION STYLE === */
     .pagination-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem; /* Giảm gap để các nút gần nhau hơn */
-      margin-top: 3rem;
-      flex-wrap: wrap; /* Cho phép xuống dòng nếu quá nhiều nút */
+      display: flex; justify-content: center; align-items: center;
+      gap: 0.5rem; margin-top: 4rem; flex-wrap: wrap;
     }
-
     .page-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      font-size: 0.9rem;
-      border-radius: 8px;
-      min-width: 40px; /* Đặt chiều rộng tối thiểu */
-      height: 40px; /* Đặt chiều cao cố định */
-      padding: 0.25rem 0.75rem;
-      text-decoration: none;
-      text-shadow: none;
-      color: var(--text-color);
-      border: 1px solid var(--card-back-border);
-      background: var(--button-bg);
-      transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 0.95rem;
+      border-radius: 8px; min-width: 42px; height: 42px;
+      padding: 0.25rem 0.75rem; text-decoration: none; text-shadow: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff; transition: all 0.3s ease;
     }
-
-    /* Nút số, prev/next khi hover */
     .page-item:not(.disabled):not(.active):hover {
-      background: var(--button-hover-bg);
-      color: var(--title-color);
-      border-color: var(--title-color);
+      border-color: var(--gold-color, #F2C94C);
+      color: var(--gold-color, #F2C94C);
+      background: rgba(242, 201, 76, 0.1);
+      box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
     }
-
-    /* Nút trang hiện tại (active) */
     .page-item.active {
-      background: var(--title-color);
-      color: var(--bg-color);
-      border-color: var(--title-color);
+      background: var(--gold-color, #F2C94C);
+      color: #050A1F; 
+      border-color: var(--gold-color, #F2C94C);
+      box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
     }
-
-    /* Nút bị vô hiệu hóa (..., nút prev/next ở đầu/cuối) */
-    .page-item.disabled {
-      opacity: 0.5;
-      background: transparent;
-      pointer-events: none; /* Không cho phép click */
+    .page-item.disabled { opacity: 0.3; pointer-events: none; border-color: transparent; }
+    .page-item.dots { border: none; background: transparent; }
+    
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .grid-4 { grid-template-columns: repeat(2, 1fr); }
+        .section-title { font-size: 2.2rem; }
     }
-    .page-item.dots {
-      border: none;
-      background: transparent;
+    @media (max-width: 480px) {
+        .grid-4 { grid-template-columns: 1fr; }
     }
   </style>
 </BaseLayout>
