@@ -3,28 +3,45 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. LẤY DỮ LIỆU
-const blogPosts = await getCollection('blog');
+// 2. LẤY DỮ LIỆU & SẮP XẾP
+const allBlogPosts = await getCollection('blog');
+const sortedPosts = allBlogPosts.sort((a, b) => 
+  new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
+);
 
-// 3. SẮP XẾP
-const allPosts = blogPosts.map(post => ({
-  ...post,
-  type: 'blog',
-  url: `/blog/${post.slug}`
-})).sort((a, b) => {
-  const dateA = a.data.pubDate ? new Date(a.data.pubDate) : new Date(0);
-  const dateB = b.data.pubDate ? new Date(b.data.pubDate) : new Date(0);
-  return dateB.getTime() - dateA.getTime();
-});
+// 3. TÁCH BÀI VIẾT NỔI BẬT (LOGIC CŨ)
+// Tìm bài có isFeatured: true
+let featuredPost = sortedPosts.find(post => post.data.isFeatured === true);
 
-// 4. LOGIC PHÂN TRANG (Giữ nguyên logic cũ)
+// Nếu không có bài nào được ghim, lấy bài mới nhất làm featured
+if (!featuredPost && sortedPosts.length > 0) {
+  featuredPost = sortedPosts[0];
+}
+
+// Danh sách bài viết còn lại (để phân trang) - Loại bỏ bài featured để không trùng
+const remainingPosts = sortedPosts.filter(post => post.slug !== featuredPost?.slug);
+
+// ==========================================================
+// 4. LOGIC PHÂN TRANG (Áp dụng cho remainingPosts)
+// ==========================================================
+const pageSize = 12; 
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+
+// Tính tổng trang dựa trên danh sách ĐÃ TRỪ bài featured
+const totalPages = Math.ceil(remainingPosts.length / pageSize);
+
+// Cắt danh sách bài viết cho trang hiện tại
+const postsForThisPage = remainingPosts.slice(
+  (currentPage - 1) * pageSize, 
+  currentPage * pageSize      
+);
+
+// Hàm tạo nút phân trang (Giữ nguyên)
 const range = (start, end) => Array.from({ length: end - start + 1 }, (_, idx) => idx + start);
-
 const generatePagination = (currentPage, totalPages) => {
-  const totalVisiblePages = 7;
-  const DOTS = '...';
+  const totalVisiblePages = 7; const DOTS = '...';
   if (totalPages <= totalVisiblePages) return range(1, totalPages);
-
+  
   const siblings = 1;
   const leftSiblingIndex = Math.max(currentPage - siblings, 1);
   const rightSiblingIndex = Math.min(currentPage + siblings, totalPages);
@@ -33,35 +50,35 @@ const generatePagination = (currentPage, totalPages) => {
 
   if (!showLeftDots && showRightDots) return [...range(1, 3 + 2 * siblings), DOTS, totalPages];
   if (showLeftDots && !showRightDots) return [1, DOTS, ...range(totalPages - (3 + 2 * siblings) + 1, totalPages)];
-  
   return [1, DOTS, ...range(leftSiblingIndex, rightSiblingIndex), DOTS, totalPages];
 };
 
-const pageSize = 12;
-const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
-const totalPages = Math.ceil(allPosts.length / pageSize);
-const postsForThisPage = allPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 const paginationItems = generatePagination(currentPage, totalPages);
 
-// 5. SCHEMA (Cập nhật URL)
+// 5. SCHEMA
 const siteUrl = Astro.site ? Astro.site.href : '/';
-const pageUrl = new URL(`/blog?page=${currentPage}`, siteUrl).href; // SỬA: /blog thay vì /bai-viet
+const pageUrl = new URL(`/blog?page=${currentPage}`, siteUrl).href;
+
+// Schema bao gồm cả Featured Post nếu đang ở trang 1
+const schemaPosts = currentPage === 1 && featuredPost 
+  ? [featuredPost, ...postsForThisPage] 
+  : postsForThisPage;
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "name": `Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`,
+  "name": `Blog - Bài Viết | Phở Gõ Tarot`,
   "description": "Tổng hợp các bài viết mới nhất về kiến thức tarot chuyên sâu.",
   "url": pageUrl,
   "mainEntity": {
     "@type": "ItemList",
-    "itemListElement": postsForThisPage.map((post, index) => ({
+    "itemListElement": schemaPosts.map((post, index) => ({
       "@type": "ListItem",
-      "position": (currentPage - 1) * pageSize + index + 1,
+      "position": index + 1,
       "item": {
         "@type": "Article",
         "name": post.data.title,
-        "url": new URL(post.url, siteUrl).href,
+        "url": new URL(`/blog/${post.slug}`, siteUrl).href,
         ...(post.data.image && { "image": new URL(post.data.image, siteUrl).href })
       }
     }))
@@ -81,24 +98,41 @@ const schema = {
           <h2 class="section-title">Bài Viết Tarot</h2>
         </div>
 
+        {/* --- PHẦN FEATURED POST (CHỈ HIỆN Ở TRANG 1) --- */}
+        {currentPage === 1 && featuredPost && (
+          <div class="featured-post-card">
+            <a href={`/blog/${featuredPost.slug}`} class="featured-image-link">
+              <img src={featuredPost.data.image} alt={featuredPost.data.title} class="section-image-featured" />
+            </a>
+            <div class="featured-content">
+              <a href={`/blog/${featuredPost.slug}`} class="title-link">
+                <h3 class="section-subtitle">{featuredPost.data.title}</h3>
+              </a>
+              <p class="section-text">{featuredPost.data.excerpt}</p>
+              <a href={`/blog/${featuredPost.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+            </div>
+          </div>
+        )}
+
+        {/* --- GRID BÀI VIẾT THƯỜNG --- */}
         <div class="grid-4">
           {postsForThisPage.map(post => (
             <div class="blog-card">
-              <a href={post.url} class="image-link-wrapper">
+              <a href={`/blog/${post.slug}`} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
                    <img src={post.data.image} alt={post.data.title} class="section-image" loading="lazy" />
                 </div>
               </a>
-              <a href={post.url} class="title-link">
+              <a href={`/blog/${post.slug}`} class="title-link">
                 <h3 class="section-subtitle">{post.data.title}</h3>
               </a>
               <p class="section-text">{post.data.excerpt}</p>
-              <a href={post.url} class="btn-outline">Đọc tiếp &rarr;</a>
+              <a href={`/blog/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
             </div>
           ))}
         </div>
 
-        {/* PHÂN TRANG - SỬA HREF */}
+        {/* --- PHÂN TRANG --- */}
         <nav class="pagination-nav">
           <a 
             href={`/blog?page=${currentPage - 1}`} 
@@ -110,8 +144,6 @@ const schema = {
           {paginationItems.map((item) => {
             if (item === '...') return <span class="page-item dots disabled">...</span>;
             if (item === currentPage) return <span class="page-item active">{item}</span>;
-            
-            // SỬA: Link trỏ về /blog thay vì /blog/bai-viet
             return <a href={`/blog?page=${item}`} class="page-item">{item}</a>;
           })}
 
@@ -130,196 +162,95 @@ const schema = {
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
 
   <style>
-    /* === 1. CẤU TRÚC CHUNG & LAYOUT (Đồng bộ blog.astro) === */
-    .homepage-section { 
-        padding: 4rem 1rem; 
-        position: relative;
-    }
-    .container { 
-        max-width: 1200px; 
-        margin: auto; 
-        padding: 0; 
-    }
-    
-    /* Grid responsive 3 cột (màn hình lớn) - 1 cột (mobile) */
-    .grid-4 { 
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-        gap: 2rem;
-    }
-    @media (min-width: 1024px) {
-      .grid-4 { grid-template-columns: repeat(3, 1fr); }
-    }
+    /* === 1. STYLE CHUNG === */
+    .homepage-section { padding: 4rem 1rem; position: relative; }
+    .container { max-width: 1200px; margin: auto; padding: 0; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+    @media (min-width: 1024px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
 
-    /* === 2. TYPOGRAPHY (TITLE TRẮNG + GLOW VÀNG) === */
-    .section-header {
-      display: flex; justify-content: center; align-items: center;
-      margin-bottom: 3.5rem; flex-wrap: wrap; gap: 1rem;
-    }
-    
+    /* HEADER */
+    .section-header { display: flex; justify-content: center; align-items: center; margin-bottom: 3.5rem; }
     .section-title { 
-        font-family: var(--font-title); 
-        color: #ffffff; /* Chữ trắng */
-        font-size: 3.5rem; 
-        font-weight: 700; 
-        margin-bottom: 0; text-align: center; margin-top: 0;
-        
-        /* Hiệu ứng Glow Vàng */
-        text-shadow: 
-            0 0 10px rgba(242, 201, 76, 0.5),
-            0 0 20px rgba(242, 201, 76, 0.3),
-            0 0 40px rgba(242, 201, 76, 0.1);
+        font-family: var(--font-title); color: #ffffff; font-size: 3.5rem; font-weight: 700; 
+        text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); 
     }
 
-    /* === 3. CARD STYLE (SANG TRỌNG & TINH TẾ) === */
-    .blog-card { 
-        background-color: rgba(255, 255, 255, 0.02); 
-        border: 1px solid rgba(255, 255, 255, 0.12); /* Viền xám mờ mặc định */
-        padding: 0; 
-        border-radius: 16px; 
-        text-align: left; height: 100%; 
-        display: flex; flex-direction: column; position: relative;
-        transition: all 0.4s ease;
-        overflow: hidden;
+    /* === 2. (MỚI) FEATURED POST CARD STYLE === */
+    /* Lấy từ file blog.astro gốc */
+    .featured-post-card {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      margin-bottom: 4rem; 
+      display: grid; grid-template-columns: 1fr; 
+      overflow: hidden;
+      transition: all 0.4s ease;
     }
+    .featured-post-card:hover {
+      border-color: rgba(242, 201, 76, 0.6);
+      box-shadow: 0 0 25px rgba(242, 201, 76, 0.1);
+      transform: translateY(-3px);
+    }
+    .featured-image-link { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+    .section-image-featured { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .featured-image-link:hover .section-image-featured { transform: scale(1.05); }
+    .featured-content { padding: 2rem; display: flex; flex-direction: column; justify-content: center;}
     
-    /* Hover vào card: Viền vàng + Glow nhẹ */
+    /* Desktop style cho Featured Card */
+    @media (min-width: 900px) {
+      .featured-post-card { grid-template-columns: 1.2fr 1fr; }
+      .featured-image-link { aspect-ratio: auto; height: 100%; }
+      .featured-content { padding: 3rem; }
+      .featured-content .section-subtitle { font-size: 2rem; }
+    }
+
+    /* === 3. STANDARD BLOG CARD === */
+    .blog-card { 
+        background-color: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px; 
+        display: flex; flex-direction: column; 
+        overflow: hidden; transition: all 0.4s ease;
+    }
     .blog-card:hover {
         transform: translateY(-5px);
         border-color: rgba(242, 201, 76, 0.6);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(242, 201, 76, 0.1);
+        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
     }
-
-    /* Ảnh đại diện */
-    .image-link-wrapper {
-        display: block; width: 100%; margin-bottom: 0; 
-        border-radius: 0; overflow: hidden; position: relative;
-    }
-    .image-link-wrapper::after {
-        content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-        height: 1px; background: rgba(255,255,255,0.1);
-    }
-    .image-wrapper-4-3 {
-        width: 100%; aspect-ratio: 4 / 3; flex-shrink: 0;
-    }
-    .section-image { 
-        width: 100%; height: 100%; object-fit: cover; 
-        transition: transform 0.6s ease;
-    }
-    .blog-card:hover .section-image {
-        transform: scale(1.1);
-    }
+    .image-link-wrapper { display: block; width: 100%; position: relative; }
+    .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; }
+    .section-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    .blog-card:hover .section-image { transform: scale(1.05); }
     
-    /* Căn chỉnh nội dung bên trong card */
-    .blog-card .title-link, 
-    .blog-card .section-text, 
-    .blog-card .btn-outline {
-        margin-left: 1.5rem; margin-right: 1.5rem;
-    }
-    .blog-card .title-link { margin-top: 1.5rem; display: block; }
-    .blog-card .btn-outline { margin-bottom: 1.5rem; margin-left: 1.5rem;}
-
-    .title-link { text-decoration: none!important; color: inherit; }
+    .blog-card .title-link, .blog-card .section-text, .blog-card .btn-outline { margin-left: 1.5rem; margin-right: 1.5rem; }
+    .title-link { margin-top: 1.5rem; display: block; text-decoration: none; color: inherit; }
     
     .section-subtitle { 
-        font-family: var(--font-title);
-        color: #fff; 
-        font-size: 1.35rem; 
-        font-weight: 700;
-        margin-bottom: 0.8rem; margin-top: 0;
-        line-height: 1.4;
-        transition: all 0.3s ease;
+        font-family: var(--font-title); color: #fff; font-size: 1.35rem; font-weight: 700; 
+        margin-bottom: 1rem; margin-top: 0; line-height: 1.3; transition: all 0.3s ease; 
     }
-    
-    /* Hover tiêu đề: Vẫn trắng nhưng sáng rực hơn */
-    .blog-card:hover .section-subtitle {
-        color: #ffffff;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(242, 201, 76, 0.4);
-    }
+    .blog-card:hover .section-subtitle { text-shadow: 0 0 15px rgba(255,255,255,0.8); }
+    .featured-content .section-subtitle { margin-bottom: 1rem; text-shadow: 0 0 15px rgba(242, 201, 76, 0.4); }
 
-    .section-text { 
-        font-size: 0.95rem; opacity: 0.8; margin-bottom: 1.5rem; 
-        text-shadow: none; flex-grow: 1; color: #ccc; line-height: 1.6;
-    }
+    .section-text { font-size: 0.95rem; opacity: 0.8; margin-bottom: 1.5rem; color: #ccc; flex-grow: 1; }
 
-    /* === 4. BUTTON STYLE === */
+    /* BUTTONS */
     .btn-outline { 
-        display: inline-block;
-        background: transparent; 
-        border: 1px solid var(--gold-color, #F2C94C); 
-        color: var(--gold-color, #F2C94C);
-        padding: 0.6rem 1.8rem; 
-        border-radius: 8px; 
-        font-weight: 600; 
-        text-decoration: none; 
-        text-shadow: none;
-        align-self: flex-start; 
-        transition: all 0.3s ease;
-        font-size: 0.95rem;
+        display: inline-block; border: 1px solid #F2C94C; color: #F2C94C; 
+        padding: 0.6rem 1.8rem; border-radius: 8px; text-decoration: none; 
+        font-weight: 600; margin-bottom: 1.5rem; transition: 0.3s; align-self: flex-start;
     }
-    
-    .btn-outline:hover { 
-        background-color: rgba(242, 201, 76, 0.1);
-        box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
-        color: #fff;
-        transform: translateY(-2px);
-    }
+    .btn-outline:hover { background: rgba(242,201,76,0.1); color: #fff; }
 
-    /* === 5. PAGINATION STYLE (ĐỒNG BỘ THEME MỚI) === */
-    .pagination-nav {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 4rem;
-      flex-wrap: wrap;
+    /* PAGINATION */
+    .pagination-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 4rem; }
+    .page-item { 
+        display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; 
+        background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+        color: #fff; border-radius: 8px; text-decoration: none; font-weight: 700;
     }
-
-    .page-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 0.95rem;
-      border-radius: 8px;
-      min-width: 42px; 
-      height: 42px;
-      padding: 0.25rem 0.75rem;
-      text-decoration: none;
-      text-shadow: none;
-      
-      /* Style mặc định: Nền tối mờ, viền xám */
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: #fff;
-      transition: all 0.3s ease;
-    }
-
-    /* Hover nút phân trang */
-    .page-item:not(.disabled):not(.active):hover {
-      border-color: var(--gold-color, #F2C94C);
-      color: var(--gold-color, #F2C94C);
-      background: rgba(242, 201, 76, 0.1);
-      box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
-    }
-
-    /* Trang hiện tại (Active): Màu vàng đặc */
-    .page-item.active {
-      background: var(--gold-color, #F2C94C);
-      color: #050A1F; /* Chữ tối màu trên nền vàng */
-      border-color: var(--gold-color, #F2C94C);
-      box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
-    }
-
-    /* Nút Disabled */
-    .page-item.disabled {
-      opacity: 0.3;
-      pointer-events: none;
-      border-color: transparent;
-    }
-    .page-item.dots {
-      border: none;
-      background: transparent;
-    }
+    .page-item.active { background: #F2C94C; color: #050A1F; border-color: #F2C94C; }
+    .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C; color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
+    .page-item.disabled { opacity: 0.3; pointer-events: none; }
   </style>
 </BaseLayout>
