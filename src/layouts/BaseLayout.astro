@@ -1,19 +1,18 @@
 ---
-// 1. Nhận "props" (tiêu đề, mô tả) từ các trang con
+// 1. Nhận "props"
 export interface Props {
   title: string;
   description: string;
-  ogImage?: string; // Ảnh Open Graph, nếu không có sẽ dùng ảnh mặc định
+  ogImage?: string;
 }
 
 const { 
   title, 
   description, 
-  ogImage = '/images/phogotarot-og-image.jpg' // Đặt ảnh OG mặc định ở đây
+  ogImage = '/images/phogotarot-og-image.jpg'
 } = Astro.props;
 
-// 2. Lấy URL chuẩn của trang
-// (QUAN TRỌNG: Cần thêm "site" vào astro.config.mjs, xem Bước 2)
+// 2. Lấy URL chuẩn
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
 ---
@@ -35,12 +34,12 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-    
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
     <script is:inline>
@@ -79,10 +78,12 @@ const ogImageURL = new URL(ogImage, Astro.site);
                 <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image">
             </a>
         </div>
+        
         <div class="nav-links" id="nav-links">
             <a href="/" class="nav-link">Trang Chủ</a>
+            
             <div class="nav-item nav-dropdown">
-                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer;">
+                <div class="nav-link" id="tarot-dropdown-toggle" style="cursor: pointer; display: flex; align-items: center; gap: 5px;">
                     <span>Bói Tarot Free</span>
                     <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -94,15 +95,74 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
                  </div>
             </div>
-            <a href="/about-us" class="nav-link">Về chúng tôi</a> <a href="/blog" class="nav-link">Blogs</a>
-            <a href="/contact" class="nav-link">Liên hệ</a> <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+            
+            <a href="/about-us" class="nav-link">Về chúng tôi</a>
+            <a href="/blog" class="nav-link">Blogs</a>
+            <a href="/contact" class="nav-link">Liên hệ</a>
+            <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
         </div>
+
         <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
             <span class="hamburger"></span>
         </button>
     </nav>
     
     <slot />
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-column brand">
+                <a href="/" class="footer-logo">
+                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image">
+                </a>
+                <p class="footer-description">
+                    Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý để bạn tự khám phá và quyết định con đường của mình.
+                </p>
+                <div class="footer-social-links">
+                    <a href="#" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" target="_blank" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column links">
+                <h3 class="footer-title">Chính sách</h3>
+                <ul class="footer-link-list">
+                    <li><a href="/about-us">Giới thiệu</a></li>
+                    <li><a href="/contact">Liên hệ</a></li>
+                    <li><a href="/privacy-policy">Chính sách bảo mật</a></li>
+                    <li><a href="/disclaimer">Miễn trừ trách nhiệm</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column contact">
+                <h3 class="footer-title">Thông tin liên hệ</h3>
+                <ul class="footer-link-list">
+                    <li>
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-phone"></i>
+                        <a href="tel:0352677543">0352 677 543</a>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-envelope"></i>
+                        <a href="mailto:contact@phogotarot.com">contact@phogotarot.com</a>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-globe"></i>
+                        <a href="https://phogotarot.com" target="_blank">https://phogotarot.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-copyright">
+            &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
+        </div>
+    </footer>
 
     <div id="history-modal-backdrop" class="modal-backdrop"></div>
     <div id="history-modal-content" class="modal-content">
@@ -116,81 +176,55 @@ const ogImageURL = new URL(ogImage, Astro.site);
         </div>
     </div>
 
-    <footer class="main-footer">
-            <div class="footer-container">
-                <div class="footer-column brand">
-                    <a href="/" class="footer-logo">
-                        <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image">
-                    </a>
-                    <p class="footer-description">
-                        Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý và suy nghĩ để bạn tự khám phá và quyết định con đường của mình.
-                    </p>
-                    <div class="footer-social-links">
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                            <i class="fa-brands fa-facebook"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-                            <i class="fa-brands fa-youtube"></i>
-                        </a>
-                        <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="#" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <div class="footer-column links">
-                    <h3 class="footer-title">Chính sách</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <a href="/about-us">Giới thiệu</a>
-                        </li>
-                        <li>
-                            <a href="/contact">Liên hệ</a>
-                        </li>
-                        <li>
-                            <a href="/privacy-policy">Chính sách bảo mật</a>
-                        </li>
-                        <li>
-                            <a href="/disclaimer">Miễn trừ trách nhiệm</a>
-                        </li>
-                    </ul>
-                </div>
-                
-                <div class="footer-column contact">
-                    <h3 class="footer-title">Thông tin liên hệ</h3>
-                    <ul class="footer-link-list">
-                        <li>
-                            <i class="fa-solid fa-location-dot"></i>
-                            <span>Quận Bình Thạnh, Hồ Chí Minh, VN</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-phone"></i>
-                            <a href="tel:0352677543">0352 677 543</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-envelope"></i>
-                            <a href="mailto:contact@phogotarot.com">contact@phogotarot.com</a>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-globe"></i>
-                            <a href="https://phogotarot.com" target="_blank" rel="noopener noreferrer">https://phogotarot.com</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-copyright">
-                &copy; 2025 Phở Gõ Tarot. Mọi quyền được bảo lưu.
-            </div>
-        </footer>
-
     <script src="/common.js" defer></script>
+    
+    <script is:inline>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            
+            // 1. Định nghĩa hàm tô màu Vàng (Active Style)
+            const setActiveStyle = (element) => {
+                if (!element) return;
+                element.style.color = 'var(--gold-color, #F2C94C)';
+                element.style.textShadow = '0 0 10px rgba(242, 201, 76, 0.5)';
+                element.classList.add('active'); // Thêm class active để dự phòng
+                
+                // Nếu là SVG mũi tên bên trong, cũng cho sáng luôn
+                const arrow = element.querySelector('.dropdown-arrow');
+                if (arrow) arrow.style.fill = 'var(--gold-color, #F2C94C)';
+            };
 
-    <div id="history-modal-backdrop" class="modal-backdrop"></div>
-    <div id="history-modal-content" class="modal-content">
-        </div>
+            // 2. Duyệt tất cả các thẻ <a> trong menu
+            const navLinks = document.querySelectorAll('a.nav-link');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+
+                // Logic so sánh: 
+                // - Trùng khớp hoàn toàn (href === currentPath)
+                // - Hoặc là trang con (VD: đang ở /blog/bai-viet-1 thì menu /blog vẫn sáng), trừ trang chủ '/'
+                if (href && (href === currentPath || (href !== '/' && currentPath.startsWith(href)))) {
+                    
+                    // A. Tô vàng chính link con đó
+                    setActiveStyle(link);
+
+                    // B. KÍCH HOẠT MENU MẸ (Quan trọng)
+                    // Kiểm tra xem link này có nằm trong menu xổ xuống không
+                    const parentSubmenu = link.closest('.dropdown-submenu');
+                    
+                    if (parentSubmenu) {
+                        // Tìm thẻ cha bao bọc (nav-item)
+                        const parentNavItem = parentSubmenu.closest('.nav-item');
+                        if (parentNavItem) {
+                            // Tìm cái nút tiêu đề (VD: Bói Tarot Free) nằm cùng cấp
+                            // Nó là thẻ có class .nav-link nhưng không phải là thẻ a (hoặc có id toggle)
+                            const parentToggle = parentNavItem.querySelector('#tarot-dropdown-toggle, .nav-link:not(a)');
+                            setActiveStyle(parentToggle);
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

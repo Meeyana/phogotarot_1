@@ -3,27 +3,24 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. (ĐÃ XÓA) Bỏ getStaticPaths()
-// export async function getStaticPaths() { ... }
-
-// 3. (MỚI) Lấy 'slug' từ URL của người dùng
+// 2. (MỚI) Lấy 'slug' từ URL của người dùng
 const { slug } = Astro.params;
 
-// 4. (MỚI) Lấy TẤT CẢ bài viết để tìm bài viết hiện tại
+// 3. (MỚI) Lấy TẤT CẢ bài viết để tìm bài viết hiện tại
 const allPosts = await getCollection('blog');
 
-// 5. (MỚI) Tìm bài viết hiện tại dựa trên slug
+// 4. (MỚI) Tìm bài viết hiện tại dựa trên slug
 const post = allPosts.find(p => p.slug === slug);
 
-// 6. (MỚI) Xử lý 404 nếu không tìm thấy bài viết
+// 5. (MỚI) Xử lý 404 nếu không tìm thấy bài viết
 if (!post) {
   return Astro.redirect('/404');
 }
 
-// 7. (GIỮ NGUYÊN) Render và lấy dữ liệu
+// 6. (GIỮ NGUYÊN) Render và lấy dữ liệu
 const { Content } = await post.render();
 
-// 8. (GIỮ NGUYÊN) Xử lý ngày đăng
+// 7. (GIỮ NGUYÊN) Xử lý ngày đăng
 const postDate = post.data.pubDate ? new Date(post.data.pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -31,84 +28,53 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 9. (CẬP NHẬT) Lọc bài viết liên quan thông minh theo 'category'
-
-// Lấy category của bài viết hiện tại
+// 8. (CẬP NHẬT) Lọc bài viết liên quan thông minh theo 'category'
 const currentCategory = post.data.category;
 let relatedPosts = [];
 
-// Kiểm tra xem bài này có category không
 if (currentCategory) {
-  // Lọc Lần 1: Lấy các bài viết CÓ CÙNG CATEGORY
   const postsInSameCategory = allPosts
-    .filter(p => {
-      // Lọc bỏ chính bài viết hiện tại VÀ
-      // Lọc các bài có cùng category
-      return p.slug !== post.slug && p.data.category === currentCategory;
-    })
-    // Sắp xếp các bài cùng category theo ngày mới nhất
+    .filter(p => p.slug !== post.slug && p.data.category === currentCategory)
     .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
 
-  
   if (postsInSameCategory.length >= 3) {
-    // 1. Nếu có đủ 3 (hoặc nhiều hơn) bài cùng chủ đề -> Lấy 3 bài
     relatedPosts = postsInSameCategory.slice(0, 3);
   } else {
-    // 2. Nếu không đủ 3 bài (ví dụ: chỉ có 1 bài cùng chủ đề)
-    // Lấy hết các bài cùng chủ đề đó (ví dụ: lấy 1 bài đó)
     relatedPosts = [...postsInSameCategory];
   }
 }
 
-// 3. LOGIC LẤP ĐẦY (FILLER)
-// Nếu sau khi lọc category mà vẫn chưa đủ 3 bài
 if (relatedPosts.length < 3) {
-  // Tạo một Set (tập hợp) các slug đã có để tránh trùng lặp
   const existingSlugs = new Set(relatedPosts.map(p => p.slug));
-  existingSlugs.add(post.slug); // Thêm cả slug của bài hiện tại
-
-  // Lọc Lần 2: Lấy thêm các bài MỚI NHẤT (trừ những bài đã có)
+  existingSlugs.add(post.slug);
+  
   const fillerPosts = allPosts
-    .filter(p => !existingSlugs.has(p.slug)) // Lọc những bài đã có
+    .filter(p => !existingSlugs.has(p.slug))
     .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
 
-  // Tính xem cần lấp đầy bao nhiêu bài nữa
   const needed = 3 - relatedPosts.length;
-  
-  // Thêm các bài "filler" này vào
   relatedPosts.push(...fillerPosts.slice(0, needed));
 }
 
-// 10. (GIỮ NGUYÊN) TẠO SCHEMA JSON-LD
+// 9. (GIỮ NGUYÊN) TẠO SCHEMA JSON-LD
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
   "headline": post.data.title,
   "description": post.data.excerpt,
   "image": new URL(post.data.image, Astro.site).href,
-  "author": {
-    "@type": "Organization",
-    "name": "Phở Gõ Tarot"
-  },
+  "author": { "@type": "Organization", "name": "Phở Gõ Tarot" },
   "publisher": {
     "@type": "Organization",
     "name": "Phở Gõ Tarot",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://phogotarot.com/images/logo.png"
-    }
+    "logo": { "@type": "ImageObject", "url": "https://phogotarot.com/images/logo.png" }
   },
   ...(postDate && { "datePublished": postDate.toISOString() })
 };
 
-// 11. (GIỮ NGUYÊN) Lấy URL hiện tại để chia sẻ
 const currentUrl = Astro.url.href;
 const shareImage = new URL(post.data.image, Astro.site).href;
 ---
-
-{/* ========================================================== */}
-{/* TOÀN BỘ PHẦN HTML VÀ CSS BÊN DƯỚI ĐƯỢC GIỮ NGUYÊN Y HỆT     */}
-{/* ========================================================== */}
 
 <BaseLayout
   title={`${post.data.title} - Phở Gõ Tarot`}
@@ -122,8 +88,7 @@ const shareImage = new URL(post.data.image, Astro.site).href;
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          {/* (SỬA) Sửa link breadcrumb về trang bài viết */}
-          <a href="/bai-viet">Kiến Thức</a> 
+          <a href="/blog/bai-viet">Kiến Thức</a> 
           <span class="divider">&raquo;</span>
           <span class="current">{post.data.title}</span>
         </nav>
@@ -166,6 +131,7 @@ const shareImage = new URL(post.data.image, Astro.site).href;
             </a>
           </div>
 
+          <!-- CTA Banner (Nút màu vàng rực rỡ) -->
           <div class="cta-banner">
             <div class="cta-content">
               <h3>Bạn đang tìm kiếm câu trả lời?</h3>
@@ -189,8 +155,8 @@ const shareImage = new URL(post.data.image, Astro.site).href;
             </div>
           </div>
 
-          {/* (SỬA) Sửa link nút quay lại */}
-          <a href="/bai-viet" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
+          <!-- Nút Quay Lại (Có class back-btn riêng để style hover mạnh hơn) -->
+          <a href="/blog/bai-viet" class="btn-outline back-btn" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
         </article>
 
       </div>
@@ -207,279 +173,144 @@ const shareImage = new URL(post.data.image, Astro.site).href;
     /* --- Cài đặt chung & Layout --- */
     .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
     .container { 
-      max-width: 1000px;
+      max-width: 900px; 
       margin: auto; 
       padding: 0 1rem; 
     }
-    .post-main-content {
-      width: 100%;
-    }
+    .post-main-content { width: 100%; }
+
+    /* --- TYPOGRAPHY --- */
     .hero-title { 
       font-family: var(--font-title); 
-      color: var(--title-color); 
-      font-size: 3rem; 
+      color: #ffffff; 
+      font-size: 2.8rem; 
+      font-weight: 700;
       margin-bottom: 1rem;
       text-align: left; 
       line-height: 1.2;
+      text-shadow: 0 0 10px rgba(242, 201, 76, 0.5), 0 0 20px rgba(242, 201, 76, 0.3);
     }
     .section-image { 
-      width: 100%;
-      height: auto; 
-      max-height: 600px;
-      border-radius: 12px; 
-      object-fit: cover;
-      margin-bottom: 2.5rem; 
+      width: 100%; height: auto; max-height: 500px; border-radius: 16px; 
+      object-fit: cover; margin-bottom: 3rem; 
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
+
+    /* --- NÚT VIỀN (BTN OUTLINE) & NÚT BACK --- */
     .btn-outline { 
       display: inline-block;
       background: transparent; 
-      border: 1px solid var(--card-back-border); 
-      color: var(--title-color); padding: 0.75rem 1.5rem; 
+      border: 1px solid var(--gold-color, #F2C94C); 
+      color: var(--gold-color, #F2C94C); 
+      padding: 0.7rem 1.5rem; 
       border-radius: 8px; font-weight: 600; 
       text-decoration: none; text-shadow: none;
+      transition: all 0.3s ease;
+    }
+    /* Hover chung cho các nút viền */
+    .btn-outline:hover { 
+        background-color: rgba(242, 201, 76, 0.1);
+        box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+        color: #fff;
+        transform: translateY(-2px);
+    }
+    
+    /* (MỚI) Hiệu ứng hover riêng cho nút Quay Lại: Lấp đầy màu vàng */
+    .back-btn:hover {
+        background-color: var(--gold-color, #F2C94C);
+        color: #050A1F; /* Chữ màu tối */
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.5);
+        transform: translateX(-5px); /* Di chuyển nhẹ sang trái */
     }
 
-    /* --- Breadcrumbs --- */
-    .breadcrumbs {
-      margin-bottom: 2rem;
-      font-size: 0.9rem;
-      opacity: 0.8;
-      text-shadow: none;
-    }
-    .breadcrumbs a {
-      color: var(--text-color);
-      text-decoration: none;
-    }
-    .breadcrumbs a:hover {
-      color: var(--title-color);
-      text-decoration: underline;
-    }
-    .breadcrumbs .divider {
-      margin: 0 0.5rem;
-    }
-    .breadcrumbs .current {
-      font-weight: 600;
-      color: var(--title-color);
-    }
-
-    /* --- Meta Ngày đăng --- */
-    .post-meta {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 1.5rem;
-      text-shadow: none;
-    }
-    .post-meta time {
-      font-weight: 600;
-      color: var(--title-color);
-    }
+    /* --- Breadcrumbs & Meta --- */
+    .breadcrumbs { margin-bottom: 2rem; font-size: 0.9rem; color: #ccc; text-shadow: none; }
+    .breadcrumbs a { color: #ccc; text-decoration: none; transition: color 0.3s; }
+    .breadcrumbs a:hover { color: var(--gold-color, #F2C94C); }
+    .breadcrumbs .divider { margin: 0 0.5rem; color: rgba(255,255,255,0.3); }
+    .breadcrumbs .current { font-weight: 600; color: var(--gold-color, #F2C94C); }
+    .post-meta { font-size: 0.95rem; color: #aaa; margin-bottom: 1.5rem; text-shadow: none; display: flex; align-items: center; gap: 0.5rem; }
+    .post-meta time { font-weight: 600; color: var(--gold-color, #F2C94C); }
 
     /* --- CSS Nội dung bài viết --- */
-    #post-content {
-      font-size: 1.1rem;
-      line-height: 1.8; text-shadow: none;
-      text-align: left;
-    }
-    #post-content h2, #post-content h3 {
-      font-family: var(--font-title);
-      color: var(--title-color);
-      margin-top: 2.5rem; margin-bottom: 1rem;
-    }
+    #post-content { font-size: 1.1rem; line-height: 1.8; text-shadow: none; text-align: left; color: #e0e0e0; }
+    #post-content h2, #post-content h3 { font-family: var(--font-title); color: var(--gold-color, #F2C94C); margin-top: 3rem; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(242, 201, 76, 0.2); }
+    #post-content h2 { font-size: 2rem; border-bottom: 1px solid rgba(242, 201, 76, 0.2); padding-bottom: 0.5rem;}
+    #post-content h3 { font-size: 1.5rem; }
     #post-content p { margin-bottom: 1.5rem; }
-    #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
-    
-    #post-content :global(img) {
-      display: block;
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      border-radius: 8px;
-      margin: 2rem auto; 
-      border: 1px solid var(--card-back-border);
-    }
-    #post-content :global(a) {
-      color: #009eff;
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.3s, text-decoration 0.3s;
-    }
-    #post-content :global(a:hover) {
-      color: orange;
-      text-decoration: underline;
-    }
-    #post-content :global(.text-center) {
+    #post-content ul, #post-content ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    #post-content :global(img) { display: block; width: 100%; max-width: 600px; height: auto; border-radius: 8px; margin: 2rem auto; border: 1px solid rgba(255, 255, 255, 0.1); }
+    #post-content :global(a) { color: var(--gold-color, #F2C94C); text-decoration: none; font-weight: 600; border-bottom: 1px dashed rgba(242, 201, 76, 0.5); transition: all 0.3s; }
+    #post-content :global(a:hover) { color: #fff; border-bottom-style: solid; text-shadow: 0 0 5px var(--gold-color, #F2C94C); }
+    #post-content :global(strong) { color: #fff; }
+    #post-content :global(.text-center){
       text-align: center;
     }
 
-    /* --- Nút chia sẻ Icon --- */
-    .share-buttons {
-      display: flex; flex-wrap: wrap;
-      gap: 1rem;
-      align-items: center;
-      margin: 3rem 0;
-      padding: 1.5rem 0;
-      border-top: 1px solid var(--card-back-border);
-      border-bottom: 1px solid var(--card-back-border);
-    }
-    .share-buttons span {
-      font-weight: 600;
-      font-family: var(--font-title);
-      font-size: 1.1rem;
-      color: var(--title-color);
-      margin-right: 0.5rem;
-    }
-    .share-btn {
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      width: 40px; 
-      height: 40px; 
-      border-radius: 50%; 
-      text-decoration: none;
-      text-shadow: none;
-      color: #fff;
-      transition: opacity 0.3s;
-    }
-    .share-btn:hover { opacity: 0.8; }
-    .share-btn.facebook { background-color: #1877F2; }
-    .share-btn.pinterest { background-color: #E60023; }
-
-    /* --- CTA Banner --- */
+    /* --- CTA Banner & Button (ĐÃ SỬA MÀU VÀNG) --- */
     .cta-banner {
-      background-image: linear-gradient(90deg, rgba(20, 40, 80, 0.9) 0%, rgba(40, 60, 100, 0.7) 100%);
-      border: 1px solid var(--card-back-border);
-      border-radius: 12px;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column; 
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-      text-align: center; 
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(242, 201, 76, 0.3);
+      border-radius: 16px;
+      padding: 2.5rem;
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      gap: 2rem; margin-bottom: 4rem; text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.2); 
     }
     .cta-content h3 {
       font-family: var(--font-title);
-      color: var(--title-color);
-      font-size: 1.75rem;
-      margin: 0 0 0.75rem 0;
+      color: var(--gold-color, #F2C94C);
+      font-size: 1.8rem; margin: 0 0 1rem 0;
+      text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
     }
-    .cta-content p {
-      margin: 0;
-      font-size: 1rem;
-      opacity: 0.9;
-      text-shadow: none;
-      max-width: 500px;
-    }
+    .cta-content p { margin: 0; font-size: 1.05rem; opacity: 0.9; text-shadow: none; max-width: 600px; color: #ddd; }
+    
+    /* (MỚI) Nút CTA màu vàng rực (Solid Gold Gradient) */
     .cta-button {
-      background-color: var(--title-color);
-      color: var(--bg-color);
+      background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+      color: #050A1F;
       text-decoration: none;
       font-weight: 700;
-      padding: 0.8rem 2rem;
-      border-radius: 8px;
+      padding: 1rem 2.5rem;
+      border-radius: 50px;
       text-shadow: none;
-      transition: background-color 0.3s;
+      transition: all 0.3s;
       flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+      border: 2px solid transparent; /* Để tránh vỡ layout khi hover */
     }
     .cta-button:hover {
-      background-color: #b8d4ff;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 0 25px rgba(242, 201, 76, 0.8);
+      background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%); /* Sáng chói khi hover */
     }
     @media (min-width: 768px) {
-      .cta-banner {
-        flex-direction: row;
-        text-align: left;
-      }
-      .cta-content {
-        flex-grow: 1;
-      }
+      .cta-banner { flex-direction: row; text-align: left; }
+      .cta-content { flex-grow: 1; }
     }
 
-    /* --- Bài viết liên quan --- */
-    .widget-title { 
-      font-family: var(--font-title);
-      color: var(--title-color);
-      margin-top: 0;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-    .related-posts {
-      margin-bottom: 2rem;
-    }
-    .related-posts-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-    .related-post-card {
-      display: flex; 
-      flex-direction: column; 
-      text-decoration: none;
-      background-color: var(--button-bg);
-      border: 1px solid var(--card-back-border);
-      border-radius: 8px;
-      overflow: hidden;
-      transition: border-color 0.3s;
-    }
-    .related-card-img-wrapper {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      overflow: hidden;
-    }
-    .related-post-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    .related-post-card:hover img {
-      transform: scale(1.05);
-    }
-    .related-post-card h4 {
-      font-family: var(--font-title);
-      color: var(--text-color);
-      font-size: 1.1rem; 
-      line-height: 1.4;
-      padding: 1rem 1rem 0.5rem 1rem; 
-      margin: 0;
-      text-shadow: none;
-    }
-    .related-card-desc {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      text-shadow: none;
-      padding: 0 1rem 1rem 1rem;
-      margin: 0;
-      flex-grow: 1; 
-      color:#fff;
-    }
-
-    /* --- Responsive cho Mobile --- */
-    @media (max-width: 900px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-    }
-    @media (max-width: 768px) { 
-      .related-posts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-    @media (max-width: 600px) {
-      .homepage-section { padding: 4rem 0.5rem; }
-      .container { padding: 0 0.5rem; }
-      .related-posts-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero-title {
-        font-size: 2rem;
-      }
-      #post-content {
-        font-size: 18px;
-      }
-      #post-content :global(img) {
-        max-width: 100%;
-      }
-    }
+    /* --- Các phần khác --- */
+    .share-buttons { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; margin: 4rem 0; padding: 2rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1); border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .share-buttons span { font-weight: 600; font-family: var(--font-title); font-size: 1.1rem; color: #fff; margin-right: 0.5rem; }
+    .share-btn { display: flex; align-items: center; justify-content: center; width: 45px; height: 45px; border-radius: 50%; text-decoration: none; text-shadow: none; color: #fff; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); }
+    .share-btn:hover { transform: translateY(-3px); }
+    .share-btn.facebook { background-color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.4); }
+    .share-btn.pinterest { background-color: #E60023; box-shadow: 0 0 10px rgba(230, 0, 35, 0.4); }
+    .widget-title { font-family: var(--font-title); color: #fff; margin-top: 0; margin-bottom: 2rem; font-size: 2rem; text-align: center; text-shadow: 0 0 15px rgba(242, 201, 76, 0.4); }
+    .related-posts { margin-bottom: 2rem; }
+    .related-posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .related-post-card { display: flex; flex-direction: column; text-decoration: none; background-color: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 12px; overflow: hidden; transition: all 0.4s ease; }
+    .related-post-card:hover { transform: translateY(-5px); border-color: rgba(242, 201, 76, 0.6); box-shadow: 0 5px 15px rgba(0,0,0,0.3), 0 0 10px rgba(242, 201, 76, 0.1); }
+    .related-card-img-wrapper { width: 100%; aspect-ratio: 16 / 10; overflow: hidden; position: relative; }
+    .related-card-img-wrapper::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); }
+    .related-post-card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .related-post-card:hover img { transform: scale(1.1); }
+    .related-post-card h4 { font-family: var(--font-title); color: #fff; font-size: 1.15rem; line-height: 1.4; padding: 1rem 1rem 0.5rem 1rem; margin: 0; text-shadow: none; transition: color 0.3s; }
+    .related-post-card:hover h4 { color: #fff; text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); }
+    .related-card-desc { font-size: 0.9rem; opacity: 0.7; text-shadow: none; padding: 0 1rem 1.5rem 1rem; margin: 0; flex-grow: 1; color: #ccc; line-height: 1.5; }
+    @media (max-width: 900px) { .hero-title { font-size: 2.2rem; } }
+    @media (max-width: 768px) { .related-posts-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .homepage-section { padding: 4rem 0.5rem; } .container { padding: 0 0.5rem; } .related-posts-grid { grid-template-columns: 1fr; } .hero-title { font-size: 2rem; } #post-content { font-size: 1rem; } }
   </style>
 </BaseLayout>

@@ -3,31 +3,25 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. (ĐÃ XÓA) Bỏ getStaticPaths()
-// export async function getStaticPaths() { ... }
-
-// 3. (MỚI) Lấy 'slug' từ URL của người dùng
+// 2. Lấy 'slug' từ URL
 const { slug } = Astro.params;
 
-// 4. (MỚI) Lấy TẤT CẢ lá bài để tìm lá bài hiện tại
+// 3. Lấy TẤT CẢ lá bài
 const allCards = await getCollection('cards');
 
-// 5. (MỚI) Tìm lá bài hiện tại dựa trên slug
+// 4. Tìm lá bài hiện tại
 const card = allCards.find(c => c.slug === slug);
 
-// 6. (MỚI) Xử lý 404 nếu không tìm thấy lá bài (VÔ CÙNG QUAN TRỌNG)
+// 5. Xử lý 404
 if (!card) {
-  // Nếu người dùng gõ URL sai, chuyển họ về trang 404
   return Astro.redirect('/404');
-  // Hoặc: return new Response(null, { status: 404, statusText: 'Not Found' });
 }
 
-// 7. (GIỮ NGUYÊN) Render và lấy dữ liệu
-// Vì đã có 'card', chúng ta không cần "Astro.props" nữa
+// 6. Render dữ liệu
 const { Content } = await card.render();
 const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate, group, index } = card.data;
 
-// 8. (GIỮ NGUYÊN) Xử lý ngày đăng
+// 7. Xử lý ngày đăng
 const postDate = pubDate ? new Date(pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     day: '2-digit',
@@ -35,7 +29,7 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 9. (GIỮ NGUYÊN) Cập nhật Schema
+// 8. Schema JSON-LD
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -47,27 +41,17 @@ const schema = {
   ...(postDate && { "datePublished": postDate.toISOString() })
 };
 
-// 10. (GIỮ NGUYÊN) Lấy URL hiện tại để chia sẻ
+// 9. URL chia sẻ
 const currentUrl = Astro.url.href;
 const shareImage = new URL(image, Astro.site).href;
 
-// 11. (TỐI ƯU HÓA) Lấy các lá bài liên quan
-// Chúng ta không cần gọi getCollection() LẦN NỮA
-// vì đã có 'allCards' ở bước 4
+// 10. Lấy lá bài liên quan (Cùng group)
 const relatedCards = allCards
-  .filter(item => 
-    item.data.group === group && // Lọc các lá bài cùng 'group'
-    item.data.index !== index   // Loại bỏ chính lá bài hiện tại
-  )
-  .sort((a, b) => a.data.index - b.data.index); // Sắp xếp theo index
+  .filter(item => item.data.group === group && item.data.index !== index)
+  .sort((a, b) => a.data.index - b.data.index);
 
-// 12. (GIỮ NGUYÊN) Tạo tên nhóm
 const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 ---
-
-{/* ========================================================== */}
-{/* TOÀN BỘ PHẦN HTML VÀ CSS BÊN DƯỚI ĐƯỢC GIỮ NGUYÊN         */}
-{/* ========================================================== */}
 
 <BaseLayout
   title={`${title} - Phở Gõ Tarot`}
@@ -81,18 +65,22 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          <a href="/blog/y-nghia-la-bai">Ý nghĩa lá bài</a> <span class="divider">&raquo;</span>
+          <a href="/blog/y-nghia-la-bai">Ý nghĩa lá bài</a> 
+          <span class="divider">&raquo;</span>
           <span class="current">{title}</span>
         </nav>
 
         <div class="card-detail-layout">
           
+          <!-- SIDEBAR (Hình ảnh + Keywords) -->
           <aside class="card-sidebar">
-            <img src={image} alt={title} class="card-main-image" />
+            <div class="card-image-wrapper">
+               <img src={image} alt={title} class="card-main-image" />
+            </div>
             
             {upright_keywords && upright_keywords.length > 0 && (
               <div class="keywords-box">
-                <h4>Từ khoá lá bài thẳng đứng</h4>
+                <h4><i class="fa-solid fa-arrow-up"></i> Từ khoá Xuôi</h4>
                 <ul class="keywords-list">
                   {upright_keywords.map(kw => <li>{kw}</li>)}
                 </ul>
@@ -100,8 +88,8 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
             )}
 
             {reversed_keywords && reversed_keywords.length > 0 && (
-              <div class="keywords-box">
-                <h4>Từ khoá lá bài ngược</h4>
+              <div class="keywords-box reversed">
+                <h4><i class="fa-solid fa-arrow-down"></i> Từ khoá Ngược</h4>
                 <ul class="keywords-list">
                   {reversed_keywords.map(kw => <li>{kw}</li>)}
                 </ul>
@@ -109,12 +97,13 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
             )}
           </aside>
 
+          <!-- NỘI DUNG CHÍNH -->
           <article class="post-main-content">
             <h1 class="hero-title">{title}</h1>
 
             {displayDate && (
               <div class="post-meta">
-                <span>Ngày đăng: </span>
+                <span>Cập nhật: </span>
                 <time datetime={postDate.toISOString()}>{displayDate}</time>
               </div>
             )}
@@ -123,6 +112,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
               <Content />
             </div>
 
+            <!-- Share Buttons -->
             <div class="share-buttons">
               <span>Chia sẻ:</span>
               <a 
@@ -130,7 +120,6 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
                 class="share-btn facebook" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                aria-label="Chia sẻ lên Facebook"
               >
                 <i class="fa-brands fa-facebook-f"></i>
               </a>
@@ -139,44 +128,46 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
                 class="share-btn pinterest" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                aria-label="Ghim lên Pinterest"
               >
                 <i class="fa-brands fa-pinterest"></i>
               </a>
             </div>
 
+            <!-- CTA Banner (Style Gold Mới) -->
             <div class="cta-banner">
               <div class="cta-content">
-                <h3>Bạn đang tìm kiếm câu trả lời?</h3>
-                <p>Hãy để những lá bài Tarot soi sáng con đường của bạn. Trải nghiệm một phiên đọc bài cá nhân hoá ngay hôm nay.</p>
+                <h3>Bạn đang băn khoăn về lá bài này?</h3>
+                <p>Đôi khi ý nghĩa lá bài thay đổi tuỳ theo hoàn cảnh. Hãy để Reader của Phở Gõ giúp bạn giải mã thông điệp riêng.</p>
               </div>
               <a href="/tarot" class="cta-button">Trải Bài Ngay</a>
             </div>
 
+            <!-- Related Cards -->
             {relatedCards.length > 0 && (
               <div class="related-cards-section">
-                <h3>Các Lá Bài Cùng Nhóm {groupName}</h3>
+                <h3 class="widget-title">Các Lá Bài Cùng Nhóm {groupName}</h3>
                 <div class="related-cards-grid">
                   {relatedCards.map(related => (
                     <a href={`/y-nghia-la-bai/${related.slug}`} class="related-card-item">
-                      <img 
-                        src={related.data.image} 
-                        alt={related.data.title} 
-                        loading="lazy" 
-                        width="150" 
-                        height="255"
-                      />
+                      <div class="related-img-wrapper">
+                          <img 
+                            src={related.data.image} 
+                            alt={related.data.title} 
+                            loading="lazy" 
+                          />
+                      </div>
                       <span>{related.data.title.replace("Ý nghĩa lá bài ", "")}</span>
-                      
                     </a>
                   ))}
                 </div>
               </div>
             )}
-            <a href="/blog/y-nghia-la-bai" class="btn-outline" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
+            
+            <a href="/blog/y-nghia-la-bai" class="btn-outline back-btn" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
           </article>
 
-        </div> </div>
+        </div> 
+      </div>
     </section>
   </main>
     
@@ -187,292 +178,274 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
   />
 
   <style>
-    /* --- Cài đặt chung & Layout --- */
+    /* --- Cài đặt chung --- */
     .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
-    .container { 
-      max-width: 1200px;
-      margin: auto; padding: 0 1rem;
-    }
-    .btn-outline { 
-      display: inline-block; background: transparent; 
-      border: 1px solid var(--card-back-border);
-      color: var(--title-color); padding: 0.75rem 1.5rem; 
-      border-radius: 8px; font-weight: 600; 
-      text-decoration: none; text-shadow: none;
-    }
+    .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
 
-    /* --- CSS Layout 2 cột --- */
+    /* --- LAYOUT 2 CỘT --- */
     .card-detail-layout {
       display: grid;
-      grid-template-columns: 1fr; /* Mặc định 1 cột mobile */
+      grid-template-columns: 1fr;
       gap: 3rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 900px) {
       .card-detail-layout {
-        grid-template-columns: 350px 1fr;
+        grid-template-columns: 350px 1fr; /* Sidebar cố định 350px */
+        align-items: start;
       }
     }
 
-    /* --- CSS Cột 1: Sidebar --- */
-    .card-sidebar {
-      width: 100%;
+    /* --- SIDEBAR STYLE (GOLD THEME) --- */
+    .card-sidebar { width: 100%; }
+    
+    .card-image-wrapper {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(242, 201, 76, 0.3); /* Viền vàng nhẹ */
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.1); /* Glow nhẹ */
+        margin-bottom: 2rem;
+        transition: transform 0.3s;
+    }
+    .card-image-wrapper:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(242, 201, 76, 0.2);
     }
     .card-main-image {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-      border: 1px solid var(--card-back-border);
+      width: 100%; height: auto; display: block;
     }
+
+    /* Hộp từ khóa (Glassmorphism) */
     .keywords-box {
-      border: 1px solid var(--card-back-border);
-      background: var(--button-bg);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      text-align: left;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(5px);
     }
+    /* Box keywords ngược có màu viền khác chút */
+    .keywords-box.reversed {
+        border-color: rgba(255, 255, 255, 0.05);
+    }
+
     .keywords-box h4 {
       font-family: var(--font-title);
-      color: var(--title-color);
-      margin: 0 0 0.75rem 0;
-      font-size: 1.2rem;
-      border-bottom: 1px solid var(--card-back-border);
-      padding-bottom: 0.5rem;
+      color: var(--gold-color, #F2C94C); /* Tiêu đề vàng */
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px dashed rgba(242, 201, 76, 0.3);
+      padding-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
     }
+
     .keywords-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex; flex-wrap: wrap;
-      gap: 0.5rem;
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
     }
     .keywords-list li {
-      background: var(--card-back-border);
-      padding: 0.25rem 0.75rem;
-      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
       font-size: 0.9rem;
-      color: var(--text-color);
+      color: #ddd;
+      transition: all 0.2s;
+    }
+    .keywords-list li:hover {
+        border-color: var(--gold-color, #F2C94C);
+        color: #fff;
+        background: rgba(242, 201, 76, 0.1);
     }
 
-    /* --- CSS Cột 2: Nội dung chính --- */
-    .post-main-content {
-      width: 100%;
-    }
+    /* --- MAIN CONTENT --- */
+    .post-main-content { width: 100%; }
+
     .hero-title { 
       font-family: var(--font-title); 
-      color: var(--title-color); 
+      color: #ffffff; /* Chữ Trắng */
       font-size: 3rem; 
-      margin-bottom: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem; margin-top: 0;
       text-align: left; 
       line-height: 1.2;
-      margin-top: 0;
+      /* Hiệu ứng Glow Vàng CHỈ CHO TITLE CHÍNH */
+      text-shadow: 0 0 10px rgba(242, 201, 76, 0.5), 0 0 30px rgba(242, 201, 76, 0.2);
+    }
+
+    .breadcrumbs { margin-bottom: 2rem; font-size: 0.9rem; color: #ccc; }
+    .breadcrumbs a { color: #ccc; text-decoration: none; transition: color 0.3s; }
+    .breadcrumbs a:hover { color: var(--gold-color, #F2C94C); }
+    .breadcrumbs .divider { margin: 0 0.5rem; color: rgba(255,255,255,0.3); }
+    .breadcrumbs .current { font-weight: 600; color: var(--gold-color, #F2C94C); }
+
+    .post-meta { font-size: 0.95rem; color: #aaa; margin-bottom: 2rem; }
+    .post-meta time { font-weight: 600; color: var(--gold-color, #F2C94C); }
+
+    /* === NỘI DUNG BÀI VIẾT (ĐÃ ĐIỀU CHỈNH LẠI) === */
+    #post-content { font-size: 1.1rem; line-height: 1.8; color: #e0e0e0; text-align: left; }
+    
+    /* H2 (Heading lớn): Giữ vàng nhưng bỏ shadow chói */
+    #post-content h2 { 
+        font-family: var(--font-title); 
+        color: var(--gold-color, #F2C94C); 
+        margin-top: 2.5rem; margin-bottom: 1rem;
+        font-size: 2rem;
+        border-bottom: 1px solid rgba(242, 201, 76, 0.2); 
+        padding-bottom: 0.5rem;
+        text-shadow: none; /* Bỏ glow */
     }
     
-    /* --- Breadcrumbs --- */
-    .breadcrumbs {
-      margin-bottom: 2rem;
-      font-size: 0.9rem;
-      opacity: 0.8;
-      text-shadow: none;
+    /* H3, H4...: Chuyển về màu TRẮNG BÌNH THƯỜNG */
+    #post-content h3, #post-content h4 {
+        font-family: var(--font-title);
+        color: #ffffff; 
+        margin-top: 2rem; margin-bottom: 0.5rem;
+        font-size: 1.5rem;
+        text-shadow: none;
     }
-    .breadcrumbs a {
-      color: var(--text-color);
-      text-decoration: none;
-    }
-    .breadcrumbs a:hover {
-      color: var(--title-color);
-      text-decoration: underline;
-    }
-    .breadcrumbs .divider {
-      margin: 0 0.5rem;
-    }
-    .breadcrumbs .current {
-      font-weight: 600;
-      color: var(--title-color);
-    }
-
-    /* --- Meta Ngày đăng --- */
-    .post-meta {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 1.5rem;
-      text-shadow: none;
-    }
-    .post-meta time {
-      font-weight: 600;
-      color: var(--title-color);
-    }
-
-    /* --- CSS Nội dung bài viết --- */
-    #post-content {
-      font-size: 1.1rem;
-      line-height: 1.8; text-shadow: none;
-      text-align: left;
-    }
-    #post-content h2, #post-content h3 {
-      font-family: var(--font-title);
-      color: var(--title-color);
-      margin-top: 2.5rem; margin-bottom: 1rem;
-    }
-    #post-content p { margin-bottom:  1.5rem; }
-    #post-content ul, #post-content ol { padding-left: 2rem; margin-bottom: 1.5rem; }
     
-    #post-content :global(img) {
-      display: block; 
-      width: 100%;
-      max-width: 600px;
-      height: auto;
-      border-radius: 8px;
-      margin: 2rem auto; 
-      border: 1px solid var(--card-back-border);
+    #post-content p { margin-bottom: 1.5rem; }
+    #post-content ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+    #post-content :global(strong) { color: #fff; }
+    
+    /* Link trong bài: Chuyển về màu trắng gạch chân bình thường */
+    #post-content :global(a) { 
+        color: #fff; 
+        text-decoration: underline; 
+        font-weight: 600; 
+        border-bottom: none; 
+        transition: all 0.3s; 
+    }
+    #post-content :global(a:hover) { 
+        color: var(--gold-color, #F2C94C); 
+        text-decoration: none;
     }
 
-    /* --- Nút chia sẻ Icon --- */
-    .share-buttons {
-      display: flex; flex-wrap: wrap; gap: 1rem;
-      align-items: center;
-      margin: 3rem 0;
-      padding: 1.5rem 0;
-      border-top: 1px solid var(--card-back-border);
-      border-bottom: 1px solid var(--card-back-border);
+    /* --- SHARE BUTTONS --- */
+    .share-buttons { 
+        display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; 
+        margin: 3rem 0; padding: 1.5rem 0; 
+        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
-    .share-buttons span {
-      font-weight: 600; font-family: var(--font-title);
-      font-size: 1.1rem; color: var(--title-color);
-      margin-right: 0.5rem;
+    .share-buttons span { 
+        font-weight: 600; font-family: var(--font-title); font-size: 1.1rem; color: #fff; margin-right: 0.5rem; 
     }
-    .share-btn {
-      display: flex; align-items: center; justify-content: center;
-      width: 40px; height: 40px; border-radius: 50%; 
-      text-decoration: none; text-shadow: none;
-      color: #fff; transition: opacity 0.3s;
+    .share-btn { 
+        display: flex; align-items: center; justify-content: center; 
+        width: 45px; height: 45px; border-radius: 50%; 
+        text-decoration: none; color: #fff; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); 
     }
-    .share-btn:hover { opacity: 0.8; }
-    .share-btn.facebook { background-color: #1877F2; }
-    .share-btn.pinterest { background-color: #E60023; }
+    .share-btn:hover { transform: translateY(-3px); }
+    .share-btn.facebook { background-color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.4); }
+    .share-btn.pinterest { background-color: #E60023; box-shadow: 0 0 10px rgba(230, 0, 35, 0.4); }
 
-    /* --- CTA Banner --- */
+    /* --- CTA BANNER (Style Mới) --- */
     .cta-banner {
-      background-image: linear-gradient(90deg, rgba(20, 40, 80, 0.9) 0%, rgba(40, 60, 100, 0.7) 100%);
-      border: 1px solid var(--card-back-border);
-      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(242, 201, 76, 0.3);
+      border-radius: 16px;
       padding: 2rem;
-      display: flex;
-      flex-direction: column; 
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5rem;
-      margin-bottom: 3rem;
-      text-align: center; 
+      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      gap: 1.5rem; margin-bottom: 3rem; text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.2);
     }
     .cta-content h3 {
-      font-family: var(--font-title); color: var(--title-color);
-      font-size: 1.75rem;
-      margin: 0 0 0.75rem 0;
+      font-family: var(--font-title); color: var(--gold-color, #F2C94C);
+      font-size: 1.75rem; margin: 0 0 0.75rem 0;
+      text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
     }
-    .cta-content p {
-      margin: 0;
-      font-size: 1rem; opacity: 0.9;
-      text-shadow: none; max-width: 500px;
-    }
+    .cta-content p { margin: 0; font-size: 1rem; opacity: 0.9; color: #ddd; max-width: 500px; }
+    
     .cta-button {
-      background-color: var(--title-color);
-      color: var(--bg-color);
-      text-decoration: none; font-weight: 700;
-      padding: 0.8rem 2rem; border-radius: 8px;
-      text-shadow: none; transition: background-color 0.3s;
-      flex-shrink: 0;
+      background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+      color: #050A1F; text-decoration: none; font-weight: 700;
+      padding: 0.9rem 2.2rem; border-radius: 50px; flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); transition: all 0.3s;
     }
-    .cta-button:hover { background-color: #b8d4ff; }
+    .cta-button:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 0 25px rgba(242, 201, 76, 0.8);
+        background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%);
+    }
     @media (min-width: 768px) {
-      .cta-banner {
-        flex-direction: row;
-        text-align: left;
-      }
+      .cta-banner { flex-direction: row; text-align: left; }
       .cta-content { flex-grow: 1; }
     }
 
-    /* --- (MỚI) CSS Bài Viết Liên Quan --- */
+    /* --- RELATED CARDS --- */
     .related-cards-section {
-      margin-top: 3rem;
-      margin-bottom: 2rem;
-      border-top: 1px solid var(--card-back-border);
-      padding-top: 2.5rem;
-      text-align: left;
+      margin-top: 3rem; margin-bottom: 2rem;
     }
-    .related-cards-section h3 {
-      font-family: var(--font-title);
-      color: var(--title-color);
-      font-size: 1.75rem;
-      margin: 0 0 1.5rem 0;
+    .widget-title {
+      font-family: var(--font-title); color: #fff; font-size: 1.75rem;
+      margin: 0 0 1.5rem 0; text-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
     }
     .related-cards-grid {
-      display: grid;
-      /* (MOBI) 2 cột */
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;
     }
     .related-card-item {
-      display: block;
-      text-decoration: none;
-      text-shadow: none;
-      border: 1px solid var(--card-back-border);
-      border-radius: 8px;
-      overflow: hidden;
-      background: var(--button-bg);
-      transition: transform 0.2s, box-shadow 0.2s;
+      display: block; text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.1); /* Viền mảnh */
+      border-radius: 12px; overflow: hidden;
+      background: rgba(255, 255, 255, 0.02);
+      transition: all 0.3s ease;
     }
     .related-card-item:hover {
       transform: translateY(-5px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      border-color: var(--gold-color, #F2C94C);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3), 0 0 10px rgba(242, 201, 76, 0.1);
+    }
+    .related-img-wrapper {
+        width: 100%; aspect-ratio: 1 / 1.6; overflow: hidden;
     }
     .related-card-item img {
-      width: 100%;
-      height: auto;
-      /* Tỷ lệ khung hình lá bài để đồng bộ */
-      aspect-ratio: 1 / 1.7;
-      object-fit: cover;
-      display: block;
-      border-bottom: 1px solid var(--card-back-border);
+      width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
     }
+    .related-card-item:hover img { transform: scale(1.1); }
+    
     .related-card-item span {
-      display: block;
-      padding: 0.75rem;
-      text-align: center;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--text-color);
-      /* Chống vỡ layout nếu tên quá dài */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      display: block; padding: 0.75rem; text-align: center;
+      font-size: 0.9rem; font-weight: 600; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .related-card-item:hover span { color: var(--gold-color, #F2C94C); }
+
+    @media (min-width: 600px) { .related-cards-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 900px) { .related-cards-grid { grid-template-columns: repeat(4, 1fr); } }
+
+    /* --- Buttons & Back Button --- */
+    .btn-outline { 
+      display: inline-block; background: transparent; 
+      border: 1px solid var(--gold-color, #F2C94C);
+      color: var(--gold-color, #F2C94C); padding: 0.7rem 1.5rem; 
+      border-radius: 8px; font-weight: 600; text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-outline:hover { 
+        background-color: rgba(242, 201, 76, 0.1);
+        box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+        color: #fff; transform: translateY(-2px);
+    }
+    .back-btn:hover {
+        background-color: var(--gold-color, #F2C94C);
+        color: #050A1F; 
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.5);
+        transform: translateX(-5px);
     }
 
-    /* (DESKTOP) 5 cột - theo yêu cầu */
-    @media (min-width: 992px) {
-      .related-cards-grid {
-        grid-template-columns: repeat(5, 1fr);
-      }
-    }
-    /* (TABLET) có thể 3-4 cột nếu muốn */
-    @media (min-width: 600px) and (max-width: 991px) {
-      .related-cards-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    /* --- Responsive cho Mobile --- */
+    /* Responsive Mobile */
     @media (max-width: 900px) {
       .hero-title { font-size: 2.5rem; }
     }
-
     @media (max-width: 600px) {
       .homepage-section { padding: 4rem 0.5rem; }
       .container { padding: 0 0.5rem; }
       .hero-title { font-size: 2rem; }
-      #post-content { font-size: 18px; }
-      #post-content :global(img) { max-width: 100%; }
     }
   </style>
 </BaseLayout>
