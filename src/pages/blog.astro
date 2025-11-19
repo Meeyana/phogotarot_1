@@ -1,152 +1,136 @@
 ---
+// 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// --- 1. SECTION: KIẾN THỨC TAROT ---
-const allBlogPosts = await getCollection('blog');
-// Tìm bài viết được ghim (nếu có)
-let featuredBlogPost = allBlogPosts.find(post => post.data.isFeatured === true);
-// Sắp xếp TẤT CẢ bài viết theo ngày mới nhất
-const sortedBlogPosts = allBlogPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+// 2. LẤY DỮ LIỆU
+const blogPosts = await getCollection('blog');
 
-// Nếu không có bài nào ghim, tự động lấy bài mới nhất
-if (!featuredBlogPost) {
-  featuredBlogPost = sortedBlogPosts[0];
-}
+// 3. SẮP XẾP
+const allPosts = blogPosts.map(post => ({
+  ...post,
+  type: 'blog',
+  url: `/blog/${post.slug}`
+})).sort((a, b) => {
+  const dateA = a.data.pubDate ? new Date(a.data.pubDate) : new Date(0);
+  const dateB = b.data.pubDate ? new Date(b.data.pubDate) : new Date(0);
+  return dateB.getTime() - dateA.getTime();
+});
 
-// Lấy 3 bài viết tiếp theo (loại bỏ bài ghim)
-const otherBlogPosts = sortedBlogPosts
-  .filter(post => post.slug !== featuredBlogPost?.slug)
-  .slice(0, 3);
+// 4. LOGIC PHÂN TRANG (Giữ nguyên logic cũ)
+const range = (start, end) => Array.from({ length: end - start + 1 }, (_, idx) => idx + start);
 
-// --- 2. SECTION: Ý NGHĨA LÁ BÀI ---
-const featuredCardPosts = (await getCollection('cards'))
-  .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime())
-  .slice(0, 3);
+const generatePagination = (currentPage, totalPages) => {
+  const totalVisiblePages = 7;
+  const DOTS = '...';
+  if (totalPages <= totalVisiblePages) return range(1, totalPages);
 
-// --- 3. SCHEMA ---
-const allPostsForSchema = [featuredBlogPost, ...otherBlogPosts, ...featuredCardPosts].filter(Boolean);
+  const siblings = 1;
+  const leftSiblingIndex = Math.max(currentPage - siblings, 1);
+  const rightSiblingIndex = Math.min(currentPage + siblings, totalPages);
+  const showLeftDots = leftSiblingIndex > 2;
+  const showRightDots = rightSiblingIndex < totalPages - 2;
+
+  if (!showLeftDots && showRightDots) return [...range(1, 3 + 2 * siblings), DOTS, totalPages];
+  if (showLeftDots && !showRightDots) return [1, DOTS, ...range(totalPages - (3 + 2 * siblings) + 1, totalPages)];
+  
+  return [1, DOTS, ...range(leftSiblingIndex, rightSiblingIndex), DOTS, totalPages];
+};
+
+const pageSize = 12;
+const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
+const totalPages = Math.ceil(allPosts.length / pageSize);
+const postsForThisPage = allPosts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+const paginationItems = generatePagination(currentPage, totalPages);
+
+// 5. SCHEMA (Cập nhật URL)
 const siteUrl = Astro.site ? Astro.site.href : '/';
-const pageUrl = new URL('/blog', siteUrl).href;
+const pageUrl = new URL(`/blog?page=${currentPage}`, siteUrl).href; // SỬA: /blog thay vì /bai-viet
 
 const schema = {
   "@context": "https://schema.org",
   "@type": "Blog",
-  "name": "Blog - Bài Viết | Phở Gõ Tarot",
-  "description": "Tổng hợp các bài viết mới nhất về ý nghĩa lá bài, các phương pháp luận giải và kiến thức tarot chuyên sâu từ Phở Gõ Tarot.",
+  "name": `Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`,
+  "description": "Tổng hợp các bài viết mới nhất về kiến thức tarot chuyên sâu.",
   "url": pageUrl,
   "mainEntity": {
     "@type": "ItemList",
-    "itemListElement": allPostsForSchema.map((post, index) => {
-      const isCard = post.collection === 'cards';
-      const postUrlPath = isCard ? `/y-nghia-la-bai/${post.slug}` : `/blog/${post.slug}`;
-      const postUrl = new URL(postUrlPath, siteUrl).href;
-      const postImage = post.data.image ? new URL(post.data.image, siteUrl).href : null;
-      return {
-        "@type": "ListItem",
-        "position": index + 1,
-        "item": {
-          "@type": "Article",
-          "name": post.data.title,
-          "url": postUrl,
-          ...(postImage && { "image": postImage })
-        }
-      };
-    })
+    "itemListElement": postsForThisPage.map((post, index) => ({
+      "@type": "ListItem",
+      "position": (currentPage - 1) * pageSize + index + 1,
+      "item": {
+        "@type": "Article",
+        "name": post.data.title,
+        "url": new URL(post.url, siteUrl).href,
+        ...(post.data.image && { "image": new URL(post.data.image, siteUrl).href })
+      }
+    }))
   }
 };
 ---
 
 <BaseLayout
-  title="Blog - Bài Viết | Phở Gõ Tarot"
-  description="Tổng hợp các bài viết, kiến thức và ý nghĩa các lá bài Tarot."
+  title={`Blog - Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
+  description="Tổng hợp các bài viết, kiến thức Tarot chuyên sâu từ Phở Gõ Tarot."
 >
   <main id="homepage-content">
-    
-    <section class="homepage-section" style="padding-top: 3rem;">
+    <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
       <div class="container">
+        
         <div class="section-header">
           <h2 class="section-title">Bài Viết Tarot</h2>
         </div>
 
-        {featuredBlogPost && (
-          <div class="featured-post-card">
-            <a href={`/blog/${featuredBlogPost.slug}`} class="featured-image-link">
-              <img src={featuredBlogPost.data.image} alt={featuredBlogPost.data.title} class="section-image-featured" />
-            </a>
-            <div class="featured-content">
-              <a href={`/blog/${featuredBlogPost.slug}`} class="title-link">
-                <h3 class="section-subtitle">{featuredBlogPost.data.title}</h3>
-              </a>
-              <p class="section-text">{featuredBlogPost.data.excerpt}</p>
-              <a href={`/blog/${featuredBlogPost.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
-            </div>
-          </div>
-        )}
-
         <div class="grid-4">
-          {otherBlogPosts.map(post => (
+          {postsForThisPage.map(post => (
             <div class="blog-card">
-              <a href={`/blog/${post.slug}`} class="image-link-wrapper">
+              <a href={post.url} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
-                  <img src={post.data.image} alt={post.data.title} class="section-image" />
+                   <img src={post.data.image} alt={post.data.title} class="section-image" loading="lazy" />
                 </div>
               </a>
-              <a href={`/blog/${post.slug}`} class="title-link">
+              <a href={post.url} class="title-link">
                 <h3 class="section-subtitle">{post.data.title}</h3>
               </a>
               <p class="section-text">{post.data.excerpt}</p>
-              <a href={`/blog/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
+              <a href={post.url} class="btn-outline">Đọc tiếp &rarr;</a>
             </div>
           ))}
         </div>
 
-        <div class="section-footer-action">
-          <a href="/blog/bai-viet" class="btn-outline btn-key">Xem thêm &rarr;</a>
-        </div>
-      </div>
-   </section>
+        {/* PHÂN TRANG - SỬA HREF */}
+        <nav class="pagination-nav">
+          <a 
+            href={`/blog?page=${currentPage - 1}`} 
+            class:list={["page-item", "prev", { "disabled": currentPage === 1 }]}
+          >
+             &larr;
+          </a>
 
-    <section class="homepage-section" style="padding-top: 1rem;">
-      <div class="container">
-        <div class="section-header">
-          <h2 class="section-title">Ý Nghĩa Lá Bài</h2>
-        </div>
+          {paginationItems.map((item) => {
+            if (item === '...') return <span class="page-item dots disabled">...</span>;
+            if (item === currentPage) return <span class="page-item active">{item}</span>;
+            
+            // SỬA: Link trỏ về /blog thay vì /blog/bai-viet
+            return <a href={`/blog?page=${item}`} class="page-item">{item}</a>;
+          })}
 
-        <div class="grid-4">
-         {featuredCardPosts.map(post => (
-            <div class="blog-card">
-              <span class="category-badge card-badge">Ý nghĩa lá bài</span>
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="image-link-wrapper">
-                <div class="image-wrapper-4-3">
-                  <img src={post.data.image} alt={post.data.title} class="section-image" />
-               </div>
-             </a>
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="title-link">
-                <h3 class="section-subtitle">{post.data.title}</h3>
-              </a>
-              <p class="section-text">{post.data.excerpt}</p>
-              <a href={`/y-nghia-la-bai/${post.slug}`} class="btn-outline">Đọc tiếp &rarr;</a>
-            </div>
-           ))}
-        </div>
+          <a 
+            href={`/blog?page=${currentPage + 1}`} 
+            class:list={["page-item", "next", { "disabled": currentPage === totalPages }]}
+          >
+            &rarr;
+          </a>
+        </nav>
 
-        <div class="section-footer-action">
-          <a href="/blog/y-nghia-la-bai" class="btn-outline btn-key">Xem thêm &rarr;</a>
-        </div>
       </div>
     </section>
-
   </main>
-   
-  <script 
-    type="application/ld+json" 
-    slot="head"
-    set:html={JSON.stringify(schema)}
-  />
+  
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)} />
 
   <style>
-    /* === 1. CẤU TRÚC CHUNG === */
+    /* === 1. CẤU TRÚC CHUNG & LAYOUT (Đồng bộ blog.astro) === */
     .homepage-section { 
         padding: 4rem 1rem; 
         position: relative;
@@ -157,6 +141,7 @@ const schema = {
         padding: 0; 
     }
     
+    /* Grid responsive 3 cột (màn hình lớn) - 1 cột (mobile) */
     .grid-4 { 
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
@@ -166,7 +151,7 @@ const schema = {
       .grid-4 { grid-template-columns: repeat(3, 1fr); }
     }
 
-    /* === 2. TYPOGRAPHY === */
+    /* === 2. TYPOGRAPHY (TITLE TRẮNG + GLOW VÀNG) === */
     .section-header {
       display: flex; justify-content: center; align-items: center;
       margin-bottom: 3.5rem; flex-wrap: wrap; gap: 1rem;
@@ -174,19 +159,90 @@ const schema = {
     
     .section-title { 
         font-family: var(--font-title); 
-        color: #ffffff;
+        color: #ffffff; /* Chữ trắng */
         font-size: 3.5rem; 
         font-weight: 700; 
         margin-bottom: 0; text-align: center; margin-top: 0;
+        
+        /* Hiệu ứng Glow Vàng */
         text-shadow: 
             0 0 10px rgba(242, 201, 76, 0.5),
             0 0 20px rgba(242, 201, 76, 0.3),
             0 0 40px rgba(242, 201, 76, 0.1);
     }
 
-    /* === 3. BUTTONS (BÌNH THƯỜNG & KEY) === */
+    /* === 3. CARD STYLE (SANG TRỌNG & TINH TẾ) === */
+    .blog-card { 
+        background-color: rgba(255, 255, 255, 0.02); 
+        border: 1px solid rgba(255, 255, 255, 0.12); /* Viền xám mờ mặc định */
+        padding: 0; 
+        border-radius: 16px; 
+        text-align: left; height: 100%; 
+        display: flex; flex-direction: column; position: relative;
+        transition: all 0.4s ease;
+        overflow: hidden;
+    }
     
-    /* Nút viền (Cho từng bài viết) */
+    /* Hover vào card: Viền vàng + Glow nhẹ */
+    .blog-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(242, 201, 76, 0.6);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(242, 201, 76, 0.1);
+    }
+
+    /* Ảnh đại diện */
+    .image-link-wrapper {
+        display: block; width: 100%; margin-bottom: 0; 
+        border-radius: 0; overflow: hidden; position: relative;
+    }
+    .image-link-wrapper::after {
+        content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+        height: 1px; background: rgba(255,255,255,0.1);
+    }
+    .image-wrapper-4-3 {
+        width: 100%; aspect-ratio: 4 / 3; flex-shrink: 0;
+    }
+    .section-image { 
+        width: 100%; height: 100%; object-fit: cover; 
+        transition: transform 0.6s ease;
+    }
+    .blog-card:hover .section-image {
+        transform: scale(1.1);
+    }
+    
+    /* Căn chỉnh nội dung bên trong card */
+    .blog-card .title-link, 
+    .blog-card .section-text, 
+    .blog-card .btn-outline {
+        margin-left: 1.5rem; margin-right: 1.5rem;
+    }
+    .blog-card .title-link { margin-top: 1.5rem; display: block; }
+    .blog-card .btn-outline { margin-bottom: 1.5rem; margin-left: 1.5rem;}
+
+    .title-link { text-decoration: none!important; color: inherit; }
+    
+    .section-subtitle { 
+        font-family: var(--font-title);
+        color: #fff; 
+        font-size: 1.35rem; 
+        font-weight: 700;
+        margin-bottom: 0.8rem; margin-top: 0;
+        line-height: 1.4;
+        transition: all 0.3s ease;
+    }
+    
+    /* Hover tiêu đề: Vẫn trắng nhưng sáng rực hơn */
+    .blog-card:hover .section-subtitle {
+        color: #ffffff;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(242, 201, 76, 0.4);
+    }
+
+    .section-text { 
+        font-size: 0.95rem; opacity: 0.8; margin-bottom: 1.5rem; 
+        text-shadow: none; flex-grow: 1; color: #ccc; line-height: 1.6;
+    }
+
+    /* === 4. BUTTON STYLE === */
     .btn-outline { 
         display: inline-block;
         background: transparent; 
@@ -201,6 +257,7 @@ const schema = {
         transition: all 0.3s ease;
         font-size: 0.95rem;
     }
+    
     .btn-outline:hover { 
         background-color: rgba(242, 201, 76, 0.1);
         box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
@@ -208,134 +265,61 @@ const schema = {
         transform: translateY(-2px);
     }
 
-    /* === (MỚI) NÚT KEY - XEM THÊM (FULL GOLD) === */
-    /* Ghi đè lên btn-outline để tạo sự khác biệt */
-    .btn-key {
-        background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #D4AF37 100%); /* Gradient Vàng Kim */
-        color: #050A1F !important; /* Chữ màu tối mới đọc được trên nền vàng */
-        border: none; /* Bỏ viền */
-        padding: 0.8rem 3rem; /* Nút to hơn */
-        font-size: 1rem;
-        font-weight: 700;
-        border-radius: 50px; /* Bo tròn bầu dục cho khác biệt hẳn */
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); /* Đổ bóng vàng */
+    /* === 5. PAGINATION STYLE (ĐỒNG BỘ THEME MỚI) === */
+    .pagination-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 4rem;
+      flex-wrap: wrap;
     }
 
-    .btn-key:hover {
-        background: linear-gradient(135deg, #F2C94C 0%, #FFD700 50%, #F2C94C 100%); /* Sáng rực hơn khi hover */
-        transform: translateY(-4px);
-        box-shadow: 0 6px 25px rgba(242, 201, 76, 0.6); /* Phát sáng mạnh */
-        color: #000 !important;
+    .page-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      min-width: 42px; 
+      height: 42px;
+      padding: 0.25rem 0.75rem;
+      text-decoration: none;
+      text-shadow: none;
+      
+      /* Style mặc định: Nền tối mờ, viền xám */
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      transition: all 0.3s ease;
     }
 
-    .section-footer-action {
-      text-align: center; margin-top: 3.5rem;
+    /* Hover nút phân trang */
+    .page-item:not(.disabled):not(.active):hover {
+      border-color: var(--gold-color, #F2C94C);
+      color: var(--gold-color, #F2C94C);
+      background: rgba(242, 201, 76, 0.1);
+      box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
     }
 
-    /* === 4. FEATURED POST CARD === */
-    .featured-post-card {
-      background-color: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 16px;
-      margin-bottom: 4rem; 
-      display: grid; grid-template-columns: 1fr; 
-      overflow: hidden; transition: all 0.4s ease;
-    }
-    .featured-post-card:hover {
-      border-color: rgba(242, 201, 76, 0.6);
-      box-shadow: 0 0 25px rgba(242, 201, 76, 0.1);
-      transform: translateY(-3px);
-    }
-    .featured-image-link {
-      display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden;
-    }
-    .section-image-featured {
-      width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;
-    }
-    .featured-image-link:hover .section-image-featured {
-      transform: scale(1.05);
-    }
-    .featured-content { padding: 2rem; display: flex; flex-direction: column; justify-content: center;}
-    .featured-content .section-subtitle { 
-        font-family: var(--font-title); color: #fff; font-size: 2rem; font-weight: 700;
-        margin-bottom: 1rem; margin-top: 0; text-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
-        line-height: 1.3;
-    }
-    .featured-content .section-text { 
-        font-size: 1.1rem; opacity: 0.8; margin-bottom: 2rem; text-shadow: none; 
-        color: #e0e0e0; line-height: 1.7;
-    }
-    .featured-content .title-link { text-decoration: none!important; color: inherit; }
-
-    @media (min-width: 900px) {
-      .featured-post-card { grid-template-columns: 1.2fr 1fr; }
-      .featured-image-link { aspect-ratio: auto; height: 100%; }
-      .featured-content { padding: 3rem; }
+    /* Trang hiện tại (Active): Màu vàng đặc */
+    .page-item.active {
+      background: var(--gold-color, #F2C94C);
+      color: #050A1F; /* Chữ tối màu trên nền vàng */
+      border-color: var(--gold-color, #F2C94C);
+      box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
     }
 
-    /* === 5. STANDARD BLOG CARD === */
-    .blog-card { 
-        background-color: rgba(255, 255, 255, 0.02); 
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        padding: 0; border-radius: 16px; 
-        text-align: left; height: 100%; 
-        display: flex; flex-direction: column; position: relative;
-        transition: all 0.4s ease; overflow: hidden;
+    /* Nút Disabled */
+    .page-item.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+      border-color: transparent;
     }
-    .blog-card:hover {
-        transform: translateY(-5px);
-        border-color: rgba(242, 201, 76, 0.6);
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(242, 201, 76, 0.1);
-    }
-    .image-link-wrapper {
-        display: block; width: 100%; margin-bottom: 0; 
-        border-radius: 0; overflow: hidden; position: relative;
-    }
-    .image-link-wrapper::after {
-        content: ''; position: absolute; bottom: 0; left: 0; right: 0;
-        height: 1px; background: rgba(255,255,255,0.1);
-    }
-    .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; flex-shrink: 0; }
-    .section-image { 
-        width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;
-    }
-    .blog-card:hover .section-image { transform: scale(1.1); }
-    
-    .blog-card .title-link, .blog-card .section-text, .blog-card .btn-outline {
-        margin-left: 1.5rem; margin-right: 1.5rem;
-    }
-    .blog-card .title-link { margin-top: 1.5rem; display: block; }
-    .blog-card .btn-outline { margin-bottom: 1.5rem; margin-left: 1.5rem;}
-    .title-link { text-decoration: none!important; color: inherit; }
-    
-    .blog-card .section-subtitle { 
-        font-family: var(--font-title); color: #fff; font-size: 1.35rem; 
-        font-weight: 700; margin-bottom: 0.8rem; margin-top: 0; line-height: 1.4;
-        transition: all 0.3s ease;
-    }
-    /* Hover: Giữ màu trắng, tăng glow */
-    .blog-card:hover .section-subtitle {
-        color: #ffffff;
-        text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 0 0 25px rgba(242, 201, 76, 0.4);
-    }
-    .blog-card .section-text { 
-        font-size: 0.95rem; opacity: 0.8; margin-bottom: 1.5rem; 
-        text-shadow: none; flex-grow: 1; color: #ccc; line-height: 1.6;
-    }
-
-    /* === 6. BADGES === */
-    .category-badge {
-      position: absolute; top: 1rem; left: 1rem;
-      padding: 0.3rem 0.8rem; border-radius: 50px;
-      font-size: 0.75rem; font-weight: 700; z-index: 2; text-shadow: none;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      background-color: rgba(11, 19, 43, 0.95);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; backdrop-filter: blur(4px);
-    }
-    .category-badge.card-badge {
-       border-color: var(--gold-color, #F2C94C);
-       color: var(--gold-color, #F2C94C);
+    .page-item.dots {
+      border: none;
+      background: transparent;
     }
   </style>
 </BaseLayout>

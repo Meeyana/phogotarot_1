@@ -65,7 +65,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
         <nav class="breadcrumbs">
           <a href="/">Trang chủ</a>
           <span class="divider">&raquo;</span>
-          <a href="/blog/y-nghia-la-bai">Ý nghĩa lá bài</a> 
+          <a href="/cards">Các lá bài</a> 
           <span class="divider">&raquo;</span>
           <span class="current">{title}</span>
         </nav>
@@ -148,7 +148,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
                 <h3 class="widget-title">Các Lá Bài Cùng Nhóm {groupName}</h3>
                 <div class="related-cards-grid">
                   {relatedCards.map(related => (
-                    <a href={`/y-nghia-la-bai/${related.slug}`} class="related-card-item">
+                    <a href={`/cards/${related.slug}`} class="related-card-item">
                       <div class="related-img-wrapper">
                           <img 
                             src={related.data.image} 
@@ -163,7 +163,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
               </div>
             )}
             
-            <a href="/blog/y-nghia-la-bai" class="btn-outline back-btn" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
+            <a href="/cards" class="btn-outline back-btn" style="margin-top: 3rem;">&larr; Quay lại danh sách</a>
           </article>
 
         </div> 

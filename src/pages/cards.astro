@@ -26,7 +26,7 @@ const cardGroups = [
 
 // 5. SEO
 const pageTitle = "Toàn Bộ 78 Lá Bài Tarot | Phở Gõ Tarot";
-const pageDesc = "Khám phá thư viện đầy đủ 78 lá bài Tarot, được sắp xếp theo Ẩn Chính và 4 bộ Ẩn Phụ. Nhấn vào bất kỳ lá bài nào để xem ý nghĩa chi tiết.";
+const pageDesc = "Khám phá thư viện đầy đủ 78 lá bài Tarot, được sắp xếp theo Ẩn Chính và 4 bộ Ẩn Phụ.";
 
 // 6. URL gốc
 const siteUrl = Astro.site ? Astro.site.href : '/';
@@ -43,7 +43,7 @@ const schema = {
     "@type": "ItemList",
     "numberOfItems": sortedCards.length,
     "itemListElement": sortedCards.map((card, index) => {
-      const cardUrl = new URL(`/y-nghia-la-bai/${card.slug}`, siteUrl).href;
+      const cardUrl = new URL(`/cards/${card.slug}`, siteUrl).href;
       const cardImage = card.data.image ? new URL(card.data.image, siteUrl).href : null;
       return {
         "@type": "ListItem",
@@ -84,7 +84,7 @@ const schema = {
             
             <div class="card-grid">
               {group.cards.map(card => (
-                <a href={`/y-nghia-la-bai/${card.slug}`} class="card-item-link" title={card.data.title}>
+                <a href={`/cards/${card.slug}`} class="card-item-link" title={card.data.title}>
                   <div class="card-image-wrapper">
                       <img 
                         src={card.data.image} 
@@ -117,13 +117,14 @@ const schema = {
     .page-title {
       font-family: var(--font-title);
       color: #ffffff; /* Chữ trắng */
-      font-size: 2.5rem;
+      font-size: 3.5rem;
       text-align: center;
       margin-top: 0; margin-bottom: 1rem;
       /* Glow Vàng */
       text-shadow: 
-        0 0 10px rgba(242, 201, 76, 0.5), 
-        0 0 30px rgba(242, 201, 76, 0.2);
+        0 0 10px rgba(242,201,76,0.5),
+        0 0 20px rgba(242,201,76,0.3),
+        0 0 40px rgba(242,201,76,0.1)
     }
     
     .page-description {
