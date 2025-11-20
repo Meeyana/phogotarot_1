@@ -133,6 +133,11 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
               </a>
             </div>
 
+            <div class="post-disclaimer">
+              <p><strong>Lưu ý:</strong> Những thông điệp từ Phở Gõ Tarot gửi đến bạn mang ý nghĩa tham khảo và chiêm nghiệm cá nhân. Chúng tôi không thay thế vai trò của các chuyên gia y tế, tài chính hay pháp lý. Mong bạn đón nhận các lá bài với tâm thế cởi mở, lắng nghe trực giác và tự làm chủ quyết định của chính mình.</p>
+            </div>
+          
+
             <!-- CTA Banner (Style Gold Mới) -->
             <div class="cta-banner">
               <div class="cta-content">
@@ -446,6 +451,28 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       .homepage-section { padding: 4rem 0.5rem; }
       .container { padding: 0 0.5rem; }
       .hero-title { font-size: 2rem; }
+    }
+
+    /* --- Style cho phần Disclaimer (Lưu ý) --- */
+    .post-disclaimer {
+        margin-bottom: 3rem; /* Cách banner CTA một chút */
+        padding: 1.2rem;
+        background: rgba(255, 255, 255, 0.03); /* Nền tối mờ nhẹ */
+        border-left: 3px solid var(--gold-color, #F2C94C); /* Viền vàng bên trái tạo điểm nhấn */
+        border-radius: 0 8px 8px 0;
+        font-size: 0.9rem; /* Chữ nhỏ hơn body một chút */
+        line-height: 1.6;
+        color: #aaa; /* Màu chữ xám nhẹ để không quá nổi bật nhưng vẫn dễ đọc */
+        font-style: italic; /* Chữ nghiêng tạo cảm giác lưu ý nhẹ nhàng */
+    }
+    
+    .post-disclaimer strong {
+        color: var(--gold-color, #F2C94C);
+        font-style: normal;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        margin-right: 5px;
     }
   </style>
 </BaseLayout>

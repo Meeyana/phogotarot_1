@@ -910,7 +910,7 @@
 
         @media (min-width: 768px){
                 .facedown-card:hover {
-                transform: translateY(-15px)!important; 
+/*                transform: translateY(-15px)!important; */
 /*                border-color: var(--title-color);*/
             }
         }
