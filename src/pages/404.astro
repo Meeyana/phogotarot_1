@@ -1,0 +1,160 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pageTitle = "404 - Lạc Lối Giữa Các Vì Sao | Phở Gõ Tarot";
+const pageDesc = "Trang bạn đang tìm kiếm không tồn tại hoặc đã bị vũ trụ che giấu.";
+---
+
+<BaseLayout title={pageTitle} description={pageDesc}>
+  <main class="error-page">
+    <div class="container text-center">
+      
+      <h1 class="error-code">404</h1>
+      
+      <div class="spinning-wheel-container">
+          <img src="/wheel.png" alt="Vòng tròn Zodiac" class="spinning-wheel">
+      </div>
+
+      <h2 class="error-title">Vũ trụ chưa gửi tín hiệu này</h2>
+      
+      <p class="error-text">
+        Có vẻ như lá bài bạn đang tìm kiếm vẫn còn ẩn mình trong màn đêm bí ẩn, 
+        hoặc đường dẫn đã bị thay đổi bởi sự sắp đặt của các vì sao.
+      </p>
+
+      <a href="/" class="btn-primary">Quay Về Trang Chủ</a>
+      
+    </div>
+  </main>
+
+  <style>
+    /* === 1. CẤU TRÚC TRANG 404 === */
+    .error-page {
+      min-height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* === 2. TYPOGRAPHY & MÀU SẮC (Lấy từ index.astro) === */
+    .error-code {
+      font-family: var(--font-title, 'Playfair Display', serif);
+      font-size: clamp(6rem, 15vw, 10rem);
+      line-height: 1;
+      margin: 0;
+      color: #F2C94C;
+      text-shadow: 0 0 30px rgba(242, 201, 76, 0.6);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .error-title {
+      font-family: var(--font-title, 'Playfair Display', serif);
+      font-size: clamp(1.5rem, 5vw, 2.5rem);
+      color: #fff;
+      margin: 2rem 0 1rem;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .error-text {
+      font-family: var(--font-body, 'Quicksand', sans-serif);
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 2.5rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* === 3. BUTTON (Copy từ index.astro để đồng bộ) === */
+    .btn-primary {
+      display: inline-block;
+      background-color: #F2C94C; 
+      color: #0b132b;
+      border: none;
+      padding: 0.8rem 2.5rem; 
+      border-radius: 50px; /* Bo tròn hơn chút cho lạ */
+      font-family: var(--font-body, 'Quicksand', sans-serif); 
+      font-size: 1.1rem; 
+      font-weight: 700;
+      cursor: pointer; 
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .btn-primary:hover {
+      background-color: #ffdb73;
+      box-shadow: 0 0 30px rgba(242, 201, 76, 0.7);
+      transform: translateY(-3px);
+    }
+
+    /* === 4. HÌNH ẢNH & ANIMATION === */
+    .spinning-wheel-container {
+      width: 150px;
+      height: 150px;
+      margin: -2rem 0 1rem; /* Đè lên số 404 một chút hoặc chỉnh tùy ý */
+      opacity: 0.8;
+    }
+
+    .spinning-wheel {
+      width: 100%;
+      height: 100%;
+      animation: spin-clockwise 20s linear infinite;
+      filter: drop-shadow(0 0 15px rgba(242, 201, 76, 0.3));
+    }
+
+    @keyframes spin-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* === 5. HIỆU ỨNG NỀN SAO (Quan trọng: Phải copy lại từ index.astro) === */
+    /* LƯU Ý: Vì trong BaseLayout bạn có <div id="stars-bg"></div>
+       nhưng CSS của nó lại nằm ở index.astro, nên ta phải khai báo lại ở đây
+       để trang 404 cũng có sao bay.
+    */
+    :global(#stars-bg) {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      overflow: hidden; z-index: 0;
+      pointer-events: none;
+    }
+    :global(#stars-bg::after) {
+      content: '';
+      position: absolute; top: 10%; right: 15%;
+      width: 50px; height: 50px; border-radius: 50%;
+      box-shadow: -10px 5px 0 0px #F2C94C;
+      opacity: 0.5; animation: moon-glow 10s ease-in-out infinite alternate;
+    }
+    :global(#stars-bg::before) {
+      content: '';
+      position: absolute; bottom: 5%; left: 10%;
+      width: 200px; height: 100px;
+      background: radial-gradient(ellipse at center, rgba(242, 201, 76, 0.15) 0%, rgba(242, 201, 76, 0) 70%);
+      border-radius: 50%; transform: rotate(-30deg);
+      opacity: 0.5; animation: moon-glow 15s ease-in-out infinite alternate;
+    }
+
+    @keyframes moon-glow {
+        from { opacity: 0.3; transform: rotate(-5deg); }
+        to { opacity: 0.6; transform: rotate(5deg); }
+    }
+  </style>
+</BaseLayout>

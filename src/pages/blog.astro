@@ -96,6 +96,7 @@ const schema = {
         
         <div class="section-header">
           <h2 class="section-title">Bài Viết Tarot</h2>
+          
         </div>
 
         {/* --- PHẦN FEATURED POST (CHỈ HIỆN Ở TRANG 1) --- */}
@@ -169,10 +170,10 @@ const schema = {
     @media (min-width: 1024px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
 
     /* HEADER */
-    .section-header { display: flex; justify-content: center; align-items: center; margin-bottom: 3.5rem; }
+    .section-header { justify-content: center; align-items: center; margin-bottom: 3.5rem; }
     .section-title { 
         font-family: var(--font-title); color: #ffffff; font-size: 3.5rem; font-weight: 700; 
-        text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); 
+        text-align: center; text-shadow: 0 0 10px rgba(242,201,76,0.5),0 0 20px rgba(242,201,76,0.3),0 0 40px rgba(242,201,76,0.1); 
     }
 
     /* === 2. (MỚI) FEATURED POST CARD STYLE === */
@@ -252,5 +253,6 @@ const schema = {
     .page-item.active { background: #F2C94C; color: #050A1F; border-color: #F2C94C; }
     .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C; color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
     .page-item.disabled { opacity: 0.3; pointer-events: none; }
+    
   </style>
 </BaseLayout>
