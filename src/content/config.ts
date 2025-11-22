@@ -52,5 +52,5 @@ const cardsCollection = defineCollection({
 // 3. Xuất cả hai collection
 export const collections = {
   'blog': blogCollection,
-  'cards': cardsCollection, 
+  'cards': cardsCollection,
 };
