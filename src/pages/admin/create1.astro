@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>🪄 Tạo Bài Viết Tarot Tự Động</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{
+      --bg:#f6f5f4;
+      --card:#ffffff;
+      --accent:#6a4df4;
+      --muted:#9aa0a6;
+    }
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{
+      background:var(--bg);
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      padding:36px;
+    }
+
+    .container{
+      width:100%;
+      max-width:760px;
+      background:var(--card);
+      border-radius:12px;
+      padding:28px;
+      box-shadow:0 12px 30px rgba(20,20,40,0.06);
+      box-sizing:border-box;
+    }
+
+    h2{color:var(--accent);margin:0 0 12px;font-size:22px;text-align:center}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    label.block{display:block;font-weight:600;margin:16px 0 8px;color:#333}
+    input[type="text"], textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid #e6e6e6;
+      background:#fbfbfb;
+      font-size:14px;
+      box-sizing:border-box;
+    }
+
+    /* category box */
+    #category-list{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:8px;
+      padding:12px;
+      border-radius:10px;
+      border:1px solid #eee;
+      background:#fcfcfc;
+      margin-top:6px;
+    }
+    #category-list label{display:flex;gap:10px;align-items:center;font-weight:500;padding:6px 8px;border-radius:8px}
+    #category-list input[type="radio"]{width:16px;height:16px}
+
+    .actions{margin-top:20px;display:flex;gap:12px;align-items:center}
+    button.primary{
+      background:var(--accent);
+      color:#fff;border:none;padding:12px 16px;border-radius:10px;font-weight:700;font-size:15px;cursor:pointer;flex:1;
+      box-shadow:0 8px 18px rgba(106,77,244,0.14)
+    }
+    button.primary:disabled{opacity:0.6;cursor:not-allowed}
+
+    pre#result{
+      margin-top:18px;background:#f7f7f8;padding:12px;border-radius:8px;border:1px solid #f0f0f0;font-size:13px;max-height:260px;overflow:auto;
+    }
+
+    /* toast */
+    #toast{
+      position:fixed;right:28px;bottom:28px;padding:12px 16px;border-radius:10px;color:#fff;font-weight:600;box-shadow:0 10px 24px rgba(0,0,0,0.12);opacity:0;transform:translateY(8px);transition:all .28s;
+      pointer-events:none;
+    }
+    #toast.show{opacity:1;transform:translateY(0);pointer-events:auto}
+
+    .muted{color:var(--muted);font-size:13px;margin-top:6px}
+    @media (max-width:520px){
+      .container{padding:18px}
+      h2{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" role="main">
+  <h2>🪄 Tạo Bài Viết Tarot Tự Động</h2>
+
+  <form id="blogForm" novalidate>
+    <label class="block">Từ khóa (keyword) *</label>
+    <input id="keyword" type="text" placeholder="ví dụ: ý nghĩa lá bài The Sun" required>
+
+    <label class="block">Tiêu đề (title, tùy chọn)</label>
+    <input id="title" type="text" placeholder="Tarot The Sun – Ánh sáng của sự thật">
+
+    <label class="block">Tone bài viết</label>
+    <input id="tone" type="text" value="mystical, spiritual">
+
+    <label class="block">Chủ đề (category / topic) *</label>
+    <div id="category-list" aria-label="Danh sách chủ đề">
+      <label><input type="radio" name="category" value="tarot căn bản"> Tarot căn bản</label>
+      <label><input type="radio" name="category" value="kỹ năng đọc bài"> Kỹ năng đọc bài</label>
+      <label><input type="radio" name="category" value="ý nghĩa lá bài"> Ý nghĩa lá bài</label>
+      <label><input type="radio" name="category" value="tarot theo tình huống"> Tarot theo tình huống</label>
+      <label><input type="radio" name="category" value="công cụ trải bài"> Công cụ trải bài</label>
+      <label><input type="radio" name="category" value="tarot mở rộng"> Tarot mở rộng</label>
+    </div>
+    <div class="muted">Chọn 1 mục</div>
+
+    <label class="block">Đối tượng người đọc (audience)</label>
+    <input id="audience" type="text" value="người xem tarot, người mới học tarot">
+
+    <!-- 6 headings tĩnh (loại bỏ template literal) -->
+    <label class="block">Heading 1 (optional)</label>
+    <input id="h1" type="text" placeholder="Heading phụ 1">
+
+    <label class="block">Heading 2 (optional)</label>
+    <input id="h2" type="text" placeholder="Heading phụ 2">
+
+    <label class="block">Heading 3 (optional)</label>
+    <input id="h3" type="text" placeholder="Heading phụ 3">
+
+    <label class="block">Heading 4 (optional)</label>
+    <input id="h4" type="text" placeholder="Heading phụ 4">
+
+    <label class="block">Heading 5 (optional)</label>
+    <input id="h5" type="text" placeholder="Heading phụ 5">
+
+    <label class="block">Heading 6 (optional)</label>
+    <input id="h6" type="text" placeholder="Heading phụ 6">
+
+    <div class="actions">
+      <button id="submitBtn" class="primary" type="submit">Gửi bài cho n8n</button>
+    </div>
+
+    <pre id="result" aria-live="polite" role="status">Kết quả sẽ hiển thị ở đây...</pre>
+  </form>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="status" aria-atomic="true"></div>
+
+<script>
+  const form = document.getElementById('blogForm');
+  const resultEl = document.getElementById('result');
+  const toast = document.getElementById('toast');
+  const submitBtn = document.getElementById('submitBtn');
+
+  function showToast(message, success = true) {
+    toast.style.background = success ? '#2ecc71' : '#e74c3c';
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(()=> toast.classList.remove('show'), 4000);
+  }
+
+  function getSelectedCategory() {
+    const sel = document.querySelector('#category-list input[type="radio"]:checked');
+    return sel ? sel.value : "";
+  }
+
+  form.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    // simple client validation
+    const keyword = document.getElementById('keyword').value.trim();
+    const category = getSelectedCategory();
+
+    if (!keyword) {
+      showToast('Vui lòng nhập keyword.', false);
+      document.getElementById('keyword').focus();
+      return;
+    }
+    if (!category) {
+      showToast('Vui lòng chọn 1 mục category.', false);
+      return;
+    }
+
+    // prepare payload (đảm bảo lấy đúng từng field)
+    const payload = {
+      keyword,
+      title: document.getElementById('title').value.trim() || "",
+      tone: document.getElementById('tone').value.trim() || "",
+      category, // single string (radio)
+      audience: document.getElementById('audience').value.trim() || "",
+      headings: [
+        document.getElementById('h1').value.trim() || "",
+        document.getElementById('h2').value.trim() || "",
+        document.getElementById('h3').value.trim() || "",
+        document.getElementById('h4').value.trim() || "",
+        document.getElementById('h5').value.trim() || "",
+        document.getElementById('h6').value.trim() || ""
+      ]
+    };
+
+    // disable button to prevent double submit
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Đang gửi...';
+
+    try {
+      const res = await fetch('https://n8n.n8ntuanphangz.xyz/webhook-test/basic-post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer SECRET_TOKEN'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const ct = res.headers.get('content-type') || '';
+      const data = ct.includes('application/json') ? await res.json() : await res.text();
+
+      // hiển thị kết quả rõ ràng
+      resultEl.textContent = JSON.stringify({ status: res.status, body: data }, null, 2);
+
+      if (res.ok) {
+        showToast('✓ Gửi thành công!', true);
+      } else {
+        showToast('✕ Gửi thất bại (status: ' + res.status + ')', false);
+      }
+    } catch (err) {
+      resultEl.textContent = 'Lỗi kết nối: ' + err.message;
+      showToast('✕ Lỗi kết nối: ' + err.message, false);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Gửi bài cho n8n';
+    }
+  });
+
+  // optional: keyboard accessibility — cho phép chọn category bằng phím
+  document.querySelectorAll('#category-list input[type="radio"]').forEach(r=>{
+    r.addEventListener('keydown', (e)=>{
+      if (e.key === 'Enter') r.checked = true;
+    });
+  });
+
+  // small UX: clear result text initially
+  resultEl.textContent = 'Kết quả sẽ hiển thị ở đây...';
+</script>
+</body>
+</html>
