@@ -1,263 +1,345 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Image Generator (Gemini & Imagen)</title>
-    <!-- Sử dụng Tailwind CSS qua CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font cho đẹp -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Hiệu ứng loading spinner */
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 3px solid #4f46e5;
-            width: 24px;
-            height: 24px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>✨ AI Image Generator</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    /* --- CSS Variables & Reset --- */
+    :root {
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --primary-color: #4f46e5; /* Màu tím indigo */
+      --primary-hover: #4338ca;
+      --danger-color: #ef4444;
+      --danger-hover: #dc2626;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --radius: 12px;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    /* --- Main Container --- */
+    .ai-gen-container {
+      width: 100%;
+      max-width: 800px; /* Giới hạn chiều rộng để không bị bè ra */
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 10px; }
+    .header h1 { margin: 0 0 8px; font-size: 24px; color: var(--primary-color); }
+    .header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+
+    /* Form Elements */
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .form-label { font-weight: 600; font-size: 14px; }
+    
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: inherit;
+      box-sizing: border-box; /* Quan trọng để padding không làm vỡ layout */
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-textarea { resize: vertical; min-height: 120px; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 15px;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .btn-primary { background-color: var(--primary-color); color: white; }
+    .btn-primary:hover { background-color: var(--primary-hover); }
+    .btn-primary:disabled { background-color: #a5a3e6; cursor: not-allowed; }
+
+    .btn-danger { background-color: #fee2e2; color: var(--danger-color); margin-top: 12px; }
+    .btn-danger:hover { background-color: #fecaca; }
+
+    /* --- Result Area --- */
+    .result-area {
+      border-top: 1px solid var(--border-color);
+      padding-top: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 200px;
+      justify-content: center;
+    }
+
+    /* Image Wrapper */
+    .image-wrapper {
+      width: 100%;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: #f3f4f6;
+      position: relative;
+    }
+
+    .image-wrapper img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 500px;
+      object-fit: contain;
+    }
+
+    /* Placeholder / States */
+    .state-msg { text-align: center; color: var(--text-muted); }
+    .state-error { color: var(--danger-color); background: #fef2f2; padding: 12px; border-radius: 8px; width: 100%; text-align: center; }
+
+    /* Loading Spinner */
+    .spinner {
+      width: 30px;
+      height: 30px;
+      border: 3px solid #e5e7eb;
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Utility */
+    .hidden { display: none !important; }
+    .meta-info { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-family: monospace; }
+
+    /* Responsive layout for large screens */
+    @media (min-width: 768px) {
+      .ai-gen-container {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .col-left, .col-right { flex: 1; width: 100%; }
+      .result-area { 
+        border-top: none; 
+        padding-top: 0; 
+        padding-left: 24px; 
+        border-left: 1px solid var(--border-color);
+        height: 100%;
+      }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen p-4 md:p-8">
+<body>
 
-    <div class="max-w-4xl mx-auto space-y-6">
-        
-        <!-- Header -->
-        <div class="text-center space-y-2 mb-8">
-            <div class="inline-flex items-center justify-center p-3 bg-indigo-600 rounded-2xl shadow-lg mb-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"/></svg>
-            </div>
-            <h1 class="text-3xl font-bold text-slate-900 tracking-tight">AI Image Generator</h1>
-            <p class="text-slate-500">Sử dụng Gemini 2.5 & Imagen 4.0</p>
+  <div class="ai-gen-container">
+    
+    <!-- Cột trái: Input Form -->
+    <div class="col-left">
+      <div class="header">
+        <h1>AI Image Generator</h1>
+        <p>Sử dụng Gemini 2.5 & Imagen 4.0</p>
+      </div>
+
+      <form id="generateForm">
+        <div class="form-group">
+          <label class="form-label">Mô tả hình ảnh (Prompt)</label>
+          <textarea id="promptInput" class="form-textarea" placeholder="Ví dụ: Một con mèo máy đang uống cà phê tại Sài Gòn..." required></textarea>
         </div>
 
-        <!-- Main Content -->
-        <div class="grid md:grid-cols-2 gap-6">
-            
-            <!-- Left: Input Form -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-full">
-                <form id="generate-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Mô tả hình ảnh (Prompt)</label>
-                        <textarea id="prompt-input" placeholder="Mô tả chi tiết hình ảnh bạn muốn tạo..." class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none min-h-[120px] resize-none" required></textarea>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Model AI</label>
-                        <select id="model-select" class="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none bg-white">
-                            <option value="imagen-4.0-generate-001">Imagen 4.0 (High Quality)</option>
-                            <option value="gemini-2.5-flash-image">Gemini 2.5 Flash Image (Fast)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" id="btn-submit" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg flex items-center justify-center gap-2 font-medium transition-all shadow-md hover:shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                        <span>Tạo hình ảnh</span>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Right: Result Display -->
-            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col items-center justify-center min-h-[300px] relative">
-                
-                <!-- State: Empty -->
-                <div id="state-empty" class="text-center text-slate-400 space-y-2">
-                    <div class="bg-slate-100 w-20 h-20 rounded-full mx-auto flex items-center justify-center mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-                    </div>
-                    <p>Kết quả hình ảnh sẽ hiển thị tại đây</p>
-                </div>
-
-                <!-- State: Loading -->
-                <div id="state-loading" class="hidden text-center space-y-4">
-                    <div class="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"></div>
-                    <p class="text-indigo-600 font-medium">Đang gửi yêu cầu...</p>
-                    <p class="text-xs text-slate-400">Quá trình tạo ảnh có thể mất 10-30 giây</p>
-                </div>
-
-                <!-- State: Error -->
-                <div id="state-error" class="hidden flex flex-col items-center text-center text-red-500 space-y-2 bg-red-50 p-4 rounded-lg border border-red-100 w-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
-                    <p class="font-medium">Lỗi xử lý</p>
-                    <p id="error-msg" class="text-sm">Nội dung lỗi</p>
-                </div>
-
-                <!-- State: Success (Image) -->
-                <div id="state-success" class="hidden w-full flex flex-col gap-4 fade-in">
-                    <div class="relative group w-full rounded-lg overflow-hidden shadow-md border border-slate-100">
-                        <img id="result-image" src="" alt="Generated AI" class="w-full h-auto object-cover max-h-[400px]">
-                        <a id="link-original" href="#" target="_blank" class="absolute top-2 right-2 p-2 bg-white/90 rounded-full hover:bg-white text-slate-800 shadow-sm transition-transform hover:scale-110" title="Mở link gốc">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-                        </a>
-                    </div>
-
-                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-lg border border-slate-100">
-                        <span class="text-xs text-slate-500 font-mono">ID: <span id="file-id-display">N/A</span></span>
-                        <button id="btn-delete" class="flex items-center gap-2 px-3 py-1.5 bg-red-100 text-red-600 rounded-md hover:bg-red-200 transition-colors text-sm font-medium">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                            Xóa ảnh
-                        </button>
-                    </div>
-                </div>
-
-            </div>
+        <div class="form-group">
+          <label class="form-label">Model AI</label>
+          <select id="modelSelect" class="form-select">
+            <option value="imagen-4.0-generate-001">Imagen 4.0 (Chất lượng cao)</option>
+            <option value="gemini-2.5-flash-image">Gemini 2.5 Flash (Tốc độ nhanh)</option>
+          </select>
         </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary">
+          <span>✨ Tạo hình ảnh</span>
+        </button>
+      </form>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
-    <script>
-        // --- CẤU HÌNH WEBHOOK (HARDCODED) ---
-        // Thay thế URL thực tế của bạn vào đây
-        const WEBHOOK_GENERATE_URL = "https://n8n.n8ntuanphangz.xyz/webhook/get-prompt"; 
-        const WEBHOOK_DELETE_URL   = "https://n8n.n8ntuanphangz.xyz/webhook/delete-image";
+    <!-- Cột phải: Kết quả -->
+    <div class="col-right result-area">
+      
+      <!-- State: Empty -->
+      <div id="stateEmpty" class="state-msg">
+        <p>Kết quả hình ảnh sẽ hiển thị tại đây</p>
+      </div>
 
-        // --- Variables ---
-        let currentFileId = null;
+      <!-- State: Loading -->
+      <div id="stateLoading" class="state-msg hidden">
+        <div class="spinner" style="margin: 0 auto 10px;"></div>
+        <p>Đang gửi yêu cầu đến n8n...</p>
+      </div>
+
+      <!-- State: Error -->
+      <div id="stateError" class="state-error hidden">
+        <strong>Lỗi:</strong> <span id="errorText">Đã xảy ra lỗi</span>
+      </div>
+
+      <!-- State: Success -->
+      <div id="stateSuccess" class="hidden" style="width: 100%;">
+        <div class="image-wrapper">
+          <img id="resultImage" src="" alt="AI Generated Image">
+        </div>
         
-        // --- DOM Elements ---
-        const generateForm = document.getElementById('generate-form');
-        const promptInput = document.getElementById('prompt-input');
-        const modelSelect = document.getElementById('model-select');
-        const btnSubmit = document.getElementById('btn-submit');
-        
-        const stateEmpty = document.getElementById('state-empty');
-        const stateLoading = document.getElementById('state-loading');
-        const stateError = document.getElementById('state-error');
-        const stateSuccess = document.getElementById('state-success');
-        
-        const errorMsg = document.getElementById('error-msg');
-        const resultImage = document.getElementById('result-image');
-        const linkOriginal = document.getElementById('link-original');
-        const fileIdDisplay = document.getElementById('file-id-display');
-        const btnDelete = document.getElementById('btn-delete');
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span class="meta-info">ID: <span id="fileIdText">...</span></span>
+        </div>
 
-        // --- UI Functions ---
-        function showState(state) {
-            // Hide all first
-            stateEmpty.classList.add('hidden');
-            stateLoading.classList.add('hidden');
-            stateError.classList.add('hidden');
-            stateSuccess.classList.add('hidden');
-            
-            // Show requested
-            if (state === 'empty') stateEmpty.classList.remove('hidden');
-            if (state === 'loading') stateLoading.classList.remove('hidden');
-            if (state === 'error') stateError.classList.remove('hidden');
-            if (state === 'success') stateSuccess.classList.remove('hidden');
-        }
+        <button id="deleteBtn" class="btn btn-danger">
+          🗑️ Xóa hình & Workflow
+        </button>
+      </div>
 
-        function setLoading(isLoading) {
-            if (isLoading) {
-                btnSubmit.disabled = true;
-                btnSubmit.classList.add('opacity-70', 'cursor-not-allowed');
-                btnSubmit.innerHTML = '<div class="loader mr-2 border-t-white w-4 h-4"></div> Đang xử lý...';
-            } else {
-                btnSubmit.disabled = false;
-                btnSubmit.classList.remove('opacity-70', 'cursor-not-allowed');
-                btnSubmit.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg><span>Tạo hình ảnh</span>';
-            }
-        }
+    </div>
 
-        // --- Event Listeners ---
-        
-        // Handle Generate
-        generateForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const prompt = promptInput.value.trim();
-            const model = modelSelect.value;
+  </div>
 
-            if (!WEBHOOK_GENERATE_URL || WEBHOOK_GENERATE_URL.includes('n8n.yoursite.com')) {
-                alert('Lưu ý: Bạn chưa thay đổi Webhook URL trong source code (file HTML). Vui lòng mở file code và cập nhật biến WEBHOOK_GENERATE_URL.');
-            }
+  <script>
+    // --- CẤU HÌNH WEBHOOK ---
+    const WEBHOOK_GENERATE = "https://n8n.n8ntuanphangz.xyz/webhook/get-prompt";
+    const WEBHOOK_DELETE   = "https://n8n.n8ntuanphangz.xyz/webhook/delete-image";
 
-            showState('loading');
-            setLoading(true);
+    // Elements
+    const form = document.getElementById('generateForm');
+    const promptInput = document.getElementById('promptInput');
+    const modelSelect = document.getElementById('modelSelect');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    const stateEmpty = document.getElementById('stateEmpty');
+    const stateLoading = document.getElementById('stateLoading');
+    const stateError = document.getElementById('stateError');
+    const stateSuccess = document.getElementById('stateSuccess');
+    
+    const resultImage = document.getElementById('resultImage');
+    const errorText = document.getElementById('errorText');
+    const fileIdText = document.getElementById('fileIdText');
+    const deleteBtn = document.getElementById('deleteBtn');
 
-            try {
-                const response = await fetch(WEBHOOK_GENERATE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt, model })
-                });
+    let currentFileId = null;
 
-                if (!response.ok) throw new Error(`Lỗi HTTP: ${response.status}`);
+    // Helpers
+    function showState(state) {
+      [stateEmpty, stateLoading, stateError, stateSuccess].forEach(el => el.classList.add('hidden'));
+      if(state === 'empty') stateEmpty.classList.remove('hidden');
+      if(state === 'loading') stateLoading.classList.remove('hidden');
+      if(state === 'error') stateError.classList.remove('hidden');
+      if(state === 'success') stateSuccess.classList.remove('hidden');
+    }
 
-                const data = await response.json();
-                
-                // Validate response data
-                // Expect n8n response format: { "url": "...", "fileId": "..." }
-                if (data.url) {
-                    resultImage.src = data.url;
-                    linkOriginal.href = data.url;
-                    currentFileId = data.fileId || 'Unknown';
-                    fileIdDisplay.textContent = currentFileId;
-                    showState('success');
-                } else {
-                    throw new Error('Phản hồi từ n8n không chứa trường "url". Kiểm tra node Output của bạn.');
-                }
+    // --- 1. Xử lý Tạo ảnh ---
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const prompt = promptInput.value.trim();
+      const model = modelSelect.value;
 
-            } catch (error) {
-                console.error(error);
-                errorMsg.textContent = error.message || "Không kết nối được với Webhook.";
-                showState('error');
-            } finally {
-                setLoading(false);
-            }
+      if (!prompt) return alert("Vui lòng nhập mô tả!");
+
+      // UI Loading
+      showState('loading');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "⏳ Đang xử lý...";
+
+      try {
+        const res = await fetch(WEBHOOK_GENERATE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, model })
         });
 
-        // Handle Delete
-        btnDelete.addEventListener('click', async () => {
-            if (!WEBHOOK_DELETE_URL) {
-                alert('Vui lòng cấu hình Webhook Xóa trong code.');
-                return;
-            }
+        if (!res.ok) throw new Error(`Lỗi kết nối: ${res.status}`);
 
-            if (!confirm('Bạn có chắc chắn muốn xóa ảnh này khỏi Drive không?')) return;
+        const data = await res.json();
 
-            const originalBtnText = btnDelete.innerHTML;
-            btnDelete.innerHTML = 'Đang xóa...';
-            btnDelete.disabled = true;
+        // Kiểm tra dữ liệu trả về từ n8n (cần có field "url" và "fileId")
+        if (data.url) {
+          resultImage.src = data.url;
+          currentFileId = data.fileId || "Unknown";
+          fileIdText.innerText = currentFileId;
+          showState('success');
+        } else {
+          throw new Error("Không tìm thấy URL ảnh trong phản hồi.");
+        }
 
-            try {
-                const response = await fetch(WEBHOOK_DELETE_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        fileId: currentFileId,
-                        action: 'delete'
-                    })
-                });
+      } catch (err) {
+        console.error(err);
+        errorText.innerText = err.message;
+        showState('error');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "✨ Tạo hình ảnh";
+      }
+    });
 
-                if (!response.ok) throw new Error('Lỗi khi gọi Webhook xóa');
+    // --- 2. Xử lý Xóa ảnh ---
+    deleteBtn.addEventListener('click', async () => {
+      if (!currentFileId) return;
+      if (!confirm("Bạn chắc chắn muốn xóa hình ảnh này?")) return;
 
-                alert('Đã xóa thành công!');
-                showState('empty'); // Reset về trạng thái ban đầu
-                currentFileId = null;
-                resultImage.src = '';
+      const originalText = deleteBtn.innerText;
+      deleteBtn.innerText = "Đang xóa...";
+      deleteBtn.disabled = true;
 
-            } catch (error) {
-                alert('Lỗi xóa ảnh: ' + error.message);
-            } finally {
-                btnDelete.innerHTML = originalBtnText;
-                btnDelete.disabled = false;
-            }
+      try {
+        const res = await fetch(WEBHOOK_DELETE, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            fileId: currentFileId,
+            action: 'delete' 
+          })
         });
 
-    </script>
+        if (!res.ok) throw new Error("Lỗi khi gọi webhook xóa");
+
+        alert("Đã xóa thành công!");
+        showState('empty');
+        promptInput.value = ""; // Reset form
+        currentFileId = null;
+
+      } catch (err) {
+        alert("Lỗi xóa: " + err.message);
+      } finally {
+        deleteBtn.innerText = originalText;
+        deleteBtn.disabled = false;
+      }
+    });
+  </script>
+
 </body>
 </html>
