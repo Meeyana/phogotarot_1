@@ -1,8 +1,10 @@
 ---
 title: "Bộ Ẩn Phụ (Minor Arcana): Chi tiết 4 nhóm nguyên tố"
-image: "/images/uploads/bo-an-phu-tarot-4-nguyen-to.png"
-excerpt: "Khám phá ý nghĩa sâu sắc của 4 nhóm nguyên tố trong Bộ Ẩn Phụ Tarot. Hiểu rõ hơn về cuộc sống thường nhật và đưa ra quyết định sáng suốt hơn."
 pubDate: 2025-11-22
+image: /images/uploads/bo-an-phu-4-nguyen-to-tarot.png
+category: tarot căn bản
+excerpt: Khám phá ý nghĩa sâu sắc của 4 nhóm nguyên tố trong Bộ Ẩn Phụ Tarot.
+  Hiểu rõ hơn về cuộc sống thường nhật và đưa ra quyết định sáng suốt hơn.
 ---
 
 Nếu 22 lá Ẩn Chính là hành trình vĩ đại của linh hồn, thì 56 lá Ẩn Phụ chính là những lát cắt chi tiết của đời sống thường nhật. Chúng không mô tả những bước ngoặt định mệnh, mà là tấm gương phản chiếu những suy nghĩ, cảm xúc, hành động và hoàn cảnh vật chất mà ta đối mặt mỗi ngày. Bốn nhóm nguyên tố—Wands, Cups, Swords, Pentacles—tạo nên một hệ thống chặt chẽ, lý giải cách chúng ta trải nghiệm và tương tác với thế giới. Việc nắm vững cấu trúc này chính là chìa khóa để giải mã những thông điệp thực tế và sâu sắc nhất từ Tarot.
