@@ -2,14 +2,14 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>✨ AI Image Generator</title>
+  <title>✨ AI Art Studio</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     /* --- CSS Variables & Reset --- */
     :root {
       --bg-color: #f8f9fa;
       --card-bg: #ffffff;
-      --primary-color: #4f46e5; /* Màu tím indigo */
+      --primary-color: #4f46e5;
       --primary-hover: #4338ca;
       --danger-color: #ef4444;
       --danger-hover: #dc2626;
@@ -17,6 +17,7 @@
       --text-muted: #6b7280;
       --border-color: #e5e7eb;
       --radius: 12px;
+      --copy-bg: #f3f4f6;
     }
 
     body {
@@ -34,34 +35,35 @@
     /* --- Main Container --- */
     .ai-gen-container {
       width: 100%;
-      max-width: 800px; /* Giới hạn chiều rộng để không bị bè ra */
+      max-width: 850px;
       background: var(--card-bg);
       border-radius: var(--radius);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      padding: 32px;
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 28px;
     }
 
     /* Header */
     .header { text-align: center; margin-bottom: 10px; }
-    .header h1 { margin: 0 0 8px; font-size: 24px; color: var(--primary-color); }
-    .header p { margin: 0; color: var(--text-muted); font-size: 14px; }
+    .header h1 { margin: 0 0 8px; font-size: 26px; color: var(--text-main); letter-spacing: -0.5px; }
+    .header p { margin: 0; color: var(--text-muted); font-size: 15px; }
 
     /* Form Elements */
-    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-    .form-label { font-weight: 600; font-size: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
+    .form-label { font-weight: 600; font-size: 14px; color: #374151; }
     
     .form-input, .form-select, .form-textarea {
       width: 100%;
-      padding: 12px;
+      padding: 12px 16px;
       border: 1px solid var(--border-color);
       border-radius: 8px;
       font-size: 15px;
       font-family: inherit;
-      box-sizing: border-box; /* Quan trọng để padding không làm vỡ layout */
-      transition: border-color 0.2s;
+      box-sizing: border-box;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background-color: #fff;
     }
 
     .form-input:focus, .form-select:focus, .form-textarea:focus {
@@ -70,14 +72,14 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
     }
 
-    .form-textarea { resize: vertical; min-height: 120px; }
+    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.5; }
 
     /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      padding: 12px 24px;
+      padding: 14px 24px;
       border: none;
       border-radius: 8px;
       font-weight: 600;
@@ -86,14 +88,37 @@
       font-size: 15px;
       gap: 8px;
       width: 100%;
+      position: relative;
+      overflow: hidden;
     }
 
     .btn-primary { background-color: var(--primary-color); color: white; }
-    .btn-primary:hover { background-color: var(--primary-hover); }
-    .btn-primary:disabled { background-color: #a5a3e6; cursor: not-allowed; }
+    .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { background-color: #a5a3e6; cursor: not-allowed; transform: none; }
 
-    .btn-danger { background-color: #fee2e2; color: var(--danger-color); margin-top: 12px; }
-    .btn-danger:hover { background-color: #fecaca; }
+    .btn-danger { background-color: white; color: var(--danger-color); border: 1px solid #fee2e2; margin-top: 12px; }
+    .btn-danger:hover { background-color: #fef2f2; border-color: #fca5a5; }
+
+    /* Copy Button Style */
+    .btn-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--copy-bg);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-family: monospace;
+      transition: all 0.2s;
+      max-width: 100%;
+    }
+    .btn-copy:hover { background: #e5e7eb; color: var(--text-main); border-color: #d1d5db; }
+    .btn-copy svg { width: 14px; height: 14px; opacity: 0.7; }
+    .btn-copy.copied { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
 
     /* --- Result Area --- */
     .result-area {
@@ -102,61 +127,66 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 200px;
+      min-height: 240px;
       justify-content: center;
     }
 
-    /* Image Wrapper */
     .image-wrapper {
       width: 100%;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
       background: #f3f4f6;
+      margin-bottom: 16px;
       position: relative;
+      min-height: 200px; /* Placeholder height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .image-wrapper img {
       width: 100%;
       height: auto;
       display: block;
-      max-height: 500px;
+      max-height: 600px;
       object-fit: contain;
     }
 
-    /* Placeholder / States */
-    .state-msg { text-align: center; color: var(--text-muted); }
-    .state-error { color: var(--danger-color); background: #fef2f2; padding: 12px; border-radius: 8px; width: 100%; text-align: center; }
+    /* States */
+    .state-msg { text-align: center; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .state-error { color: var(--danger-color); background: #fef2f2; padding: 16px; border-radius: 8px; width: 100%; text-align: center; border: 1px solid #fecaca; }
 
     /* Loading Spinner */
     .spinner {
-      width: 30px;
-      height: 30px;
+      width: 36px;
+      height: 36px;
       border: 3px solid #e5e7eb;
       border-top-color: var(--primary-color);
       border-radius: 50%;
       animation: spin 1s linear infinite;
-      margin-bottom: 10px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     /* Utility */
     .hidden { display: none !important; }
-    .meta-info { font-size: 12px; color: var(--text-muted); margin-top: 8px; font-family: monospace; }
+    .toolbar { width: 100%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
 
-    /* Responsive layout for large screens */
+    /* Responsive */
     @media (min-width: 768px) {
       .ai-gen-container {
         flex-direction: row;
         align-items: flex-start;
       }
-      .col-left, .col-right { flex: 1; width: 100%; }
+      .col-left { flex: 1; width: 100%; }
+      .col-right { flex: 1.2; width: 100%; } /* Bên phải rộng hơn chút để hiển thị ảnh đẹp */
       .result-area { 
         border-top: none; 
         padding-top: 0; 
-        padding-left: 24px; 
+        padding-left: 32px; 
         border-left: 1px solid var(--border-color);
         height: 100%;
+        justify-content: flex-start;
       }
     }
   </style>
@@ -168,26 +198,27 @@
     <!-- Cột trái: Input Form -->
     <div class="col-left">
       <div class="header">
-        <h1>AI Image Generator</h1>
-        <p>Sử dụng Gemini 2.5 & Imagen 4.0</p>
+        <h1>AI Art Studio</h1>
+        <p>Sáng tạo hình ảnh với Gemini & Imagen</p>
       </div>
 
       <form id="generateForm">
         <div class="form-group">
-          <label class="form-label">Mô tả hình ảnh (Prompt)</label>
-          <textarea id="promptInput" class="form-textarea" placeholder="Ví dụ: Một con mèo máy đang uống cà phê tại Sài Gòn..." required></textarea>
+          <label class="form-label">Ý tưởng của bạn</label>
+          <textarea id="promptInput" class="form-textarea" placeholder="Mô tả chi tiết bức tranh bạn muốn vẽ..." required></textarea>
         </div>
 
         <div class="form-group">
-          <label class="form-label">Model AI</label>
+          <label class="form-label">Chế độ xử lý</label>
           <select id="modelSelect" class="form-select">
-            <option value="imagen-4.0-generate-001">Imagen 4.0 (Chất lượng cao)</option>
-            <option value="gemini-2.5-flash-image">Gemini 2.5 Flash (Tốc độ nhanh)</option>
+            <option value="imagen-4.0-generate-001">Chất lượng cao (Imagen 4.0)</option>
+            <option value="gemini-2.5-flash-image">Tốc độ nhanh (Gemini 2.5)</option>
           </select>
         </div>
 
         <button type="submit" id="submitBtn" class="btn btn-primary">
-          <span>✨ Tạo hình ảnh</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+          <span>Bắt đầu tạo ảnh</span>
         </button>
       </form>
     </div>
@@ -197,18 +228,19 @@
       
       <!-- State: Empty -->
       <div id="stateEmpty" class="state-msg">
-        <p>Kết quả hình ảnh sẽ hiển thị tại đây</p>
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        <p>Tác phẩm của bạn sẽ xuất hiện tại đây</p>
       </div>
 
       <!-- State: Loading -->
       <div id="stateLoading" class="state-msg hidden">
-        <div class="spinner" style="margin: 0 auto 10px;"></div>
-        <p>Đang gửi yêu cầu đến n8n...</p>
+        <div class="spinner"></div>
+        <p>AI đang vẽ tranh, vui lòng đợi...</p>
       </div>
 
       <!-- State: Error -->
       <div id="stateError" class="state-error hidden">
-        <strong>Lỗi:</strong> <span id="errorText">Đã xảy ra lỗi</span>
+        <strong>Rất tiếc!</strong> <br> <span id="errorText" style="font-size: 14px;">Đã xảy ra lỗi xử lý</span>
       </div>
 
       <!-- State: Success -->
@@ -217,13 +249,18 @@
           <img id="resultImage" src="" alt="AI Generated Image">
         </div>
         
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span class="meta-info">ID: <span id="fileIdText">...</span></span>
+        <div class="toolbar">
+          <!-- Nút Copy ID -->
+          <button id="copyIdBtn" class="btn-copy" title="Sao chép ID hình ảnh">
+            <svg id="iconCopy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            <svg id="iconCheck" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="fileIdText">ID...</span>
+          </button>
+          
+          <button id="deleteBtn" class="btn btn-danger" style="width: auto; margin-top:0; padding: 8px 12px; font-size: 13px;">
+            Xóa hình ảnh
+          </button>
         </div>
-
-        <button id="deleteBtn" class="btn btn-danger">
-          🗑️ Xóa hình & Workflow
-        </button>
       </div>
 
     </div>
@@ -231,7 +268,7 @@
   </div>
 
   <script>
-    // --- CẤU HÌNH WEBHOOK ---
+    // --- CẤU HÌNH API ---
     const WEBHOOK_GENERATE = "https://n8n.n8ntuanphangz.xyz/webhook/get-prompt";
     const WEBHOOK_DELETE   = "https://n8n.n8ntuanphangz.xyz/webhook/delete-image";
 
@@ -248,7 +285,12 @@
     
     const resultImage = document.getElementById('resultImage');
     const errorText = document.getElementById('errorText');
+    
+    const copyIdBtn = document.getElementById('copyIdBtn');
     const fileIdText = document.getElementById('fileIdText');
+    const iconCopy = document.getElementById('iconCopy');
+    const iconCheck = document.getElementById('iconCheck');
+    
     const deleteBtn = document.getElementById('deleteBtn');
 
     let currentFileId = null;
@@ -268,12 +310,12 @@
       const prompt = promptInput.value.trim();
       const model = modelSelect.value;
 
-      if (!prompt) return alert("Vui lòng nhập mô tả!");
+      if (!prompt) return alert("Vui lòng nhập mô tả ý tưởng của bạn!");
 
       // UI Loading
       showState('loading');
       submitBtn.disabled = true;
-      submitBtn.innerText = "⏳ Đang xử lý...";
+      submitBtn.innerHTML = '<span class="spinner" style="width: 18px; height: 18px; border-width: 2px;"></span> Đang xử lý...';
 
       try {
         const res = await fetch(WEBHOOK_GENERATE, {
@@ -282,34 +324,75 @@
           body: JSON.stringify({ prompt, model })
         });
 
-        if (!res.ok) throw new Error(`Lỗi kết nối: ${res.status}`);
+        if (!res.ok) throw new Error(`Máy chủ không phản hồi (Mã lỗi: ${res.status})`);
 
         const data = await res.json();
 
-        // Kiểm tra dữ liệu trả về từ n8n (cần có field "url" và "fileId")
         if (data.url) {
           resultImage.src = data.url;
           currentFileId = data.fileId || "Unknown";
           fileIdText.innerText = currentFileId;
+          
+          // Reset trạng thái nút copy
+          copyIdBtn.classList.remove('copied');
+          iconCopy.classList.remove('hidden');
+          iconCheck.classList.add('hidden');
+          
           showState('success');
         } else {
-          throw new Error("Không tìm thấy URL ảnh trong phản hồi.");
+          throw new Error("Không nhận được dữ liệu hình ảnh.");
         }
 
       } catch (err) {
         console.error(err);
-        errorText.innerText = err.message;
+        errorText.innerText = err.message || "Đã có lỗi xảy ra, vui lòng thử lại.";
         showState('error');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerText = "✨ Tạo hình ảnh";
+        submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg> <span>Bắt đầu tạo ảnh</span>';
       }
     });
 
-    // --- 2. Xử lý Xóa ảnh ---
+    // --- 2. Xử lý Copy ID ---
+    copyIdBtn.addEventListener('click', () => {
+      if (!currentFileId) return;
+
+      // Kỹ thuật copy an toàn cho mọi trình duyệt (tạo textarea ẩn)
+      const textArea = document.createElement("textarea");
+      textArea.value = currentFileId;
+      document.body.appendChild(textArea);
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        
+        // Hiệu ứng thành công
+        copyIdBtn.classList.add('copied');
+        iconCopy.classList.add('hidden');
+        iconCheck.classList.remove('hidden');
+        
+        const originalText = fileIdText.innerText;
+        fileIdText.innerText = "Đã chép!";
+        
+        // Reset lại sau 2 giây
+        setTimeout(() => {
+          copyIdBtn.classList.remove('copied');
+          iconCopy.classList.remove('hidden');
+          iconCheck.classList.add('hidden');
+          fileIdText.innerText = currentFileId;
+        }, 2000);
+        
+      } catch (err) {
+        alert('Không thể copy tự động. ID là: ' + currentFileId);
+      }
+      
+      document.body.removeChild(textArea);
+    });
+
+    // --- 3. Xử lý Xóa ảnh ---
     deleteBtn.addEventListener('click', async () => {
       if (!currentFileId) return;
-      if (!confirm("Bạn chắc chắn muốn xóa hình ảnh này?")) return;
+      if (!confirm("Bạn có chắc chắn muốn xóa tác phẩm này không?")) return;
 
       const originalText = deleteBtn.innerText;
       deleteBtn.innerText = "Đang xóa...";
@@ -325,7 +408,7 @@
           })
         });
 
-        if (!res.ok) throw new Error("Lỗi khi gọi webhook xóa");
+        if (!res.ok) throw new Error("Lỗi kết nối máy chủ");
 
         alert("Đã xóa thành công!");
         showState('empty');
@@ -333,7 +416,7 @@
         currentFileId = null;
 
       } catch (err) {
-        alert("Lỗi xóa: " + err.message);
+        alert("Không thể xóa: " + err.message);
       } finally {
         deleteBtn.innerText = originalText;
         deleteBtn.disabled = false;
