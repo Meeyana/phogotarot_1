@@ -1,7 +1,7 @@
 ---
 title: "Phát Triển Trực Giác Khi Đọc Bài Tarot"
 image: "/images/uploads/phat-trien-truc-giac-khi-doc-bai-tarot-ket-noi-sau-sac-hon.png"
-excerpt: "Bạn có bao giờ cảm thấy mình chỉ đang "đọc sách giải nghĩa" thay vì thực sự "đọc bài Tarot" một cách sâu sắc? Khám phá cách khai mở trực giác Tarot để biến mỗi trải bài thành cuộc đối thoại chân thực."
+excerpt: "Bạn có bao giờ cảm thấy mình chỉ đang \"đọc sách giải nghĩa\" thay vì thực sự \"đọc bài Tarot\" một cách sâu sắc? Khám phá cách khai mở trực giác Tarot để biến mỗi trải bài thành cuộc đối thoại chân thực."
 pubDate: 2025-11-25
 ---
 
