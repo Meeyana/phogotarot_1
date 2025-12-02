@@ -1,0 +1,389 @@
+{
+  "lifePath": {
+    "1": {
+      "title": "Số chủ đạo 1",
+      "blocks": [
+        { "type": "text", "content": "<p>Nội dung số chủ đạo 1...</p>" },
+        {
+          "type": "list",
+          "title": "Điểm mạnh cần phát huy:",
+          "items": [
+            "Quyết đoán và tiên phong.",
+            "Tập trung cao độ vào mục tiêu.",
+            "Sáng tạo và độc lập."
+          ]
+        }
+      ]
+    },
+    "7": {
+      "title": "Đường Đời Số 7",
+      "blocks": [
+        { "type": "text", "content": "<p>Nội dung số chủ đạo 7...</p>" },
+        {
+          "type": "list",
+          "title": "Điểm mạnh cần phát huy:",
+          "items": [
+            "Quyết đoán và tiên phong.",
+            "Tập trung cao độ vào mục tiêu.",
+            "Sáng tạo và độc lập."
+          ]
+        }
+      ]
+    },
+    "33": {
+      "title": "Đường Đời Số 33",
+      "blocks": [
+        { "type": "text", "content": "<p>Nội dung số chủ đạo 33...</p>" }       
+      ]
+    }
+  },
+  "destiny": {
+    "4": { "title": "Sứ Mệnh 4", "blocks": [{ "type": "text", "content": "<p>Oke</p>" }] }
+  },
+  "soul": {
+    "5": { 
+          "title": "Linh Hồn 5", 
+          "blocks": [            
+            {"type": "text", "content": "<p>Bạn là con người luôn muốn làm những việc để <br>- Được là chính mình khi tự do, khám phá cũng như thám hiểm, du lịch, hoặc trong các công việc như khảo cổ học.<br>- Được hưởng thụ cuộc sống theo cách riêng của bản thân.<br>- Được giao tiếp và kết nối với mọi người không kể xa gần, quen hay lạ.</p>"},
+            {"type": "text", "content": "<p>Với chỉ số linh hồn 5, bạn khao khát được tự do, khám phá và trải nghiệm cuộc sống theo cách riêng của mình. Bạn muốn bản thân sẽ mang một bản sắc riêng, không trùng lặp với bất kỳ ai. Đối với bạn, sự tươi mới trong cuộc sống nảy sinh từ việc tự do theo đuổi đam mê, khám phá và học hỏi.<br>Bạn là người linh hoạt, mong muốn được giao tiếp và kết nối với mọi người. Việc được trò chuyện và mở rộng các mối quan hệ luôn khiến bạn thích thú. Bạn không hề e ngại hay gặp khó khăn khi giao tiếp và làm quen với người khác, kể cả đó là người xa lạ chưa từng gặp.<br>Ngoài ra, chỉ số linh hồn này giúp bạn được trang bị rất tốt cho cuộc sống. Sự thay đổi - hằng số duy nhất trong cuộc sống - không đe dọa bạn như những người khác. Bạn rất tháo vát. Nói chung, bạn có thể suy nghĩ rõ ràng trong cơn khủng hoảng; bạn có phản xạ tinh thần và thể chất tốt. Bất cứ khi nào bạn ngã, bạn thường có xu hướng gặp may. Bạn rất nhiệt tình. Bạn dễ dàng phấn khích trước một ý tưởng hoặc cơ hội mới.<br>Bạn là một anh hùng và muốn cứu thế giới. Điều này khiến bạn đưa ra những lời hứa mà bạn thường không thể giữ được. Trong sâu thẳm, bạn mong muốn làm hài lòng tất cả mọi người, một mục tiêu không thể thực hiện được. Nhiều người có chỉ số linh hồn 5 có thể hời hợt về mặt cảm xúc. Bạn cảm thấy yêu say đắm nhưng lại sợ phải thực hiện những cam kết sâu sắc và lâu dài. Kết quả là, bạn kháng cự lại chiều sâu của những gắn bó tình cảm và ở lại trên bề mặt ở nơi an toàn. Sự thôi thúc của linh hồn 5 sẽ trải qua nhiều thay đổi và sự kiện bất thường, nhưng bạn sẽ học hỏi tốt nhất thông qua trải nghiệm đó. Vì vậy, cuộc sống của bạn sẽ viên mãn và bạn sẽ đạt được những bước tiến lớn trong sự phát triển cá nhân.</p>"}
+          ] 
+         }
+  },
+  "personality": {
+    "8": { 
+          "title": "Nhân Cách số 8", 
+          "blocks": [
+            {"type": "text", "content": "<p>Bạn là con người luôn muốn làm những việc để <br>- Được là chính mình khi tự do, khám phá cũng như thám hiểm, du lịch, hoặc trong các công việc như khảo cổ học.<br>- Được hưởng thụ cuộc sống theo cách riêng của bản thân.<br>- Được giao tiếp và kết nối với mọi người không kể xa gần, quen hay lạ.</p>"},
+            {"type": "text", "content": "<p>Với chỉ số nhân cách 8, bạn khao khát được tự do, khám phá và trải nghiệm cuộc sống theo cách riêng của mình. Bạn muốn bản thân sẽ mang một bản sắc riêng, không trùng lặp với bất kỳ ai. Đối với bạn, sự tươi mới trong cuộc sống nảy sinh từ việc tự do theo đuổi đam mê, khám phá và học hỏi.<br>Bạn là người linh hoạt, mong muốn được giao tiếp và kết nối với mọi người. Việc được trò chuyện và mở rộng các mối quan hệ luôn khiến bạn thích thú. Bạn không hề e ngại hay gặp khó khăn khi giao tiếp và làm quen với người khác, kể cả đó là người xa lạ chưa từng gặp.<br>Ngoài ra, chỉ số linh hồn này giúp bạn được trang bị rất tốt cho cuộc sống. Sự thay đổi - hằng số duy nhất trong cuộc sống - không đe dọa bạn như những người khác. Bạn rất tháo vát. Nói chung, bạn có thể suy nghĩ rõ ràng trong cơn khủng hoảng; bạn có phản xạ tinh thần và thể chất tốt. Bất cứ khi nào bạn ngã, bạn thường có xu hướng gặp may. Bạn rất nhiệt tình. Bạn dễ dàng phấn khích trước một ý tưởng hoặc cơ hội mới.<br>Bạn là một anh hùng và muốn cứu thế giới. Điều này khiến bạn đưa ra những lời hứa mà bạn thường không thể giữ được. Trong sâu thẳm, bạn mong muốn làm hài lòng tất cả mọi người, một mục tiêu không thể thực hiện được. Nhiều người có chỉ số linh hồn 5 có thể hời hợt về mặt cảm xúc. Bạn cảm thấy yêu say đắm nhưng lại sợ phải thực hiện những cam kết sâu sắc và lâu dài. Kết quả là, bạn kháng cự lại chiều sâu của những gắn bó tình cảm và ở lại trên bề mặt ở nơi an toàn. Sự thôi thúc của linh hồn 5 sẽ trải qua nhiều thay đổi và sự kiện bất thường, nhưng bạn sẽ học hỏi tốt nhất thông qua trải nghiệm đó. Vì vậy, cuộc sống của bạn sẽ viên mãn và bạn sẽ đạt được những bước tiến lớn trong sự phát triển cá nhân.</p>"}
+          ] 
+         }
+  },
+  "attitude": {},
+  "maturity": {},
+  "rational": {},
+
+  
+  "strengthGrid": {
+    "1": {
+       "title": "Số 1 trong Biểu đồ Ngày Sinh",
+       "blocks": [
+          { "type": "text", "content": "<p>Trong biểu đồ ngày sinh, số 1 đại diện cho cái tôi, cách bạn giao tiếp và thể hiện bản thân. Sự hiện diện của nó cho thấy mức độ tự chủ của bạn.</p>" }
+          
+       ]
+    },
+    "2": {
+       "title": "Số 2 trong Biểu đồ Ngày Sinh",
+       "blocks": [
+          { "type": "text", "content": "<p>2Trong biểu đồ ngày sinh, số 1 đại diện cho cái tôi, cách bạn giao tiếp và thể hiện bản thân. Sự hiện diện của nó cho thấy mức độ tự chủ của bạn.</p>" }
+          
+       ]
+    },
+    "7": {
+       "title": "Số 7 trong Biểu đồ Ngày Sinh",
+       "blocks": [
+          { "type": "text", "content": "<p>Số 7 ở đây nói lên những bài học qua trải nghiệm thực tế và sự mất mát trong quá khứ hoặc hiện tại để trưởng thành.</p>" }
+       ]
+    }
+  },
+
+  "synthesisGrid": {
+    "1": {
+       "title": "Số 1 trong Biểu đồ Tổng Hợp",
+       "blocks": [
+          { "type": "text", "content": "<p>Khi kết hợp cả Tên và Ngày sinh, số 1 ở đây cho thấy sức mạnh tổng thể của cái tôi. Nếu quá nhiều số 1, bạn có thể trở nên độc đoán.</p>" }
+          
+       ]
+    },
+    "2": {
+       "title": "Số 2 trong Biểu đồ Tổng Hợp",
+       "blocks": [
+          { "type": "text", "content": "<p>Khi kết hợp cả Tên và Ngày sinh, số 1 ở đây cho thấy sức mạnh tổng thể của cái tôi. Nếu quá nhiều số 1, bạn có thể trở nên độc đoán.</p>" }
+          
+       ]
+    }
+  },
+
+  "arrows": {
+    "strength": {
+      "1-4-7": {
+        "present": { "title": "Trục Thể Chất (1-4-7)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Thể Chất (1-4-7)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "2-5-8": {
+        "present": { "title": "Trục Tinh Thần (2-5-8)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Tinh Thần (2-5-8)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "3-6-9": {
+        "present": { "title": "Trục Trí Não (3-6-9)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Trí Não (3-6-9)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "4-5-6": {
+        "present": { "title": "Đường Thực Tế (4-5-6)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Đường Thực Tế (4-5-6)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "7-8-9": {
+        "present": { "title": "Đường Trí Tuệ (7-8-9)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Đường Trí Tuệ (7-8-9)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      }   
+    },
+    "synthesis": {
+      "1-4-7": {
+        "present": { "title": "Trục Thể Chất (1-4-7)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Thể Chất (1-4-7)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "2-5-8": {
+        "present": { "title": "Trục Tinh Thần (2-5-8)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Tinh Thần (2-5-8)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "3-6-9": {
+        "present": { "title": "Trục Trí Não (3-6-9)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Trục Trí Não (3-6-9)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "4-5-6": {
+        "present": { "title": "Đường Thực Tế (4-5-6)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Đường Thực Tế (4-5-6)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      },
+      "7-8-9": {
+        "present": { "title": "Đường Trí Tuệ (7-8-9)", "blocks": [{ "type": "text", "content": "<p>Bạn có trí nhớ bẩm sinh tốt...</p>" }] },
+        "missing": { "title": "Chưa có Đường Trí Tuệ (7-8-9)", "blocks": [{ "type": "text", "content": "<p>Cần chú ý rèn luyện trí nhớ...</p>" }] }
+      }
+    }
+  },
+
+  "missingNumbers": {
+    "strength": {
+      "1": { "content": "Thiếu số 1 (Ngày sinh): Khó khăn trong việc tự chủ..." },
+      "2": { "content": "Thiếu số 2 (Ngày sinh): Thiếu nhạy cảm bẩm sinh..." },
+      "3": { "content": "Thiếu số 3 (Ngày sinh): ..." },
+      "4": { "content": "Thiếu số 4 (Ngày sinh): ..." },
+      "5": { "content": "Thiếu số 5 (Ngày sinh): ..." },
+      "6": { "content": "Thiếu số 6 (Ngày sinh): ..." },
+      "7": { "content": "Thiếu số 7 (Ngày sinh): ..." },
+      "8": { "content": "Thiếu số 8 (Ngày sinh): ..." },
+      "9": { "content": "Thiếu số 9 (Ngày sinh): ..." }
+    },
+    "synthesis": {
+      "1": { "content": "Thiếu số 1 (Tổng hợp): Tên của bạn chưa bù đắp được sự thiếu hụt này. Cần rèn luyện tính quyết đoán..." },
+      "2": { "content": "Thiếu số 2 (Tổng hợp): ..." },
+      "3": { "content": "Thiếu số 3 (Tổng hợp): Chưa bù trừ được số 3 bị thiếu - con số của trí tuệ sáng tạo, vui vẻ và hoạt ngôn." },
+      "4": { "content": "<p>Thiếu số 4 (Tổng hợp): Chưa bù trừ được số 4 bị thiếu - con số của sự cẩn thận và thực tế.</p>" },
+      "5": { "content": "Thiếu số 5 (Tổng hợp): ..." },
+      "6": { "content": "Thiếu số 6 (Tổng hợp): ..." },
+      "7": { "content": "Thiếu số 7 (Tổng hợp): ..." },
+      "8": { "content": "Thiếu số 8 (Tổng hợp): ..." },
+      "9": { "content": "Thiếu số 9 (Tổng hợp): ..." }
+    }
+  },
+  "periodCycleMeanings": {
+    "1": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn này đòi hỏi sự độc lập, tự chủ và tiên phong. Bạn sẽ học cách đứng trên đôi chân của mình.</p>" }
+      ]
+    },
+    "2": {
+      "blocks": [
+        { "type": "text", "content": "<p>Đây là thời kỳ của sự hợp tác, kết nối và phát triển trực giác. Học bài học về sự kiên nhẫn và ngoại giao.</p>" }
+      ]
+    },
+    "3": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn mang năng lượng sáng tạo, vui vẻ. Lúc để bạn thể hiện bản thân qua lời nói hoặc nghệ thuật.</p>" }
+      ]
+    },
+    "4": {
+      "blocks": [
+        { "type": "text", "content": "<p>Thời kỳ xây dựng nền móng vững chắc. Cần tập trung vào kỷ luật và tổ chức.</p>" }
+      ]
+    },
+    "5": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn của sự thay đổi, tự do và phiêu lưu. Nhiều cơ hội trải nghiệm mới.</p>" }
+      ]
+    },
+    "6": {
+      "blocks": [
+        { "type": "text", "content": "<p>Thời điểm hướng về gia đình và trách nhiệm. Tìm thấy niềm vui trong việc chăm sóc người khác.</p>" }
+      ]
+    },
+    "7": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn chiêm nghiệm và học hỏi. Tìm kiếm tri thức sâu sắc và thời gian riêng tư.</p>" }
+      ]
+    },
+    "8": {
+      "blocks": [
+        { "type": "text", "content": "<p>Thời kỳ tập trung vào thành công vật chất và sự nghiệp. Khẳng định vị thế tài chính.</p>" }
+      ]
+    },
+    "9": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn của lòng trắc ẩn và sự cho đi. Quan tâm đến cộng đồng và nhân đạo.</p>" }
+      ]
+    },
+    "11": {
+      "blocks": [
+        { "type": "text", "content": "<p>Năng lượng tâm linh cao và trực giác nhạy bén. Tiềm năng trở thành người truyền cảm hứng.</p>" }
+      ]
+    },
+    "22": {
+      "blocks": [
+        { "type": "text", "content": "<p>Thời kỳ kiến tạo những điều vĩ đại. Biến giấc mơ lớn thành hiện thực.</p>" }
+      ]
+    },
+    "33": {
+      "blocks": [
+        { "type": "text", "content": "<p>Giai đoạn của tình yêu thương vô điều kiện và sự chữa lành.</p>" }
+      ]
+    }
+  },
+
+  "karmicDebt": {
+    "13": {
+      "title": "Nợ nghiệp 13/4: Sự Lười Biếng & Tiêu Cực",
+      "blocks": [
+        { "type": "text", "content": "<p>Nợ nghiệp 13/4 liên quan đến sự lười biếng, ỷ lại hoặc trốn tránh trách nhiệm trong quá khứ. Ở kiếp này, bạn thường gặp nhiều trở ngại, khó khăn buộc bạn phải làm việc chăm chỉ gấp nhiều lần người khác.</p>" },
+        { "type": "quote", "content": "Bài học: Kiên trì, kỷ luật và không đi đường tắt." }
+      ]
+    },
+    "14": {
+      "title": "Nợ nghiệp 14/5: Sự Lạm Dụng Tự Do",
+      "blocks": [
+        { "type": "text", "content": "<p>Nợ nghiệp 14/5 xuất phát từ việc lạm dụng sự tự do để thỏa mãn dục vọng cá nhân, gây tổn hại đến người khác. Bạn có thể gặp phải những thay đổi bất ngờ, sự mất mát tự do hoặc các vấn đề liên quan đến nghiện ngập, sắc dục.</p>" },
+        { "type": "quote", "content": "Bài học: Thích nghi, tiết chế và sống có trách nhiệm." }
+      ]
+    },
+    "16": {
+      "title": "Nợ nghiệp 16/7: Sự Phản Bội & Đổ Vỡ",
+      "blocks": [
+        { "type": "text", "content": "<p>Nợ nghiệp 16/7 liên quan đến sự kiêu ngạo, vô tâm hoặc tình cảm lăng nhăng gây đau khổ cho người khác. Trong đời này, bạn có thể phải đối mặt với sự đổ vỡ trong các mối quan hệ, sự cô độc hoặc cái tôi bị tổn thương để học cách khiêm nhường.</p>" },
+        { "type": "quote", "content": "Bài học: Chân thành, chung thủy và buông bỏ cái tôi." }
+      ]
+    },
+    "19": {
+      "title": "Nợ nghiệp 19/1: Sự Lạm Quyền & Ích Kỷ",
+      "blocks": [
+        { "type": "text", "content": "<p>Nợ nghiệp 19/1 đến từ việc lạm dụng quyền lực, chèn ép người khác để trục lợi. Bạn có thể rơi vào hoàn cảnh phải tự lực cánh sinh, không ai giúp đỡ hoặc bị người khác đối xử bất công.</p>" },
+        { "type": "quote", "content": "Bài học: Biết ơn, chia sẻ và giúp đỡ người khác." }
+      ]
+    }
+  },
+  "karmicLessons": {
+    "1": {
+      "title": "Thiếu số 1: Thiếu Quyết Đoán & Tự Chủ",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn thiếu sự tự tin vào bản thân, hay do dự và dễ bị người khác chi phối. Bài học của bạn là phải học cách đứng trên đôi chân của mình, dám ra quyết định và tiên phong.</p>" }
+      ]
+    },
+    "2": {
+      "title": "Thiếu số 2: Thiếu Sự Tinh Tế & Hợp Tác",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể thiếu sự kiên nhẫn, ít để ý đến cảm xúc của người khác hoặc gặp khó khăn khi làm việc nhóm. Bài học là học cách lắng nghe, ngoại giao và hòa hợp.</p>" }
+      ]
+    },
+    "3": {
+      "title": "Thiếu số 3: Thiếu Khả Năng Diễn Đạt",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn gặp khó khăn trong việc bày tỏ cảm xúc hoặc thiếu sự hài hước, lạc quan. Bài học là học cách giao tiếp cởi mở và tìm niềm vui trong cuộc sống.</p>" }
+      ]
+    },
+    "4": {
+      "title": "Thiếu số 4: Thiếu Kỷ Luật & Tổ Chức",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có xu hướng thiếu kiên trì, làm việc tùy hứng hoặc thiếu kế hoạch cụ thể. Bài học là xây dựng nền tảng vững chắc, trật tự và sự chăm chỉ.</p>" }
+      ]
+    },
+    "5": {
+      "title": "Thiếu số 5: Sợ Thay Đổi & Thiếu Linh Hoạt",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể ngại mạo hiểm, sợ những điều mới lạ hoặc sống quá khép kín. Bài học là học cách thích nghi, mở rộng tầm nhìn và đón nhận cơ hội mới.</p>" }
+      ]
+    },
+    "6": {
+      "title": "Thiếu số 6: Thiếu Trách Nhiệm & Cam Kết",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể tr né trách nhiệm gia đình hoặc thiếu sự quan tâm sâu sắc đến người khác. Bài học là học cách yêu thương, hy sinh và gánh vác trách nhiệm.</p>" }
+      ]
+    },
+    "7": {
+      "title": "Thiếu số 7: Thiếu Chiều Sâu & Đức Tin",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể nhìn cuộc sống hời hợt, thiếu sự chiêm nghiệm hoặc hoài nghi thái quá. Bài học là tìm về nội tâm, học hỏi tri thức và xây dựng đức tin.</p>" }
+      ]
+    },
+    "8": {
+      "title": "Thiếu số 8: Thiếu Nhạy Bén Tài Chính",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể gặp vấn đề về quản lý tiền bạc, thiếu tham vọng hoặc đánh giá thấp giá trị vật chất. Bài học là học cách quản trị tài chính và sử dụng quyền lực đúng đắn.</p>" }
+      ]
+    },
+    "9": {
+      "title": "Thiếu số 9: Thiếu Lòng Trắc Ẩn & Bao Dung",
+      "blocks": [
+        { "type": "text", "content": "<p>Bạn có thể sống quá thực tế, ít quan tâm đến cộng đồng hoặc khó tha thứ. Bài học là học cách cho đi vô điều kiện và hướng tới những lý tưởng nhân văn.</p>" }
+      ]
+    }
+  },
+
+  "personalityChart": {
+    "title": "Biểu đồ Tính Cách",
+    "intro": "Dưới đây là mức độ ảnh hưởng của các nhóm tính cách lên con người bạn:",
+    "meanings": {
+        "1": { "blocks": [{ "type": "text", "content": "<p>Bạn có xu hướng độc lập, mạnh mẽ và thích dẫn đầu.</p>" }] },
+        "2": { "blocks": [{ "type": "text", "content": "<p>Bạn nhạy cảm, khéo léo và giỏi hòa giải.</p>" }] },
+        "3": { "blocks": [{ "type": "text", "content": "<p>Bạn sáng tạo, hoạt ngôn và mang lại niềm vui.</p>" }] },
+        "4": { "blocks": [{ "type": "text", "content": "<p>Bạn thực tế, tỉ mỉ và đáng tin cậy.</p>" }] },
+        "5": { "blocks": [{ "type": "text", "content": "<p>Bạn yêu tự do, thích trải nghiệm và linh hoạt.</p>" }] },
+        "6": { "blocks": [{ "type": "text", "content": "<p>Bạn giàu tình yêu thương và có trách nhiệm với gia đình.</p>" }] },
+        "7": { "blocks": [{ "type": "text", "content": "<p>Bạn sâu sắc, thích chiêm nghiệm và tìm tòi chân lý.</p>" }] },
+        "8": { "blocks": [{ "type": "text", "content": "<p>Bạn quyết đoán, có tư duy kinh doanh và coi trọng hiệu quả.</p>" }] },
+        "9": { "blocks": [{ "type": "text", "content": "<p>Bạn bao dung, nhân hậu và hướng tới cộng đồng.</p>" }] }
+    }
+  },
+
+  "careerChart": {
+    "title": "Định Hướng Nghề Nghiệp",
+    "intro": "Dựa trên bộ số của bạn, mức độ phù hợp với các nhóm ngành nghề như sau:",
+    "meanings": {
+        "research": { "blocks": [{ "type": "text", "content": "<p>Bạn có khả năng tư duy logic, phân tích sâu sắc. Nghề phù hợp: Nhà khoa học, Lập trình viên, Chuyên gia phân tích, Bác sĩ.</p>" }] },
+        "social": { "blocks": [{ "type": "text", "content": "<p>Bạn thích tương tác và giúp đỡ người khác. Nghề phù hợp: Giáo viên, Bác sĩ tâm lý, Công tác xã hội, Tư vấn viên, Y tá.</p>" }] },
+        "technical": { "blocks": [{ "type": "text", "content": "<p>Bạn thích làm việc với máy móc, công cụ hoặc số liệu cụ thể. Nghề phù hợp: Kỹ sư, Kỹ thuật viên, Kiến trúc sư, Thợ lành nghề.</p>" }] },
+        "artistic": { "blocks": [{ "type": "text", "content": "<p>Bạn có tâm hồn nghệ sĩ, yêu cái đẹp và sự sáng tạo. Nghề phù hợp: Thiết kế, Nhà văn, Diễn viên, Nhạc sĩ, Truyền thông.</p>" }] },
+        "management": { "blocks": [{ "type": "text", "content": "<p>Bạn có tố chất lãnh đạo, thuyết phục và quản lý. Nghề phù hợp: CEO, Quản lý dự án, Kinh doanh, Luật sư, Chính trị gia.</p>" }] },
+        "business": { "blocks": [{ "type": "text", "content": "<p>Bạn làm việc ngăn nắp, có trật tự và tuân thủ quy trình. Nghề phù hợp: Kế toán, Ngân hàng, Thư ký, Quản trị văn phòng.</p>" }] }
+    }
+  },
+
+  "personalYear": {
+    "1": { 
+        "blocks": [
+            { "type": "text", "content": "<p><strong>Năm cá nhân số 1:</strong> Năm của sự khởi đầu mới, gieo hạt và hành động độc lập.</p>" },
+            { "type": "list", "items": ["Bắt đầu dự án mới", "Thay đổi công việc", "Làm mới bản thân"] }
+        ] 
+    },
+    "2": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 2:</strong> Năm của sự kiên nhẫn, hợp tác và phát triển các mối quan hệ.</p>" }] },
+    "3": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 3:</strong> Năm của sự sáng tạo, vui vẻ và giao tiếp xã hội.</p>" }] },
+    "4": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 4:</strong> Năm của sự củng cố, làm việc chăm chỉ và xây dựng nền tảng.</p>" }] },
+    "5": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 5:</strong> Năm của sự thay đổi, tự do và phiêu lưu.</p>" }] },
+    "6": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 6:</strong> Năm của gia đình, trách nhiệm và sự chăm sóc.</p>" }] },
+    "7": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 7:</strong> Năm của sự chiêm nghiệm, học hỏi và phát triển nội tâm.</p>" }] },
+    "8": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 8:</strong> Năm của thành tựu, quyền lực và tài chính.</p>" }] },
+    "9": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 9:</strong> Năm của sự hoàn tất, buông bỏ và dọn dẹp.</p>" }] }
+  },
+
+  "personalMonth": {
+    "1": { "blocks": [{ "type": "text", "content": "<p>Tháng để bắt đầu, quyết đoán và hành động mạnh mẽ.</p>" }] },
+    "2": { "blocks": [{ "type": "text", "content": "<p>Tháng để lắng nghe, hòa giải và kết nối nhẹ nhàng.</p>" }] },
+    "3": { "blocks": [{ "type": "text", "content": "<p>Tháng để sáng tạo, gặp gỡ bạn bè và giải trí.</p>" }] },
+    "4": { "blocks": [{ "type": "text", "content": "<p>Tháng để tập trung làm việc, sắp xếp lại trật tự.</p>" }] },
+    "5": { "blocks": [{ "type": "text", "content": "<p>Tháng của những thay đổi, đi lại hoặc trải nghiệm mới.</p>" }] },
+    "6": { "blocks": [{ "type": "text", "content": "<p>Tháng dành cho gia đình, tình yêu và trách nhiệm.</p>" }] },
+    "7": { "blocks": [{ "type": "text", "content": "<p>Tháng để nghỉ ngơi, suy ngẫm và học hỏi.</p>" }] },
+    "8": { "blocks": [{ "type": "text", "content": "<p>Tháng tập trung vào công việc, tiền bạc và kết quả.</p>" }] },
+    "9": { "blocks": [{ "type": "text", "content": "<p>Tháng để dọn dẹp, từ thiện và hoàn thành công việc.</p>" }] }
+  },
+
+  "default": {
+      "title": "Thông báo",
+      "blocks": [ { "type": "text", "content": "<p>Chưa có dữ liệu chi tiết.</p>" } ]
+  }
+}
