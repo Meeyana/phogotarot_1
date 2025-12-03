@@ -84,12 +84,12 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
     });
 
     if (btnAnalyze) {
-        btnAnalyze.addEventListener('click', async () => {
+        btnAnalyze.addEventListener('click', () => {
             // Lấy giá trị từ 4 trường
-            const nameInput = document.getElementById('fullName');
-            const dobInput = document.getElementById('dob');
-            const nicknameInput = document.getElementById('nickname');
-            const genderInput = document.getElementById('gender');
+            const nameInput = document.getElementById('fullName') as HTMLInputElement;
+            const dobInput = document.getElementById('dob') as HTMLInputElement;
+            const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
+            const genderInput = document.getElementById('gender') as HTMLSelectElement;
 
             const name = nameInput.value.trim();
             const dob = dobInput.value;
@@ -110,37 +110,17 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
             }
 
             // Animation loading trên nút
-            btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Mã Hóa...';
-            btnAnalyze.style.opacity = "0.8";
-            btnAnalyze.disabled = true;
+            btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Kết Nối...';
+            (btnAnalyze as HTMLButtonElement).style.opacity = "0.8";
+            (btnAnalyze as HTMLButtonElement).disabled = true;
 
-            try {
-                // GỌI API ENDPOINT ĐỂ MÃ HÓA
-                const response = await fetch('/api/encrypt', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, dob, nickname, gender })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Encryption failed');
-                }
-
-                const data = await response.json();
-                const token = data.token;
-
-                // Redirect với token đã mã hóa
-                setTimeout(() => {
-                    window.location.href = `/ket-qua-than-so-hoc?id=${token}`;
-                }, 800);
-
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Có lỗi xảy ra, vui lòng thử lại');
-                btnAnalyze.innerHTML = '<span class="icon">✨</span> Giải Mã Định Mệnh';
-                btnAnalyze.style.opacity = "1";
-                btnAnalyze.disabled = false;
-            }
+            // Tạo URL params với đủ 4 trường
+            const params = new URLSearchParams({ name, dob, nickname, gender });
+            
+            // Delay nhẹ để người dùng thấy hiệu ứng
+            setTimeout(() => {
+                window.location.href = `/ket-qua-than-so-hoc?${params.toString()}`;
+            }, 800);
         });
     }
   </script>

@@ -1,8 +1,5 @@
 ---
-// Thay thế phần đầu của ket-qua-than-so-hoc.astro
-
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { decryptData } from '../utils/encryption';
 import { 
     calculateLifePath, calculateDestiny, calculateSoul, 
     calculatePersonality, calculateAttitude, calculateMaturity, 
@@ -16,35 +13,13 @@ import {
     calculateForecast
 } from '../utils/numerology';
 
-// 1. Lấy token từ URL
+// 1. Lấy tham số URL
 const url = Astro.url;
-const token = url.searchParams.get('id');
+const fullName = url.searchParams.get('name') || "Bạn Mình";
+const dobStr = url.searchParams.get('dob') || "2000-01-01";
+const nickname = url.searchParams.get('nickname') || "";
 
-// 2. Giải mã token
-let fullName = "Bạn Mình";
-let dobStr = "2000-01-01";
-let nickname = "";
-let gender = "male";
-
-if (token) {
-    const decryptedData = decryptData(token);
-    
-    if (decryptedData) {
-        // Thành công - lấy dữ liệu
-        fullName = decryptedData.name || fullName;
-        dobStr = decryptedData.dob || dobStr;
-        nickname = decryptedData.nickname || "";
-        gender = decryptedData.gender || "male";
-    } else {
-        // Token không hợp lệ - redirect về form
-        return Astro.redirect('/than-so-hoc?error=invalid_token');
-    }
-} else {
-    // Không có token - redirect về form
-    return Astro.redirect('/than-so-hoc');
-}
-
-// 3. Tiếp tục xử lý như cũ
+// 2. Xử lý ngày sinh
 const [yStr, mStr, dStr] = dobStr.split('-');
 const day = parseInt(dStr);
 const month = parseInt(mStr);
