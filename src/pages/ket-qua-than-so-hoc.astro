@@ -1,45 +1,41 @@
 ---
+// Thay thế phần đầu của ket-qua-than-so-hoc.astro
+
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { decryptData } from '../utils/encryption';
 import { 
-    calculateLifePath, calculateDestiny, calculateSoul, 
-    calculatePersonality, calculateAttitude, calculateMaturity, 
-    calculateRationalThought,
-    calculatePyramid, calculateChartData,
-    calculatePeriodCycles,
-    calculateKarmicDebt,
-    calculateKarmicLessons,
-    calculatePersonalityPercentages,
-    calculateCareerPercentages,
-    calculateForecast
+    calculateLifePath, calculateDestiny, // ... các import khác
 } from '../utils/numerology';
 
-// 1. Lấy tham số URL
+// 1. Lấy token từ URL
 const url = Astro.url;
-const encryptedId = url.searchParams.get('id');
+const token = url.searchParams.get('id');
+
+// 2. Giải mã token
 let fullName = "Bạn Mình";
 let dobStr = "2000-01-01";
 let nickname = "";
-let gender = "other";
+let gender = "male";
 
-// Logic giải mã
-if (encryptedId) {
-    const decoded = decryptData(encryptedId);
-    if (decoded) {
-        fullName = decoded.name;
-        dobStr = decoded.dob;
-        nickname = decoded.nickname || "";
-        gender = decoded.gender || "other";
+if (token) {
+    const decryptedData = decryptData(token);
+    
+    if (decryptedData) {
+        // Thành công - lấy dữ liệu
+        fullName = decryptedData.name || fullName;
+        dobStr = decryptedData.dob || dobStr;
+        nickname = decryptedData.nickname || "";
+        gender = decryptedData.gender || "male";
     } else {
-        // Nếu giải mã thất bại (link đểu), redirect về trang chủ nhập lại
-        return Astro.redirect('/than-so-hoc');
+        // Token không hợp lệ - redirect về form
+        return Astro.redirect('/than-so-hoc?error=invalid_token');
     }
 } else {
-    // Trường hợp không có ID (ví dụ vào trực tiếp link), redirect về trang nhập
-    // Hoặc giữ giá trị default để test
-    // return Astro.redirect('/than-so-hoc'); 
+    // Không có token - redirect về form
+    return Astro.redirect('/than-so-hoc');
 }
 
-// 2. Xử lý ngày sinh
+// 3. Tiếp tục xử lý như cũ
 const [yStr, mStr, dStr] = dobStr.split('-');
 const day = parseInt(dStr);
 const month = parseInt(mStr);

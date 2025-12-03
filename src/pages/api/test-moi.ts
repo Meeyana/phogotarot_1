@@ -1,17 +1,18 @@
 import type { APIRoute } from 'astro';
 
-// Hàm này dành cho trình duyệt test (GET)
-export const GET: APIRoute = async () => {
-  return new Response(JSON.stringify({ message: "GET success" }), {
-    status: 200,
-    headers: { "Content-Type": "application/json" } // Quan trọng để hiển thị JSON đẹp
-  });
-}
+export const prerender = false;
 
-// Hàm này dành cho Form gửi lên (POST)
-export const POST: APIRoute = async ({ request }) => {
-  const body = await request.json();
-  return new Response(JSON.stringify({ message: "POST success", received: body }), {
-    status: 200 
-  });
-}
+export const GET: APIRoute = async () => {
+  const hasKey = !!import.meta.env.SECRET_KEY;
+  
+  return new Response(
+    JSON.stringify({ 
+      hasSecretKey: hasKey,
+      keyLength: import.meta.env.SECRET_KEY?.length || 0
+    }),
+    { 
+      status: 200, 
+      headers: { 'Content-Type': 'application/json' } 
+    }
+  );
+};
