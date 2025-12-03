@@ -13,32 +13,11 @@ import {
     calculateForecast
 } from '../utils/numerology';
 
-// --- PHẦN XỬ LÝ LOGIC MỚI ---
+// 1. Lấy tham số URL
 const url = Astro.url;
-const encryptedId = url.searchParams.get('id');
-
-// Khai báo biến mặc định
-let fullName = "Bạn Mình";
-let dobStr = "2000-01-01";
-let nickname = "";
-let gender = "other"; // Nếu có dùng biến này
-
-// Giải mã dữ liệu
-if (encryptedId) {
-    const decoded = decryptData(encryptedId);
-    if (decoded) {
-        fullName = decoded.name || fullName;
-        dobStr = decoded.dob || dobStr;
-        nickname = decoded.nickname || "";
-        gender = decoded.gender || "other";
-    } else {
-        // Nếu ID sai hoặc bị hack -> Chuyển về trang chủ hoặc hiện lỗi
-        return Astro.redirect('/than-so-hoc?error=invalid_id');
-    }
-} else {
-    // Nếu không có ID -> Chuyển về trang chủ
-    return Astro.redirect('/than-so-hoc');
-}
+const fullName = url.searchParams.get('name') || "Bạn Mình";
+const dobStr = url.searchParams.get('dob') || "2000-01-01";
+const nickname = url.searchParams.get('nickname') || "";
 
 // 2. Xử lý ngày sinh
 const [yStr, mStr, dStr] = dobStr.split('-');

@@ -84,55 +84,43 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
     });
 
     if (btnAnalyze) {
-        btnAnalyze.addEventListener('click', async () => {
-            // Lấy giá trị
-            const nameInput = document.getElementById('fullName');
-            const dobInput = document.getElementById('dob');
-            const nicknameInput = document.getElementById('nickname');
-            const genderInput = document.getElementById('gender');
+        btnAnalyze.addEventListener('click', () => {
+            // Lấy giá trị từ 4 trường
+            const nameInput = document.getElementById('fullName') as HTMLInputElement;
+            const dobInput = document.getElementById('dob') as HTMLInputElement;
+            const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
+            const genderInput = document.getElementById('gender') as HTMLSelectElement;
 
             const name = nameInput.value.trim();
             const dob = dobInput.value;
             const nickname = nicknameInput.value.trim();
             const gender = genderInput.value;
 
-            // Validate
+            // Validate các trường bắt buộc (Tên & Ngày sinh)
             if (!name || !dob) {
                 if (errorMsg) errorMsg.classList.remove('hidden');
-                // ... hiệu ứng rung lắc (giữ nguyên) ...
+                
+                // Hiệu ứng rung lắc báo lỗi
+                const box = document.querySelector('.mystic-form-box');
+                if (box) {
+                    box.classList.add('shake');
+                    setTimeout(() => box.classList.remove('shake'), 500);
+                }
                 return;
             }
 
-            // Animation loading
-            btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Mã Hóa...';
-            btnAnalyze.style.opacity = "0.8";
-            btnAnalyze.disabled = true;
+            // Animation loading trên nút
+            btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Kết Nối...';
+            (btnAnalyze as HTMLButtonElement).style.opacity = "0.8";
+            (btnAnalyze as HTMLButtonElement).disabled = true;
 
-            try {
-                // 1. Gọi API để mã hóa dữ liệu
-                const response = await fetch('/api/generate-id', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, dob, nickname, gender })
-                });
-
-                const result = await response.json();
-
-                if (result.id) {
-                    // 2. Redirect với ID đã mã hóa
-                    // URL sẽ trông như: /ket-qua-than-so-hoc?id=a1b2c3...
-                    window.location.href = `/ket-qua-than-so-hoc?id=${result.id}`;
-                } else {
-                    alert('Có lỗi xảy ra, vui lòng thử lại.');
-                    btnAnalyze.innerHTML = 'Thử Lại';
-                    btnAnalyze.disabled = false;
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Lỗi kết nối server.');
-                btnAnalyze.innerHTML = 'Thử Lại';
-                btnAnalyze.disabled = false;
-            }
+            // Tạo URL params với đủ 4 trường
+            const params = new URLSearchParams({ name, dob, nickname, gender });
+            
+            // Delay nhẹ để người dùng thấy hiệu ứng
+            setTimeout(() => {
+                window.location.href = `/ket-qua-than-so-hoc?${params.toString()}`;
+            }, 800);
         });
     }
   </script>
