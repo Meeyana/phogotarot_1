@@ -15,9 +15,29 @@ import {
 
 // 1. Lấy tham số URL
 const url = Astro.url;
-const fullName = url.searchParams.get('name') || "Bạn Mình";
-const dobStr = url.searchParams.get('dob') || "2000-01-01";
-const nickname = url.searchParams.get('nickname') || "";
+const encryptedId = url.searchParams.get('id');
+let fullName = "Bạn Mình";
+let dobStr = "2000-01-01";
+let nickname = "";
+let gender = "other";
+
+// Logic giải mã
+if (encryptedId) {
+    const decoded = decryptData(encryptedId);
+    if (decoded) {
+        fullName = decoded.name;
+        dobStr = decoded.dob;
+        nickname = decoded.nickname || "";
+        gender = decoded.gender || "other";
+    } else {
+        // Nếu giải mã thất bại (link đểu), redirect về trang chủ nhập lại
+        return Astro.redirect('/than-so-hoc');
+    }
+} else {
+    // Trường hợp không có ID (ví dụ vào trực tiếp link), redirect về trang nhập
+    // Hoặc giữ giá trị default để test
+    // return Astro.redirect('/than-so-hoc'); 
+}
 
 // 2. Xử lý ngày sinh
 const [yStr, mStr, dStr] = dobStr.split('-');
