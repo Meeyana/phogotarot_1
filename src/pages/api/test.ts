@@ -1,11 +1,17 @@
-export const prerender = false; // Luôn nhớ dòng này với chế độ Hybrid
+import type { APIRoute } from 'astro';
 
-export const GET = () => {
-  return new Response(JSON.stringify({
-      message: "API hoạt động tốt!",
-      time: new Date().toISOString()
-  }), {
+// Hàm này dành cho trình duyệt test (GET)
+export const GET: APIRoute = async () => {
+  return new Response(JSON.stringify({ message: "GET success" }), {
     status: 200,
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" } // Quan trọng để hiển thị JSON đẹp
+  });
+}
+
+// Hàm này dành cho Form gửi lên (POST)
+export const POST: APIRoute = async ({ request }) => {
+  const body = await request.json();
+  return new Response(JSON.stringify({ message: "POST success", received: body }), {
+    status: 200 
   });
 }
