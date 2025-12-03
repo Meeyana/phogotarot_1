@@ -13,7 +13,7 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
     
     <!-- Header Section -->
     <section class="hero-section text-center">
-      <h1 class="hero-title">Thần Số Học</h1>
+      <h1 class="hero-title">Tra Cứu Thần Số Học</h1>
       <p class="hero-subtitle">
         Nhập <span class="text-gold">Họ Tên</span> trên giấy khai sinh và <span class="text-gold">Ngày Sinh</span> dương lịch để vũ trụ gửi đến bạn bản đồ định mệnh.
       </p>
@@ -142,12 +142,18 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
     .hero-section {
         margin-bottom: 3rem;
         padding: 0 1rem;
+        text-align: center;
     }
     
     /* Sử dụng biến từ style.css */
     .hero-title {
         /* Đã có style từ global css */
         margin-bottom: 1rem;
+        font-family: var(--font-title);
+        color: #fff;
+        font-size: clamp(2rem, 6vw, 3rem);
+        text-shadow: 0 0 15px rgba(242,201,76,.6),0 0 30px rgba(242,201,76,.3);
+        margin-bottom: .5rem;
     }
     
     .hero-subtitle {
@@ -169,7 +175,7 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
         border: 1px solid rgba(242, 201, 76, 0.3); /* Viền vàng mờ */
         border-radius: 20px;
         padding: 2.5rem;
-        width: 100%;
+        
         max-width: 700px; /* Tăng nhẹ max-width để grid đẹp hơn */
         position: relative;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(242, 201, 76, 0.05);
