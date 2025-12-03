@@ -13,6 +13,9 @@ import {
     calculateForecast
 } from '../utils/numerology';
 
+// [MỚI] Import dữ liệu trực tiếp từ Server (Đảm bảo file json nằm đúng đường dẫn này)
+import fullNumerologyData from '../data/numerology-data.json';
+
 // 1. Lấy tham số URL
 const url = Astro.url;
 const fullName = url.searchParams.get('name') || "Bạn Mình";
@@ -44,30 +47,116 @@ const careerStats = calculateCareerPercentages(lifePath, destiny, soul, personal
 
 // TÍNH DỰ BÁO
 const forecast = calculateForecast(day, month);
-
 const renderCell = (number, countsArray) => {
-    const count = countsArray[number - 1]; 
+    const count = countsArray[number - 1];
     if (!count || count === 0) return '';
     return String(number).repeat(count);
 };
+
+// ========================================================================
+// [MỚI] SERVER-SIDE FILTERING LOGIC
+// Lọc dữ liệu JSON khổng lồ thành object nhỏ gọn chỉ chứa thông tin cần thiết cho user này
+// ========================================================================
+
+const getData = (category, key) => {
+    return fullNumerologyData[category]?.[key] || fullNumerologyData['default'];
+};
+
+const filteredData = {
+    // Các chỉ số cốt lõi
+    lifePath: { [lifePath]: getData('lifePath', lifePath) },
+    destiny: { [destiny]: getData('destiny', destiny) },
+    soul: { [soul]: getData('soul', soul) },
+    personality: { [personality]: getData('personality', personality) },
+    attitude: { [attitude]: getData('attitude', attitude) },
+    maturity: { [maturity]: getData('maturity', maturity) },
+    rational: { [rational]: getData('rational', rational) },
+
+    // Biểu đồ & Mũi tên
+    strengthGrid: {}, 
+    synthesisGrid: {},
+    arrows: { strength: {}, synthesis: {} },
+    missingNumbers: { strength: {}, synthesis: {} },
+
+    // Nghiệp quả & Chu kỳ
+    karmicDebt: {},
+    karmicLessons: {},
+    periodCycleMeanings: {},
+    
+    // Dự báo
+    personalYear: {},
+    personalMonth: {},
+
+    // Giữ nguyên data tĩnh cho Chart biểu đồ cột
+    personalityChart: fullNumerologyData.personalityChart,
+    careerChart: fullNumerologyData.careerChart
+};
+
+// 1. Fill Strength Grid (Số trong biểu đồ ngày sinh)
+chartData.strengthData.forEach((count, index) => {
+    const num = index + 1;
+    if (count > 0) filteredData.strengthGrid[num] = getData('strengthGrid', num);
+});
+
+// 2. Fill Synthesis Grid (Số trong biểu đồ tổng hợp)
+chartData.synthesisData.forEach((count, index) => {
+    const num = index + 1;
+    if (count > 0) filteredData.synthesisGrid[num] = getData('synthesisGrid', num);
+});
+
+// 3. Fill Arrows (Mũi tên chỉ lấy cái có mặt/vắng mặt thực tế)
+const mapArrows = (arrowList, type) => {
+    if(!arrowList) return;
+    arrowList.forEach(arrow => {
+        const arrowData = fullNumerologyData.arrows?.[type]?.[arrow.id]?.[arrow.type];
+        if (arrowData) {
+            if (!filteredData.arrows[type][arrow.id]) filteredData.arrows[type][arrow.id] = {};
+            filteredData.arrows[type][arrow.id][arrow.type] = arrowData;
+        }
+    });
+};
+mapArrows(chartData.strengthArrows, 'strength');
+mapArrows(chartData.synthesisArrows, 'synthesis');
+
+// 4. Fill Missing Numbers
+const mapMissing = (missingList, type) => {
+    if(!missingList) return;
+    missingList.forEach(num => {
+        filteredData.missingNumbers[type][num] = fullNumerologyData.missingNumbers?.[type]?.[num];
+    });
+};
+mapMissing(chartData.strengthMissingNums, 'strength');
+mapMissing(chartData.synthesisMissingNums, 'synthesis');
+
+// 5. Fill Karmic Debt & Lessons
+karmicDebts.forEach(debt => filteredData.karmicDebt[debt] = getData('karmicDebt', debt));
+karmicLessons.forEach(lesson => filteredData.karmicLessons[lesson] = getData('karmicLessons', lesson));
+
+// 6. Fill Chu kỳ (3 giai đoạn)
+[periodCycles.c1.number, periodCycles.c2.number, periodCycles.c3.number].forEach(num => {
+    filteredData.periodCycleMeanings[num] = getData('periodCycleMeanings', num);
+});
+
+// 7. Fill Dự báo
+forecast.years.forEach(y => filteredData.personalYear[y.number] = getData('personalYear', y.number));
+forecast.months.forEach(m => filteredData.personalMonth[m.number] = getData('personalMonth', m.number));
+
+// ========================================================================
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
 ---
 
 <BaseLayout title={pageTitle}>
-    <!-- Load Chart.js CDN -->
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <script is:inline src="/js/numerology-charts.js"></script>
 
-    <!-- Background Effect -->
     <div id="stars-bg"></div>
 
     <main id="homepage-content">
         <section class="homepage-section">
             <div class="container">
                 
-                <!-- HEADER -->
                 <header class="report-header text-center mb-12 fade-in">
                     <h2 class="hero-title-small">{fullName.toUpperCase()}</h2>
                     <div class="info-badges justify-center">
@@ -84,15 +173,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </header>
 
-                <!-- ====================================================================================== -->
-                <!-- I. NỀN TẢNG CỐT LÕI (CORE BLUEPRINT) -->
-                <!-- ====================================================================================== -->
                 <div class="main-section-title text-center mb-8 fade-in-up">
                     <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">I. Nền Tảng Cốt Lõi</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                
                 <div class="chart-section fade-in-up">
                     <div class="hero-numerology mb-0">
                         <div class="mandala-wrapper">
@@ -105,6 +190,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                     </div>
+              
                     <div class="sub-grid-container fade-in-up mt-8 mb-12">
                         <div class="glass-card sub-card">
                             <span class="sub-label">Sứ Mệnh</span><span class="sub-val">{destiny}</span>
@@ -137,20 +223,17 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
                 <div class="divider-section"></div>
 
-                <!-- ====================================================================================== -->
-                <!-- II. BIỂU ĐỒ & CẤU TRÚC NỘI TẠI (INNER STRUCTURE) -->
-                <!-- ====================================================================================== -->
                 <div class="main-section-title text-center mb-8 fade-in-up">
                     <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">II. Biểu Đồ & Cấu Trúc</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <!-- 1. BIỂU ĐỒ NGÀY SINH -->
                 <div class="chart-section fade-in-up">
                     <div class="section-header text-center mb-8">
                         <h3 class="section-subtitle">Biểu Đồ Ngày Sinh</h3>
                         <p class="section-text opacity-70">Sức mạnh bẩm sinh của bạn qua các con số</p>
                     </div>
+        
                     <div class="single-chart-layout">
                         <div class="chart-card glass-card chart-container mx-auto" id="strength-grid-source">
                             <div class="numerology-grid">
@@ -171,7 +254,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <!-- 2. BIỂU ĐỒ TÊN & TỔNG HỢP -->
                 <div class="chart-section fade-in-up mt-12">
                     <div class="section-header text-center mb-8">
                         <h3 class="section-subtitle">Biểu Đồ Tên & Tổng Hợp</h3>
@@ -197,6 +279,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                                 </div>
                             </div>
                         </div>
+    
                         <div class="chart-column">
                             <div class="chart-card glass-card chart-container" id="synthesis-grid-source">
                                 <h4 class="text-center text-gold mb-6 text-lg uppercase">Biểu Đồ Tổng Hợp</h4>
@@ -214,23 +297,22 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                     </div>
+                   
                     <div id="synthesis-interpretations" class="interpretations-container max-w-4xl mx-auto rich-text-content">
                         <div class="loading-placeholder text-center opacity-50">Đang tải luận giải tổng hợp...</div>
                     </div>
                 </div>
 
-                <!-- 3. KIM TỰ THÁP -->
                 <div class="chart-section fade-in-up mt-12">
                     <div class="section-header text-center mb-4">
                         <h3 class="section-subtitle">Kim Tự Tháp Thần Số</h3>
                         <p class="section-text text-center text-sm opacity-80">4 Đỉnh cao & 4 Thử thách cuộc đời</p>
                     </div>
                     <div class="diamond-layout-wrapper" id="pyramid-chart-source">
-                         <!-- SVG Code giữ nguyên -->
-                        <div class="chart-draw-area">
+                         <div class="chart-draw-area">
                             <div class="diamond-aspect-ratio">
                                 <svg class="diamond-lines" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet">
-                                     <defs>
+                                    <defs>
                                         <marker id="dot-start" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
                                             <circle cx="3" cy="3" r="2" fill="rgba(242, 201, 76, 0.6)" />
                                         </marker>
@@ -296,7 +378,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <!-- 4. NỢ NGHIỆP -->
                 {karmicDebts.length > 0 && (
                     <div class="karmic-debt-section fade-in-up mt-12 max-w-4xl mx-auto rich-text-content">
                         <div class="section-header text-center mb-8">
@@ -307,7 +388,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 )}
 
-                <!-- 5. BÀI HỌC ĐƯỜNG ĐỜI -->
                 {karmicLessons.length > 0 && (
                     <div class="chart-section fade-in-up mt-12">
                         <div class="section-header text-center mb-8">
@@ -324,9 +404,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
                 <div class="divider-section"></div>
 
-                <!-- ====================================================================================== -->
-                <!-- III. NHÓM TÍNH CÁCH & ĐỊNH HƯỚNG (PERSONALITY & DIRECTION) -->
-                <!-- ====================================================================================== -->
                 <div class="main-section-title text-center mb-8 fade-in-up">
                     <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">III. Nhóm Tính Cách & Định Hướng</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
@@ -361,15 +438,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
                 <div class="divider-section"></div>
 
-                <!-- ====================================================================================== -->
-                <!-- IV. DÒNG THỜI GIAN – CHU KỲ VẬN ĐỘNG (TIMELINE & FORECASTING) -->
-                <!-- ====================================================================================== -->
                 <div class="main-section-title text-center mb-8 fade-in-up">
                     <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">IV. Dòng Thời Gian – Chu Kỳ Vận Động</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <!-- 1. CHU KỲ ĐƯỜNG ĐỜI -->
                 <div class="chart-section fade-in-up">
                     <div class="section-header text-center mb-8">
                         <h3 class="section-subtitle">Chu Kỳ Đường Đời</h3>
@@ -381,7 +454,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                 <!-- 2. BIỂU ĐỒ SÓNG (CHU KỲ 9 NĂM) -->
                  <div class="chart-section fade-in-up mt-12">
                      <div class="section-header text-center">
                         <h3 class="section-subtitle">Chu Kỳ Vận Số 9 Năm</h3>
@@ -397,7 +469,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <!-- 3. DỰ BÁO NĂM CÁ NHÂN -->
                 <div class="chart-section fade-in-up mt-12">
                     <div class="section-header text-center mb-8">
                         <h3 class="section-subtitle">Dự Báo Năm Cá Nhân</h3>
@@ -410,14 +481,13 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <!-- 4. DỰ BÁO THÁNG CÁ NHÂN -->
                 <div class="chart-section fade-in-up mt-12">
                     <div class="section-header text-center mb-8">
                         <h3 class="section-subtitle">Dự Báo Tháng Cá Nhân</h3>
                         <p class="section-text opacity-70">Chi tiết năng lượng 3 tháng sắp tới</p>
                     </div>
                     <div class="max-w-4xl mx-auto rich-text-content">
-                         <div id="month-forecast-list" class="space-y-6">
+                        <div id="month-forecast-list" class="space-y-6">
                             <div class="loading-placeholder text-center opacity-50">Đang tải dự báo tháng...</div>
                         </div>
                     </div>
@@ -429,11 +499,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </a>
                 </div>
                 
-            </div> <!-- End Container -->
-        </section> <!-- End Section -->
-    </main>
+            </div> </section> </main>
 
-    <!-- SCRIPT -->
     <script define:vars={{ 
         day, month, lifePath,
         strengthData: chartData.strengthData, 
@@ -449,9 +516,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         careerStats: careerStats,
         forecastYears: forecast.years,
         forecastMonths: forecast.months,
-        // Truyền các chỉ số vào để JS xử lý render
-        destiny, soul, personality, attitude, maturity, rational
+        destiny, soul, personality, attitude, maturity, rational,
+        serverFilteredData: filteredData
     }}>
+        let globalNumerologyData = serverFilteredData;
+
         window.addEventListener('load', () => {
             if (typeof drawWaveChart === 'function') {
                 drawWaveChart('personalYearChart', day, month);
@@ -460,6 +529,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             drawCareerChart();
         });
 
+        // --- CÁC HÀM VẼ BIỂU ĐỒ (Giữ nguyên) ---
         function drawPersonalityChart() {
             const ctx = document.getElementById('personalityChart');
             if (!ctx) return;
@@ -493,10 +563,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     },
                     scales: {
                         x: { display: false, max: 100 },
-                        y: { 
-                            ticks: { color: '#e5e7eb', font: { size: 11 } },
-                            grid: { display: false } 
-                        }
+                        y: { ticks: { color: '#e5e7eb', font: { size: 11 } }, grid: { display: false } }
                     }
                 },
                 plugins: [ChartDataLabels]
@@ -535,10 +602,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     },
                     scales: {
                         x: { display: false, max: 100 },
-                        y: { 
-                            ticks: { color: '#e5e7eb', font: { size: 11 } },
-                            grid: { display: false } 
-                        }
+                        y: { ticks: { color: '#e5e7eb', font: { size: 11 } }, grid: { display: false } }
                     }
                 },
                 plugins: [ChartDataLabels]
@@ -558,155 +622,128 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             const monthContainer = document.getElementById('month-forecast-list');
             const coreStatsDetailsContainer = document.getElementById('core-stats-details-container');
 
-            let globalNumerologyData = null;
-            const CACHE_KEY_DATA = 'numerology_full_data_v1';
-            const CACHE_KEY_URL = 'numerology_profile_url';
-
-            const initPageData = async () => {
-                const currentUrlParams = window.location.search;
-                const cachedUrl = localStorage.getItem(CACHE_KEY_URL);
-                const cachedData = localStorage.getItem(CACHE_KEY_DATA);
-
-                if (cachedData && cachedUrl === currentUrlParams) {
-                    try {
-                        globalNumerologyData = JSON.parse(cachedData);
-                        renderAllInterpretations(); 
-                        return;
-                    } catch (e) { console.warn("Cache lỗi"); }
-                }
-
-                try {
-                    const response = await fetch('/numerology-data.json');
-                    if (!response.ok) throw new Error("Error");
-                    const data = await response.json();
-                    globalNumerologyData = data;
-                    localStorage.setItem(CACHE_KEY_DATA, JSON.stringify(data));
-                    localStorage.setItem(CACHE_KEY_URL, currentUrlParams);
-                    renderAllInterpretations(); 
-                } catch (error) { console.error(error); }
+            const initPageData = () => {
+                renderAllInterpretations();
             };
 
+            // [HELPER] Hàm chuyển đổi Blocks thành HTML string an toàn (Fix lỗi replace undefined)
+            const safeBlocksToHTML = (blocks) => {
+                if (!blocks || !Array.isArray(blocks)) return '';
+                return blocks.map(b => {
+                    // Xử lý List
+                    if (b.type === 'list' && b.items) {
+                        return `<ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+                    }
+                    // Xử lý Quote
+                    if (b.type === 'quote') {
+                        return `<blockquote class="border-l-2 border-gold pl-4 italic opacity-80 my-2">${b.content || ''}</blockquote>`;
+                    }
+                    // Xử lý Text (Mặc định)
+                    if (b.content) {
+                        // Loại bỏ thẻ p thừa nếu có sẵn trong data để tránh lồng thẻ p trong p
+                        const cleanContent = b.content.replace(/<p>|<\/p>/g, '');
+                        return `<p class="mb-2">${cleanContent}</p>`;
+                    }
+                    return '';
+                }).join('');
+            };
+
+            // Hàm xử lý Blocks cho các phần render chi tiết (LifePath, Career...)
             const processBlocks = (container, blocks, idPrefix) => {
-                let chartsToRender = [];
                 blocks.forEach((block, idx) => {
                     let html = '';
+                    if (block.title) {
+                        html += `<h5 class="font-bold text-white/90 text-lg mt-4 mb-2">✦ ${block.title}</h5>`;
+                    }
                     switch(block.type) {
                         case 'text':
-                            html = `<div class="content-block text-block">${block.content}</div>`;
+                            html += `<div class="content-block text-block">${block.content}</div>`;
                             container.insertAdjacentHTML('beforeend', html);
                             break;
                         case 'list':
                             const listItems = block.items.map(item => `<li>${item}</li>`).join('');
-                            html = `<div class="content-block list-block"><strong class="text-gold block mb-2">${block.title || ''}</strong><ul>${listItems}</ul></div>`;
+                            html += `<div class="content-block list-block"><ul class="list-disc pl-5 space-y-2">${listItems}</ul></div>`;
                             container.insertAdjacentHTML('beforeend', html);
                             break;
                         case 'quote':
-                            html = `<div class="content-block quote-block"><blockquote>${block.content}</blockquote></div>`;
+                            html += `<div class="content-block quote-block border-l-4 border-gold bg-white/5 p-4 my-4 italic text-gray-300 rounded-r">
+                                        <blockquote>${block.content}</blockquote>
+                                    </div>`;
                             container.insertAdjacentHTML('beforeend', html);
                             break;
                         case 'reused_chart':
-                            const sourceEl = document.getElementById(block.sourceId);
-                            if (sourceEl) {
-                                const clone = sourceEl.cloneNode(true);
-                                clone.removeAttribute('id');
-                                const sourceCanvas = sourceEl.querySelector('canvas');
-                                if (sourceCanvas) {
-                                    const destCanvas = clone.querySelector('canvas');
-                                    if (destCanvas) {
-                                        const img = document.createElement('img');
-                                        img.src = sourceCanvas.toDataURL();
-                                        img.style.width = '100%'; img.style.display = 'block';
-                                        destCanvas.parentNode.replaceChild(img, destCanvas);
-                                    }
-                                }
-                                const wrapper = document.createElement('div');
-                                wrapper.className = 'content-block chart-block reused-chart-wrapper';
-                                wrapper.appendChild(clone);
-                                if(block.label) {
-                                    const lbl = document.createElement('p');
-                                    lbl.className = 'text-center text-sm opacity-70 mt-2';
-                                    lbl.textContent = block.label;
-                                    wrapper.appendChild(lbl);
-                                }
-                                container.appendChild(wrapper);
+                             const sourceEl = document.getElementById(block.sourceId);
+                             if (sourceEl) {
+                                 const clone = sourceEl.cloneNode(true);
+                                 clone.removeAttribute('id');
+                                 const sourceCanvas = sourceEl.querySelector('canvas');
+                                 if (sourceCanvas) {
+                                     const destCanvas = clone.querySelector('canvas');
+                                     if (destCanvas) {
+                                         const img = document.createElement('img');
+                                         img.src = sourceCanvas.toDataURL();
+                                         img.style.width = '100%'; img.style.display = 'block';
+                                         destCanvas.parentNode.replaceChild(img, destCanvas);
+                                     }
+                                 }
+                                 const wrapper = document.createElement('div');
+                                 wrapper.className = 'content-block chart-block reused-chart-wrapper mt-4';
+                                 wrapper.appendChild(clone);
+                                 if(block.label) {
+                                     const lbl = document.createElement('p');
+                                     lbl.className = 'text-center text-sm opacity-70 mt-2';
+                                     lbl.textContent = block.label;
+                                     wrapper.appendChild(lbl);
+                                 }
+                                 container.appendChild(wrapper);
                             }
-                            break;
-                        case 'chart':
-                            const uniqueId = `${idPrefix}-${idx}`;
-                            html = `<div class="content-block chart-block" style="height:250px; position:relative;"><canvas id="${uniqueId}"></canvas></div>`;
-                            container.insertAdjacentHTML('beforeend', html);
-                            chartsToRender.push({ id: uniqueId, type: block.chartType, data: block.data, label: block.label });
                             break;
                     }
                 });
-                if(chartsToRender.length > 0) {
-                    requestAnimationFrame(() => {
-                        chartsToRender.forEach(c => {
-                            const ctx = document.getElementById(c.id);
-                            if(ctx) {
-                                new Chart(ctx, {
-                                    type: c.type || 'bar',
-                                    data: {
-                                        labels: ['A', 'B', 'C'],
-                                        datasets: [{
-                                            label: c.label,
-                                            data: c.data || [10, 20, 30],
-                                            backgroundColor: 'rgba(242, 201, 76, 0.5)',
-                                            borderColor: '#F2C94C',
-                                            borderWidth: 1
-                                        }]
-                                    },
-                                    options: { responsive: true, maintainAspectRatio: false }
-                                });
-                            }
-                        });
-                    });
-                }
             };
 
             const createInterpretationBlock = (container, data, number, uniqueKey, titleOverride, isWarning = false) => {
                 const wrapper = document.createElement('div');
-                wrapper.className = `number-interpretation-block glass-card mb-6 p-6 ${isWarning ? 'border-red-400 bg-red-900/20' : ''}`;
+                wrapper.className = `number-interpretation-block glass-card mb-6 p-6 group ${isWarning ? 'border-red-400 bg-red-900/20' : ''}`;
                 
                 const header = document.createElement('div');
-                header.className = 'interp-header flex items-center mb-4';
-                
+                header.className = 'interp-header flex items-center mb-4 border-b border-white/10 pb-2';
                 header.innerHTML = `                   
-                    <h4 class="text-xl ${isWarning ? 'text-red-300' : 'text-white'} font-title">${titleOverride || data.title}</h4>
+                    <h4 class="text-xl ${isWarning ? 'text-red-300' : 'text-gold'} font-title uppercase">
+                        ${titleOverride || data.title}
+                    </h4>
                 `;
                 wrapper.appendChild(header);
 
+                const body = document.createElement('div');
+                body.className = 'interpretation-content-body'; 
+                
                 if (data.blocks && Array.isArray(data.blocks)) {
-                    processBlocks(wrapper, data.blocks, `inline-${uniqueKey}`);
+                    processBlocks(body, data.blocks, `inline-${uniqueKey}`);
                 } else if (data.content) {
-                    wrapper.insertAdjacentHTML('beforeend', `<div class="html-content">${data.content}</div>`);
+                    body.insertAdjacentHTML('beforeend', `<div class="html-content">${data.content}</div>`);
                 }
+                
+                wrapper.appendChild(body);
                 container.appendChild(wrapper);
             };
 
-            // [CẬP NHẬT] Gom nhóm Dự Báo (Năm & Tháng)
+            // [ĐÃ FIX LỖI CRASH] Gom nhóm Dự Báo (Năm & Tháng)
             const renderForecastInterpretations = () => {
                 if (!globalNumerologyData) return;
-
-                // 1. Xử lý DỰ BÁO NĂM
+                
+                // 1. DỰ BÁO NĂM
                 if (yearContainer && forecastYears.length > 0) {
                     yearContainer.innerHTML = '';
                     const yearDataStore = globalNumerologyData['personalYear'] || {};
                     let yearHTML = '';
-                    
                     forecastYears.forEach((item, index) => {
                          const yearNum = item.number;
                          const yearData = yearDataStore[yearNum];
                          if (yearData) {
                              const subTitle = `Năm ${item.year} - Vận niên số ${yearNum} ${index === 0 ? '(Hiện tại)' : ''}`;
-                             
-                             let content = '';
-                             if (yearData.blocks) {
-                                 content = yearData.blocks.map(b => {
-                                     if(b.type === 'list') return `<ul class="list-disc pl-5 mt-2">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
-                                     return `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`;
-                                 }).join('');
-                             }
+                             // Sử dụng hàm safeBlocksToHTML thay vì map thủ công gây lỗi
+                             const content = safeBlocksToHTML(yearData.blocks);
 
                              yearHTML += `
                                 <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -714,9 +751,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                                     <div class="text-sm opacity-90">${content}</div>
                                 </div>
                              `;
-                         }
+                        }
                     });
-
                     if (yearHTML) {
                         createInterpretationBlock(yearContainer, {
                             title: "Chi Tiết Vận Trình 3 Năm (Trước - Nay - Sau)",
@@ -725,22 +761,18 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     }
                 }
 
-                // 2. Xử lý DỰ BÁO THÁNG
+                // 2. DỰ BÁO THÁNG
                 if (monthContainer && forecastMonths.length > 0) {
                     monthContainer.innerHTML = '';
                     const monthDataStore = globalNumerologyData['personalMonth'] || {};
                     let monthHTML = '';
-                    
                     forecastMonths.forEach((item, index) => {
                         const monthNum = item.number;
                         const monthData = monthDataStore[monthNum];
                         if (monthData) {
                              const subTitle = `Tháng ${item.month}/${item.year} - Vận số ${monthNum}`;
-                             
-                             let content = '';
-                             if (monthData.blocks) {
-                                 content = monthData.blocks.map(b => `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`).join('');
-                             }
+                             // Sử dụng hàm safeBlocksToHTML
+                             const content = safeBlocksToHTML(monthData.blocks);
 
                              monthHTML += `
                                 <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -750,7 +782,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                              `;
                         }
                     });
-
                     if (monthHTML) {
                         createInterpretationBlock(monthContainer, {
                             title: "Dự Báo Năng Lượng 3 Tháng Tới",
@@ -762,11 +793,9 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
             const renderNewChartsInterpretations = () => {
                 if (!globalNumerologyData) return;
-                
-                // Personality
                 const pData = globalNumerologyData['personalityChart'] || {};
                 if (personalityContainer && pData.meanings) {
-                    personalityContainer.innerHTML = ''; 
+                    personalityContainer.innerHTML = '';
                     if(pData.intro) {
                         personalityContainer.insertAdjacentHTML('beforeend', `<p class="mb-4 italic text-gold">${pData.intro}</p>`);
                     }
@@ -788,14 +817,13 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     });
                 }
 
-                // Career
                 const cData = globalNumerologyData['careerChart'] || {};
                 if (careerContainer && cData.meanings) {
                     careerContainer.innerHTML = '';
                     if(cData.intro) {
                         careerContainer.insertAdjacentHTML('beforeend', `<p class="mb-4 italic text-blue-300">${cData.intro}</p>`);
                     }
-                    const topCareer = careerStats[0]; 
+                    const topCareer = careerStats[0];
                     if (topCareer) {
                         const meaningData = cData.meanings[topCareer.id];
                         if (meaningData) {
@@ -814,35 +842,20 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 }
             };
 
-            // [CẬP NHẬT] Hàm gom nhóm nội dung vào 1 box duy nhất
+            // [ĐÃ FIX LỖI CRASH] Hàm render chi tiết số
             const renderNumberDetails = (container, dataKey, countsArray, arrowsList, missingList, chartType) => {
-                container.innerHTML = ''; // Xóa nội dung cũ
-                
+                container.innerHTML = '';
                 const dataStore = globalNumerologyData[dataKey] || {};
-                let combinedHTML = ''; // Chuỗi chứa toàn bộ nội dung gom lại
+                let combinedHTML = ''; 
 
-                // 1. Duyệt qua các con số 1-9
                 for (let i = 1; i <= 9; i++) {
                     if (countsArray[i - 1] > 0) {
                         const numData = dataStore[i];
                         if (numData) {
-                            // Lấy tiêu đề và nội dung
                             const title = numData.title || `Số ${i}`;
-                            let content = '';
-                            
-                            // Xử lý blocks nếu có, hoặc lấy content trực tiếp
-                            if (numData.blocks) {
-                                // Chuyển đổi blocks thành HTML string đơn giản
-                                content = numData.blocks.map(b => {
-                                    if (b.type === 'text') return `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`;
-                                    if (b.type === 'list') return `<ul class="list-disc pl-5">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
-                                    return '';
-                                }).join('');
-                            } else {
-                                content = numData.content || '';
-                            }
+                            // Sử dụng safeBlocksToHTML
+                            let content = numData.blocks ? safeBlocksToHTML(numData.blocks) : (numData.content || '');
 
-                            // Gom vào chuỗi chung
                             combinedHTML += `
                                 <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
                                     <h5 class="text-gold font-bold text-lg mb-2 uppercase">✦ ${title}</h5>
@@ -853,21 +866,17 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     }
                 }
 
-                // 2. Duyệt qua các mũi tên (Arrows)
                 if (arrowsList && arrowsList.length > 0) {
                     const arrowStore = globalNumerologyData['arrows'] || {};
                     const specificArrowStore = arrowStore[chartType] || {};
-                    
                     arrowsList.forEach(arrow => {
                         const arrowDataConfig = specificArrowStore[arrow.id]; 
                         if (arrowDataConfig) {
-                            const contentData = arrowDataConfig[arrow.type]; // type là 'present' hoặc 'missing'
+                            const contentData = arrowDataConfig[arrow.type]; 
                             if (contentData) {
                                 const title = contentData.title;
-                                let content = '';
-                                if (contentData.blocks) {
-                                    content = contentData.blocks.map(b => `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`).join('');
-                                }
+                                // Sử dụng safeBlocksToHTML
+                                const content = contentData.blocks ? safeBlocksToHTML(contentData.blocks) : '';
                                 
                                 combinedHTML += `
                                     <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -882,14 +891,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     });
                 }
 
-                // 3. Duyệt qua các số thiếu (Missing Numbers)
                 if (missingList && missingList.length > 0) {
                     const missingStore = globalNumerologyData['missingNumbers'] || {};
                     const specificMissingStore = missingStore[chartType] || {};
                     
-                    // Thêm tiêu đề cho phần điểm yếu
                     combinedHTML += `<div class="mt-8 mb-4"><h4 class="text-red-400 font-bold text-xl uppercase border-b border-red-400/30 pb-2">⚠️ Điểm Cần Khắc Phục (Số Thiếu)</h4></div>`;
-
                     missingList.forEach(num => {
                         const missingData = specificMissingStore[num];
                         if (missingData) {
@@ -903,40 +909,32 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     });
                 }
 
-                // 4. Render ra 1 Box duy nhất nếu có nội dung
                 if (combinedHTML) {
                     const boxTitle = chartType === 'strength' ? 'Tổng Hợp Luận Giải Biểu Đồ Ngày Sinh' : 'Tổng Hợp Luận Giải Biểu Đồ Tổng Hợp';
-                    
-                    // Tạo data giả lập để tái sử dụng hàm createInterpretationBlock
                     const fakeData = {
                         title: boxTitle,
-                        content: combinedHTML // Truyền toàn bộ HTML đã gom vào đây
+                        content: combinedHTML 
                     };
-
-                    // Gọi hàm tạo block (nó sẽ tự động được script Read More xử lý vì nằm trong .html-content)
                     createInterpretationBlock(container, fakeData, null, `${chartType}-combined-box`);
                 } else {
                     container.innerHTML = '<p class="text-center opacity-60 italic">Không có thông tin nổi bật.</p>';
                 }
             };
 
-            // [CẬP NHẬT] Render Chu Kỳ (Giao diện Gold Luxury + Box Text Chuẩn)
+            // [ĐÃ FIX LỖI CRASH] Render Chu Kỳ
             const renderCycleInterpretations = () => {
                 if (!cyclesContainer) return;
-                cyclesContainer.innerHTML = ''; // Reset container
+                cyclesContainer.innerHTML = ''; 
                 
                 const cyclesData = globalNumerologyData['periodCycleMeanings'] || {};
                 
-                // Dữ liệu 3 chu kỳ
                 const list = [
                     { id: 1, label: 'Gieo Hạt', data: periodCycles.c1 },
                     { id: 2, label: 'Chín', data: periodCycles.c2 },
                     { id: 3, label: 'Thu Hoạch', data: periodCycles.c3 }
                 ];
 
-                // 1. Render Visual Cards (Gold Theme)
                 let gridHTML = '<div class="cycle-grid fade-in-up">';
-                
                 list.forEach(item => {
                     gridHTML += `
                         <div class="cycle-card glass-card">
@@ -956,20 +954,14 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 });
                 gridHTML += '</div>';
                 
-                // Chèn Grid 3 thẻ bài vào trước
                 cyclesContainer.insertAdjacentHTML('beforeend', gridHTML);
 
-                // 2. Render Text Content (Dùng createInterpretationBlock để chuẩn CSS)
                 let combinedTextHTML = '';
                 list.forEach(item => {
                     const textData = cyclesData[item.data.number];
                     if (textData) {
-                        let content = '';
-                        if (textData.blocks) {
-                            content = textData.blocks.map(b => `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`).join('');
-                        } else {
-                            content = textData.content || '';
-                        }
+                        // FIX LỖI Ở ĐÂY: Dùng safeBlocksToHTML thay vì map trực tiếp
+                        const content = textData.blocks ? safeBlocksToHTML(textData.blocks) : (textData.content || '');
                         
                         combinedTextHTML += `
                             <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -982,35 +974,29 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     }
                 });
 
-                // Gọi hàm chuẩn để tạo Box, đảm bảo class "number-interpretation-block glass-card mb-6 p-6"
                 if (combinedTextHTML) {
                     createInterpretationBlock(
                         cyclesContainer, 
-                        { content: combinedTextHTML }, // Nội dung
+                        { content: combinedTextHTML }, 
                         null, 
-                        'cycles-text-combined', // Key unique
-                        'Chi Tiết Ý Nghĩa Các Giai Đoạn' // Tiêu đề Box
+                        'cycles-text-combined', 
+                        'Chi Tiết Ý Nghĩa Các Giai Đoạn' 
                     );
                 }
             };
-            
-            // [CẬP NHẬT] Gom nhóm Bài Học Đường Đời
+
+            // [ĐÃ FIX LỖI CRASH] Karmic Lessons
             const renderKarmicLessons = () => {
                 if (!lessonsContainer || karmicLessons.length === 0) return;
                 lessonsContainer.innerHTML = '';
                 
                 const lessonsData = globalNumerologyData['karmicLessons'] || {};
                 let combinedHTML = '';
-
                 karmicLessons.forEach(num => {
                     const data = lessonsData[num];
                     if (data) {
-                        let content = '';
-                        if (data.blocks) {
-                             content = data.blocks.map(b => `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`).join('');
-                        } else {
-                             content = data.content || '';
-                        }
+                        // Dùng safeBlocksToHTML
+                        const content = data.blocks ? safeBlocksToHTML(data.blocks) : (data.content || '');
                         
                         combinedHTML += `
                             <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -1020,7 +1006,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         `;
                     }
                 });
-
                 if (combinedHTML) {
                     createInterpretationBlock(lessonsContainer, { 
                         title: "Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)", 
@@ -1029,28 +1014,19 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 }
             };
 
-            // [CẬP NHẬT] Gom nhóm Nợ Nghiệp
+            // [ĐÃ FIX LỖI CRASH] Nợ Nghiệp
             const renderKarmicDebts = () => {
                 if (!karmicContainer || karmicDebts.length === 0) return;
                 karmicContainer.innerHTML = '';
                 
                 const karmicData = globalNumerologyData['karmicDebt'] || {};
                 let combinedHTML = '';
-
                 karmicDebts.forEach(debtNum => {
                     const data = karmicData[debtNum];
                     if (data) {
                         const title = data.title || `Nợ nghiệp bài học ${debtNum}`;
-                        let content = '';
-                        
-                        if (data.blocks) {
-                            content = data.blocks.map(b => {
-                                if (b.type === 'quote') return `<blockquote class="border-l-2 border-gold pl-4 italic opacity-80 my-2">${b.content}</blockquote>`;
-                                return `<p>${b.content.replace(/<p>|<\/p>/g, '')}</p>`;
-                            }).join('');
-                        } else {
-                            content = data.content || '';
-                        }
+                        // Dùng safeBlocksToHTML
+                        const content = data.blocks ? safeBlocksToHTML(data.blocks) : (data.content || '');
 
                         combinedHTML += `
                             <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -1060,7 +1036,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         `;
                     }
                 });
-
                 if (combinedHTML) {
                     createInterpretationBlock(karmicContainer, { 
                         title: "Tổng Hợp Chỉ Số Nợ Nghiệp Cần Giải Quyết", 
@@ -1075,7 +1050,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 
                 const lpData = globalNumerologyData['lifePath'] || {};
                 const data = lpData[lifePath];
-                
                 if (data) {
                     const blockData = {
                         ...data,
@@ -1087,7 +1061,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 }
             };
 
-            // [UPDATED] Render Các Chỉ Số Phụ theo đúng thứ tự Outline
             const renderCoreStatsDetails = () => {
                 if (!coreStatsDetailsContainer || !globalNumerologyData) return;
                 coreStatsDetailsContainer.innerHTML = ''; 
@@ -1110,7 +1083,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         const rawData = dataStore[number] || dataStore['default'];
                         const displayTitle = `${stat.label} (Số ${number})`;
                         
-                        // Section Header
                         const sectionHtml = document.createElement('div');
                         sectionHtml.className = "chart-section fade-in-up";
                         
@@ -1121,7 +1093,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         `;
                         sectionHtml.innerHTML = headerHtml;
 
-                        // Content Body
                         const contentBody = document.createElement('div');
                         contentBody.className = "max-w-4xl mx-auto rich-text-content";
                         
@@ -1137,68 +1108,59 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 });
             };
 
-            // [MỚI] Hàm xử lý thêm nút Đọc thêm cho nội dung dài
+            // [TÍNH NĂNG THU GỌN - ĐÃ HOẠT ĐỘNG TRỞ LẠI]
             const setupReadMore = () => {
-                // Chỉ chọn các block text hoặc nội dung html có khả năng dài
-                const textBlocks = document.querySelectorAll('.content-block.text-block, .html-content');
-                
-                textBlocks.forEach(block => {
-                    // Kiểm tra xem đã xử lý block này chưa để tránh lặp
-                    if (block.dataset.readMoreInit) return;
+                const contentBodies = document.querySelectorAll('.interpretation-content-body');
+                contentBodies.forEach(body => {
+                    if (body.dataset.readMoreInit) return;
                     
-                    // Nếu chiều cao thực tế lớn hơn 250px thì mới gom gọn
-                    if (block.scrollHeight > 250) {
-                        block.classList.add('expandable-content', 'collapsed');
-                        block.dataset.readMoreInit = "true";
+                    if (body.scrollHeight > 300) {
+                        body.classList.add('expandable-content', 'collapsed');
+                        body.dataset.readMoreInit = "true";
 
-                        // Tạo nút bấm
+                        const btnWrapper = document.createElement('div');
+                        btnWrapper.className = 'text-center mt-4 pt-2 border-t border-white/5 relative z-10';
+
                         const btn = document.createElement('button');
-                        btn.className = 'read-more-btn';
-                        btn.innerHTML = 'Đọc thêm <i class="fas fa-chevron-down" style="margin-left:5px;"></i>';
+                        btn.className = 'read-more-btn inline-flex items-center gap-2 px-6 py-2 rounded-full border border-gold/50 text-gold hover:bg-gold hover:text-black transition-all text-sm font-bold uppercase tracking-wider';
+                        btn.innerHTML = 'Xem chi tiết <i class="fas fa-chevron-down"></i>';
                         
-                        // Xử lý sự kiện click
                         btn.addEventListener('click', (e) => {
-                            e.preventDefault(); // Ngăn chặn hành vi mặc định nếu có
-                            const isCollapsed = block.classList.contains('collapsed');
+                            e.preventDefault();
+                            const isCollapsed = body.classList.contains('collapsed');
                             
                             if (isCollapsed) {
-                                block.classList.remove('collapsed');
-                                btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up" style="margin-left:5px;"></i>';
+                                body.classList.remove('collapsed');
+                                btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up"></i>';
                             } else {
-                                block.classList.add('collapsed');
-                                btn.innerHTML = 'Đọc thêm <i class="fas fa-chevron-down" style="margin-left:5px;"></i>';
-                                // Tùy chọn: Cuộn nhẹ lên đầu đoạn văn nếu quá dài (bỏ comment dòng dưới nếu muốn dùng)
-                                // block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                                body.classList.add('collapsed');
+                                btn.innerHTML = 'Xem chi tiết <i class="fas fa-chevron-down"></i>';
+                                body.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                             }
                         });
 
-                        // Chèn nút ngay sau block văn bản
-                        block.parentNode.insertBefore(btn, block.nextSibling);
+                        btnWrapper.appendChild(btn);
+                        body.parentNode.insertBefore(btnWrapper, body.nextSibling);
                     }
                 });
             };
 
             const renderAllInterpretations = () => {
                 if (!globalNumerologyData) return;
-                
-                // Phần I
                 renderLifePath(); 
-                renderCoreStatsDetails(); 
-
-                // Phần II
+                renderCoreStatsDetails();
+                
                 renderNumberDetails(strengthContainer, 'strengthGrid', strengthData, strengthArrows, strengthMissingNums, 'strength');
                 renderNumberDetails(synthesisContainer, 'synthesisGrid', synthesisData, synthesisArrows, synthesisMissingNums, 'synthesis');
                 renderKarmicDebts();
                 renderKarmicLessons();
                 
-                // Phần III
-                renderNewChartsInterpretations(); 
-
-                // Phần IV
+                renderNewChartsInterpretations();
                 renderCycleInterpretations();
-                renderForecastInterpretations(); 
-                
-                setTimeout(setupReadMore, 100);
+                renderForecastInterpretations();
+
+                // Vì các hàm trên đã fix lỗi crash, dòng này sẽ được thực thi
+                setTimeout(setupReadMore, 500); // Tăng thời gian delay một chút để DOM render kịp
             };
 
             initPageData();
@@ -1210,17 +1172,17 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         /* [1] NEW LAYOUT SYSTEM (Matched [slug])    */
         /* ========================================= */
         .homepage-section { 
-            padding: 4rem 1rem; 
+            padding: 4rem 1rem;
             position: relative; 
             z-index: 1; 
         }
         .container { 
-            max-width: 1100px; 
+            max-width: 1100px;
             margin: auto; 
             padding: 0 1rem; 
         }
         #stars-bg {
-            position: fixed; 
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: 0;
             pointer-events: none;
@@ -1232,7 +1194,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             margin-bottom: 2rem;
         }
         .divider-section {
-             height: 1px; 
+             height: 1px;
              background-color: rgba(255, 255, 255, 0.15); 
              margin: 4rem auto; 
              width: 80%; 
@@ -1254,7 +1216,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         .rich-text-content :global(ul),
         .html-content :global(ul),
         .content-block.list-block :global(ul) {
-            list-style: none; 
+            list-style: none;
             padding-left: 0.5rem;
             margin-bottom: 1.5rem;
         }
@@ -1272,7 +1234,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         .rich-text-content :global(li)::before,
         .html-content :global(li)::before,
         .content-block.list-block :global(li)::before {
-            content: '✦'; 
+            content: '✦';
             position: absolute;
             left: 0;
             top: 2px; 
@@ -1290,98 +1252,202 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         /* ========================================= */
         /* [3] PRESERVED STYLES (Charts & UI)        */
         /* ========================================= */
-        .text-gold { color: var(--gold-color) !important; text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); }
-        .hero-title-small { font-family: var(--font-title); color: #fff; font-size: clamp(2rem, 5vw, 3rem); text-shadow: 0 0 15px var(--gold-shadow); margin-bottom: 0.5rem; text-transform: uppercase; }
-        .info-badges { display: flex; gap: 1rem; flex-wrap: wrap; }
-        .badge-item { background: rgba(255,255,255,0.05); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.1); }
-        .badge-value { color: var(--gold-color); font-weight: 600; margin-left: 0.3rem; }
-        .hero-numerology { display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem; position: relative; }
-        .mandala-wrapper { width: 280px; height: 280px; position: relative; display: flex; justify-content: center; align-items: center; margin-bottom: 1.5rem; }
-        .mandala-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(242, 201, 76, 0.3); box-shadow: 0 0 15px rgba(242, 201, 76, 0.1); }
-        .ring-1 { width: 100%; height: 100%; border-style: dashed; animation: spin 20s linear infinite; }
-        .ring-2 { width: 85%; height: 85%; border: 2px dotted var(--gold-color); opacity: 0.5; animation: spin 15s linear infinite reverse; }
-        .ring-3 { width: 70%; height: 70%; border: 1px solid rgba(255,255,255,0.2); background: radial-gradient(circle, rgba(242,201,76,0.15) 0%, rgba(0,0,0,0) 70%); animation: pulse 3s ease-in-out infinite; }
-        .main-number-box { position: relative; z-index: 10; text-align: center; }
-        .label-hero { display: block; font-size: 0.9rem; letter-spacing: 3px; color: #fff; margin-bottom: 0.5rem; opacity: 0.8; }
-        .number-hero { font-family: var(--font-title); font-size: 7rem; font-weight: 700; line-height: 1; display: block; }
-        .hero-desc-box { max-width: 600px; padding: 1.5rem; text-align: center; margin: 0 auto; }
-        .magic-title { font-family: var(--font-title); font-size: 1.3rem; margin-bottom: 0.5rem; }
-        .sub-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; width: 100%; }
-        @media (min-width: 768px) { .sub-grid-container { grid-template-columns: repeat(3, 1fr); gap: 1.5rem; } }
-        @media (min-width: 1024px) { .sub-grid-container { grid-template-columns: repeat(6, 1fr); } }
-        .sub-card { padding: 1.2rem 0.5rem; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .sub-label { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
-        .sub-val { font-family: var(--font-title); font-size: 2rem; font-weight: bold; color: #fff; }
-        :global(.glass-card) { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; transition: all 0.3s ease; }
-        :global(.glass-card:hover){ border-color: var(--gold-color); box-shadow: 0 0 15px rgba(242, 201, 76, 0.15); transform: translateY(-3px); }
-        .diamond-layout-wrapper { display: flex; position: relative; width: 100%; max-width: 450px; margin: 0 auto; justify-content: center; }
-        .chart-draw-area { width: 100%; padding: 10px; box-sizing: border-box; }
-        .diamond-aspect-ratio { position: relative; width: 100%; padding-bottom: 140%; }
-        .diamond-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; z-index: 0; }
-        .line-gold { stroke: var(--gold-color); stroke-width: 1.5; opacity: 0.6; vector-effect: non-scaling-stroke; }
-        .line-gold.thick { stroke-width: 2.5; opacity: 0.8; }
-        .line-gold.thickest { stroke-width: 3.5; opacity: 1; filter: drop-shadow(0 0 5px var(--gold-color)); }
-        .line-gold.thin { stroke-width: 1; }
-        .opacity-30 { opacity: 0.3 !important; }
-        .opacity-50 { opacity: 0.5 !important; }
-        .opacity-20 { opacity: 0.2 !important; }
-        .callout-line { stroke: #c5c2b9; stroke-width: 1; opacity: 0.5; fill: none; }
-        .node-wrapper { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 2; pointer-events: none; }
-        .node-wrapper.main-center { z-index: 10; }
-        .circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-family: var(--font-title); font-size: 1rem; border: 1px solid var(--gold-color); color: var(--gold-color); background-color: #0b132b; box-shadow: 0 0 10px rgba(242, 201, 76, 0.2); position: relative; z-index: 3; }
-        .main-glow { border: 2px solid var(--gold-color); box-shadow: 0 0 20px rgba(242, 201, 76, 0.6), inset 0 0 10px rgba(242, 201, 76, 0.2); background-color: rgba(11, 19, 43, 0.9); }
-        .circle.gray-border { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.6); box-shadow: none; }
-        .note-label { font-size: 0.8rem; margin-top: 6px; color: rgba(255,255,255,0.7); opacity: 0.8; }
-        .note-label.highlight { color: var(--gold-color); font-weight: bold; opacity: 1; }
-        .annotation-box { position: absolute; width: 100px; transform: translateY(-50%); z-index: 5; pointer-events: none; }
-        .left-align { text-align: left; }
-        .right-align { text-align: right; }
-        .anno-text { font-size: 0.75rem; color: var(--gold-color); display: block; line-height: 1.3; text-shadow: 0 0 3px rgba(0,0,0,0.8); }
-        .anno-text b { font-weight: 700; font-size: 0.85rem; color: #fff; }
-        .chart-card { padding: 1.5rem; height: 100%; }
-        .chart-wrapper { position: relative; height: 300px; width: 100%; }
-        :global(.section-subtitle) { font-family: var(--font-title); color: var(--title-color); font-size: 1.8rem; text-shadow: 0 0 10px rgba(242, 201, 76, 0.6); margin-bottom: 1rem; }
-        .mystic-btn-outline { display: inline-block; padding: 0.8rem 2rem; border: 1px solid var(--gold-color); color: var(--gold-color); border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s; }
-        .mystic-btn-outline:hover { background: var(--gold-color); color: #000; box-shadow: 0 0 20px rgba(242, 201, 76, 0.4); }
-        .fade-in-up { animation: fadeInUp 0.8s ease-out backwards; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
-        .grid { display: grid; }
-        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
-        .gap-8 { gap: 2rem; }
-        @media (min-width: 768px) { .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        .numerology-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; aspect-ratio: 1/1; max-width: 250px; margin: 0 auto; border: none; }
-        .grid-cell { display: flex; align-items: center; justify-content: center; font-family: var(--font-title); font-weight: bold; font-size: 1.2rem; color: var(--gold-color); border: 1px solid var(--gold-color); text-shadow: 0 0 5px rgba(242, 201, 76, 0.3); }
-        .text-synthesis { color: #4ade80; text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
-        .grid-cell:nth-child(1), .grid-cell:nth-child(2), .grid-cell:nth-child(3) { border-top: none; }
-        .grid-cell:nth-child(7), .grid-cell:nth-child(8), .grid-cell:nth-child(9) { border-bottom: none; }
-        .grid-cell:nth-child(3n+1) { border-left: none; }
-        .grid-cell:nth-child(3n) { border-right: none; }
-        .reused-chart-wrapper { background: transparent; padding: 0; margin: 1.5rem 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .reused-chart-wrapper .chart-card { box-shadow: none; border: none; background: rgba(255,255,255,0.03); }
-        .reused-chart-wrapper .diamond-layout-wrapper { max-width: 100%; }
+        .text-gold { color: var(--gold-color) !important;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); }
+        .hero-title-small { font-family: var(--font-title);
+            color: #fff; font-size: clamp(2rem, 5vw, 3rem); text-shadow: 0 0 15px var(--gold-shadow); margin-bottom: 0.5rem; text-transform: uppercase;
+        }
+        .info-badges { display: flex; gap: 1rem; flex-wrap: wrap;
+        }
+        .badge-item { background: rgba(255,255,255,0.05); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.95rem;
+            border: 1px solid rgba(255,255,255,0.1); }
+        .badge-value { color: var(--gold-color); font-weight: 600; margin-left: 0.3rem;
+        }
+        .hero-numerology { display: flex; flex-direction: column; align-items: center; margin-bottom: 3rem; position: relative;
+        }
+        .mandala-wrapper { width: 280px; height: 280px; position: relative; display: flex; justify-content: center;
+            align-items: center; margin-bottom: 1.5rem; }
+        .mandala-ring { position: absolute; border-radius: 50%;
+            border: 1px solid rgba(242, 201, 76, 0.3); box-shadow: 0 0 15px rgba(242, 201, 76, 0.1);
+        }
+        .ring-1 { width: 100%; height: 100%; border-style: dashed;
+            animation: spin 20s linear infinite; }
+        .ring-2 { width: 85%; height: 85%;
+            border: 2px dotted var(--gold-color); opacity: 0.5; animation: spin 15s linear infinite reverse;
+        }
+        .ring-3 { width: 70%; height: 70%; border: 1px solid rgba(255,255,255,0.2);
+            background: radial-gradient(circle, rgba(242,201,76,0.15) 0%, rgba(0,0,0,0) 70%); animation: pulse 3s ease-in-out infinite;
+        }
+        .main-number-box { position: relative; z-index: 10; text-align: center;
+        }
+        .label-hero { display: block; font-size: 0.9rem; letter-spacing: 3px; color: #fff; margin-bottom: 0.5rem;
+            opacity: 0.8; }
+        .number-hero { font-family: var(--font-title); font-size: 7rem; font-weight: 700; line-height: 1;
+            display: block; }
+        .hero-desc-box { max-width: 600px; padding: 1.5rem; text-align: center;
+            margin: 0 auto; }
+        .magic-title { font-family: var(--font-title); font-size: 1.3rem; margin-bottom: 0.5rem;
+        }
+        .sub-grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; width: 100%;
+        }
+        @media (min-width: 768px) { .sub-grid-container { grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+        } }
+        @media (min-width: 1024px) { .sub-grid-container { grid-template-columns: repeat(6, 1fr);
+        } }
+        .sub-card { padding: 1.2rem 0.5rem; text-align: center; display: flex; flex-direction: column;
+            align-items: center; }
+        .sub-label { font-size: 0.8rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 0.5rem; }
+        .sub-val { font-family: var(--font-title); font-size: 2rem; font-weight: bold; color: #fff;
+        }
+        :global(.glass-card) { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; transition: all 0.3s ease;
+        }
+        :global(.glass-card:hover){ border-color: var(--gold-color); box-shadow: 0 0 15px rgba(242, 201, 76, 0.15);
+            transform: translateY(-3px); }
+        .diamond-layout-wrapper { display: flex; position: relative; width: 100%; max-width: 450px;
+            margin: 0 auto; justify-content: center; }
+        .chart-draw-area { width: 100%; padding: 10px;
+            box-sizing: border-box; }
+        .diamond-aspect-ratio { position: relative; width: 100%; padding-bottom: 140%;
+        }
+        .diamond-lines { position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: visible; z-index: 0; }
+        .line-gold { stroke: var(--gold-color); stroke-width: 1.5; opacity: 0.6;
+            vector-effect: non-scaling-stroke; }
+        .line-gold.thick { stroke-width: 2.5; opacity: 0.8;
+        }
+        .line-gold.thickest { stroke-width: 3.5; opacity: 1; filter: drop-shadow(0 0 5px var(--gold-color));
+        }
+        .line-gold.thin { stroke-width: 1;
+        }
+        .opacity-30 { opacity: 0.3 !important;
+        }
+        .opacity-50 { opacity: 0.5 !important;
+        }
+        .opacity-20 { opacity: 0.2 !important;
+        }
+        .callout-line { stroke: #c5c2b9; stroke-width: 1; opacity: 0.5; fill: none;
+        }
+        .node-wrapper { position: absolute; transform: translate(-50%, -50%); display: flex; flex-direction: column;
+            align-items: center; z-index: 2; pointer-events: none; }
+        .node-wrapper.main-center { z-index: 10;
+        }
+        .circle { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; font-family: var(--font-title); font-size: 1rem; border: 1px solid var(--gold-color); color: var(--gold-color); background-color: #0b132b;
+            box-shadow: 0 0 10px rgba(242, 201, 76, 0.2); position: relative; z-index: 3;
+        }
+        .main-glow { border: 2px solid var(--gold-color);
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.6), inset 0 0 10px rgba(242, 201, 76, 0.2);
+            background-color: rgba(11, 19, 43, 0.9); }
+        .circle.gray-border { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.6);
+            box-shadow: none; }
+        .note-label { font-size: 0.8rem; margin-top: 6px; color: rgba(255,255,255,0.7); opacity: 0.8;
+        }
+        .note-label.highlight { color: var(--gold-color); font-weight: bold; opacity: 1;
+        }
+        .annotation-box { position: absolute; width: 100px; transform: translateY(-50%); z-index: 5; pointer-events: none;
+        }
+        .left-align { text-align: left;
+        }
+        .right-align { text-align: right;
+        }
+        .anno-text { font-size: 0.75rem; color: var(--gold-color); display: block; line-height: 1.3;
+            text-shadow: 0 0 3px rgba(0,0,0,0.8); }
+        .anno-text b { font-weight: 700; font-size: 0.85rem;
+            color: #fff; }
+        .chart-card { padding: 1.5rem; height: 100%;
+        }
+        .chart-wrapper { position: relative; height: 300px; width: 100%;
+        }
+        :global(.section-subtitle) { font-family: var(--font-title); color: var(--title-color); font-size: 1.8rem;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.6); margin-bottom: 1rem;
+        }
+        .mystic-btn-outline { display: inline-block; padding: 0.8rem 2rem; border: 1px solid var(--gold-color);
+            color: var(--gold-color); border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s;
+        }
+        .mystic-btn-outline:hover { background: var(--gold-color); color: #000;
+            box-shadow: 0 0 20px rgba(242, 201, 76, 0.4); }
+        .fade-in-up { animation: fadeInUp 0.8s ease-out backwards;
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px);
+        } to { opacity: 1; transform: translateY(0); } }
+        @keyframes spin { 100% { transform: rotate(360deg);
+        } }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1);
+        } 50% { opacity: 1; transform: scale(1.05); } }
+        .grid { display: grid;
+        }
+        .grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        .gap-8 { gap: 2rem;
+        }
+        @media (min-width: 768px) { .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr));
+        } }
+        .numerology-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; aspect-ratio: 1/1;
+            max-width: 250px; margin: 0 auto; border: none; }
+        .grid-cell { display: flex;
+            align-items: center; justify-content: center; font-family: var(--font-title); font-weight: bold; font-size: 1.2rem; color: var(--gold-color); border: 1px solid var(--gold-color);
+            text-shadow: 0 0 5px rgba(242, 201, 76, 0.3); }
+        .text-synthesis { color: #4ade80;
+            text-shadow: 0 0 5px rgba(74, 222, 128, 0.3); }
+        .grid-cell:nth-child(1), .grid-cell:nth-child(2), .grid-cell:nth-child(3) { border-top: none;
+        }
+        .grid-cell:nth-child(7), .grid-cell:nth-child(8), .grid-cell:nth-child(9) { border-bottom: none;
+        }
+        .grid-cell:nth-child(3n+1) { border-left: none;
+        }
+        .grid-cell:nth-child(3n) { border-right: none;
+        }
+        .reused-chart-wrapper { background: transparent; padding: 0; margin: 1.5rem 0; border-radius: 12px;
+            overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .reused-chart-wrapper .chart-card { box-shadow: none;
+            border: none; background: rgba(255,255,255,0.03); }
+        .reused-chart-wrapper .diamond-layout-wrapper { max-width: 100%;
+        }
         
-        :global(.content-block) { margin-bottom: 1.5rem; }
-        .quote-block { border-left: 3px solid var(--gold-color); padding: 1rem 1.5rem; margin: 1.5rem 0; font-style: italic; color: var(--gold-color); background: rgba(242, 201, 76, 0.05); border-radius: 0 8px 8px 0; }
-        .chart-block { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px; }
-        :global(.number-interpretation-block) { border-left: 4px solid var(--gold-color); background: rgba(11, 19, 43, 0.6); margin: 1rem 0; padding:1rem; }
-        :global(.number-interpretation-block.border-red-400) { border-left-color: #f87171; }
-        .interpretations-container { width: 100%; max-width: 1200px; margin-left: auto; margin-right: auto; }
-        .cycle-item { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; transition: transform 0.3s; }
-        .cycle-item:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.3); }
-        .cycle-circle-wrapper { width: 120px; height: 120px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 1rem; position: relative; }
-        .cycle-circle { width: 100px; height: 100px; border-radius: 50%; background: #0b132b; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(0,0,0,0.5); }
-        .cycle-number { font-family: var(--font-title); font-size: 3rem; font-weight: bold; }
-        .cycle-circle-wrapper.color-1 { background: conic-gradient(from 0deg, #f43f5e, #db2777, #f43f5e); box-shadow: 0 0 20px rgba(244, 63, 94, 0.4); }
-        .cycle-circle-wrapper.color-1 .cycle-number { color: #f43f5e; }
-        .cycle-circle-wrapper.color-2 { background: conic-gradient(from 0deg, #8b5cf6, #7c3aed, #8b5cf6); box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
-        .cycle-circle-wrapper.color-2 .cycle-number { color: #8b5cf6; }
-        .cycle-circle-wrapper.color-3 { background: conic-gradient(from 0deg, #10b981, #059669, #10b981); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-        .cycle-circle-wrapper.color-3 .cycle-number { color: #10b981; }
-        .divider { height: 1px; background-color: rgba(255, 255, 255, 0.1); margin: 3rem auto; width: 100%; max-width: 600px; }
+        :global(.content-block) { margin-bottom: 1.5rem;
+        }
+        .quote-block { border-left: 3px solid var(--gold-color); padding: 1rem 1.5rem; margin: 1.5rem 0;
+            font-style: italic; color: var(--gold-color); background: rgba(242, 201, 76, 0.05); border-radius: 0 8px 8px 0;
+        }
+        .chart-block { background: rgba(255,255,255,0.05); padding: 1rem; border-radius: 8px;
+        }
+        :global(.number-interpretation-block) { border-left: 4px solid var(--gold-color); background: rgba(11, 19, 43, 0.6);
+            margin: 1rem 0; padding:1rem; }
+        :global(.number-interpretation-block.border-red-400) { border-left-color: #f87171;
+        }
+        .interpretations-container { width: 100%; max-width: 1200px; margin-left: auto; margin-right: auto;
+        }
+        .cycle-item { display: flex; flex-direction: column; align-items: center; padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 16px; transition: transform 0.3s;
+        }
+        .cycle-item:hover { transform: translateY(-5px); border-color: rgba(255, 255, 255, 0.3);
+        }
+        .cycle-circle-wrapper { width: 120px; height: 120px; border-radius: 50%; display: flex; justify-content: center;
+            align-items: center; margin-bottom: 1rem; position: relative; }
+        .cycle-circle { width: 100px; height: 100px;
+            border-radius: 50%; background: #0b132b; display: flex; justify-content: center; align-items: center; box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        .cycle-number { font-family: var(--font-title); font-size: 3rem; font-weight: bold;
+        }
+        .cycle-circle-wrapper.color-1 { background: conic-gradient(from 0deg, #f43f5e, #db2777, #f43f5e);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4); }
+        .cycle-circle-wrapper.color-1 .cycle-number { color: #f43f5e;
+        }
+        .cycle-circle-wrapper.color-2 { background: conic-gradient(from 0deg, #8b5cf6, #7c3aed, #8b5cf6);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4); }
+        .cycle-circle-wrapper.color-2 .cycle-number { color: #8b5cf6;
+        }
+        .cycle-circle-wrapper.color-3 { background: conic-gradient(from 0deg, #10b981, #059669, #10b981);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .cycle-circle-wrapper.color-3 .cycle-number { color: #10b981;
+        }
+        .divider { height: 1px; background-color: rgba(255, 255, 255, 0.1); margin: 3rem auto;
+            width: 100%; max-width: 600px; }
 
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }   
+        @keyframes slideUp { from { transform: translateY(20px);
+            opacity: 0; } to { transform: translateY(0); opacity: 1; } }   
     </style>
     <style is:global>
         /* --- TÍNH NĂNG ĐỌC THÊM (READ MORE) --- */
@@ -1392,7 +1458,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         }
 
         .expandable-content.collapsed {
-            max-height: 200px; /* Chiều cao tối đa khi đóng */
+            max-height: 200px;
+            /* Chiều cao tối đa khi đóng */
             /* Tạo hiệu ứng mờ dần ở đuôi văn bản mà không cần màu nền cứng */
             mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
@@ -1430,12 +1497,15 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             margin-bottom: 2rem;
         }
         @media (min-width: 768px) {
-            .cycle-grid { grid-template-columns: repeat(3, 1fr); }
+            .cycle-grid { grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .cycle-card {
-            background: rgba(20, 20, 20, 0.4); /* Nền tối hơn chút để tôn màu vàng */
-            border: 1px solid rgba(242, 201, 76, 0.15); /* Viền vàng mờ */
+            background: rgba(20, 20, 20, 0.4);
+            /* Nền tối hơn chút để tôn màu vàng */
+            border: 1px solid rgba(242, 201, 76, 0.15);
+            /* Viền vàng mờ */
             backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 2.5rem 1rem;
@@ -1471,7 +1541,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             font-family: var(--font-title);
             font-size: 2.2rem;
             font-weight: bold;
-            color: var(--gold-color); /* Chữ số màu vàng */
+            color: var(--gold-color);
+            /* Chữ số màu vàng */
             z-index: 2;
             box-shadow: 0 0 15px rgba(242, 201, 76, 0.1); /* Glow nhẹ tĩnh */
         }
@@ -1500,8 +1571,10 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         }
 
         @keyframes spin-ring {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% { transform: rotate(0deg);
+            }
+            100% { transform: rotate(360deg);
+            }
         }
 
         /* Typography */
@@ -1526,6 +1599,28 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             font-size: 0.9rem;
             color: rgba(255,255,255,0.6);
             margin-top: auto; /* Đẩy xuống dưới cùng nếu cần */
+        }
+
+
+        /* --- STYLES CHO READ MORE (GOM NHÓM) --- */
+        .interpretation-content-body {
+            position: relative;
+            overflow: hidden;
+            transition: max-height 0.8s ease-in-out;
+        }
+
+        /* Khi đóng lại: Giới hạn chiều cao và thêm hiệu ứng mờ */
+        .interpretation-content-body.collapsed {
+            max-height: 300px;
+            /* Chiều cao mặc định khi đóng */
+            mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+        }
+
+        /* Khi mở ra: Cho phép chiều cao tự động */
+        .interpretation-content-body:not(.collapsed) {
+            mask-image: none;
+            -webkit-mask-image: none;
         }
     </style>
 </BaseLayout>
