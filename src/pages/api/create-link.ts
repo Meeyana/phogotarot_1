@@ -1,4 +1,5 @@
 // src/pages/api/create-link.ts
+export const prerender = false;
 import type { APIRoute } from 'astro';
 import { encryptData } from '../../utils/crypto';
 
