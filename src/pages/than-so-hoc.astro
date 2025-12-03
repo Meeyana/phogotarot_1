@@ -72,59 +72,77 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
   </main>
 
   <script>
+    const btnAnalyze = document.getElementById('btn-analyze');
+    const errorMsg = document.getElementById('error-msg');
+    const inputs = document.querySelectorAll('.mystic-input');
 
-    btnAnalyze.addEventListener('click', async () => {
-        const nameInput = document.getElementById('fullName') as HTMLInputElement;
-        const dobInput = document.getElementById('dob') as HTMLInputElement;
-        const nicknameInput = document.getElementById('nickname') as HTMLInputElement;
-        const genderInput = document.getElementById('gender') as HTMLSelectElement;
-
-        const name = nameInput.value.trim();
-        const dob = dobInput.value;
-        const nickname = nicknameInput.value.trim();
-        const gender = genderInput.value;
-
-        // Validate
-        if (!name || !dob) {
-            if (errorMsg) errorMsg.classList.remove('hidden');
-            const box = document.querySelector('.mystic-form-box');
-            if (box) {
-                box.classList.add('shake');
-                setTimeout(() => box.classList.remove('shake'), 500);
-            }
-            return;
-        }
-
-        // Animation loading
-        btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Mã Hóa...';
-        (btnAnalyze as HTMLButtonElement).style.opacity = "0.8";
-        (btnAnalyze as HTMLButtonElement).disabled = true;
-
-        try {
-            // GỌI API ENDPOINT ĐỂ MÃ HÓA
-            const response = await fetch('/api/encrypt', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, dob, nickname, gender })
-            });
-
-            if (!response.ok) throw new Error('Encryption failed');
-
-            const { token } = await response.json();
-
-            // Redirect với token đã mã hóa
-            setTimeout(() => {
-                window.location.href = `/ket-qua-than-so-hoc?id=${token}`;
-            }, 800);
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Có lỗi xảy ra, vui lòng thử lại');
-            btnAnalyze.innerHTML = '<span class="icon">✨</span> Giải Mã Định Mệnh';
-            (btnAnalyze as HTMLButtonElement).style.opacity = "1";
-            (btnAnalyze as HTMLButtonElement).disabled = false;
-        }
+    // Xóa lỗi khi người dùng bắt đầu nhập liệu
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (errorMsg) errorMsg.classList.add('hidden');
+        });
     });
+
+    if (btnAnalyze) {
+        btnAnalyze.addEventListener('click', async () => {
+            // Lấy giá trị từ 4 trường
+            const nameInput = document.getElementById('fullName');
+            const dobInput = document.getElementById('dob');
+            const nicknameInput = document.getElementById('nickname');
+            const genderInput = document.getElementById('gender');
+
+            const name = nameInput.value.trim();
+            const dob = dobInput.value;
+            const nickname = nicknameInput.value.trim();
+            const gender = genderInput.value;
+
+            // Validate các trường bắt buộc (Tên & Ngày sinh)
+            if (!name || !dob) {
+                if (errorMsg) errorMsg.classList.remove('hidden');
+                
+                // Hiệu ứng rung lắc báo lỗi
+                const box = document.querySelector('.mystic-form-box');
+                if (box) {
+                    box.classList.add('shake');
+                    setTimeout(() => box.classList.remove('shake'), 500);
+                }
+                return;
+            }
+
+            // Animation loading trên nút
+            btnAnalyze.innerHTML = '<span class="animate-spin">✦</span> Đang Mã Hóa...';
+            btnAnalyze.style.opacity = "0.8";
+            btnAnalyze.disabled = true;
+
+            try {
+                // GỌI API ENDPOINT ĐỂ MÃ HÓA
+                const response = await fetch('/api/encrypt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, dob, nickname, gender })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Encryption failed');
+                }
+
+                const data = await response.json();
+                const token = data.token;
+
+                // Redirect với token đã mã hóa
+                setTimeout(() => {
+                    window.location.href = `/ket-qua-than-so-hoc?id=${token}`;
+                }, 800);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra, vui lòng thử lại');
+                btnAnalyze.innerHTML = '<span class="icon">✨</span> Giải Mã Định Mệnh';
+                btnAnalyze.style.opacity = "1";
+                btnAnalyze.disabled = false;
+            }
+        });
+    }
   </script>
 
   <style>
