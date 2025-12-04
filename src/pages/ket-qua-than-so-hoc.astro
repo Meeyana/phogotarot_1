@@ -157,9 +157,9 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         <section class="homepage-section">
             <div class="container">
                 
-                <header class="report-header text-center mb-12 fade-in">
+                <header class="report-header mb-12 fade-in" style="text-align:center;">
                     <h2 class="hero-title-small">{fullName.toUpperCase()}</h2>
-                    <div class="info-badges justify-center">
+                    <div class="info-badges" style="justify-content:center;">
                         <div class="badge-item">
                             <span class="badge-label">Ngày sinh:</span>
                             <span class="badge-value">{formattedDob}</span>
@@ -173,10 +173,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </header>
 
-                <div class="main-section-title text-center mb-8 fade-in-up">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">I. Nền Tảng Cốt Lõi</h2>
-                    <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
-                </div>
+                
 
                 <div class="chart-section fade-in-up">
                     <div class="hero-numerology mb-0">
@@ -210,6 +207,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <div class="glass-card sub-card">
                             <span class="sub-label">Trưởng Thành</span><span class="sub-val">{maturity}</span>
                         </div>
+                    </div>
+
+                    <div class="main-section-title text-center mb-8 fade-in-up">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider head-outline">I. Nền Tảng Cốt Lõi</h2>
+                        <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                     </div>
                     
                     <div id="lifepath-interpretations-container" class="max-w-4xl mx-auto rich-text-content mt-8">
@@ -708,11 +710,11 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 
                 const header = document.createElement('div');
                 header.className = 'interp-header flex items-center mb-4 border-b border-white/10 pb-2';
-                header.innerHTML = `                   
+                /*header.innerHTML = `                   
                     <h4 class="text-xl ${isWarning ? 'text-red-300' : 'text-gold'} font-title uppercase">
                         ${titleOverride || data.title}
                     </h4>
-                `;
+                `;*/
                 wrapper.appendChild(header);
 
                 const body = document.createElement('div');
@@ -1081,7 +1083,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
                     if (dataStore && (dataStore[number] || dataStore['default'])) {
                         const rawData = dataStore[number] || dataStore['default'];
-                        const displayTitle = `${stat.label} (Số ${number})`;
+                        const displayTitle = `${stat.label} của bạn: Số ${number}`;
                         
                         const sectionHtml = document.createElement('div');
                         sectionHtml.className = "chart-section fade-in-up";
@@ -1255,7 +1257,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         .text-gold { color: var(--gold-color) !important;
             text-shadow: 0 0 10px rgba(242, 201, 76, 0.5); }
         .hero-title-small { font-family: var(--font-title);
-            color: #fff; font-size: clamp(2rem, 5vw, 3rem); text-shadow: 0 0 15px var(--gold-shadow); margin-bottom: 0.5rem; text-transform: uppercase;
+            color: #fff; font-size: clamp(2rem, 6vw, 3rem); text-shadow: 0 0 15px var(--gold-shadow); margin-bottom: 0.5rem; text-transform: uppercase;
         }
         .info-badges { display: flex; gap: 1rem; flex-wrap: wrap;
         }
@@ -1447,7 +1449,9 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             width: 100%; max-width: 600px; }
 
         @keyframes slideUp { from { transform: translateY(20px);
-            opacity: 0; } to { transform: translateY(0); opacity: 1; } }   
+            opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        
     </style>
     <style is:global>
         /* --- TÍNH NĂNG ĐỌC THÊM (READ MORE) --- */
@@ -1622,5 +1626,12 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             mask-image: none;
             -webkit-mask-image: none;
         }
+
+        h5{
+            font-size: 1.1rem;
+            color:var(--gold-color);
+            text-color: 0 0 10px rgba(242, 201, 76, 0.4);
+        }
+        .head-outline{ font-size: 2rem;}
     </style>
 </BaseLayout>
