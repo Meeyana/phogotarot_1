@@ -61,12 +61,26 @@ export function calculateLifePath(day, month, year) {
 
 // 2. Destiny (Sứ mệnh) - REVERT: Cộng tổng toàn bộ tên rồi mới rút gọn
 export function calculateDestiny(fullName) {
-    const cleanName = removeAccents(fullName);
-    let total = 0;
-    for (let char of cleanName) {
-        if (/[a-zA-Z]/.test(char)) total += getCharValue(char);
+    const cleanName = removeAccents(fullName).trim();
+    // Tách tên thành mảng các từ, loại bỏ khoảng trắng thừa
+    const nameParts = cleanName.split(/\s+/);
+    
+    let totalOfParts = 0;
+
+    for (let part of nameParts) {
+        let partSum = 0;
+        // Tính tổng giá trị các chữ cái trong 1 từ
+        for (let char of part) {
+            if (/[a-zA-Z]/.test(char)) {
+                partSum += getCharValue(char);
+            }
+        }
+        // Rút gọn tổng của từ đó (Giữ 11, 22, 33) trước khi cộng vào tổng chính
+        totalOfParts += reduceSum(partSum);
     }
-    return reduceSum(total);
+
+    // Rút gọn tổng cuối cùng
+    return reduceSum(totalOfParts);
 }
 
 // 3. Soul (Linh hồn) - REVERT: Cộng tổng toàn bộ nguyên âm
@@ -112,9 +126,15 @@ export function calculateMaturity(lifePath, destiny) {
 // 7. Rational Thought (Tư duy) - CẬP NHẬT LOGIC MỚI
 
 // PHIÊN BẢN HÀM MỚI (Cần cập nhật bên file .astro gọi hàm này)
-export function calculateRationalThought(day, month) {
-    let sum = day + month;
-    return reduceToSingle(sum);
+export function calculateRationalThought(day, destiny) {
+    // 1. Xử lý ngày sinh: Rút gọn nhưng giữ nguyên 11, 22 (nếu có)
+    const dayVal = reduceSum(day);
+    
+    // 2. Cộng với số Sứ mệnh (đã có master number từ hàm calculateDestiny)
+    const sum = dayVal + destiny;
+
+    // 3. Rút gọn kết quả cuối cùng (Giữ 11, 22, 33)
+    return reduceSum(sum);
 }
 
 export function calculatePeriodCycles(day, month, year, lifePath) {
@@ -341,42 +361,76 @@ export function calculatePersonalityPercentages(strengthCounts, nameCounts, life
     }));
 }
 
-export function calculateCareerPercentages(lifePath, destiny, soul) {
-    // Định nghĩa nhóm ngành và các con số phù hợp (Holland Code simulation)
+export function calculateCareerPercentages(day, month, year, fullName, nickname, lifePath, destiny, soul) {
+    // 1. Khởi tạo bộ đếm tần suất cho các số từ 1-9
+    const frequencyMap = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
+
+    // Hàm hỗ trợ tăng đếm (chỉ nhận 1-9, nếu số master thì tách ra hoặc rút gọn)
+    const addCount = (num, weight = 1) => {
+        // Luôn rút gọn về 1 chữ số để đếm vào các nhóm 1-9
+        let single = num;
+        while (single > 9) {
+            single = String(single).split('').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+        }
+        if (frequencyMap[single] !== undefined) {
+            frequencyMap[single] += weight;
+        }
+    };
+
+    // 2. Quét dữ liệu từ NGÀY SINH (Day, Month, Year)
+    // Tách từng chữ số ra để đếm (VD: 1996 -> 1, 9, 9, 6)
+    const dobStr = `${day}${month}${year}`;
+    for (let char of dobStr) {
+        if (!isNaN(parseInt(char))) addCount(parseInt(char), 1);
+    }
+
+    // 3. Quét dữ liệu từ HỌ TÊN & NICKNAME
+    const fullText = (fullName + (nickname || "")).toLowerCase();
+    const cleanText = removeAccents(fullText); // Hàm removeAccents đã có trong file của bạn
+    for (let char of cleanText) {
+        if (/[a-z]/.test(char)) {
+            const val = getCharValue(char); // Hàm getCharValue đã có trong file của bạn
+            if (val > 0) addCount(val, 1);
+        }
+    }
+
+    // 4. Quét dữ liệu từ CHỈ SỐ LÕI (Life Path, Destiny, Soul)
+    // Quan trọng: Gán trọng số cao (Weight = 10) để định hướng nghề nghiệp bám sát số chủ đạo
+    // Nếu không nhân trọng số, các chữ cái trong tên (quá nhiều) sẽ làm loãng số chủ đạo.
+    addCount(lifePath, 10);
+    addCount(destiny, 10);
+    addCount(soul, 10);
+
+    // 5. Định nghĩa nhóm ngành (Mapping số)
     const careerGroups = [
-        { id: "research", name: "Nhóm Nghiên cứu (Investigative)", numbers: [7, 4, 1] },
-        { id: "social", name: "Nhóm Xã hội (Social)", numbers: [2, 6, 9, 33] },
-        { id: "technical", name: "Nhóm Kỹ thuật (Realistic)", numbers: [4, 7, 8] },
-        { id: "artistic", name: "Nhóm Nghệ thuật (Artistic)", numbers: [3, 5, 6] },
-        { id: "management", name: "Nhóm Quản lý (Enterprising)", numbers: [1, 8, 5, 22] },
-        { id: "business", name: "Nhóm Nghiệp vụ (Conventional)", numbers: [4, 2, 6] }
+        { id: "management", name: "Nhóm Quản lý (Enterprising)", numbers: [1, 8] },       // Lãnh đạo, Kinh doanh
+        { id: "business", name: "Nhóm Nghiệp vụ (Conventional)", numbers: [4, 2, 6] },    // Quy trình, Chi tiết
+        { id: "technical", name: "Nhóm Kỹ thuật (Realistic)", numbers: [7, 5, 4] },       // Công cụ, Logic (4 ở đây là kỹ thuật thực hành)
+        { id: "research", name: "Nhóm Nghiên cứu (Investigative)", numbers: [7, 9] },     // Học thuật, Khám phá
+        { id: "social", name: "Nhóm Xã hội (Social)", numbers: [2, 6, 9, 3] },            // Con người, Cộng đồng
+        { id: "artistic", name: "Nhóm Nghệ thuật (Artistic)", numbers: [3, 5] }           // Sáng tạo, Tự do
     ];
 
-    // Chuẩn hóa số Master về số đơn để so sánh dễ hơn, nhưng giữ Master nếu cần trọng số cao
-    const coreNumbers = [lifePath, destiny, soul].map(n => reduceToSingle(n));
-
+    // 6. Tính điểm cho từng nhóm dựa trên Frequency Map
     let totalScore = 0;
     const results = careerGroups.map(group => {
         let score = 0;
-        // Kiểm tra sự phù hợp của bộ số chủ đạo với nhóm ngành
-        coreNumbers.forEach(num => {
-            if (group.numbers.includes(num)) {
-                score += 10; // Cộng điểm nếu số chủ đạo khớp
-            }
+        group.numbers.forEach(num => {
+            score += (frequencyMap[num] || 0);
         });
         
-        // Cộng thêm điểm cơ bản để tránh 0%
-        score += 5; 
-
+        // Cộng một chút điểm cơ bản để biểu đồ không bị rỗng
+        score += 2; 
         totalScore += score;
         return { ...group, rawScore: score };
     });
 
+    // 7. Quy đổi ra phần trăm
     return results.map(item => ({
         id: item.id,
         label: item.name,
         percent: parseFloat(((item.rawScore / totalScore) * 100).toFixed(2))
-    })).sort((a, b) => b.percent - a.percent); // Sắp xếp từ cao xuống thấp
+    })).sort((a, b) => b.percent - a.percent);
 }
 
 export function calculatePersonalYear(day, month, targetYear) {

@@ -36,14 +36,14 @@ const soul = calculateSoul(fullName);
 const personality = calculatePersonality(fullName);
 const attitude = calculateAttitude(day, month);
 const maturity = calculateMaturity(lifePath, destiny);
-const rational = calculateRationalThought(day, month);
+const rational = calculateRationalThought(day, destiny);
 const pyramid = calculatePyramid(day, month, year, lifePath);
 const chartData = calculateChartData(day, month, year, fullName, nickname);
 const periodCycles = calculatePeriodCycles(day, month, year, lifePath);
 const karmicDebts = calculateKarmicDebt(day, month, year, fullName);
 const karmicLessons = calculateKarmicLessons(fullName);
 const personalityStats = calculatePersonalityPercentages(chartData.strengthData, chartData.nameData, lifePath, destiny, soul, personality);
-const careerStats = calculateCareerPercentages(lifePath, destiny, soul, personality, day);
+const careerStats = calculateCareerPercentages(day, month, year, fullName, nickname, lifePath, destiny, soul);
 
 // TÍNH DỰ BÁO
 const forecast = calculateForecast(day, month);
