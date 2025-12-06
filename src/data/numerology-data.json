@@ -4151,6 +4151,151 @@
     }
   },
 
+  "pyramid": {
+    "peaks": {
+      "1": {
+        "title": "Đỉnh Cao Số 1 - Giai Đoạn Độc Lập & Khẳng Định",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là giai đoạn bạn tách mình ra khỏi sự bao bọc để khẳng định cái tôi riêng biệt. Thành công trong giai đoạn này đến từ nỗ lực cá nhân, sự tiên phong và dám làm những điều mới mẻ.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Thích hợp để khởi nghiệp hoặc đứng ra làm chủ.", "Rèn luyện sự quyết đoán, không phụ thuộc vào ý kiến người khác.", "Cẩn thận với sự cô độc hoặc cái tôi quá lớn gây mâu thuẫn."] }
+        ]
+      },
+      "2": {
+        "title": "Đỉnh Cao Số 2 - Giai Đoạn Phát Triển Tâm Linh & Cảm Xúc",
+        "blocks": [
+          { "type": "text", "content": "<p>Giai đoạn này cuộc sống vật chất có thể chậm lại để nhường chỗ cho sự phát triển nội tâm. Trực giác của bạn trở nên cực kỳ nhạy bén. Thành công đến từ sự hợp tác, ngoại giao và các giá trị tinh thần.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Phát triển các mối quan hệ sâu sắc, bền vững.", "Học cách lắng nghe trực giác và cân bằng cảm xúc.", "Thích hợp làm việc trong lĩnh vực nghệ thuật, tâm lý hoặc giáo dục."] }
+        ]
+      },
+      "3": {
+        "title": "Đỉnh Cao Số 3 - Giai Đoạn Tỏa Sáng & Học Hỏi",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là thời kỳ rực rỡ nhất về mặt trí tuệ và giao tiếp. Bạn có cơ hội để đi lại, học hỏi và mở rộng tầm nhìn. Nhu cầu thể hiện bản thân và sự sáng tạo sẽ được đẩy lên cao trào.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Tập trung vào việc học tập, viết lách hoặc diễn thuyết.", "Tận hưởng cuộc sống, du lịch và kết nối xã hội.", "Tránh sự phân tán năng lượng hoặc sống hời hợt."] }
+        ]
+      },
+      "4": {
+        "title": "Đỉnh Cao Số 4 - Giai Đoạn Xây Dựng & Củng Cố",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là giai đoạn bạn cần làm việc chăm chỉ để xây dựng nền tảng vật chất vững chắc. Mọi thứ sẽ đi vào quy củ, trật tự. Thành quả không đến từ may mắn mà đến từ mồ hôi công sức.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Tập trung phát triển sự nghiệp và tích lũy tài sản.", "Xây dựng quy trình làm việc kỷ luật và ngăn nắp.", "Tránh sự cứng nhắc hoặc tham công tiếc việc quá mức."] }
+        ]
+      },
+      "5": {
+        "title": "Đỉnh Cao Số 5 - Giai Đoạn Tự Do & Thay Đổi",
+        "blocks": [
+          { "type": "text", "content": "<p>Giai đoạn này mang đến những thay đổi bước ngoặt về nhận thức hoặc môi trường sống. Sự tự do là khao khát lớn nhất. Bạn sẽ phá vỡ những rào cản cũ để trải nghiệm những điều mới lạ.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Sẵn sàng đón nhận những cơ hội bất ngờ.", "Linh hoạt thích nghi với hoàn cảnh mới.", "Kiểm soát bản thân để không sa đà vào sự phóng túng."] }
+        ]
+      },
+      "6": {
+        "title": "Đỉnh Cao Số 6 - Giai Đoạn Gia Đình & Trách Nhiệm",
+        "blocks": [
+          { "type": "text", "content": "<p>Tâm điểm của giai đoạn này là mái ấm. Bạn sẽ gánh vác nhiều trách nhiệm hơn với gia đình và cộng đồng. Hạnh phúc đến từ sự phụng sự và yêu thương.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Xây dựng tổ ấm, kết hôn hoặc chăm sóc con cái.", "Tham gia các hoạt động cộng đồng, thiện nguyện.", "Cân bằng giữa việc chăm sóc người khác và yêu thương bản thân."] }
+        ]
+      },
+      "7": {
+        "title": "Đỉnh Cao Số 7 - Giai Đoạn Trải Nghiệm & Thức Tỉnh",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là giai đoạn đánh dấu sự trưởng thành vượt bậc về tâm thức. Bạn sẽ học được nhiều bài học sâu sắc thông qua trải nghiệm thực tế. Đời sống vật chất có thể nhiều thử thách để hướng bạn về tinh thần.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Dành thời gian chiêm nghiệm, thiền định hoặc nghiên cứu.", "Chia sẻ tri thức và kinh nghiệm sống cho người khác.", "Giữ vững đức tin trong những thời điểm khó khăn."] }
+        ]
+      },
+      "8": {
+        "title": "Đỉnh Cao Số 8 - Giai Đoạn Thành Công & Quyền Lực",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là giai đoạn gặt hái thành quả lớn về tài chính và địa vị. Năng lực lãnh đạo và điều hành của bạn sẽ được phát huy tối đa.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Mở rộng kinh doanh, nắm giữ vị trí quản lý.", "Độc lập về tài chính và tạo ra giá trị vật chất lớn.", "Cân bằng giữa tham vọng sự nghiệp và đời sống tinh thần."] }
+        ]
+      },
+      "9": {
+        "title": "Đỉnh Cao Số 9 - Giai Đoạn Cống Hiến & Nhân Đạo",
+        "blocks": [
+          { "type": "text", "content": "<p>Giai đoạn này mang đậm màu sắc nhân văn. Bạn sẽ cảm thấy thôi thúc muốn cống hiến cho xã hội. Thành công của bạn gắn liền với việc giúp đỡ người khác.</p>" },
+          { "type": "list", "title": "Cơ hội & Lời khuyên:", "items": ["Tham gia các hoạt động xã hội, giáo dục hoặc nghệ thuật.", "Học cách bao dung, tha thứ và buông bỏ.", "Trở thành người truyền cảm hứng sống đẹp."] }
+        ]
+      },
+      "10": {
+        "title": "Đỉnh Cao Số 10 (1) - Giai Đoạn Của Sự Hoàn Hảo & Dẫn Đầu",
+        "blocks": [
+          { "type": "text", "content": "<p>Tương tự số 1 nhưng ở tầng cao hơn. Bạn có cơ hội trở thành người đứng đầu kiệt xuất, gánh vác trọng trách lớn với sự tự tin tuyệt đối.</p>" }
+        ]
+      },
+      "11": {
+        "title": "Đỉnh Cao Số 11 - Giai Đoạn Khai Sáng Tâm Linh",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn trở thành ngọn hải đăng về mặt tinh thần. Trực giác phát triển mạnh mẽ giúp bạn dẫn dắt người khác tìm về chân lý.</p>" }
+        ]
+      }
+    },
+    "challenges": {
+      "0": {
+        "title": "Thử Thách Số 0 - Thử Thách Của Sự Lựa Chọn",
+        "blocks": [
+          { "type": "text", "content": "<p>Đây là con số đặc biệt. Bạn không có thử thách cụ thể nào, hoặc là bạn có TẤT CẢ thử thách. Cuộc đời trao cho bạn quyền tự quyết hoàn toàn. Bạn có thể trở thành vĩ nhân hoặc không là ai cả tùy thuộc vào sự lựa chọn của bạn.</p>" },
+          { "type": "quote", "content": "Lời khuyên: Hãy sống có mục đích và đừng lãng phí sự tự do này." }
+        ]
+      },
+      "1": {
+        "title": "Thử Thách Số 1 - Khẳng Định Cái Tôi",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn sẽ gặp khó khăn trong việc thể hiện cá tính hoặc hay bị người khác áp đặt. Bạn cần học cách vượt qua sự tự ti để đứng trên đôi chân mình.</p>" },
+          { "type": "quote", "content": "Bài học: Rèn luyện sự quyết đoán, không để người khác chi phối cuộc đời mình." }
+        ]
+      },
+      "2": {
+        "title": "Thử Thách Số 2 - Kiểm Soát Cảm Xúc",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn cực kỳ nhạy cảm và dễ bị tổn thương bởi ý kiến người khác. Thử thách là học cách cân bằng cảm xúc và không phụ thuộc vào tình cảm bên ngoài.</p>" },
+          { "type": "quote", "content": "Bài học: Xây dựng sự tự tin nội tại và bớt lo nghĩ thái quá." }
+        ]
+      },
+      "3": {
+        "title": "Thử Thách Số 3 - Diễn Đạt Bản Thân",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn gặp khó khăn trong việc nói ra suy nghĩ thật, hoặc nói quá nhiều làm mất lòng người khác. Bạn hay phân tán năng lượng và thiếu tập trung.</p>" },
+          { "type": "quote", "content": "Bài học: Học cách giao tiếp chân thành và tập trung vào mục tiêu." }
+        ]
+      },
+      "4": {
+        "title": "Thử Thách Số 4 - Kỷ Luật & Chi Tiết",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn ghét sự gò bó, lười biếng hoặc thiếu ngăn nắp. Cuộc sống sẽ ném vào bạn những việc đòi hỏi sự tỉ mỉ buộc bạn phải rèn luyện sự kiên trì.</p>" },
+          { "type": "quote", "content": "Bài học: Kỷ luật là chìa khóa của tự do. Hãy làm việc có kế hoạch." }
+        ]
+      },
+      "5": {
+        "title": "Thử Thách Số 5 - Tự Do & Trách Nhiệm",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn rất sợ bị ràng buộc, dễ bốc đồng và hay thay đổi. Thử thách là tìm kiếm sự tự do trong khuôn khổ của trách nhiệm chứ không phải sự phóng túng.</p>" },
+          { "type": "quote", "content": "Bài học: Kiềm chế ham muốn nhất thời để hướng tới mục tiêu dài hạn." }
+        ]
+      },
+      "6": {
+        "title": "Thử Thách Số 6 - Kỳ Vọng & Chấp Nhận",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn hay đòi hỏi sự hoàn hảo ở bản thân và người khác, dẫn đến thất vọng. Bạn có xu hướng can thiệp quá sâu vào chuyện người khác.</p>" },
+          { "type": "quote", "content": "Bài học: Học cách chấp nhận khiếm khuyết và yêu thương không điều kiện." }
+        ]
+      },
+      "7": {
+        "title": "Thử Thách Số 7 - Đức Tin & Sự Cô Độc",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn cảm thấy cô đơn, hoài nghi cuộc đời hoặc gặp khó khăn về tinh thần. Thử thách là vượt qua nỗi sợ hãi để tìm thấy ánh sáng tri thức.</p>" },
+          { "type": "quote", "content": "Bài học: Mở lòng chia sẻ và tìm kiếm đức tin vững chắc." }
+        ]
+      },
+      "8": {
+        "title": "Thử Thách Số 8 - Vật Chất & Quyền Lực",
+        "blocks": [
+          { "type": "text", "content": "<p>Bạn có thể quá tham vọng, thực dụng hoặc ngược lại là sợ hãi tiền bạc. Thử thách là cân bằng giữa đời sống vật chất và giá trị tinh thần.</p>" },
+          { "type": "quote", "content": "Bài học: Sử dụng tiền bạc và quyền lực làm phương tiện, không phải mục đích." }
+        ]
+      }
+    }
+  },
+
   "default": {
       "title": "Thông báo",
       "blocks": [ { "type": "text", "content": "<p>Chưa có dữ liệu chi tiết.</p>" } ]

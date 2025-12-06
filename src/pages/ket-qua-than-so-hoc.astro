@@ -87,6 +87,8 @@ const filteredData = {
     personalYear: {},
     personalMonth: {},
 
+    pyramidData: { peaks: {}, challenges: {} },
+
     // Giữ nguyên data tĩnh cho Chart biểu đồ cột
     personalityChart: fullNumerologyData.personalityChart,
     careerChart: fullNumerologyData.careerChart
@@ -141,6 +143,20 @@ karmicLessons.forEach(lesson => filteredData.karmicLessons[lesson] = getData('ka
 forecast.years.forEach(y => filteredData.personalYear[y.number] = getData('personalYear', y.number));
 forecast.months.forEach(m => filteredData.personalMonth[m.number] = getData('personalMonth', m.number));
 
+// [MỚI] 8. Fill Pyramid (Đỉnh cao & Thử thách)
+// Lấy danh sách 4 đỉnh cao và 4 thử thách từ kết quả tính toán
+const userPeaks = [pyramid.peaks.p1, pyramid.peaks.p2, pyramid.peaks.p3, pyramid.peaks.p4];
+const userChallenges = [pyramid.challenges.c1, pyramid.challenges.c2, pyramid.challenges.c3, pyramid.challenges.c4];
+
+userPeaks.forEach(p => {
+    // Lưu ý: Đỉnh cao số 1 đôi khi được hiển thị là 10 hoặc 1 trong sách, ở đây ta map theo key json
+    filteredData.pyramidData.peaks[p] = fullNumerologyData.pyramid?.peaks?.[p];
+});
+
+userChallenges.forEach(c => {
+    filteredData.pyramidData.challenges[c] = fullNumerologyData.pyramid?.challenges?.[c];
+});
+
 // ========================================================================
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
@@ -157,7 +173,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         <section class="homepage-section">
             <div class="container">
                 
-                <header class="report-header mb-12 fade-in" style="text-align:center;">
+                <header class="report-header mb-12 fade-in" style="text-align:center;margin-bottom:2rem;">
                     <h2 class="hero-title-small">{fullName.toUpperCase()}</h2>
                     <div class="info-badges" style="justify-content:center;">
                         <div class="badge-item">
@@ -226,7 +242,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 <div class="divider-section"></div>
 
                 <div class="main-section-title text-center mb-8 fade-in-up">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">II. Biểu Đồ & Cấu Trúc</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider head-outline">II. Biểu Đồ & Cấu Trúc</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
@@ -378,6 +394,10 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                     </div>
+
+                    <div id="pyramid-interpretations" class="interpretations-container max-w-4xl mx-auto rich-text-content mt-12">
+                        <div class="loading-placeholder text-center opacity-50">Đang tải luận giải Kim Tự Tháp...</div>
+                    </div>
                 </div>
 
                 {karmicDebts.length > 0 && (
@@ -407,7 +427,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 <div class="divider-section"></div>
 
                 <div class="main-section-title text-center mb-8 fade-in-up">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">III. Nhóm Tính Cách & Định Hướng</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider head-outline">III. Nhóm Tính Cách & Định Hướng</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
@@ -441,7 +461,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 <div class="divider-section"></div>
 
                 <div class="main-section-title text-center mb-8 fade-in-up">
-                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider">IV. Dòng Thời Gian – Chu Kỳ Vận Động</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gold uppercase tracking-wider head-outline">IV. Dòng Thời Gian – Chu Kỳ Vận Động</h2>
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
@@ -519,7 +539,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
         forecastYears: forecast.years,
         forecastMonths: forecast.months,
         destiny, soul, personality, attitude, maturity, rational,
-        serverFilteredData: filteredData
+        serverFilteredData: filteredData,
+        pyramid: pyramid
     }}>
         let globalNumerologyData = serverFilteredData;
 
@@ -1046,6 +1067,78 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 }
             };
 
+
+            // [CẬP NHẬT] Hàm Render Luận Giải Kim Tự Tháp
+            const renderPyramidInterpretations = () => {
+                const container = document.getElementById('pyramid-interpretations');
+                if (!container || !globalNumerologyData.pyramidData) return;
+
+                container.innerHTML = '';
+                const pyData = globalNumerologyData.pyramidData;
+
+                // Dữ liệu cấu trúc 4 giai đoạn
+                const stages = [
+                    { id: 1, label: "Giai đoạn 1 (Tuổi trẻ)", peak: pyramid.peaks.p1, chal: pyramid.challenges.c1, age: pyramid.ages.p1_text },
+                    { id: 2, label: "Giai đoạn 2 (Trưởng thành)", peak: pyramid.peaks.p2, chal: pyramid.challenges.c2, age: pyramid.ages.p2_text },
+                    { id: 3, label: "Giai đoạn 3 (Trung niên)", peak: pyramid.peaks.p3, chal: pyramid.challenges.c3, age: pyramid.ages.p3_text },
+                    { id: 4, label: "Giai đoạn 4 (Viên mãn)", peak: pyramid.peaks.p4, chal: pyramid.challenges.c4, age: pyramid.ages.p4_text }
+                ];
+
+                let combinedHTML = '';
+
+                stages.forEach(stage => {
+                    const peakData = pyData.peaks[stage.peak];
+                    const chalData = pyData.challenges[stage.chal];
+
+                    const peakContent = peakData && peakData.blocks ? safeBlocksToHTML(peakData.blocks) : '<p>Chưa có dữ liệu.</p>';
+                    const chalContent = chalData && chalData.blocks ? safeBlocksToHTML(chalData.blocks) : '<p>Chưa có dữ liệu.</p>';
+
+                    // Lưu ý: Tôi đã bỏ class 'glass-card' ở div con để tránh bị lồng 2 lớp kính nhìn rối mắt
+                    // Thay vào đó dùng bg-white/5 để phân biệt các giai đoạn
+                    combinedHTML += `
+                        <div class="pyramid-stage-block mb-8 p-4 rounded-lg bg-white/5 border border-white/10">
+                            <div class="stage-header flex flex-col md:flex-row justify-between items-baseline border-b border-white/10 pb-2 mb-4">
+                                <h4 class="text-lg text-gold font-bold uppercase">✦ ${stage.label}</h4>
+                                <span class="text-sm text-gray-400 italic">${stage.age}</span>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="peak-col">
+                                    <h5 class="text-green-400 font-bold mb-2 text-md">
+                                        <i class="fas fa-mountain"></i> Đỉnh cao số ${stage.peak}
+                                    </h5>
+                                    <div class="text-sm opacity-90">${peakContent}</div>
+                                </div>
+
+                                <div class="chal-col">
+                                    <h5 class="text-red-400 font-bold mb-2 text-md">
+                                        <i class="fas fa-fire"></i> Thử thách số ${stage.chal}
+                                    </h5>
+                                    <div class="text-sm opacity-90">${chalContent}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                if (combinedHTML) {
+                    // [QUAN TRỌNG] Sử dụng createInterpretationBlock để bọc lại
+                    // Hàm này sẽ tự động thêm class 'interpretation-content-body' 
+                    // giúp kích hoạt tính năng Read More khi nội dung quá dài.
+                    createInterpretationBlock(
+                        container, 
+                        { 
+                            title: "Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách", 
+                            content: combinedHTML 
+                        }, 
+                        null, 
+                        'pyramid-combined-box'
+                    );
+                }
+            };
+
+
+
             const renderLifePath = () => {
                 if (!lifePathContainer || !globalNumerologyData) return;
                 lifePathContainer.innerHTML = '';
@@ -1156,6 +1249,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 renderNumberDetails(synthesisContainer, 'synthesisGrid', synthesisData, synthesisArrows, synthesisMissingNums, 'synthesis');
                 renderKarmicDebts();
                 renderKarmicLessons();
+                renderPyramidInterpretations();
                 
                 renderNewChartsInterpretations();
                 renderCycleInterpretations();
