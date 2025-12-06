@@ -3188,17 +3188,161 @@
 
   "personalityChart": {
     "title": "Biểu đồ Tính Cách",
-    "intro": "Dưới đây là mức độ ảnh hưởng của các nhóm tính cách lên con người bạn:",
+    "intro": "Dưới đây là mức độ ảnh hưởng của các nhóm tính cách lên con người bạn, tiết lộ cách bạn tương tác với thế giới:",
     "meanings": {
-        "1": { "blocks": [{ "type": "text", "content": "<p>Bạn có xu hướng độc lập, mạnh mẽ và thích dẫn đầu.</p>" }] },
-        "2": { "blocks": [{ "type": "text", "content": "<p>Bạn nhạy cảm, khéo léo và giỏi hòa giải.</p>" }] },
-        "3": { "blocks": [{ "type": "text", "content": "<p>Bạn sáng tạo, hoạt ngôn và mang lại niềm vui.</p>" }] },
-        "4": { "blocks": [{ "type": "text", "content": "<p>Bạn thực tế, tỉ mỉ và đáng tin cậy.</p>" }] },
-        "5": { "blocks": [{ "type": "text", "content": "<p>Bạn yêu tự do, thích trải nghiệm và linh hoạt.</p>" }] },
-        "6": { "blocks": [{ "type": "text", "content": "<p>Bạn giàu tình yêu thương và có trách nhiệm với gia đình.</p>" }] },
-        "7": { "blocks": [{ "type": "text", "content": "<p>Bạn sâu sắc, thích chiêm nghiệm và tìm tòi chân lý.</p>" }] },
-        "8": { "blocks": [{ "type": "text", "content": "<p>Bạn quyết đoán, có tư duy kinh doanh và coi trọng hiệu quả.</p>" }] },
-        "9": { "blocks": [{ "type": "text", "content": "<p>Bạn bao dung, nhân hậu và hướng tới cộng đồng.</p>" }] }
+      "1": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Mạnh mẽ - Độc lập - Tự tin</strong><br>Bạn mang năng lượng của một người tiên phong. Trong mắt người khác, bạn là một cá thể riêng biệt, không hòa tan vào đám đông. Bạn toát lên khí chất của một người dám nghĩ dám làm và không ngại đương đầu với thử thách.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Có tư duy độc lập, không thích dựa dẫm vào người khác.",
+              "Quyết đoán trong hành động, có tố chất lãnh đạo bẩm sinh.",
+              "Luôn đặt tiêu chuẩn cao cho bản thân và khao khát vị trí dẫn đầu.",
+              "Thẳng thắn, bộc trực và ghét sự vòng vo."
+            ]
+          }
+        ]
+      },
+      "2": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Lắng nghe - Khéo léo - Nhạy cảm</strong><br>Bạn là hiện thân của sự hòa bình và kết nối. Tính cách của bạn mềm mại như nước, biết cách len lỏi và xoa dịu những căng thẳng xung quanh. Bạn sở hữu trực giác tuyệt vời về cảm xúc con người.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Khả năng thấu cảm cao, luôn biết lắng nghe và chia sẻ.",
+              "Tinh tế trong giao tiếp, rất giỏi ngoại giao và giữ hòa khí.",
+              "Thích sự hợp tác, làm việc nhóm hơn là tranh đấu cá nhân.",
+              "Nhạy cảm với môi trường xung quanh, dễ bị ảnh hưởng bởi cảm xúc người khác."
+            ]
+          }
+        ]
+      },
+      "3": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Sáng tạo - Hoạt bát - Lạc quan</strong><br>Bạn là \"vitamin vui vẻ\" của mọi người. Năng lượng của bạn rực rỡ và đầy màu sắc. Bạn có khả năng biến những điều tẻ nhạt trở nên thú vị thông qua lăng kính sáng tạo và khiếu hài hước của mình.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Giao tiếp cuốn hút, có khiếu ăn nói và diễn đạt ý tưởng.",
+              "Giàu trí tưởng tượng, luôn có những giải pháp độc đáo.",
+              "Lạc quan, yêu đời và thích lan tỏa năng lượng tích cực.",
+              "Thích được chú ý, tỏa sáng và thể hiện bản thân."
+            ]
+          }
+        ]
+      },
+      "4": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Cẩn thận - Cầu toàn - Thực tế</strong><br>Bạn là mẫu người của sự vững chãi và tin cậy. Tính cách của bạn được xây dựng trên nền tảng của kỷ luật và trật tự. Bạn không tin vào may mắn, bạn tin vào sự chuẩn bị kỹ lưỡng và nỗ lực bền bỉ.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Làm việc có kế hoạch, quy trình rõ ràng và chi tiết.",
+              "Cẩn trọng, tỉ mỉ, hiếm khi để xảy ra sai sót nhỏ.",
+              "Trung thực, thẳng thắn và giữ chữ tín hàng đầu.",
+              "Là chỗ dựa vững chắc cho người khác khi gặp khó khăn."
+            ]
+          }
+        ]
+      },
+      "5": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Năng động - Linh hoạt - Tò mò</strong><br>Bạn là một linh hồn tự do, khao khát khám phá thế giới. Bạn giống như một chú tắc kè hoa, có thể thích nghi với mọi hoàn cảnh. Sự tò mò thúc đẩy bạn không ngừng tìm kiếm những trải nghiệm mới mẻ.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Yêu tự do, ghét sự gò bó và những lề thói cũ kỹ.",
+              "Đa tài, tháo vát và phản ứng nhanh nhạy với các vấn đề.",
+              "Có sức hút tự nhiên, lôi cuốn và dễ kết bạn.",
+              "Thích đi du lịch, mạo hiểm và đổi mới không ngừng."
+            ]
+          }
+        ]
+      },
+      "6": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Quan tâm - Yêu thương - Trách nhiệm</strong><br>Bạn mang trái tim của một người chăm sóc vĩ đại. Tính cách của bạn ấm áp, bao dung và luôn hướng về gia đình. Bạn hạnh phúc khi được bảo vệ và nuôi dưỡng những người mình yêu thương.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Sống có trách nhiệm, sẵn sàng hy sinh vì lợi ích chung.",
+              "Giàu lòng trắc ẩn, luôn muốn che chở cho người yếu thế.",
+              "Có gu thẩm mỹ tốt, yêu cái đẹp và sự hài hòa.",
+              "Là \"tổ ấm\" bình yên mà mọi người muốn tìm về."
+            ]
+          }
+        ]
+      },
+      "7": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Thông thái - Khám phá - Tri thức</strong><br>Bạn là người có chiều sâu nội tâm và tư duy sắc bén. Bạn không chấp nhận những câu trả lời hời hợt mà luôn muốn đào sâu tìm hiểu bản chất vấn đề. Bạn toát lên vẻ tri thức và có phần bí ẩn.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Thích quan sát, phân tích và chiêm nghiệm một mình.",
+              "Có tư duy logic, khoa học và hoài nghi lành mạnh.",
+              "Sở hữu trực giác tốt và đời sống tinh thần phong phú.",
+              "Cầu toàn trong tri thức, luôn muốn học hỏi để hoàn thiện."
+            ]
+          }
+        ]
+      },
+      "8": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Công bằng - Tập trung - Kỷ luật</strong><br>Bạn toát lên phong thái của một người thành đạt và quyền lực. Bạn có tư duy thực tế, hướng đến hiệu quả và kết quả rõ ràng. Tính cách của bạn mạnh mẽ, quyết đoán và sòng phẳng.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Có tham vọng lớn và năng lực hiện thực hóa mục tiêu.",
+              "Giỏi quản lý, tổ chức và điều hành công việc.",
+              "Rạch ròi giữa tình cảm và công việc, coi trọng sự công bằng.",
+              "Có sức chịu đựng áp lực cao và ý chí kiên cường."
+            ]
+          }
+        ]
+      },
+      "9": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Bao dung - Rộng lượng - Hào phóng</strong><br>Bạn có tâm hồn rộng mở và hướng thiện. Tính cách của bạn hào sảng, không toan tính chi li. Bạn thường nhìn cuộc đời qua lăng kính của tình yêu thương và những lý tưởng nhân văn cao đẹp.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Sẵn sàng cho đi và giúp đỡ cộng đồng không vụ lợi.",
+              "Có cái nhìn bao quát, bỏ qua tiểu tiết để hướng tới đại cục.",
+              "Thân thiện, hòa đồng và dễ dàng kết nối với mọi tầng lớp.",
+              "Là người truyền cảm hứng sống đẹp cho người khác."
+            ]
+          }
+        ]
+      }
     }
   },
 

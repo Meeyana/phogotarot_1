@@ -3188,60 +3188,967 @@
 
   "personalityChart": {
     "title": "Biểu đồ Tính Cách",
-    "intro": "Dưới đây là mức độ ảnh hưởng của các nhóm tính cách lên con người bạn:",
+    "intro": "Dưới đây là mức độ ảnh hưởng của các nhóm tính cách lên con người bạn, tiết lộ cách bạn tương tác với thế giới:",
     "meanings": {
-        "1": { "blocks": [{ "type": "text", "content": "<p>Bạn có xu hướng độc lập, mạnh mẽ và thích dẫn đầu.</p>" }] },
-        "2": { "blocks": [{ "type": "text", "content": "<p>Bạn nhạy cảm, khéo léo và giỏi hòa giải.</p>" }] },
-        "3": { "blocks": [{ "type": "text", "content": "<p>Bạn sáng tạo, hoạt ngôn và mang lại niềm vui.</p>" }] },
-        "4": { "blocks": [{ "type": "text", "content": "<p>Bạn thực tế, tỉ mỉ và đáng tin cậy.</p>" }] },
-        "5": { "blocks": [{ "type": "text", "content": "<p>Bạn yêu tự do, thích trải nghiệm và linh hoạt.</p>" }] },
-        "6": { "blocks": [{ "type": "text", "content": "<p>Bạn giàu tình yêu thương và có trách nhiệm với gia đình.</p>" }] },
-        "7": { "blocks": [{ "type": "text", "content": "<p>Bạn sâu sắc, thích chiêm nghiệm và tìm tòi chân lý.</p>" }] },
-        "8": { "blocks": [{ "type": "text", "content": "<p>Bạn quyết đoán, có tư duy kinh doanh và coi trọng hiệu quả.</p>" }] },
-        "9": { "blocks": [{ "type": "text", "content": "<p>Bạn bao dung, nhân hậu và hướng tới cộng đồng.</p>" }] }
+      "1": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Mạnh mẽ - Độc lập - Tự tin</strong><br>Bạn mang năng lượng của một người tiên phong. Trong mắt người khác, bạn là một cá thể riêng biệt, không hòa tan vào đám đông. Bạn toát lên khí chất của một người dám nghĩ dám làm và không ngại đương đầu với thử thách.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Có tư duy độc lập, không thích dựa dẫm vào người khác.",
+              "Quyết đoán trong hành động, có tố chất lãnh đạo bẩm sinh.",
+              "Luôn đặt tiêu chuẩn cao cho bản thân và khao khát vị trí dẫn đầu.",
+              "Thẳng thắn, bộc trực và ghét sự vòng vo."
+            ]
+          }
+        ]
+      },
+      "2": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Lắng nghe - Khéo léo - Nhạy cảm</strong><br>Bạn là hiện thân của sự hòa bình và kết nối. Tính cách của bạn mềm mại như nước, biết cách len lỏi và xoa dịu những căng thẳng xung quanh. Bạn sở hữu trực giác tuyệt vời về cảm xúc con người.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Khả năng thấu cảm cao, luôn biết lắng nghe và chia sẻ.",
+              "Tinh tế trong giao tiếp, rất giỏi ngoại giao và giữ hòa khí.",
+              "Thích sự hợp tác, làm việc nhóm hơn là tranh đấu cá nhân.",
+              "Nhạy cảm với môi trường xung quanh, dễ bị ảnh hưởng bởi cảm xúc người khác."
+            ]
+          }
+        ]
+      },
+      "3": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Sáng tạo - Hoạt bát - Lạc quan</strong><br>Bạn là \"vitamin vui vẻ\" của mọi người. Năng lượng của bạn rực rỡ và đầy màu sắc. Bạn có khả năng biến những điều tẻ nhạt trở nên thú vị thông qua lăng kính sáng tạo và khiếu hài hước của mình.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Giao tiếp cuốn hút, có khiếu ăn nói và diễn đạt ý tưởng.",
+              "Giàu trí tưởng tượng, luôn có những giải pháp độc đáo.",
+              "Lạc quan, yêu đời và thích lan tỏa năng lượng tích cực.",
+              "Thích được chú ý, tỏa sáng và thể hiện bản thân."
+            ]
+          }
+        ]
+      },
+      "4": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Cẩn thận - Cầu toàn - Thực tế</strong><br>Bạn là mẫu người của sự vững chãi và tin cậy. Tính cách của bạn được xây dựng trên nền tảng của kỷ luật và trật tự. Bạn không tin vào may mắn, bạn tin vào sự chuẩn bị kỹ lưỡng và nỗ lực bền bỉ.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Làm việc có kế hoạch, quy trình rõ ràng và chi tiết.",
+              "Cẩn trọng, tỉ mỉ, hiếm khi để xảy ra sai sót nhỏ.",
+              "Trung thực, thẳng thắn và giữ chữ tín hàng đầu.",
+              "Là chỗ dựa vững chắc cho người khác khi gặp khó khăn."
+            ]
+          }
+        ]
+      },
+      "5": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Năng động - Linh hoạt - Tò mò</strong><br>Bạn là một linh hồn tự do, khao khát khám phá thế giới. Bạn giống như một chú tắc kè hoa, có thể thích nghi với mọi hoàn cảnh. Sự tò mò thúc đẩy bạn không ngừng tìm kiếm những trải nghiệm mới mẻ.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Yêu tự do, ghét sự gò bó và những lề thói cũ kỹ.",
+              "Đa tài, tháo vát và phản ứng nhanh nhạy với các vấn đề.",
+              "Có sức hút tự nhiên, lôi cuốn và dễ kết bạn.",
+              "Thích đi du lịch, mạo hiểm và đổi mới không ngừng."
+            ]
+          }
+        ]
+      },
+      "6": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Quan tâm - Yêu thương - Trách nhiệm</strong><br>Bạn mang trái tim của một người chăm sóc vĩ đại. Tính cách của bạn ấm áp, bao dung và luôn hướng về gia đình. Bạn hạnh phúc khi được bảo vệ và nuôi dưỡng những người mình yêu thương.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Sống có trách nhiệm, sẵn sàng hy sinh vì lợi ích chung.",
+              "Giàu lòng trắc ẩn, luôn muốn che chở cho người yếu thế.",
+              "Có gu thẩm mỹ tốt, yêu cái đẹp và sự hài hòa.",
+              "Là \"tổ ấm\" bình yên mà mọi người muốn tìm về."
+            ]
+          }
+        ]
+      },
+      "7": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Thông thái - Khám phá - Tri thức</strong><br>Bạn là người có chiều sâu nội tâm và tư duy sắc bén. Bạn không chấp nhận những câu trả lời hời hợt mà luôn muốn đào sâu tìm hiểu bản chất vấn đề. Bạn toát lên vẻ tri thức và có phần bí ẩn.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Thích quan sát, phân tích và chiêm nghiệm một mình.",
+              "Có tư duy logic, khoa học và hoài nghi lành mạnh.",
+              "Sở hữu trực giác tốt và đời sống tinh thần phong phú.",
+              "Cầu toàn trong tri thức, luôn muốn học hỏi để hoàn thiện."
+            ]
+          }
+        ]
+      },
+      "8": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Công bằng - Tập trung - Kỷ luật</strong><br>Bạn toát lên phong thái của một người thành đạt và quyền lực. Bạn có tư duy thực tế, hướng đến hiệu quả và kết quả rõ ràng. Tính cách của bạn mạnh mẽ, quyết đoán và sòng phẳng.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Có tham vọng lớn và năng lực hiện thực hóa mục tiêu.",
+              "Giỏi quản lý, tổ chức và điều hành công việc.",
+              "Rạch ròi giữa tình cảm và công việc, coi trọng sự công bằng.",
+              "Có sức chịu đựng áp lực cao và ý chí kiên cường."
+            ]
+          }
+        ]
+      },
+      "9": {
+        "blocks": [
+          {
+            "type": "text",
+            "content": "<p><strong>Tính cách nổi bật: Bao dung - Rộng lượng - Hào phóng</strong><br>Bạn có tâm hồn rộng mở và hướng thiện. Tính cách của bạn hào sảng, không toan tính chi li. Bạn thường nhìn cuộc đời qua lăng kính của tình yêu thương và những lý tưởng nhân văn cao đẹp.</p>"
+          },
+          {
+            "type": "list",
+            "items": [
+              "Sẵn sàng cho đi và giúp đỡ cộng đồng không vụ lợi.",
+              "Có cái nhìn bao quát, bỏ qua tiểu tiết để hướng tới đại cục.",
+              "Thân thiện, hòa đồng và dễ dàng kết nối với mọi tầng lớp.",
+              "Là người truyền cảm hứng sống đẹp cho người khác."
+            ]
+          }
+        ]
+      }
     }
   },
 
   "careerChart": {
     "title": "Định Hướng Nghề Nghiệp",
-    "intro": "Dựa trên bộ số của bạn, mức độ phù hợp với các nhóm ngành nghề như sau:",
+    "intro": "Dựa trên bộ số của bạn, dưới đây là phân tích mức độ phù hợp với các nhóm ngành nghề và môi trường làm việc lý tưởng:",
     "meanings": {
-        "research": { "blocks": [{ "type": "text", "content": "<p>Bạn có khả năng tư duy logic, phân tích sâu sắc. Nghề phù hợp: Nhà khoa học, Lập trình viên, Chuyên gia phân tích, Bác sĩ.</p>" }] },
-        "social": { "blocks": [{ "type": "text", "content": "<p>Bạn thích tương tác và giúp đỡ người khác. Nghề phù hợp: Giáo viên, Bác sĩ tâm lý, Công tác xã hội, Tư vấn viên, Y tá.</p>" }] },
-        "technical": { "blocks": [{ "type": "text", "content": "<p>Bạn thích làm việc với máy móc, công cụ hoặc số liệu cụ thể. Nghề phù hợp: Kỹ sư, Kỹ thuật viên, Kiến trúc sư, Thợ lành nghề.</p>" }] },
-        "artistic": { "blocks": [{ "type": "text", "content": "<p>Bạn có tâm hồn nghệ sĩ, yêu cái đẹp và sự sáng tạo. Nghề phù hợp: Thiết kế, Nhà văn, Diễn viên, Nhạc sĩ, Truyền thông.</p>" }] },
-        "management": { "blocks": [{ "type": "text", "content": "<p>Bạn có tố chất lãnh đạo, thuyết phục và quản lý. Nghề phù hợp: CEO, Quản lý dự án, Kinh doanh, Luật sư, Chính trị gia.</p>" }] },
-        "business": { "blocks": [{ "type": "text", "content": "<p>Bạn làm việc ngăn nắp, có trật tự và tuân thủ quy trình. Nghề phù hợp: Kế toán, Ngân hàng, Thư ký, Quản trị văn phòng.</p>" }] }
+      "research": { 
+        "title": "Nhóm Nghiên Cứu & Tư Duy (Investigative)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn sở hữu tư duy logic sắc bén, khả năng phân tích sâu và sự tò mò vô tận về cách thế giới vận hành. Bạn thích làm việc với ý tưởng, dữ liệu và các vấn đề trừu tượng hơn là quản lý con người.</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Độc lập, yên tĩnh, ít bị làm phiền.",
+               "Đề cao tri thức, sự thật và tính chính xác.",
+               "Cho phép đào sâu nghiên cứu và giải quyết vấn đề hóc búa."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Công nghệ: Lập trình viên (IT), Kỹ sư phần mềm, Chuyên gia AI/Data.",
+               "Khoa học: Bác sĩ, Dược sĩ, Nhà nghiên cứu sinh học/hóa học.",
+               "Phân tích: Chuyên gia phân tích tài chính, Nghiên cứu thị trường."
+            ]
+          }
+        ] 
+      },
+      "social": { 
+        "title": "Nhóm Xã Hội & Kết Nối (Social)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn là người hướng về con người. Bạn có khả năng thấu cảm, lắng nghe và khao khát được giúp đỡ, chữa lành hoặc giáo dục người khác. Bạn làm việc bằng trái tim và sự nhiệt huyết.</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Tương tác trực tiếp, giao tiếp thường xuyên.",
+               "Mang tính nhân văn, hỗ trợ cộng đồng.",
+               "Cởi mở, thân thiện và đề cao sự hợp tác."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Giáo dục: Giáo viên, Giảng viên, Huấn luyện viên (Coach).",
+               "Chăm sóc sức khỏe: Bác sĩ tâm lý, Y tá, Điều dưỡng, Bác sĩ thú y.",
+               "Dịch vụ: Công tác xã hội, Chăm sóc khách hàng, Tư vấn viên, Hướng dẫn viên du lịch."
+            ]
+          }
+        ] 
+      },
+      "technical": { 
+        "title": "Nhóm Kỹ Thuật & Thực Tiễn (Realistic)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn là người thực tế, thích hành động và muốn nhìn thấy kết quả hữu hình. Bạn khéo léo trong việc vận hành máy móc, công cụ hoặc làm việc ngoài trời. Bạn thích \"làm\" hơn là \"nói\".</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Cụ thể, rõ ràng, ít mơ hồ.",
+               "Liên quan đến vận động, máy móc hoặc thiên nhiên.",
+               "Đánh giá dựa trên sản phẩm hoặc kết quả thực tế."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Kỹ thuật: Kỹ sư cơ khí, điện tử, xây dựng, kiến trúc sư.",
+               "Vận hành: Phi công, Thuyền trưởng, Lái xe chuyên nghiệp.",
+               "Thủ công/Nông nghiệp: Đầu bếp, Thợ lành nghề, Nông nghiệp công nghệ cao."
+            ]
+          }
+        ] 
+      },
+      "artistic": { 
+        "title": "Nhóm Nghệ Thuật & Sáng Tạo (Artistic)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn có tâm hồn tự do, giàu trí tưởng tượng và nhạy cảm với cái đẹp. Bạn không chịu được sự gò bó hay những công việc lặp đi lặp lại nhàm chán. Sứ mệnh của bạn là tạo ra cái mới và truyền cảm hứng.</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Tự do, linh hoạt về thời gian và không gian.",
+               "Khuyến khích sự phá cách và thể hiện cá tôi.",
+               "Đề cao tính thẩm mỹ và cảm xúc."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Sáng tạo: Thiết kế đồ họa/thời trang, Kiến trúc sư nội thất.",
+               "Truyền thông: Nhà văn, Biên kịch, Content Creator, Đạo diễn.",
+               "Nghệ thuật biểu diễn: Diễn viên, Ca sĩ, Nhạc sĩ, Nhiếp ảnh gia."
+            ]
+          }
+        ] 
+      },
+      "management": { 
+        "title": "Nhóm Quản Lý & Dẫn Dắt (Enterprising)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn sinh ra để dẫn đầu. Bạn có tham vọng, sự tự tin và khả năng thuyết phục người khác đi theo tầm nhìn của mình. Bạn thích cạnh tranh, chinh phục mục tiêu và quản lý rủi ro.</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Năng động, cạnh tranh và nhiều thách thức.",
+               "Có cơ hội thăng tiến và quyền lực rõ ràng.",
+               "Đánh giá dựa trên hiệu suất và lợi nhuận."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Lãnh đạo: CEO, Giám đốc điều hành, Quản lý dự án.",
+               "Kinh doanh: Sales manager, Bất động sản, Khởi nghiệp (Startup).",
+               "Pháp lý/Chính trị: Luật sư, Chính trị gia, Quan hệ công chúng (PR)."
+            ]
+          }
+        ] 
+      },
+      "business": { 
+        "title": "Nhóm Nghiệp Vụ & Tổ Chức (Conventional)",
+        "blocks": [
+          { "type": "text", "content": "<p><strong>Tố chất nổi bật:</strong> Bạn là người ngăn nắp, tỉ mỉ và tôn trọng quy tắc. Bạn làm việc hiệu quả nhất khi có quy trình rõ ràng. Bạn là \"hậu phương vững chắc\" giúp mọi tổ chức vận hành trơn tru và chính xác.</p>" },
+          { 
+            "type": "list", 
+            "title": "Môi trường làm việc lý tưởng:",
+            "items": [
+               "Ổn định, có trật tự và cấu trúc rõ ràng.",
+               "Làm việc với số liệu, hồ sơ và văn bản.",
+               "Đề cao sự chính xác, trung thực và cẩn trọng."
+            ]
+          },
+          { 
+            "type": "list", 
+            "title": "Gợi ý nghề nghiệp:",
+            "items": [
+               "Tài chính: Kế toán, Kiểm toán, Ngân hàng, Thuế.",
+               "Hành chính: Quản trị văn phòng, Thư ký, Nhân sự (C&B).",
+               "Quản lý hệ thống: Thủ thư, Quản lý kho, Kiểm soát chất lượng (QC)."
+            ]
+          }
+        ] 
+      }
     }
   },
 
   "personalYear": {
-    "1": { 
-        "blocks": [
-            { "type": "text", "content": "<p><strong>Năm cá nhân số 1:</strong> Năm của sự khởi đầu mới, gieo hạt và hành động độc lập.</p>" },
-            { "type": "list", "items": ["Bắt đầu dự án mới", "Thay đổi công việc", "Làm mới bản thân"] }
-        ] 
+    "1": {
+      "title": "Năm Cá Nhân Số 1 - Gieo Hạt & Khởi Đầu Mới",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Đây là cột mốc mở đầu cho một chu kỳ 9 năm hoàn toàn mới. Mọi thứ cũ kỹ của chu kỳ trước đã khép lại, và đây là thời điểm giống như một hạt mầm vừa tách vỏ. Giai đoạn này tràn đầy năng lượng của sự độc lập, tự chủ và tiên phong. Những gì được gieo trồng trong năm số 1 sẽ quyết định hoa trái gặt hái trong 8 năm tiếp theo.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Thời điểm vàng để bắt đầu những dự án mới, khởi nghiệp hoặc thay đổi công việc nếu đã ấp ủ từ lâu. Nguồn năng lượng lãnh đạo sẽ trỗi dậy mạnh mẽ. Đừng chờ đợi cơ hội, hãy tự tạo ra nó. Cần sự quyết đoán và dám chấp nhận rủi ro để bứt phá trong giai đoạn này.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Tài chính có thể chưa bùng nổ ngay lập tức vì đây là giai đoạn \"đầu tư\" và \"gieo hạt\". Tuy nhiên, các dòng tiền mới sẽ bắt đầu xuất hiện. Hãy mạnh dạn đầu tư vào bản thân hoặc các công cụ hỗ trợ công việc.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Xu hướng tập trung vào bản thân nhiều hơn có thể tạo ra sự xa cách hoặc cảm giác độc đoán trong mắt người thân. Nếu độc thân, đây là thời điểm dễ gặp những mối duyên mới đầy bất ngờ. Nếu đã có đôi, cần cẩn thận cái tôi quá lớn gây mâu thuẫn.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Năng lượng rất dồi dào, nhưng việc khởi động quá nhiều dự án mới dễ dẫn đến căng thẳng thần kinh hoặc các vấn đề về đầu, mắt. Cần duy trì thói quen tập thể dục đều đặn để giải phóng năng lượng dư thừa.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Cực kỳ thuận lợi để học một kỹ năng hoàn toàn mới hoặc bắt đầu một lộ trình học tập dài hạn. Sự tập trung và ý chí đang ở mức cao, giúp việc tiếp thu kiến thức nhanh chóng và vượt qua các kỳ thi một cách độc lập.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Viết ra mục tiêu chi tiết cho 9 năm tới (Vision Board).",
+            "Dám nói \"Có\" với những cơ hội mới.",
+            "Thay đổi ngoại hình hoặc phong cách để làm mới bản thân.",
+            "Rèn luyện sự tự tin và kỹ năng ra quyết định."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Năm số 1 là năm của hành động. Đừng chần chừ, đừng nhìn lại quá khứ. Hãy cầm lái cuộc đời mình và đạp ga tiến về phía trước."
+        }
+      ]
     },
-    "2": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 2:</strong> Năm của sự kiên nhẫn, hợp tác và phát triển các mối quan hệ.</p>" }] },
-    "3": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 3:</strong> Năm của sự sáng tạo, vui vẻ và giao tiếp xã hội.</p>" }] },
-    "4": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 4:</strong> Năm của sự củng cố, làm việc chăm chỉ và xây dựng nền tảng.</p>" }] },
-    "5": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 5:</strong> Năm của sự thay đổi, tự do và phiêu lưu.</p>" }] },
-    "6": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 6:</strong> Năm của gia đình, trách nhiệm và sự chăm sóc.</p>" }] },
-    "7": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 7:</strong> Năm của sự chiêm nghiệm, học hỏi và phát triển nội tâm.</p>" }] },
-    "8": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 8:</strong> Năm của thành tựu, quyền lực và tài chính.</p>" }] },
-    "9": { "blocks": [{ "type": "text", "content": "<p><strong>Năm cá nhân số 9:</strong> Năm của sự hoàn tất, buông bỏ và dọn dẹp.</p>" }] }
+    "2": {
+      "title": "Năm Cá Nhân Số 2 - Kết Nối & Kiên Nhẫn",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Sau sự khởi đầu mạnh mẽ của năm số 1, năm cá nhân số 2 là lúc mọi thứ chậm lại để đi vào chiều sâu. Đây là giai đoạn của sự ươm mầm, hợp tác và phát triển các mối quan hệ. Từ khóa chính là \"Kiên nhẫn\" và \"Lắng nghe\". Mọi thứ sẽ không diễn ra nhanh chóng, nhưng đang âm thầm phát triển dưới lòng đất.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Thành công trong giai đoạn này đến từ việc làm việc nhóm (teamwork) và ngoại giao khéo léo. Đây không phải lúc để làm \"sói đơn độc\". Hãy chú trọng đến các chi tiết nhỏ và hỗ trợ đồng nghiệp. Sự mềm mỏng sẽ mang lại lợi thế lớn hơn là sự áp đặt.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Thu nhập có xu hướng ổn định nhưng không có nhiều biến động lớn. Dòng tiền có thể đến từ các hoạt động hợp tác hoặc đầu tư chung. Cần cẩn trọng và tỉ mỉ trong các hợp đồng, giấy tờ ký kết.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Đây là trọng tâm của năm số 2. Các mối quan hệ tình cảm sẽ được thử thách hoặc thăng hoa. Nếu độc thân, rất dễ tìm được tri kỷ. Nếu đang có mâu thuẫn, đây là thời điểm tốt nhất để hòa giải và chữa lành.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Hệ thần kinh và tiêu hóa có thể nhạy cảm hơn bình thường do cảm xúc dao động. Cần chú ý giữ tinh thần thư thái, tránh lo âu thái quá. Các hoạt động như thiền, yoga rất phù hợp trong thời gian này.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Thích hợp cho việc học nhóm hoặc nghiên cứu các môn liên quan đến tâm lý, nghệ thuật, xã hội học. Trực giác nhạy bén giúp việc cảm thụ kiến thức trở nên sâu sắc hơn.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Mở rộng mạng lưới quan hệ (networking).",
+            "Học cách kiểm soát cảm xúc và lắng nghe.",
+            "Giải quyết các mâu thuẫn cũ còn tồn đọng.",
+            "Tìm kiếm đối tác hoặc người đồng hành tin cậy."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Đừng nóng vội khi thấy mọi việc tiến triển chậm. Hãy tận dụng thời gian này để xây dựng những kết nối bền vững. Sức mạnh của bạn nằm ở sự mềm mỏng."
+        }
+      ]
+    },
+    "3": {
+      "title": "Năm Cá Nhân Số 3 - Sáng Tạo & Tỏa Sáng",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Năng lượng của năm số 3 mang đến sự vui tươi, sáng tạo và bùng nổ. Đây là lúc những hạt mầm bắt đầu vươn lên mặt đất và đón ánh nắng. Giai đoạn này cuộc sống xã hội sẽ rất sôi động, trí não được kích thích và nhu cầu thể hiện bản thân tăng cao.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Cơ hội tuyệt vời để thực hiện các ý tưởng sáng tạo, marketing, xây dựng thương hiệu cá nhân hoặc các công việc liên quan đến nói và viết. Tuy nhiên, cần tránh sự phân tán năng lượng, làm nhiều việc cùng lúc nhưng không việc nào tới nơi tới chốn.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Tiền bạc có thể đến nhanh nhờ các cơ hội bất ngờ, nhưng cũng dễ \"đội nón ra đi\" vì thói quen chi tiêu theo cảm hứng hoặc mua sắm xa xỉ để làm đẹp hình ảnh. Cần quản lý túi tiền chặt chẽ hơn.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Bạn sẽ trở nên thu hút và quyến rũ hơn trong mắt người khác. Các mối quan hệ bạn bè mở rộng, nhiều tiệc tùng và giao lưu. Tuy nhiên, coi chừng những mối quan hệ hời hợt hoặc thị phi từ lời ăn tiếng nói.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Năng lượng tích cực giúp sức khỏe khá tốt, nhưng cần chú ý đến cân nặng (do tiệc tùng nhiều) và các vấn đề về họng, thanh quản. Tránh làm việc quá sức dẫn đến kiệt quệ năng lượng.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Tư duy nhanh nhạy giúp việc học ngoại ngữ, nghệ thuật hoặc các môn xã hội rất thuận lợi. Tuy nhiên, sự thiếu tập trung có thể là rào cản lớn nhất trong các kỳ thi quan trọng.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Đăng ký một khóa học nghệ thuật hoặc kỹ năng nói.",
+            "Lên kế hoạch du lịch hoặc giải trí để tái tạo năng lượng.",
+            "Xây dựng hình ảnh cá nhân chuyên nghiệp hơn.",
+            "Rèn luyện sự tập trung, tránh \"cả thèm chóng chán\"."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Hãy cứ tỏa sáng và tận hưởng niềm vui, nhưng đừng quên giữ đôi chân trên mặt đất. Sáng tạo có kỷ luật mới mang lại thành công thực sự."
+        }
+      ]
+    },
+    "4": {
+      "title": "Năm Cá Nhân Số 4 - Củng Cố & Kỷ Luật",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Sau một năm số 3 bay bổng, năm cá nhân số 4 yêu cầu sự nghiêm túc quay trở lại. Đây là giai đoạn của việc \"làm móng nhà\". Mọi thứ cần được sắp xếp lại trật tự, ngăn nắp và thực tế. Không có chỗ cho sự lười biếng hay mơ mộng trong thời điểm này.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Khối lượng công việc sẽ tăng lên đáng kể, đòi hỏi sự chăm chỉ và chi tiết. Đây là lúc để xây dựng quy trình, củng cố chuyên môn và làm những việc nền tảng. Kết quả có thể không đến nhanh, nhưng sẽ rất bền vững.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Thích hợp để tích lũy, tiết kiệm và đầu tư vào các tài sản cố định (nhà đất, cơ sở vật chất). Tránh các khoản đầu tư mạo hiểm hay lướt sóng. Cần lập kế hoạch chi tiêu rõ ràng và thắt chặt hầu bao.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Các mối quan hệ mang tính cam kết lâu dài và trách nhiệm sẽ được ưu tiên. Đây không phải năm của sự lãng mạn bay bổng mà là năm của sự đồng cam cộng khổ, cùng nhau xây dựng tương lai.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Cần đặc biệt chú ý đến xương khớp, răng và dạ dày. Áp lực công việc có thể gây mệt mỏi thể chất. Việc duy trì chế độ ăn ngủ điều độ và tập thể dục là bắt buộc để duy trì sức bền.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Rất tốt cho việc học chuyên sâu, lấy chứng chỉ nghề hoặc các môn kỹ thuật, logic. Sự kiên trì và kỷ luật trong giai đoạn này sẽ giúp vượt qua các kỳ thi khó khăn nhất.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Lập kế hoạch tài chính và tiết kiệm dài hạn.",
+            "Kiểm tra sức khỏe tổng quát định kỳ.",
+            "Dọn dẹp, sửa sang nhà cửa hoặc không gian làm việc.",
+            "Học thêm các kỹ năng chuyên môn sâu."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Đừng ngại vất vả. Những giọt mồ hôi đổ xuống trong năm số 4 sẽ hóa thành nền móng vững chắc cho thành công của bạn sau này."
+        }
+      ]
+    },
+    "5": {
+      "title": "Năm Cá Nhân Số 5 - Thay Đổi & Tự Do",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Nằm ở giữa chu kỳ 9 năm, năm số 5 mang đến làn gió của sự thay đổi và bứt phá. Những trật tự cũ của năm số 4 có thể bị phá vỡ để nhường chỗ cho những cơ hội mới. Đây là năm của sự dịch chuyển, tự do và những bất ngờ không báo trước.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Có thể có sự thay đổi về vị trí, công ty hoặc hướng đi mới. Các cơ hội kinh doanh, mở rộng thị trường hoặc đi công tác xa sẽ xuất hiện nhiều. Cần sự linh hoạt và khả năng thích nghi cao độ để nắm bắt thời cơ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Dòng tiền biến động mạnh, có thể thu vào nhiều nhưng chi ra cũng lắm. Cơ hội kiếm tiền đến từ sự mạo hiểm hoặc các ý tưởng đột phá. Tuy nhiên, cần cảnh giác với các rủi ro tài chính quá lớn.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Bạn sẽ muốn thoát khỏi những ràng buộc ngột ngạt. Các mối quan hệ mới đến rất nhanh và thú vị, nhưng có thể thiếu tính cam kết bền vững. Dễ xảy ra những rung động nhất thời.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Cần cẩn thận khi đi lại, di chuyển để tránh tai nạn nhỏ do bất cẩn. Hệ thần kinh có thể bị căng thẳng do quá nhiều thay đổi diễn ra cùng lúc. Nên chú ý giấc ngủ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Thích hợp học các khóa ngắn hạn, ngôn ngữ mới hoặc các kỹ năng mềm. Khó tập trung vào các môn học đòi hỏi sự kiên nhẫn quá lâu. Sự tò mò sẽ là động lực học tập chính.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Sẵn sàng tâm thế đón nhận sự thay đổi bất ngờ.",
+            "Lên kế hoạch cho các chuyến đi du lịch, trải nghiệm.",
+            "Mở rộng giao lưu kết nối xã hội.",
+            "Học cách quản trị rủi ro."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Hãy dang rộng cánh tay đón nhận những cơn gió lạ. Đừng cố kiểm soát mọi thứ, hãy học cách lướt trên những con sóng thay đổi."
+        }
+      ]
+    },
+    "6": {
+      "title": "Năm Cá Nhân Số 6 - Trách Nhiệm & Yêu Thương",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Sau một năm số 5 bay nhảy, năm số 6 gọi bạn trở về với tổ ấm. Trọng tâm của giai đoạn này là Gia đình, Trách nhiệm và Tình yêu thương. Bạn sẽ thấy mình cần quan tâm chăm sóc người khác nhiều hơn và giải quyết các vấn đề nội bộ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Công việc thường gắn liền với trách nhiệm tập thể hoặc các dự án mang tính cộng đồng, chăm sóc khách hàng. Sự thăng tiến đến từ việc bạn gánh vác trách nhiệm và được mọi người tin tưởng. Tuy nhiên, đừng ôm đồm quá mức.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Tiền bạc thường được chi tiêu cho gia đình, sửa sang nhà cửa hoặc đầu tư cho giáo dục con cái. Tài chính khá ổn định nếu bạn biết cân đối giữa thu và chi cho người thân.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Năm thuận lợi cho việc kết hôn, sinh con hoặc hàn gắn các mối quan hệ rạn nứt. Tình cảm gia đình đi vào chiều sâu. Nếu có mâu thuẫn, đây là lúc bạn cần đứng ra hòa giải bằng sự bao dung.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Chú ý các bệnh liên quan đến tim mạch, phổi hoặc các vấn đề do lo lắng quá nhiều sinh ra. Cần chăm sóc bản thân mình tốt như cách bạn chăm sóc người khác.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Thuận lợi cho việc học các ngành liên quan đến giáo dục, y tế, nghệ thuật hoặc tâm lý. Động lực học tập thường xuất phát từ mong muốn giúp đỡ người khác.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Dành thời gian chất lượng cho gia đình.",
+            "Trang trí, sửa sang lại không gian sống.",
+            "Học cách nói lời từ chối để tránh bị lợi dụng lòng tốt.",
+            "Chăm sóc sức khỏe cho cha mẹ/con cái."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Hạnh phúc nằm ngay dưới mái nhà của bạn. Hãy yêu thương và gánh vác, nhưng đừng quên yêu thương chính bản thân mình."
+        }
+      ]
+    },
+    "7": {
+      "title": "Năm Cá Nhân Số 7 - Chiêm Nghiệm & Nội Tâm",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Đây là \"khoảng lặng\" cần thiết trong chu kỳ 9 năm. Năm số 7 hướng năng lượng vào bên trong để chiêm nghiệm, học hỏi và rà soát lại hành trình đã qua. Bạn có thể cảm thấy muốn tách biệt, thích sự riêng tư hơn là ồn ào náo nhiệt.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Thích hợp cho việc nghiên cứu, phân tích, lên kế hoạch chiến lược hoặc viết lách. Tiến độ công việc bên ngoài có thể chậm lại, nhưng sự phát triển về tư duy và kỹ năng chuyên môn lại tăng vọt.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Không phải là năm thuận lợi để đầu tư mạo hiểm hay mong cầu lợi nhuận nhanh chóng. Tài chính nên giữ ở mức an toàn. Đầu tư tốt nhất trong năm nay là đầu tư vào tri thức và trí tuệ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Có thể xuất hiện cảm giác cô đơn hoặc bị người khác hiểu lầm là lạnh lùng. Các mối quan hệ xã giao sẽ được lọc bớt, chỉ giữ lại những kết nối thực sự sâu sắc và ý nghĩa.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Sức khỏe tinh thần là ưu tiên hàng đầu. Dễ bị stress, mất ngủ hoặc đau đầu do suy nghĩ quá nhiều. Cần kết nối với thiên nhiên, thiền định để cân bằng năng lượng.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Năm tuyệt vời nhất cho việc học chuyên sâu, nghiên cứu khoa học hoặc tìm hiểu về triết học/tâm linh. Khả năng tập trung và phân tích đạt đỉnh cao.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Dành thời gian tĩnh lặng mỗi ngày (thiền, đọc sách).",
+            "Tham gia một khóa học chuyên sâu nâng cao tay nghề.",
+            "Hạn chế các quyết định lớn về vật chất nếu chưa chắc chắn.",
+            "Kết nối với thiên nhiên để chữa lành."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Đừng sợ sự cô đơn, đó là lúc bạn đối thoại với chính mình. Hãy mài sắc trí tuệ, vì đó là vũ khí cho sự bùng nổ ở năm sau."
+        }
+      ]
+    },
+    "8": {
+      "title": "Năm Cá Nhân Số 8 - Thành Tựu & Quyền Lực",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Sau năm số 7 tích lũy nội lực, năm số 8 là lúc bạn bước ra ánh sáng để gặt hái thành quả. Đây là năm của quyền lực, tài chính và sự nghiệp. Luật Nhân Quả vận hành rất mạnh trong năm nay: bạn nỗ lực bao nhiêu sẽ nhận lại bấy nhiêu.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Cơ hội thăng tiến, mở rộng quy mô kinh doanh hoặc nắm giữ trọng trách lớn sẽ đến. Đây là lúc để thể hiện bản lĩnh lãnh đạo và khả năng điều hành. Cần quyết đoán và tập trung cao độ vào mục tiêu.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Dòng tiền chảy về mạnh mẽ, thuận lợi cho việc mua bán tài sản lớn, đầu tư sinh lời. Tuy nhiên, cần quản lý tài chính minh bạch và hợp pháp, tránh tham lam kẻo gặp rắc rối pháp lý.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Các mối quan hệ mang tính hỗ trợ công việc, đối tác làm ăn sẽ được ưu tiên. Trong tình cảm, cần tránh sự áp đặt hoặc mang áp lực công việc về nhà. Có thể gặp được những người có địa vị giúp đỡ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Dễ gặp các vấn đề liên quan đến huyết áp, tim mạch hoặc chấn thương do làm việc quá sức. Cần cân bằng giữa tham vọng sự nghiệp và thời gian nghỉ ngơi.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Thích hợp học các ngành quản trị kinh doanh, tài chính, luật hoặc lãnh đạo. Các kỳ thi mang tính quyết định sự nghiệp thường đạt kết quả tốt nếu có sự chuẩn bị kỹ.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Đặt ra các mục tiêu tài chính tham vọng.",
+            "Tận dụng tối đa các cơ hội kinh doanh.",
+            "Xây dựng hình ảnh cá nhân uy quyền và chuyên nghiệp.",
+            "Học cách quản lý và đầu tư tiền bạc."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Thời cơ đã đến, hãy nắm bắt lấy. Nhưng hãy nhớ, thành công bền vững phải đi kèm với đạo đức và trách nhiệm."
+        }
+      ]
+    },
+    "9": {
+      "title": "Năm Cá Nhân Số 9 - Hoàn Tất & Buông Bỏ",
+      "blocks": [
+        {
+          "type": "text",
+          "title": "Tổng quan",
+          "content": "<p>Đây là năm cuối cùng của chu kỳ 9 năm, mang năng lượng của sự tổng kết, dọn dẹp và hoàn tất. Đây không phải lúc để bắt đầu những cái mới to tát, mà là lúc để loại bỏ những gì không còn phù hợp, trả nợ (cả tiền bạc lẫn ân tình) để nhẹ nhàng bước sang chu kỳ mới.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Công việc",
+          "content": "<p>Nên tập trung hoàn thành các dự án dang dở. Có thể có sự kết thúc một công việc cũ hoặc thay đổi môi trường. Đừng cố níu kéo những gì đã hết duyên. Hãy làm việc với tinh thần cống hiến và cho đi.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Tài chính",
+          "content": "<p>Tài chính nên được dùng để thanh toán các khoản nợ nần, làm từ thiện hoặc hỗ trợ người khác. Tránh đầu tư mạo hiểm hay ký kết các hợp đồng dài hạn mới trong giai đoạn này.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Các mối quan hệ",
+          "content": "<p>Sẽ có những cuộc chia ly cần thiết (với những người tiêu cực) và những cuộc hội ngộ đầy ý nghĩa. Lòng bao dung và tha thứ là chìa khóa để chữa lành các mối quan hệ trong năm nay.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Sức khỏe",
+          "content": "<p>Cần chú ý thải độc cơ thể và chăm sóc hệ miễn dịch. Sức khỏe tinh thần cần được vỗ về để tránh cảm giác hụt hẫng hay tiếc nuối quá khứ.</p>"
+        },
+        {
+          "type": "text",
+          "title": "Về Học tập & Thi cử",
+          "content": "<p>Thích hợp để hoàn thành khóa học, tốt nghiệp hoặc tổng hợp kiến thức. Các môn học về xã hội, nhân văn hoặc nghệ thuật sẽ mang lại nhiều cảm hứng.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Kế hoạch cần chuẩn bị:",
+          "items": [
+            "Dọn dẹp nhà cửa, vứt bỏ đồ đạc không dùng đến (Declutter).",
+            "Tha thứ cho những người đã làm tổn thương mình.",
+            "Hoàn thành mọi công việc còn tồn đọng.",
+            "Làm từ thiện và chia sẻ với cộng đồng."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Tóm lại: Hãy dũng cảm buông tay những gì đã cũ. Một cánh cửa đóng lại là để một cánh cửa khác tốt đẹp hơn mở ra."
+        }
+      ]
+    }
   },
 
   "personalMonth": {
-    "1": { "blocks": [{ "type": "text", "content": "<p>Tháng để bắt đầu, quyết đoán và hành động mạnh mẽ.</p>" }] },
-    "2": { "blocks": [{ "type": "text", "content": "<p>Tháng để lắng nghe, hòa giải và kết nối nhẹ nhàng.</p>" }] },
-    "3": { "blocks": [{ "type": "text", "content": "<p>Tháng để sáng tạo, gặp gỡ bạn bè và giải trí.</p>" }] },
-    "4": { "blocks": [{ "type": "text", "content": "<p>Tháng để tập trung làm việc, sắp xếp lại trật tự.</p>" }] },
-    "5": { "blocks": [{ "type": "text", "content": "<p>Tháng của những thay đổi, đi lại hoặc trải nghiệm mới.</p>" }] },
-    "6": { "blocks": [{ "type": "text", "content": "<p>Tháng dành cho gia đình, tình yêu và trách nhiệm.</p>" }] },
-    "7": { "blocks": [{ "type": "text", "content": "<p>Tháng để nghỉ ngơi, suy ngẫm và học hỏi.</p>" }] },
-    "8": { "blocks": [{ "type": "text", "content": "<p>Tháng tập trung vào công việc, tiền bạc và kết quả.</p>" }] },
-    "9": { "blocks": [{ "type": "text", "content": "<p>Tháng để dọn dẹp, từ thiện và hoàn thành công việc.</p>" }] }
+    "1": {
+      "title": "Tháng Cá Nhân Số 1 - Khởi Đầu & Quyết Đoán",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Đây là thời điểm tuyệt vời để nhấn nút \"Start\". Năng lượng của số 1 thúc đẩy sự độc lập và tiên phong. Những gì bạn trì hoãn bấy lâu nay, hãy bắt đầu thực hiện ngay trong tháng này.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Bắt đầu một dự án mới hoặc một thói quen mới (tập gym, học ngoại ngữ...).",
+            "Đưa ra các quyết định quan trọng mà bạn đã chần chừ.",
+            "Thay đổi kiểu tóc hoặc phong cách ăn mặc để làm mới bản thân.",
+            "Làm việc độc lập, tự mình giải quyết vấn đề thay vì nhờ vả."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Đừng sợ đi một mình. Sự tự tin của bạn là thỏi nam châm thu hút thành công trong tháng này."
+        }
+      ]
+    },
+    "2": {
+      "title": "Tháng Cá Nhân Số 2 - Kết Nối & Lắng Nghe",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Sau tháng 1 bùng nổ, tháng 2 là lúc mọi thứ chậm lại để đi vào chiều sâu. Đây là tháng của ngoại giao, tình cảm và sự hợp tác. Đừng cố gắng lấn lướt, hãy học cách lùi một bước để tiến hai bước.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Hẹn hò, gặp gỡ bạn bè hoặc đối tác để hàn gắn kết nối.",
+            "Lắng nghe nhiều hơn nói trong các cuộc họp.",
+            "Giải quyết các mâu thuẫn cũ bằng thái độ hòa giải.",
+            "Chăm sóc các chi tiết nhỏ trong công việc mà tháng trước bạn đã bỏ qua."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Sự dịu dàng là vũ khí mạnh nhất của bạn lúc này. Hãy kiên nhẫn chờ đợi kết quả."
+        }
+      ]
+    },
+    "3": {
+      "title": "Tháng Cá Nhân Số 3 - Sáng Tạo & Tỏa Sáng",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Chào mừng bạn đến với tháng vui vẻ nhất! Năng lượng số 3 mang đến cảm hứng sáng tạo dồi dào và các cơ hội giao tiếp xã hội. Hãy bước ra ngoài, gặp gỡ mọi người và để bản thân được tỏa sáng.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Tham gia các bữa tiệc, sự kiện hoặc hội thảo networking.",
+            "Viết lách, vẽ tranh, ca hát hoặc thực hiện các ý tưởng sáng tạo.",
+            "Mua sắm quần áo mới hoặc làm đẹp cho bản thân.",
+            "Cười nhiều hơn và chia sẻ niềm vui với mọi người."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Hãy cẩn thận lời ăn tiếng nói để tránh thị phi, và đừng chi tiêu quá đà cho những cuộc vui."
+        }
+      ]
+    },
+    "4": {
+      "title": "Tháng Cá Nhân Số 4 - Củng Cố & Kỷ Luật",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Đã đến lúc quay lại mặt đất. Tháng này đòi hỏi bạn phải làm việc chăm chỉ, tập trung vào chi tiết và sắp xếp lại cuộc sống ngăn nắp. Đây là tháng để xây dựng nền móng vững chắc.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Dọn dẹp nhà cửa, bàn làm việc và sắp xếp lại hồ sơ.",
+            "Lập kế hoạch tài chính, rà soát lại các khoản chi tiêu.",
+            "Hoàn thành các công việc tồn đọng đòi hỏi sự tỉ mỉ.",
+            "Kiểm tra sức khỏe tổng quát hoặc sửa chữa đồ đạc hỏng hóc."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Đừng tìm kiếm đường tắt. Sự nỗ lực bền bỉ trong tháng này sẽ mang lại kết quả lâu dài."
+        }
+      ]
+    },
+    "5": {
+      "title": "Tháng Cá Nhân Số 5 - Thay Đổi & Tự Do",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Hãy chuẩn bị cho những bất ngờ! Tháng số 5 mang đến những thay đổi thú vị và cơ hội để phá vỡ sự nhàm chán. Đây là thời điểm lý tưởng để xê dịch và làm mới cuộc sống.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Đi du lịch ngắn ngày hoặc thay đổi lộ trình đi làm hàng ngày.",
+            "Thử một món ăn mới, trải nghiệm một sở thích mới.",
+            "Quảng bá bản thân, marketing hoặc mở rộng quan hệ xã hội.",
+            "Linh hoạt đón nhận những thay đổi bất ngờ trong công việc."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Đừng cố kiểm soát mọi thứ. Hãy thả lỏng và tận hưởng những làn gió mới."
+        }
+      ]
+    },
+    "6": {
+      "title": "Tháng Cá Nhân Số 6 - Gia Đình & Trách Nhiệm",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Tâm điểm của tháng này là \"Nhà\". Bạn sẽ thấy mình quan tâm nhiều hơn đến gia đình và những người thân yêu. Trách nhiệm và tình yêu thương là từ khóa chính.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Dành thời gian ăn tối cùng gia đình, thăm hỏi cha mẹ.",
+            "Trang trí, sửa sang lại nhà cửa cho ấm cúng hơn.",
+            "Giúp đỡ đồng nghiệp hoặc tham gia hoạt động thiện nguyện.",
+            "Giải quyết các vấn đề tình cảm cá nhân một cách êm đẹp."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Hãy yêu thương nhưng đừng bao bọc thái quá. Đôi khi từ chối cũng là một cách yêu thương."
+        }
+      ]
+    },
+    "7": {
+      "title": "Tháng Cá Nhân Số 7 - Chiêm Nghiệm & Học Hỏi",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Đây là \"khoảng lặng\" cần thiết để bạn sạc lại năng lượng. Tháng này không thích hợp để lao ra ngoài tranh đấu, mà thích hợp để quay vào bên trong, học hỏi và nâng cao trí tuệ.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Đăng ký một khóa học chuyên sâu hoặc đọc sách nghiên cứu.",
+            "Dành thời gian ở một mình để suy ngẫm và viết nhật ký.",
+            "Thiền định, yoga hoặc đi dạo giữa thiên nhiên.",
+            "Tránh đưa ra các quyết định lớn về tài chính nếu chưa chắc chắn."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Đừng sợ sự cô đơn. Trí tuệ sinh ra trong tĩnh lặng."
+        }
+      ]
+    },
+    "8": {
+      "title": "Tháng Cá Nhân Số 8 - Thành Tựu & Tài Chính",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Thời cơ gặt hái đã đến! Tháng số 8 tập trung mạnh mẽ vào công việc, tiền bạc và quyền lực. Đây là lúc bạn cần thể hiện bản lĩnh để đạt được những mục tiêu thực tế.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Tập trung cao độ vào các dự án kinh doanh, kiếm tiền.",
+            "Đàm phán hợp đồng, đề xuất thăng chức hoặc tăng lương.",
+            "Quản lý tài chính rõ ràng, rà soát lại các khoản đầu tư.",
+            "Thể hiện sự chuyên nghiệp và uy quyền trong công việc."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Hãy quyết đoán nhưng đừng thực dụng. Giữ cân bằng giữa tham vọng và sức khỏe."
+        }
+      ]
+    },
+    "9": {
+      "title": "Tháng Cá Nhân Số 9 - Hoàn Tất & Buông Bỏ",
+      "blocks": [
+        {
+          "type": "text",
+          "content": "<p><strong>Năng lượng tháng này:</strong> Đây là tháng để dọn dẹp sạch sẽ mọi thứ (cả vật chất lẫn tinh thần) để chuẩn bị cho chu kỳ mới. Hãy hoàn thành nốt những việc dang dở và buông bỏ những gì không còn phù hợp.</p>"
+        },
+        {
+          "type": "list",
+          "title": "Việc cần làm ngay:",
+          "items": [
+            "Kết thúc các dự án cũ, trả hết nợ nần.",
+            "Dọn dẹp nhà cửa, vứt bỏ những đồ đạc không dùng đến (Declutter).",
+            "Tha thứ cho người khác và buông bỏ những nỗi buồn quá khứ.",
+            "Làm từ thiện, giúp đỡ cộng đồng."
+          ]
+        },
+        {
+          "type": "quote",
+          "content": "Lời khuyên: Đừng bắt đầu cái mới trong tháng này. Hãy kết thúc thật trọn vẹn để mở ra cánh cửa mới vào tháng sau."
+        }
+      ]
+    }
   },
 
   "default": {
