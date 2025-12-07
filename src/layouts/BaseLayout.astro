@@ -1,15 +1,22 @@
 ---
+// src/layouts/BaseLayout.astro
+
 // 1. Nhận "props"
 export interface Props {
   title: string;
   description: string;
   ogImage?: string;
+  showChatbot?: boolean; // (MỚI) Thêm prop tùy chọn hiển thị chatbot
 }
+
+// (MỚI) IMPORT COMPONENT CHATBOT
+import OracleChat from '../components/OracleChat.astro'; 
 
 const { 
   title, 
   description, 
-  ogImage = '/images/phogotarot-og-image.jpg'
+  ogImage = '/images/phogotarot-og-image.jpg',
+  showChatbot = false // (MỚI) Mặc định là true (hiện ở mọi trang)
 } = Astro.props;
 
 // 2. Lấy URL chuẩn
@@ -36,6 +43,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+ 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="/style.css">
@@ -71,7 +79,6 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <slot name="head" />
 
     <style is:global>
-
       /* Ngăn kéo thả hình ảnh */
       img {
         -webkit-user-drag: none;
@@ -107,11 +114,11 @@ const ogImageURL = new URL(ogImage, Astro.site);
                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                 <div class="dropdown-submenu">
+                <div class="dropdown-submenu">
                     <a href="/tarot" class="nav-link submenu-link">Trải bài 3 lá</a>
                     <a href="/yes-no-reading" class="nav-link submenu-link">Câu hỏi Yes/No</a>
                     <a href="/zodiac-daily" class="nav-link submenu-link">Zodiac Tarot</a>
-                 </div>
+                </div>
             </div>
             
             <a href="/about-us" class="nav-link">Về chúng tôi</a>
@@ -135,7 +142,8 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image">
                 </a>
                 <p class="footer-description">
-                    Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những gợi ý để bạn tự khám phá và quyết định con đường của mình.
+                    Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những 
+                    gợi ý để bạn tự khám phá và quyết định con đường của mình.
                 </p>
                 <div class="footer-social-links">
                     <a href="#" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
@@ -190,10 +198,11 @@ const ogImageURL = new URL(ogImage, Astro.site);
             <h2>Lịch sử trải bài</h2>
         </div>
         <div id="history-list-wrapper" class="modal-scroll-wrapper">
-            <div id="history-list">
-                </div>
+            <div id="history-list"></div>
         </div>
     </div>
+    
+    {showChatbot && <OracleChat />}
 
     <script src="/common.js" defer></script>
     
@@ -215,7 +224,6 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
             // 2. Duyệt tất cả các thẻ <a> trong menu
             const navLinks = document.querySelectorAll('a.nav-link');
-            
             navLinks.forEach(link => {
                 const href = link.getAttribute('href');
 
