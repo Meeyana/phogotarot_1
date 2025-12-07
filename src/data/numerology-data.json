@@ -491,7 +491,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn phát huy tốt nhất năng lực khi được làm việc độc lập hoặc nắm quyền quyết định. Môi trường cạnh tranh, áp lực cao chính là nơi tôi luyện bạn thành tài.<br><strong>Nghề nghiệp phù hợp:</strong> CEO, Chủ doanh nghiệp, Khởi nghiệp (Start-up), Quản lý cấp cao, Chỉ huy quân sự, hoặc bất kỳ công việc nào cho phép bạn tự do sáng tạo và điều hành.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn phát huy tốt nhất năng lực khi được làm việc độc lập hoặc nắm quyền quyết định. Môi trường cạnh tranh, áp lực cao chính là nơi tôi luyện bạn thành tài.<br><br><strong>Nghề nghiệp phù hợp:</strong> CEO, Chủ doanh nghiệp, Khởi nghiệp (Start-up), Quản lý cấp cao, Chỉ huy quân sự, hoặc bất kỳ công việc nào cho phép bạn tự do sáng tạo và điều hành.</p>"
         }
       ]
     },
@@ -504,7 +504,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn có năng khiếu thiên bẩm trong việc làm việc nhóm, lắng nghe và phân tích chi tiết. Bạn là \"cánh tay phải\" đắc lực mà mọi nhà lãnh đạo đều khao khát.<br><strong>Nghề nghiệp phù hợp:</strong> Ngoại giao, Tâm lý học, Thư ký/Trợ lý cấp cao, Cố vấn, Chăm sóc khách hàng, Y tá, hoặc các công việc liên quan đến nghệ thuật cần sự tinh tế.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn có năng khiếu thiên bẩm trong việc làm việc nhóm, lắng nghe và phân tích chi tiết. Bạn là \"cánh tay phải\" đắc lực mà mọi nhà lãnh đạo đều khao khát.<br><br><strong>Nghề nghiệp phù hợp:</strong> Ngoại giao, Tâm lý học, Thư ký/Trợ lý cấp cao, Cố vấn, Chăm sóc khách hàng, Y tá, hoặc các công việc liên quan đến nghệ thuật cần sự tinh tế.</p>"
         }
       ]
     },
@@ -517,7 +517,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn cần một sân khấu để biểu diễn tài năng. Công việc của bạn phải có yếu tố sáng tạo, giao tiếp và không bị gò bó bởi các quy tắc cứng nhắc.<br><strong>Nghề nghiệp phù hợp:</strong> Diễn giả, MC, Ca sĩ/Diễn viên, Nhà văn/Biên kịch, Marketing, Truyền thông, Thiết kế, hoặc Bán hàng (nhờ khả năng thuyết phục tuyệt vời).</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn cần một sân khấu để biểu diễn tài năng. Công việc của bạn phải có yếu tố sáng tạo, giao tiếp và không bị gò bó bởi các quy tắc cứng nhắc.<br><br><strong>Nghề nghiệp phù hợp:</strong> Diễn giả, MC, Ca sĩ/Diễn viên, Nhà văn/Biên kịch, Marketing, Truyền thông, Thiết kế, hoặc Bán hàng (nhờ khả năng thuyết phục tuyệt vời).</p>"
         }
       ]
     },
@@ -530,7 +530,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn làm việc hiệu quả nhất trong môi trường có quy trình rõ ràng, đòi hỏi sự chính xác cao và tính kỷ luật. Bạn là bậc thầy của việc tổ chức và quản lý rủi ro.<br><strong>Nghề nghiệp phù hợp:</strong> Kỹ sư, Kiến trúc sư, Kế toán/Kiểm toán, Quản lý dự án, Luật sư, Ngân hàng, hoặc Xây dựng.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn làm việc hiệu quả nhất trong môi trường có quy trình rõ ràng, đòi hỏi sự chính xác cao và tính kỷ luật. Bạn là bậc thầy của việc tổ chức và quản lý rủi ro.<br><br><strong>Nghề nghiệp phù hợp:</strong> Kỹ sư, Kiến trúc sư, Kế toán/Kiểm toán, Quản lý dự án, Luật sư, Ngân hàng, hoặc Xây dựng.</p>"
         }
       ]
     },
@@ -543,7 +543,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sẽ chết mòn trong môi trường văn phòng 8 tiếng lặp lại. Bạn cần công việc cho phép đi lại, giao tiếp rộng rãi và liên tục có thử thách mới.<br><strong>Nghề nghiệp phù hợp:</strong> Sales/Kinh doanh, Hướng dẫn viên du lịch, Tiếp viên hàng không, Phóng viên, PR/Quan hệ công chúng, hoặc Nhà đầu tư mạo hiểm.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sẽ chết mòn trong môi trường văn phòng 8 tiếng lặp lại. Bạn cần công việc cho phép đi lại, giao tiếp rộng rãi và liên tục có thử thách mới.<br><br><strong>Nghề nghiệp phù hợp:</strong> Sales/Kinh doanh, Hướng dẫn viên du lịch, Tiếp viên hàng không, Phóng viên, PR/Quan hệ công chúng, hoặc Nhà đầu tư mạo hiểm.</p>"
         }
       ]
     },
@@ -556,7 +556,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn thành công rực rỡ trong các lĩnh vực liên quan đến con người, giáo dục và cái đẹp. Bạn làm việc bằng trái tim và tinh thần trách nhiệm cao độ.<br><strong>Nghề nghiệp phù hợp:</strong> Giáo viên, Bác sĩ/Y tá, Chuyên gia tâm lý, Trang trí nội thất, Đầu bếp, Quản lý nhân sự, hoặc các hoạt động công tác xã hội.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn thành công rực rỡ trong các lĩnh vực liên quan đến con người, giáo dục và cái đẹp. Bạn làm việc bằng trái tim và tinh thần trách nhiệm cao độ.<br><br><strong>Nghề nghiệp phù hợp:</strong> Giáo viên, Bác sĩ/Y tá, Chuyên gia tâm lý, Trang trí nội thất, Đầu bếp, Quản lý nhân sự, hoặc các hoạt động công tác xã hội.</p>"
         }
       ]
     },
@@ -569,7 +569,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn không hợp với những công việc hời hợt hay chỉ chạy theo doanh số. Bạn cần môi trường cho phép nghiên cứu sâu, làm việc độc lập và đòi hỏi chất xám cao.<br><strong>Nghề nghiệp phù hợp:</strong> Nhà khoa học/Nghiên cứu, Lập trình viên/IT, Chuyên gia phân tích dữ liệu, Bác sĩ tâm lý, Nhà triết học, hoặc các lĩnh vực liên quan đến Tôn giáo/Tâm linh.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn không hợp với những công việc hời hợt hay chỉ chạy theo doanh số. Bạn cần môi trường cho phép nghiên cứu sâu, làm việc độc lập và đòi hỏi chất xám cao.<br><br><strong>Nghề nghiệp phù hợp:</strong> Nhà khoa học/Nghiên cứu, Lập trình viên/IT, Chuyên gia phân tích dữ liệu, Bác sĩ tâm lý, Nhà triết học, hoặc các lĩnh vực liên quan đến Tôn giáo/Tâm linh.</p>"
         }
       ]
     },
@@ -582,7 +582,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sinh ra để làm chủ và điều hành. Bạn chịu áp lực giỏi và có tư duy chiến lược xuất sắc. Làm nhân viên bình thường sẽ khiến bạn cảm thấy tù túng.<br><strong>Nghề nghiệp phù hợp:</strong> CEO/Giám đốc điều hành, Nhà đầu tư tài chính, Bất động sản, Ngân hàng, Chủ doanh nghiệp lớn, hoặc Chính trị gia.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sinh ra để làm chủ và điều hành. Bạn chịu áp lực giỏi và có tư duy chiến lược xuất sắc. Làm nhân viên bình thường sẽ khiến bạn cảm thấy tù túng.<br><br><strong>Nghề nghiệp phù hợp:</strong> CEO/Giám đốc điều hành, Nhà đầu tư tài chính, Bất động sản, Ngân hàng, Chủ doanh nghiệp lớn, hoặc Chính trị gia.</p>"
         }
       ]
     },
@@ -595,7 +595,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn cần những công việc mang ý nghĩa xã hội sâu sắc, nơi bạn có thể truyền cảm hứng và chữa lành.<br><strong>Nghề nghiệp phù hợp:</strong> Lãnh đạo tổ chức phi chính phủ (NGO), Bác sĩ/Dược sĩ, Giáo viên, Nghệ sĩ (dùng nghệ thuật để truyền tải thông điệp), Luật sư nhân quyền, hoặc Nhà hoạt động xã hội.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn cần những công việc mang ý nghĩa xã hội sâu sắc, nơi bạn có thể truyền cảm hứng và chữa lành.<br><br><strong>Nghề nghiệp phù hợp:</strong> Lãnh đạo tổ chức phi chính phủ (NGO), Bác sĩ/Dược sĩ, Giáo viên, Nghệ sĩ (dùng nghệ thuật để truyền tải thông điệp), Luật sư nhân quyền, hoặc Nhà hoạt động xã hội.</p>"
         }
       ]
     },
@@ -608,7 +608,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sở hữu trực giác siêu phàm và khả năng thấu cảm. Bạn thành công trong các lĩnh vực đòi hỏi sự tinh tế và tầm nhìn xa.<br><strong>Nghề nghiệp phù hợp:</strong> Diễn giả truyền cảm hứng, Nhà lãnh đạo tôn giáo/tâm linh, Nhà thiết kế thời trang/nghệ thuật (tầm cỡ visionary), Nhà tâm lý trị liệu, hoặc Nhà ngoại giao văn hóa.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn sở hữu trực giác siêu phàm và khả năng thấu cảm. Bạn thành công trong các lĩnh vực đòi hỏi sự tinh tế và tầm nhìn xa.<br><br><strong>Nghề nghiệp phù hợp:</strong> Diễn giả truyền cảm hứng, Nhà lãnh đạo tôn giáo/tâm linh, Nhà thiết kế thời trang/nghệ thuật (tầm cỡ visionary), Nhà tâm lý trị liệu, hoặc Nhà ngoại giao văn hóa.</p>"
         }
       ]
     },
@@ -621,7 +621,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn không làm việc nhỏ. Bạn phù hợp với các dự án quy mô lớn, mang tính toàn cầu.<br><strong>Nghề nghiệp phù hợp:</strong> Lãnh đạo tập đoàn đa quốc gia, Kiến trúc sư quy hoạch đô thị, Chính trị gia tầm cỡ quốc tế, Nhà cải cách giáo dục/y tế, hoặc Chuyên gia xây dựng hệ thống toàn cầu.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Bạn không làm việc nhỏ. Bạn phù hợp với các dự án quy mô lớn, mang tính toàn cầu.<br><br><strong>Nghề nghiệp phù hợp:</strong> Lãnh đạo tập đoàn đa quốc gia, Kiến trúc sư quy hoạch đô thị, Chính trị gia tầm cỡ quốc tế, Nhà cải cách giáo dục/y tế, hoặc Chuyên gia xây dựng hệ thống toàn cầu.</p>"
         }
       ]
     },
@@ -634,7 +634,7 @@
         },
         {
           "type": "text",
-          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Sự nghiệp của bạn thường không đặt nặng vấn đề tiền bạc mà tập trung vào giá trị cống hiến. Bạn là \"người mẹ\" của cộng đồng.<br><strong>Nghề nghiệp phù hợp:</strong> Bác sĩ/Y tá (đặc biệt trong các tổ chức thiện nguyện), Chuyên gia trị liệu tâm lý, Cố vấn tinh thần, Nghệ sĩ chữa lành, hoặc Người đứng đầu các tổ chức từ thiện lớn.</p>"
+          "content": "<p><strong>Thiên hướng sự nghiệp:</strong><br>Sự nghiệp của bạn thường không đặt nặng vấn đề tiền bạc mà tập trung vào giá trị cống hiến. Bạn là \"người mẹ\" của cộng đồng.<br><br><strong>Nghề nghiệp phù hợp:</strong> Bác sĩ/Y tá (đặc biệt trong các tổ chức thiện nguyện), Chuyên gia trị liệu tâm lý, Cố vấn tinh thần, Nghệ sĩ chữa lành, hoặc Người đứng đầu các tổ chức từ thiện lớn.</p>"
         }
       ]
     }

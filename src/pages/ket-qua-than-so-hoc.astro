@@ -439,20 +439,20 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
                         <div class="chart-column">
                             <div class="p-6 h-full rich-text-content">
-                                <h4 class="text-center text-gold mb-4 text-lg uppercase font-bold">Nhóm Tính Cách Bản Ngã</h4>
+                                <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
                                 <div class="chart-container-responsive glass-card" style="position: relative; height: 400px;">
                                     <canvas id="personalityChart"></canvas>
                                 </div>
-                                <div id="personality-interpretation" class="mt-6 text-sm text-gray-300 space-y-2"></div>
+                                <div id="personality-interpretation" class="mt-6"></div>
                             </div>
                         </div>
                         <div class="chart-column">
                             <div class="p-6 h-full rich-text-content">
-                                <h4 class="text-center text-gold mb-4 text-lg uppercase font-bold">Tỉ Lệ Nhóm Ngành Phù Hợp</h4>
+                                <h3 class="section-subtitle">Tỉ Lệ Nhóm Ngành Phù Hợp</h3>
                                 <div class="chart-container-responsive glass-card" style="position: relative; height: 400px;">
                                     <canvas id="careerChart"></canvas>
                                 </div>
-                                <div id="career-interpretation" class="mt-6 text-sm text-gray-300 space-y-2"></div>
+                                <div id="career-interpretation" class="mt-6"></div>
                             </div>
                         </div>
                     </div>
@@ -486,7 +486,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             <canvas id="personalYearChart"></canvas>
                         </div>
                         <div class="current-year-note mt-4 text-center" style="margin-top: 1rem;">
-                            <span class="icon text-gold">✦</span> Năm hiện tại: <strong id="current-year-display" class="text-gold text-xl">...</strong>
+                            <span class="icon text-gold">✦</span> Năm hiện tại của bạn: Số <strong id="current-year-display" class="text-gold text-xl">...</strong>
                         </div>
                     </div>
                 </div>
@@ -649,25 +649,33 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 renderAllInterpretations();
             };
 
-            // [HELPER] Hàm chuyển đổi Blocks thành HTML string an toàn (Fix lỗi replace undefined)
+            // [CẬP NHẬT] Hàm chuyển đổi Blocks thành HTML string (Đã thêm xử lý Title)
             const safeBlocksToHTML = (blocks) => {
                 if (!blocks || !Array.isArray(blocks)) return '';
+                
                 return blocks.map(b => {
-                    // Xử lý List
+                    let blockHTML = '';
+
+                    // 1. [MỚI] Hiển thị Title nếu có (Vd: Về Công việc, Về Tài chính...)
+                    if (b.title) {
+                        // Style text-gold để nổi bật trên nền tối, thêm icon ✦ cho đồng bộ
+                        blockHTML += `<div class="font-bold text-[#F2C94C] mt-4 mb-2 text-base block-title">✦ ${b.title}</div>`;
+                    }
+
+                    // 2. Xử lý nội dung theo từng loại (Giữ nguyên logic cũ)
                     if (b.type === 'list' && b.items) {
-                        return `<ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
-                    }
-                    // Xử lý Quote
-                    if (b.type === 'quote') {
-                        return `<blockquote class="border-l-2 border-gold pl-4 italic opacity-80 my-2">${b.content || ''}</blockquote>`;
-                    }
-                    // Xử lý Text (Mặc định)
-                    if (b.content) {
-                        // Loại bỏ thẻ p thừa nếu có sẵn trong data để tránh lồng thẻ p trong p
+                        blockHTML += `<ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
+                    } 
+                    else if (b.type === 'quote') {
+                        blockHTML += `<blockquote class="border-l-2 border-gold pl-4 italic opacity-80 my-2 bg-white/5 p-2 rounded-r">${b.content || ''}</blockquote>`;
+                    } 
+                    else if (b.content) {
+                        // Loại bỏ thẻ p thừa nếu có sẵn trong data
                         const cleanContent = b.content.replace(/<p>|<\/p>/g, '');
-                        return `<p class="mb-2">${cleanContent}</p>`;
+                        blockHTML += `<p class="mb-2 text-justify">${cleanContent}</p>`;
                     }
-                    return '';
+                    
+                    return blockHTML;
                 }).join('');
             };
 
@@ -814,53 +822,89 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 }
             };
 
+            // [CẬP NHẬT] Render Charts Interpretations với Read More Wrapper
             const renderNewChartsInterpretations = () => {
                 if (!globalNumerologyData) return;
+
+                // --- 1. LUẬN GIẢI TÍNH CÁCH (PERSONALITY) ---
                 const pData = globalNumerologyData['personalityChart'] || {};
                 if (personalityContainer && pData.meanings) {
                     personalityContainer.innerHTML = '';
-                    if(pData.intro) {
-                        personalityContainer.insertAdjacentHTML('beforeend', `<p class="mb-4 italic text-gold">${pData.intro}</p>`);
-                    }
+                    let combinedHTML = '';
+
+                    // Thêm đoạn Intro đầu tiên (nếu có)
+                    //if(pData.intro) {
+                        //combinedHTML += `<div class="mb-4 italic text-gold border-b border-white/10 pb-2">${pData.intro}</div>`;
+                    //}
+
+                    // Lấy 2 tính cách nổi bật nhất
                     const topTraits = [...personalityStats].sort((a,b) => b.percent - a.percent).slice(0, 2);
+                    
                     topTraits.forEach(t => {
                         const meaningData = pData.meanings[t.id]; 
                         if (meaningData) {
-                            const traitTitle = `Tính cách nổi bật: ${t.label}`;
-                            const traitWrapper = document.createElement('div');
-                            traitWrapper.className = "mb-4 p-3 bg-white/5 rounded border border-white/10";
-                            traitWrapper.innerHTML = `<h4 class="font-bold text-gold mb-2">${traitTitle}</h4>`;
-                            if (meaningData.blocks) {
-                                processBlocks(traitWrapper, meaningData.blocks, `trait-${t.id}`);
-                            } else if (meaningData.content) {
-                                traitWrapper.insertAdjacentHTML('beforeend', `<div class="html-content text-sm">${meaningData.content}</div>`);
-                            }
-                            personalityContainer.appendChild(traitWrapper);
+                            // Sử dụng safeBlocksToHTML để lấy nội dung HTML an toàn
+                            const content = meaningData.blocks ? safeBlocksToHTML(meaningData.blocks) : (meaningData.content || '');
+                            
+                            combinedHTML += `
+                                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                                    <h5 class="text-gold font-bold text-lg mb-2">✦ Tính cách: ${t.label} (${t.percent}%)</h5>
+                                    <div class="text-sm opacity-90">${content}</div>
+                                </div>
+                            `;
                         }
                     });
+
+                    // Gọi hàm tạo Block chuẩn (sẽ tự động có Read More nếu dài)
+                    if (combinedHTML) {
+                        createInterpretationBlock(
+                            personalityContainer, 
+                            { 
+                                title: "Chi Tiết Luận Giải Tính Cách", // Tiêu đề Block
+                                content: combinedHTML 
+                            }, 
+                            null, 
+                            'personality-combined-box' // Unique ID
+                        );
+                    }
                 }
 
+                // --- 2. LUẬN GIẢI NGHỀ NGHIỆP (CAREER) ---
                 const cData = globalNumerologyData['careerChart'] || {};
                 if (careerContainer && cData.meanings) {
                     careerContainer.innerHTML = '';
-                    if(cData.intro) {
-                        careerContainer.insertAdjacentHTML('beforeend', `<p class="mb-4 italic text-blue-300">${cData.intro}</p>`);
-                    }
-                    const topCareer = careerStats[0];
+                    let combinedHTML = '';
+
+                    //if(cData.intro) {
+                        //combinedHTML += `<div class="mb-4 italic text-blue-300 border-b border-white/10 pb-2">${cData.intro}</div>`;
+                    //}
+
+                    const topCareer = careerStats[0]; // Lấy ngành cao nhất
                     if (topCareer) {
                         const meaningData = cData.meanings[topCareer.id];
                         if (meaningData) {
-                             const careerTitle = `Ngành nghề phù hợp nhất: ${topCareer.label} (${topCareer.percent}%)`;
-                             const careerWrapper = document.createElement('div');
-                             careerWrapper.className = "p-4 bg-blue-900/30 rounded border border-blue-500/30";
-                             careerWrapper.innerHTML = `<h4 class="font-bold text-blue-200 mb-2">${careerTitle}</h4>`;
-                             if (meaningData.blocks) {
-                                 processBlocks(careerWrapper, meaningData.blocks, `career-${topCareer.id}`);
-                             } else if (meaningData.content) {
-                                 careerWrapper.insertAdjacentHTML('beforeend', `<div class="html-content text-sm">${meaningData.content}</div>`);
-                             }
-                             careerContainer.appendChild(careerWrapper);
+                             const content = meaningData.blocks ? safeBlocksToHTML(meaningData.blocks) : (meaningData.content || '');
+                             
+                             combinedHTML += `
+                                <div class="mb-4">
+                                     <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: ${topCareer.label} (${topCareer.percent}%)</h5>
+                                     <div class="text-sm opacity-90">${content}</div>
+                                </div>
+                             `;
                         }
+                    }
+
+                    // Gọi hàm tạo Block chuẩn
+                    if (combinedHTML) {
+                        createInterpretationBlock(
+                            careerContainer,
+                            {
+                                title: "Chi Tiết Định Hướng Nghề Nghiệp",
+                                content: combinedHTML
+                            },
+                            null,
+                            'career-combined-box'
+                        );
                     }
                 }
             };
@@ -1141,7 +1185,17 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
             const renderLifePath = () => {
                 if (!lifePathContainer || !globalNumerologyData) return;
-                lifePathContainer.innerHTML = '';
+
+                        
+                const headerHtml = `
+                    <div class="section-header text-center mb-8">
+                        <h3 class="section-subtitle">Số chủ đạo của bạn: Số ${lifePath}</h3>
+                    </div>
+                `;
+
+
+                lifePathContainer.innerHTML = headerHtml;
+              
                 
                 const lpData = globalNumerologyData['lifePath'] || {};
                 const data = lpData[lifePath];
@@ -1295,54 +1349,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
              margin: 4rem auto; 
              width: 80%; 
              max-width: 800px;
-        }
-
-        /* ========================================= */
-        /* [2] RICH TEXT STYLING (JSON Content)      */
-        /* ========================================= */
-        .rich-text-content :global(p),
-        .html-content :global(p), 
-        :global(.content-block.text-block) :global(p) {
-            margin-bottom: 1rem;
-            line-height: 1.7;
-            color: #e0e0e0;
-            font-size: 1.05rem;
-        }
-
-        .rich-text-content :global(ul),
-        .html-content :global(ul),
-        .content-block.list-block :global(ul) {
-            list-style: none;
-            padding-left: 0.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .rich-text-content :global(li),
-        .html-content :global(li),
-        .content-block.list-block :global(li) {
-            position: relative;
-            padding-left: 2rem;
-            margin-bottom: 0.8rem;
-            line-height: 1.6;
-            color: #d1d5db;
-        }
-
-        .rich-text-content :global(li)::before,
-        .html-content :global(li)::before,
-        .content-block.list-block :global(li)::before {
-            content: '✦';
-            position: absolute;
-            left: 0;
-            top: 2px; 
-            color: var(--gold-color, #F2C94C);
-            font-size: 0.9rem;
-            text-shadow: 0 0 5px rgba(242, 201, 76, 0.5);
-        }
-
-        .rich-text-content :global(strong),
-        .html-content :global(strong) {
-            color: #fff;
-            font-weight: 600;
         }
 
         /* ========================================= */
@@ -1730,6 +1736,66 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
         #careerChart,#personalityChart{
             padding: 1rem;
+        }
+
+        /* 1. Style cho thẻ P */
+        .rich-text-content p,
+        .html-content p, 
+        .content-block.text-block p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #e0e0e0;
+            font-size: 1.05rem;
+        }
+
+        /* 2. Style cho thẻ UL (Danh sách) */
+        .rich-text-content ul,
+        .html-content ul,
+        .content-block.list-block ul {
+            list-style: none !important; /* Bắt buộc bỏ dấu chấm mặc định */
+            padding-left: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* 3. Style cho thẻ LI (Từng dòng) */
+        .rich-text-content li,
+        .html-content li,
+        .content-block.list-block li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+            color: #d1d5db;
+        }
+
+        /* 4. Tạo ngôi sao vàng (✦) */
+        .rich-text-content li::before,
+        .html-content li::before,
+        .content-block.list-block li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            top: 2px; 
+            color: #F2C94C; /* Màu vàng Gold cứng */
+            font-size: 0.9rem;
+            text-shadow: 0 0 5px rgba(242, 201, 76, 0.5);
+        }
+
+        /* 5. Style cho thẻ Strong/B (In đậm) */
+        .rich-text-content strong,
+        .html-content strong,
+        .rich-text-content b,
+        .html-content b {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        blockquote {
+            font-style: italic;
+            line-height: 1.5;
+            padding: 1rem;
+            border-radius: 10px;
+            border: 1px solid rgba(142, 186, 255, 0.3);
         }
     </style>
 </BaseLayout>
