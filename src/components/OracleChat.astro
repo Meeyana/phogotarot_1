@@ -3,7 +3,7 @@
 ---
 
 <div id="oracle-chat-widget">
-  <!-- NÚT MỞ CHAT: Icon tin nhắn đơn giản -->
+  <!-- NÚT MỞ CHAT -->
   <button id="oracle-toggle-btn" class="oracle-btn" aria-label="Trò chuyện với Joana">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
@@ -12,11 +12,10 @@
 
   <!-- Khung Chat -->
   <div id="oracle-chat-box" class="chat-container hidden">
-    <!-- Header: Có Avatar Joana -->
+    <!-- Header -->
     <div class="chat-header">
       <div class="header-info">
         <div class="header-avatar">
-             <!-- Ảnh đại diện Joana -->
              <img src="/images/witcher-bot.jpg" alt="Joana Avatar" onerror="this.src='https://ui-avatars.com/api/?name=Joana&background=F2C94C&color=0b132b&size=128'"/>
         </div>
         <div class="header-text">
@@ -25,8 +24,7 @@
         </div>
       </div>
       <div style="display: flex; gap: 10px; align-items: center;">
-        <!-- Thêm nút xóa lịch sử để tiện test -->
-        <button id="clear-history-btn" class="icon-btn" title="Xóa lịch sử trò chuyện">
+        <button id="clear-history-btn" class="icon-btn" title="Xóa lịch sử">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
         </button>
         <button id="close-chat" class="close-btn">&times;</button>
@@ -35,7 +33,7 @@
 
     <!-- Nội dung tin nhắn -->
     <div id="chat-messages" class="chat-messages">
-      <!-- Tin nhắn chào mừng sẽ được JS xử lý logic hiển thị -->
+      <!-- Nội dung sẽ được JS load vào -->
     </div>
 
     <!-- Input Area -->
@@ -67,23 +65,17 @@
     font-family: 'Quicksand', sans-serif;
   }
 
-  /* --- NÚT TRÒN NGOÀI CÙNG (ICON) --- */
+  /* --- NÚT TRÒN --- */
   .oracle-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    padding: 0;
+    width: 60px; height: 60px;
+    border-radius: 50%; padding: 0;
     border: 2px solid var(--gold-primary);
-    background: var(--bg-dark);
-    color: var(--gold-primary);
+    background: var(--bg-dark); color: var(--gold-primary);
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
   }
-
   .oracle-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(242, 201, 76, 0.4);
@@ -92,50 +84,40 @@
 
   /* --- CHAT BOX CONTAINER --- */
   .chat-container {
-    width: 340px;
-    height: 480px;
+    width: 340px; height: 480px;
     background: var(--bg-panel);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 16px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    display: flex; flex-direction: column; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     
-    position: absolute;
-    bottom: 80px;
-    right: 0;
+    position: absolute; bottom: 80px; right: 0;
     transform-origin: bottom right;
   }
 
   .chat-container.hidden {
-    opacity: 0;
-    transform: scale(0.95) translateY(20px);
-    pointer-events: none;
-    visibility: hidden;
+    opacity: 0; transform: scale(0.95) translateY(20px);
+    pointer-events: none; visibility: hidden;
   }
 
   /* --- HEADER --- */
   .chat-header {
     background: rgba(255, 255, 255, 0.03);
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    padding: 12px 16px; display: flex;
+    justify-content: space-between; align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    /* Ngăn header bị co lại trên mobile */
+    flex-shrink: 0; 
   }
   
   .header-info { display: flex; align-items: center; gap: 12px; }
-  
   .header-avatar {
-      width: 36px; height: 36px;
-      border-radius: 50%; overflow: hidden;
+      width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
       border: 1px solid rgba(242, 201, 76, 0.5);
   }
   .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
   .header-text { display: flex; flex-direction: column; justify-content: center; }
   .oracle-name { color: var(--text-white); font-weight: 700; font-size: 1rem; line-height: 1.2; }
   .oracle-status { font-size: 0.75rem; color: var(--gold-primary); font-weight: 500; }
@@ -152,7 +134,7 @@
     cursor: pointer; padding: 5px; display: flex;
     transition: color 0.2s;
   }
-  .icon-btn:hover { color: #ff6b6b; } /* Màu đỏ khi hover nút xóa */
+  .icon-btn:hover { color: #ff6b6b; }
 
   /* --- MESSAGES AREA --- */
   .chat-messages {
@@ -161,39 +143,28 @@
     display: flex; flex-direction: column; gap: 12px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.2) transparent;
+    
+    /* [FIX QUAN TRỌNG] Ngăn scroll chain lên body */
+    overscroll-behavior: contain; 
+    -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
   }
   .chat-messages::-webkit-scrollbar { width: 6px; }
   .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
 
-  /* Tin nhắn chung */
+  /* Style tin nhắn */
   .message {
     max-width: 80%; display: flex; flex-direction: column;
     animation: fadeIn 0.3s ease;
   }
-  
   .message-content {
-    padding: 10px 14px; 
-    border-radius: 14px;
+    padding: 10px 14px; border-radius: 14px;
     font-size: 0.95rem; line-height: 1.5; word-wrap: break-word;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-
-  /* Tin nhắn Bot (Bên trái) */
   .bot-message { align-self: flex-start; }
-  .bot-message .message-content {
-    background: rgba(255, 255, 255, 0.1);
-    color: #eee;
-    border-bottom-left-radius: 2px;
-  }
-
-  /* Tin nhắn User (Bên phải) */
+  .bot-message .message-content { background: rgba(255, 255, 255, 0.1); color: #eee; border-bottom-left-radius: 2px; }
   .user-message { align-self: flex-end; }
-  .user-message .message-content {
-    background: var(--gold-primary);
-    color: var(--bg-dark);
-    border-bottom-right-radius: 2px;
-    font-weight: 600;
-  }
+  .user-message .message-content { background: var(--gold-primary); color: var(--bg-dark); border-bottom-right-radius: 2px; font-weight: 600; }
 
   .typing-indicator {
     font-size: 0.8rem; color: #888;
@@ -206,6 +177,7 @@
     padding: 12px; background: rgba(0,0,0,0.2);
     display: flex; gap: 8px; align-items: flex-end;
     border-top: 1px solid rgba(255,255,255,0.05);
+    flex-shrink: 0; /* Không cho phép bị co lại */
   }
   
   textarea {
@@ -233,10 +205,14 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  /* --- MOBILE FULLSCREEN & SAFARI FIXES --- */
   @media (max-width: 600px) {
     .chat-container {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh; height: 100dvh;
+      position: fixed; top: 0; left: 0; bottom: 0;
+      /* Dùng width 100% thay vì 100vw để tránh thanh scrollbar làm phình trang */
+      width: 100%; 
+      height: 100%; 
+      height: 100dvh; /* Dynamic viewport height cho mobile */
       border-radius: 0; margin: 0; z-index: 10000;
       transform: none;
     }
@@ -255,15 +231,19 @@
       to { transform: translateY(0); }
     }
 
-    .chat-input-area { padding: 15px; }
+    .chat-input-area { padding: 15px; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
     .close-btn { padding: 10px; font-size: 28px; }
+
+    /* [FIX SAFARI ZOOM] Bắt buộc font-size >= 16px */
+    textarea {
+        font-size: 16px !important;
+    }
   }
 </style>
 
 <script>
   // --- CONFIG ---
-  // Đã cập nhật Webhook của bạn
-  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/1edf60a9-32a8-40cf-b9a7-a067487868fd';
+  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook-test/1edf60a9-32a8-40cf-b9a7-a067487868fd';
   const HISTORY_KEY = 'phogo_tarot_chat_history';
   const SESSION_KEY = 'phogo_tarot_session';
   
@@ -280,10 +260,8 @@
   let isThinking = false;
   let isTyping = false; 
 
-  // --- HÀM KHỞI TẠO (CHẠY KHI LOAD TRANG) ---
   function initChat() {
     loadHistory();
-    // Nếu chưa có lịch sử, thêm câu chào mặc định
     if (messagesContainer.children.length === 0) {
         addMessage("Chào bạn nè 👋 Mình là Joana. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
     }
@@ -298,7 +276,6 @@
     return sessionId;
   }
 
-  // --- QUẢN LÝ LỊCH SỬ CHAT (LOCAL STORAGE) ---
   function saveToHistory(text, sender) {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
     history.push({ text, sender, timestamp: new Date().toISOString() });
@@ -307,9 +284,9 @@
 
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-    messagesContainer.innerHTML = ''; // Xóa sạch cũ trước khi load
+    messagesContainer.innerHTML = '';
     history.forEach(msg => {
-        addMessage(msg.text, msg.sender, false, false); // false, false = không animate, không lưu lại lần nữa
+        addMessage(msg.text, msg.sender, false, false);
     });
     scrollToBottom();
   }
@@ -317,20 +294,28 @@
   function clearHistory() {
     if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử trò chuyện không?')) {
         localStorage.removeItem(HISTORY_KEY);
-        localStorage.removeItem(SESSION_KEY); // Reset cả session ID nếu muốn reset triệt để
+        localStorage.removeItem(SESSION_KEY);
         messagesContainer.innerHTML = '';
         addMessage("Chào bạn nè 👋 Mình là Joana. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
     }
   }
 
+  // --- LOGIC ĐÓNG MỞ CHAT (CÓ KHÓA SCROLL BODY) ---
   function toggleChat() {
     isOpen = !isOpen;
     if (isOpen) {
       chatBox.classList.remove('hidden');
       userInput.focus();
       scrollToBottom();
+      
+      // [FIX SCROLL BLEEDING] Khóa scroll của trang nền khi mở chat trên mobile
+      if (window.innerWidth <= 600) {
+          document.body.style.overflow = 'hidden';
+      }
     } else {
       chatBox.classList.add('hidden');
+      // [FIX SCROLL BLEEDING] Mở lại scroll cho trang nền
+      document.body.style.overflow = '';
     }
   }
 
@@ -340,8 +325,6 @@
     }
   }
 
-  // --- HÀM ADD MESSAGE ---
-  // Tham số save: Có lưu vào LocalStorage không? (Mặc định là có)
   function addMessage(text, sender, animate = false, save = true) {
     if (!messagesContainer) return;
 
@@ -359,7 +342,6 @@
     messagesContainer.appendChild(msgDiv);
 
     if (animate && sender === 'bot') {
-        // --- HIỆU ỨNG GÕ CHỮ ---
         isTyping = true;
         let index = 0;
         const speed = 15;
@@ -381,7 +363,6 @@
         }
         typeText();
     } else {
-        // Hiện ngay lập tức
         contentDiv.innerHTML = text.replace(/\n/g, '<br>');
         scrollToBottom();
     }
@@ -401,23 +382,19 @@
     if (typingDiv) typingDiv.remove();
   }
 
-  // --- XỬ LÝ GỬI TIN ---
   async function handleSend() {
     const text = userInput.value.trim();
     if (!text || isThinking || isTyping) return;
 
-    // 1. User (Lưu vào history: true)
     addMessage(text, 'user', false, true);
     userInput.value = '';
     
-    // 2. Loading
     isThinking = true;
     addTypingIndicator();
 
     const sessionId = getSessionId();
     
     try {
-      // 3. Gọi Webhook
       const response = await fetch(N8N_WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -435,19 +412,17 @@
       
       const botReply = data.output || data.text || "Joana đang bận xíu, thử lại sau nhé!";
       
-      // 4. Bot trả lời (Animate: true, Lưu history: true)
       addMessage(botReply, 'bot', true, true);
 
     } catch (error) {
       console.error('Error:', error);
       removeTypingIndicator();
-      addMessage("Mạng có vấn đề rồi, bạn thử lại sau nha!", 'bot', false, false); // Lỗi mạng thì không cần lưu
+      addMessage("Mạng có vấn đề rồi, bạn thử lại sau nha!", 'bot', false, false);
     } finally {
       isThinking = false;
     }
   }
 
-  // --- EVENTS ---
   toggleBtn.addEventListener('click', toggleChat);
   closeBtn.addEventListener('click', toggleChat);
   clearBtn.addEventListener('click', clearHistory);
@@ -459,6 +434,5 @@
     }
   });
 
-  // Khởi chạy khi load trang
   initChat();
 </script>
