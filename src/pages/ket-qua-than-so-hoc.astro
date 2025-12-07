@@ -277,7 +277,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <h3 class="section-subtitle">Biểu Đồ Tên & Tổng Hợp</h3>
                         <p class="section-text opacity-70">Sự kết hợp giữa năng lực tự nhiên và cái tên của bạn</p>
                     </div>
-                    <div class="dual-charts-wrapper grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto">
+                    <div class="dual-charts-wrapper">
                         <div class="chart-column">
                             <div class="chart-card glass-card chart-container" id="name-grid-source">
                                 <h4 class="text-center text-gold mb-2 text-lg uppercase">Biểu Đồ Tên</h4>
@@ -522,6 +522,56 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 </div>
                 
             </div> </section> </main>
+    <div id="toc-container" class="toc-wrapper">
+        <button id="toc-toggle" class="toc-btn" aria-label="Mục lục">
+            <i class="fas fa-list-ol"></i>
+        </button>
+        
+        <nav id="toc-content" class="toc-dropdown">
+            <div class="toc-header-title">Mục Lục Báo Cáo</div>
+            <ul id="toc-list"></ul>
+        </nav>
+    </div>
+
+    <div class="cta-section-wrapper fade-in-up" style="margin-top: 6rem; margin-bottom: 4rem;">
+        <div class="cta-tarot-card">
+            <div class="cta-bg-glow"></div>
+            
+            <div class="cta-content-grid">
+                <div class="cta-text-col">
+                    <span class="cta-badge">✦ Thông Điệp Vũ Trụ Đang Chờ ✦</span>
+                    
+                    <h2 class="cta-title">
+                        BẠN ĐÃ CÓ <span class="text-outline">BẢN ĐỒ</span><br>
+                        HÃY TÌM <span class="text-highlight">KIM CHỈ NAM</span>
+                    </h2>
+                    
+                    <p class="cta-desc">
+                        Thần Số Học vừa cho bạn thấy bức tranh toàn cảnh cuộc đời. 
+                        Nhưng ngay lúc này, bạn đang băn khoăn điều gì? 
+                        Hãy để những lá bài <b>Tarot</b> giải mã năng lượng hiện tại và đưa ra lời khuyên cụ thể nhất cho bước đi tiếp theo của bạn.
+                    </p>
+
+                    <div class="cta-actions">
+                        <a href="/tarot" class="btn-tarot-primary">
+                            <i class="fas fa-hand-sparkles"></i> Rút Bài Tarot Ngay
+                        </a>
+                        <a href="/than-so-hoc" class="btn-tarot-secondary">
+                            <i class="fas fa-redo"></i> Tra cứu hồ sơ khác
+                        </a>
+                    </div>
+                </div>
+
+                <div class="cta-visual-col">
+                    <div class="cards-visual">
+                        <div class="card-icon card-1"><i class="fas fa-sun"></i></div>
+                        <div class="card-icon card-2"><i class="fas fa-moon"></i></div>
+                        <div class="card-icon card-3"><i class="fas fa-star"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script define:vars={{ 
         day, month, lifePath,
@@ -550,6 +600,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             }
             drawPersonalityChart();
             drawCareerChart();
+            setTimeout(initTOC, 1000);
         });
 
         // --- CÁC HÀM VẼ BIỂU ĐỒ (Giữ nguyên) ---
@@ -1112,7 +1163,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             };
 
 
-            // [CẬP NHẬT] Hàm Render Luận Giải Kim Tự Tháp
+            // [CẬP NHẬT] Hàm Render Luận Giải Kim Tự Tháp (Giao diện phân cấp rõ ràng)
             const renderPyramidInterpretations = () => {
                 const container = document.getElementById('pyramid-interpretations');
                 if (!container || !globalNumerologyData.pyramidData) return;
@@ -1120,7 +1171,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 container.innerHTML = '';
                 const pyData = globalNumerologyData.pyramidData;
 
-                // Dữ liệu cấu trúc 4 giai đoạn
                 const stages = [
                     { id: 1, label: "Giai đoạn 1 (Tuổi trẻ)", peak: pyramid.peaks.p1, chal: pyramid.challenges.c1, age: pyramid.ages.p1_text },
                     { id: 2, label: "Giai đoạn 2 (Trưởng thành)", peak: pyramid.peaks.p2, chal: pyramid.challenges.c2, age: pyramid.ages.p2_text },
@@ -1134,31 +1184,33 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     const peakData = pyData.peaks[stage.peak];
                     const chalData = pyData.challenges[stage.chal];
 
+                    // Dùng safeBlocksToHTML để lấy nội dung chuẩn
                     const peakContent = peakData && peakData.blocks ? safeBlocksToHTML(peakData.blocks) : '<p>Chưa có dữ liệu.</p>';
                     const chalContent = chalData && chalData.blocks ? safeBlocksToHTML(chalData.blocks) : '<p>Chưa có dữ liệu.</p>';
 
-                    // Lưu ý: Tôi đã bỏ class 'glass-card' ở div con để tránh bị lồng 2 lớp kính nhìn rối mắt
-                    // Thay vào đó dùng bg-white/5 để phân biệt các giai đoạn
                     combinedHTML += `
-                        <div class="pyramid-stage-block mb-8 p-4 rounded-lg bg-white/5 border border-white/10">
-                            <div class="stage-header flex flex-col md:flex-row justify-between items-baseline border-b border-white/10 pb-2 mb-4">
-                                <h4 class="text-lg text-gold font-bold uppercase">✦ ${stage.label}</h4>
-                                <span class="text-sm text-gray-400 italic">${stage.age}</span>
+                        <div class="pyramid-stage-block mb-10 p-6 rounded-xl bg-white/5 border border-white/10">
+                            
+                            <div class="stage-header flex flex-col md:flex-row justify-between items-end border-b border-white/20 pb-4 mb-6">
+                                <h4 class="text-2xl text-gold font-bold uppercase tracking-wide" style="text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);">
+                                    ✦ ${stage.label}
+                                </h4>
+                                <span class="text-base text-gray-300 italic mt-2 md:mt-0 opacity-80">${stage.age}</span>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div class="peak-col">
-                                    <h5 class="text-green-400 font-bold mb-2 text-md">
+                                    <h5 class="text-green-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
                                         <i class="fas fa-mountain"></i> Đỉnh cao số ${stage.peak}
                                     </h5>
-                                    <div class="text-sm opacity-90">${peakContent}</div>
+                                    <div class="text-sm opacity-90 text-justify">${peakContent}</div>
                                 </div>
 
                                 <div class="chal-col">
-                                    <h5 class="text-red-400 font-bold mb-2 text-md">
+                                    <h5 class="text-red-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
                                         <i class="fas fa-fire"></i> Thử thách số ${stage.chal}
                                     </h5>
-                                    <div class="text-sm opacity-90">${chalContent}</div>
+                                    <div class="text-sm opacity-90 text-justify">${chalContent}</div>
                                 </div>
                             </div>
                         </div>
@@ -1166,9 +1218,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                 });
 
                 if (combinedHTML) {
-                    // [QUAN TRỌNG] Sử dụng createInterpretationBlock để bọc lại
-                    // Hàm này sẽ tự động thêm class 'interpretation-content-body' 
-                    // giúp kích hoạt tính năng Read More khi nội dung quá dài.
                     createInterpretationBlock(
                         container, 
                         { 
@@ -1315,6 +1364,90 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
             initPageData();
         });
+
+        // [CẬP NHẬT] Hàm khởi tạo Mục Lục (Phân cấp H2/H3)
+    const initTOC = () => {
+        const tocList = document.getElementById('toc-list');
+        const tocToggle = document.getElementById('toc-toggle');
+        const tocContent = document.getElementById('toc-content');
+        
+        if (!tocList || !tocToggle) return;
+        
+        // Reset list để tránh bị duplicate nếu chạy lại
+        tocList.innerHTML = '';
+
+        // Quét các thẻ Heading
+        const headings = document.querySelectorAll('h2.head-outline, h3.section-subtitle');
+
+        headings.forEach((heading, index) => {
+            const text = heading.innerText.replace(/\n/g, ' ').trim();
+            if (!text) return;
+
+            if (!heading.id) {
+                heading.id = `section-toc-${index}`;
+            }
+
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `#${heading.id}`;
+            a.textContent = text;
+            
+            // [MỚI] Phân loại thẻ để thêm Class style
+            if (heading.tagName === 'H2') {
+                li.className = 'toc-h2'; // Class cho mục lớn (I, II, III...)
+            } else {
+                li.className = 'toc-h3'; // Class cho mục nhỏ
+            }
+            
+            // Xử lý click (Giữ nguyên logic fix cứng)
+            a.addEventListener('click', (e) => {
+                e.preventDefault();
+                tocContent.classList.remove('active');
+                
+                // Trả lại icon ban đầu
+                const icon = tocToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-list-ol');
+
+                const target = document.getElementById(heading.id);
+                if (target) {
+                    const headerOffset = 80;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            });
+
+            li.appendChild(a);
+            tocList.appendChild(li);
+        });
+
+        // Các sự kiện click toggle giữ nguyên
+        tocToggle.onclick = () => {
+            tocContent.classList.toggle('active');
+            const icon = tocToggle.querySelector('i');
+            if (tocContent.classList.contains('active')) {
+                icon.classList.remove('fa-list-ol');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-list-ol');
+            }
+        };
+
+        document.onclick = (e) => {
+            if (!tocContent.contains(e.target) && !tocToggle.contains(e.target)) {
+                tocContent.classList.remove('active');
+                const icon = tocToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-list-ol');
+            }
+        };
+    };
     </script>
 
     <style>
@@ -1550,6 +1683,238 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
         @keyframes slideUp { from { transform: translateY(20px);
             opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- CUSTOM GRID CHO BIỂU ĐỒ KÉP (Tên & Tổng Hợp) --- */
+        .dual-charts-wrapper {
+            display: grid;
+            grid-template-columns: 1fr; /* Mặc định Mobile: 1 cột xếp chồng */
+            gap: 2rem;                  /* Khoảng cách giữa 2 biểu đồ */
+            margin: 0 auto 3rem auto;   /* Canh giữa và cách dưới */
+            width: 100%;
+            max-width: 1200px;          /* [QUAN TRỌNG] Chiều rộng tối đa đủ lớn cho 2 cột */
+            padding: 0 1rem;            /* Padding 2 bên để không dính sát lề màn hình nhỏ */
+        }
+
+        /* Media Query: Chỉ áp dụng khi màn hình lớn hơn 1024px (Laptop/Desktop) */
+        @media (min-width: 1024px) {
+            .dual-charts-wrapper {
+                grid-template-columns: 1fr 1fr; /* Chia thành 2 cột đều nhau */
+            }
+        }
+
+        /* --- CTA TAROT SECTION STYLES --- */
+
+.cta-tarot-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(11, 19, 43, 0.95) 0%, rgba(20, 20, 40, 0.95) 100%);
+    border: 1px solid rgba(242, 201, 76, 0.3);
+    border-radius: 24px;
+    padding: 3rem 2rem;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(242, 201, 76, 0.05);
+    margin: 2rem;
+}
+
+/* Hiệu ứng nền loang màu */
+.cta-bg-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(242, 201, 76, 0.1) 0%, transparent 60%);
+    animation: rotateGlow 20s linear infinite;
+    z-index: 0;
+    pointer-events: none;
+}
+
+@keyframes rotateGlow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.cta-content-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+@media (min-width: 992px) {
+    .cta-content-grid {
+        grid-template-columns: 1.5fr 1fr; /* Chia cột trên Desktop */
+        text-align: left;
+    }
+}
+
+/* Badge nhỏ phía trên */
+.cta-badge {
+    display: inline-block;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #F2C94C;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(242, 201, 76, 0.3);
+    padding: 6px 16px;
+    border-radius: 50px;
+    background: rgba(242, 201, 76, 0.05);
+}
+
+/* Tiêu đề chính (Theo yêu cầu: Trắng ánh vàng) */
+.cta-title {
+    font-family: var(--font-title, serif);
+    font-size: clamp(1.8rem, 5vw, 2.5rem);
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 0 15px rgba(242, 201, 76, 0.3); /* Ánh vàng nhẹ quanh chữ trắng */
+}
+
+/* Chữ "Bản Đồ" viền */
+.text-outline {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.5);
+    color: transparent;
+    font-style: italic;
+}
+
+/* Chữ "Kim Chỉ Nam" vàng rực */
+.text-highlight {
+    color: #F2C94C;
+    text-shadow: 0 0 20px rgba(242, 201, 76, 0.8);
+    font-style: italic;
+}
+
+.cta-desc {
+    color: #d1d5db;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+.cta-desc b {
+    color: #F2C94C;
+}
+
+/* Khu vực nút bấm */
+.cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+/* Nút chính (Tarot) - Hiệu ứng Pulse */
+.btn-tarot-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(45deg, #F2C94C, #fcd34d);
+    color: #000;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 0 20px rgba(242, 201, 76, 0.4);
+    transition: all 0.3s ease;
+    animation: pulseBtn 2s infinite;
+}
+
+.btn-tarot-primary:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 30px rgba(242, 201, 76, 0.7);
+}
+
+@keyframes pulseBtn {
+    0% { box-shadow: 0 0 0 0 rgba(242, 201, 76, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(242, 201, 76, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(242, 201, 76, 0); }
+}
+
+/* Nút phụ (Tra cứu lại) */
+.btn-tarot-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 12px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn-tarot-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #fff;
+}
+
+/* --- Visual Icons Animation --- */
+.cta-visual-col {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.cards-visual {
+    position: relative;
+    width: 200px;
+    height: 200px;
+}
+
+.card-icon {
+    position: absolute;
+    width: 100px;
+    height: 140px;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    border: 1px solid #F2C94C;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    color: #F2C94C;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: all 0.5s ease;
+}
+
+/* Sắp xếp các lá bài */
+.card-1 {
+    transform: rotate(-15deg) translate(-40px, 10px);
+    z-index: 1;
+    opacity: 0.7;
+}
+.card-2 {
+    transform: rotate(0deg) translate(0, -10px);
+    z-index: 3;
+    box-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
+}
+.card-3 {
+    transform: rotate(15deg) translate(40px, 10px);
+    z-index: 2;
+    opacity: 0.7;
+}
+
+/* Hover vào vùng CTA thì các lá bài xòe ra */
+.cta-tarot-card:hover .card-1 {
+    transform: rotate(-25deg) translate(-60px, 20px);
+}
+.cta-tarot-card:hover .card-3 {
+    transform: rotate(25deg) translate(60px, 20px);
+}
+.cta-tarot-card:hover .card-2 {
+    transform: translateY(-20px) scale(1.1);
+    color: #fff; /* Icon sáng lên */
+    text-shadow: 0 0 10px #F2C94C;
+}
+
+        
         
         
     </style>
@@ -1797,5 +2162,172 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
             border-radius: 10px;
             border: 1px solid rgba(142, 186, 255, 0.3);
         }
+
+        /* --- STYLES CHO MỤC LỤC (TOC) --- */
+        /* --- STYLES CHO MỤC LỤC (TOC) - VERSION FIX CỨNG --- */
+
+/* 1. Cái neo vị trí: Cố định kích thước 50x50, không bao giờ thay đổi */
+.toc-wrapper {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    width: 50px;  /* [QUAN TRỌNG] Fix chiều rộng */
+    height: 50px; /* [QUAN TRỌNG] Fix chiều cao */
+    display: block; /* Đảm bảo không phải flex */
+}
+
+/* 2. Nút bấm: Luôn nằm đè lên cái neo */
+.toc-btn {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: rgba(11, 19, 43, 0.95);
+    border: 2px solid #F2C94C;
+    color: #F2C94C;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+    transition: transform 0.2s ease, background 0.2s; /* Chỉ transition hiệu ứng nhẹ */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 20; /* Luôn nằm trên menu */
+    padding: 0;
+    margin: 0;
+}
+
+.toc-btn:hover {
+    background: #F2C94C;
+    color: #000;
+    transform: scale(1.05); /* Hover chỉ phóng to nhẹ, ko đổi vị trí */
+}
+
+/* 3. Menu xổ lên: Định vị tuyệt đối so với cái neo */
+.toc-dropdown {
+    position: absolute;
+    bottom: 60px; /* Cách đáy neo 60px (50px nút + 10px hở) */
+    right: 0;
+    z-index: 10;
+    
+    background: rgba(11, 19, 43, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1rem;
+    width: 280px; /* Chiều rộng cố định */
+    box-sizing: border-box; /* [QUAN TRỌNG] Để padding ko làm vỡ layout */
+    
+    /* Animation logic */
+    visibility: hidden; /* Dùng visibility thay vì display để tránh reflow */
+    opacity: 0;
+    transform: translateY(10px) scale(0.95); /* Hơi trượt xuống và nhỏ lại */
+    transform-origin: bottom right;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Scrollbar */
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* 4. Trạng thái Active: Chỉ hiện ra, không đẩy layout */
+.toc-dropdown.active {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    border-color: #F2C94C;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* 5. Style nội dung bên trong (Giữ nguyên cho đẹp) */
+.toc-header-title {
+    color: #F2C94C;
+    font-family: var(--font-title, serif);
+    font-weight: bold;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* --- CẬP NHẬT CSS TOC (CLEAN VERSION: NO DOTS, NO UNDERLINES) --- */
+
+#toc-list {
+    padding: 0;
+    margin: 0;
+    list-style: none !important; /* [QUAN TRỌNG] Bỏ dấu chấm tròn mặc định */
+    counter-reset: sub-counter; 
+}
+
+#toc-list li {
+    list-style: none !important; /* [QUAN TRỌNG] Đảm bảo từng dòng không có dấu chấm */
+    padding: 0;
+}
+
+/* 1. Style cho Heading lớn (H2 - I, II, III...) */
+#toc-list li.toc-h2 {
+    margin-top: 12px;
+    margin-bottom: 4px;
+    /* [CẬP NHẬT] Bỏ border-bottom (gạch chân) */
+    border-bottom: none !important; 
+    
+    counter-reset: sub-counter;
+}
+
+#toc-list li.toc-h2 a {
+    color: #F2C94C !important;
+    font-weight: bold;
+    font-family: var(--font-title, serif);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    padding-left: 0;
+    background: transparent !important;
+    pointer-events: none;
+    text-decoration: none !important; /* [QUAN TRỌNG] Bỏ gạch chân của link */
+    display: block;
+}
+
+
+/* 2. Style cho Heading nhỏ (H3 - Mục con) */
+#toc-list li.toc-h3 {
+    margin-bottom: 2px;
+    position: relative;
+    padding-left: 10px;
+    
+    counter-increment: sub-counter;
+}
+
+#toc-list li.toc-h3 a {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    padding: 6px 10px 6px 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    text-decoration: none !important; /* [QUAN TRỌNG] Bỏ gạch chân của link */
+}
+
+/* Tạo số thứ tự tự động (1. , 2. , 3.) */
+#toc-list li.toc-h3 a::before {
+    content: counter(sub-counter) ".";
+    color: #F2C94C;
+    font-weight: bold;
+    font-size: 0.8rem;
+    min-width: 15px;
+}
+
+/* Hiệu ứng hover cho mục con */
+#toc-list li.toc-h3 a:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+/* Scrollbar đẹp */
+.toc-dropdown::-webkit-scrollbar { width: 4px; }
+.toc-dropdown::-webkit-scrollbar-track { background: transparent; }
+.toc-dropdown::-webkit-scrollbar-thumb { background: #F2C94C; border-radius: 4px; }
     </style>
 </BaseLayout>
