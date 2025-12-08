@@ -1,10 +1,11 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+// Cập nhật Meta Title & Description chuẩn SEO hơn một chút
 const pageTitle = "Tra Cứu Thần Số Học Miễn Phí - Luận Giải Chi Tiết | Phở Gõ Tarot";
 const pageDesc = "Công cụ tra cứu Thần Số Học miễn phí, chính xác nhất theo trường phái Pythagoras. Khám phá Số Chủ Đạo, Sứ Mệnh, Linh Hồn qua Họ Tên và Ngày Sinh.";
 
-// Cấu trúc dữ liệu SEO (Schema Markup)
+// --- PHẦN MỚI: Cấu trúc dữ liệu SEO (Schema Markup) ---
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
@@ -48,12 +49,12 @@ const schema = {
   <!-- Inject JSON-LD Schema -->
   <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)}></script>
 
-  <!-- Hiệu ứng sao nền -->
+  <!-- Hiệu ứng sao nền đã có trong BaseLayout/body -->
   <div id="stars-bg"></div>
   
   <main class="numerology-container fade-in-up">
     
-    <!-- 1. HERO & FORM SECTION -->
+    <!-- Header Section -->
     <section class="hero-section text-center">
       <h1 class="hero-title">Tra Cứu Thần Số Học</h1>
       <p class="hero-subtitle">
@@ -78,7 +79,7 @@ const schema = {
             <input type="text" id="fullName" class="mystic-input" placeholder="Ví dụ: NGUYEN VAN A" autocomplete="off">
           </div>
 
-          <!-- 2. Biệt Danh -->
+          <!-- 2. Biệt Danh (MỚI) -->
           <div class="input-group">
             <label for="nickname">Biệt Danh / Tên Thường Gọi</label>
             <input type="text" id="nickname" class="mystic-input" placeholder="Ví dụ: Anna" autocomplete="off">
@@ -90,7 +91,7 @@ const schema = {
             <input type="date" id="dob" class="mystic-input">
           </div>
 
-          <!-- 4. Giới Tính -->
+          <!-- 4. Giới Tính (MỚI) -->
           <div class="input-group">
             <label for="gender">Giới Tính</label>
             <select id="gender" class="mystic-input">
@@ -107,14 +108,14 @@ const schema = {
             </button>
             <p id="error-msg" class="error-text hidden">Vui lòng nhập đầy đủ thông tin bắt buộc.</p>
         </div>
+
       </div>
     </section>
 
+    <!-- --- PHẦN MỚI: NỘI DUNG BÀI VIẾT SEO --- -->
     <div class="container"><div class="divider"></div></div>
 
-    <!-- 2. SEO ARTICLE CONTENT SECTION -->
     <section class="content-section container">
-      
       <article class="seo-article">
         <h2 class="section-title text-center">Thần Số Học Là Gì? <br/>Khám Phá Bí Ẩn Đằng Sau Những Con Số</h2>
         
@@ -238,134 +239,186 @@ const schema = {
   </script>
 
   <style>
-    /* === CÁC STYLE CŨ CỦA TRANG THẦN SỐ HỌC === */
+    /* === LAYOUT & SPACING === */
     .numerology-container {
-        padding-top: 6rem;
+        padding-top: 6rem; /* Tránh menu */
         padding-bottom: 4rem;
         min-height: 90vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* Bỏ justify-center để content dài không bị căn giữa dọc */
+        /* justify-content: center; BỎ dòng này để nội dung dài không bị căn giữa dọc */
         position: relative;
         z-index: 1;
     }
 
-    /* Các biến màu đã được định nghĩa trong Layout hoặc dùng trực tiếp */
-    :root {
-      --gold-color: #F2C94C;
-      --gold-shadow: rgba(242, 201, 76, 0.5);
-    }
-
-    /* === HERO & FORM (STYLE CŨ) === */
     .hero-section {
         margin-bottom: 3rem;
         padding: 0 1rem;
         text-align: center;
     }
     
+    /* Sử dụng biến từ style.css */
     .hero-title {
-        font-family: var(--font-title, sans-serif);
+        /* Đã có style từ global css */
+        margin-bottom: 1rem;
+        font-family: var(--font-title);
         color: #fff;
         font-size: clamp(2rem, 6vw, 3rem);
-        /* Shadow vàng giống trang chủ */
-        text-shadow: 0 0 20px rgb(242 201 76), 0 0 8px rgba(242, 201, 76, 0.8);
-        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(242,201,76,.6),0 0 30px rgba(242,201,76,.3);
+        margin-bottom: .5rem;
     }
     
     .hero-subtitle {
-        font-family: var(--font-body, sans-serif);
+        font-family: var(--font-body);
         font-size: 1.1rem;
         max-width: 600px;
         margin: 0 auto;
         line-height: 1.6;
         opacity: 0.9;
-        color: #fff;
+        text-shadow: none;
     }
-    .text-gold { color: #F2C94C; font-weight: bold; }
+    .text-gold { color: var(--gold-color); font-weight: bold; }
 
+    /* === MYSTIC FORM BOX === */
     .mystic-form-box {
-        background: rgba(11, 19, 43, 0.6);
+        background: rgba(11, 19, 43, 0.6); /* Dark blue trong suốt */
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(242, 201, 76, 0.3);
+        border: 1px solid rgba(242, 201, 76, 0.3); /* Viền vàng mờ */
         border-radius: 20px;
         padding: 2.5rem;
-        max-width: 700px;
+        
+        max-width: 700px; /* Tăng nhẹ max-width để grid đẹp hơn */
         position: relative;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(242, 201, 76, 0.05);
         margin: 0 1rem;
     }
 
-    /* ... (Giữ nguyên các style input/corner/button cũ của bạn) ... */
+    /* Góc trang trí */
     .corner-decoration {
-        position: absolute; width: 20px; height: 20px;
-        border-color: #F2C94C; border-style: solid;
-        opacity: 0.8; pointer-events: none;
+        position: absolute;
+        width: 20px; height: 20px;
+        border-color: var(--gold-color);
+        border-style: solid;
+        opacity: 0.8;
+        pointer-events: none;
     }
     .top-left { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 10px; }
     .top-right { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-top-right-radius: 10px; }
     .bottom-left { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-bottom-left-radius: 10px; }
     .bottom-right { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 10px; }
 
-    .form-grid { display: grid; gap: 1.5rem; }
-    @media (min-width: 640px) { .form-grid { grid-template-columns: 1fr 1fr; } }
+    /* Grid Inputs - Điều chỉnh để chứa 4 trường */
+    .form-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+    @media (min-width: 640px) { 
+        .form-grid { 
+            grid-template-columns: 1fr 1fr; /* Chia 2 cột */
+        } 
+    }
 
     .input-group { display: flex; flex-direction: column; text-align: left; }
+    
     .input-group label {
-        font-family: var(--font-title, sans-serif);
-        color: #F2C94C;
-        font-size: 0.9rem; margin-bottom: 0.5rem;
-        letter-spacing: 1px; text-transform: uppercase;
+        font-family: var(--font-title);
+        color: var(--gold-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        letter-spacing: 1px;
+        text-transform: uppercase;
     }
     .required { color: #ff6b6b; margin-left: 3px; }
 
     .mystic-input {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px; padding: 1rem;
-        color: #fff; font-size: 1rem; outline: none;
-        transition: all 0.3s ease; width: 100%;
-    }
-    select.mystic-input {
-        appearance: none; cursor: pointer;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F2C94C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em;
-    }
-    select.mystic-input option { background-color: #0b132b; color: #fff; }
-    .mystic-input:focus {
-        border-color: #F2C94C; background: rgba(255, 255, 255, 0.08);
-        box-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
-    }
-    .mystic-input::-webkit-calendar-picker-indicator {
-        filter: invert(1) sepia(1) saturate(5) hue-rotate(180deg);
-        cursor: pointer; opacity: 0.7;
+        border-radius: 8px;
+        padding: 1rem;
+        color: #fff;
+        font-family: var(--font-body);
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.3s ease;
+        text-shadow: none;
+        width: 100%; /* Đảm bảo full width */
     }
 
+    /* Style riêng cho Select để đồng bộ */
+    select.mystic-input {
+        appearance: none;
+        cursor: pointer;
+        /* Custom arrow cho select */
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F2C94C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+    }
+    select.mystic-input option {
+        background-color: #0b132b; /* Màu nền dropdown option */
+        color: #fff;
+    }
+
+    .mystic-input:focus {
+        border-color: var(--gold-color);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
+    }
+    
+    /* Date picker icon fix */
+    .mystic-input::-webkit-calendar-picker-indicator {
+        filter: invert(1) sepia(1) saturate(5) hue-rotate(180deg);
+        cursor: pointer;
+        opacity: 0.7;
+    }
+
+    /* === BUTTON & ACTION === */
     .action-area { margin-top: 2rem; text-align: center; }
+
     .mystic-btn {
-        width: 100%; padding: 1rem; font-size: 1.1rem;
-        letter-spacing: 1px; font-family: var(--font-title, sans-serif);
-        background-color: #F2C94C; color: #0b132b; border: none; border-radius: 8px; font-weight: 600;
-        box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
-        cursor: pointer; transition: all 0.3s;
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        font-family: var(--font-title);
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
         display: flex; justify-content: center; align-items: center; gap: 0.5rem;
     }
     .mystic-btn:hover {
-        background-color: #ffdb73;
         transform: translateY(-2px);
         box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);
     }
-    .error-text { color: #ff6b6b; margin-top: 1rem; font-size: 0.9rem; animation: fadeIn 0.3s; }
+
+    .error-text {
+        color: #ff6b6b;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+        animation: fadeIn 0.3s;
+    }
+
+    /* === ANIMATIONS === */
+    .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .shake { animation: shake 0.5s; }
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+    }
+    
     .hidden { display: none; }
     .animate-spin { display: inline-block; animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
-    .fade-in-up { animation: fadeInUp 0.8s ease-out; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .shake { animation: shake 0.5s; }
-    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-    /* === NEW: SEO CONTENT STYLES (Đồng bộ với Index.astro) === */
+
+    /* --- PHẦN MỚI: STYLE CHO BÀI VIẾT SEO --- */
     .container {
         max-width: 1000px; margin: 0 auto; padding: 0 1rem; width: 100%;
     }
@@ -377,20 +430,19 @@ const schema = {
 
     .content-section {
         padding-bottom: 4rem;
-        text-align: left; /* Mặc định căn trái cho dễ đọc */
+        text-align: left;
     }
 
     .section-title {
         font-family: var(--font-title, sans-serif);
         color: #fff;
         font-size: clamp(1.8rem, 5vw, 2.5rem);
-        /* Shadow vàng chuẩn */
         text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);
         margin-bottom: 2rem;
     }
     .section-subtitle-small {
         font-family: var(--font-title, sans-serif);
-        color: #F2C94C;
+        color: var(--gold-color);
         font-size: 1.4rem;
         margin-top: 2.5rem; margin-bottom: 1rem;
         text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
@@ -421,10 +473,10 @@ const schema = {
         color: #fff; opacity: 0.9; line-height: 1.6;
     }
     .mystic-list li::before {
-        content: '✦'; color: #F2C94C;
+        content: '✦'; color: var(--gold-color);
         position: absolute; left: 0; top: 0px;
     }
-    .mystic-list strong { color: #F2C94C; }
+    .mystic-list strong { color: var(--gold-color); }
 
     /* Steps (Các bước) */
     .steps-container {
@@ -438,11 +490,11 @@ const schema = {
         padding: 1.5rem; border-radius: 12px;
         transition: transform 0.3s;
     }
-    .step-item:hover { transform: translateY(-5px); border-color: #F2C94C; }
+    .step-item:hover { transform: translateY(-5px); border-color: var(--gold-color); }
     
     .step-number {
         display: block; width: 40px; height: 40px;
-        background: #F2C94C; color: #000;
+        background: var(--gold-color); color: #000;
         border-radius: 50%; text-align: center; line-height: 40px;
         font-weight: bold; margin-bottom: 1rem;
         box-shadow: 0 0 10px rgba(242, 201, 76, 0.5);
@@ -450,6 +502,5 @@ const schema = {
     .step-title {
         color: #fff; margin-bottom: 0.5rem; font-family: var(--font-title, sans-serif);
     }
-
   </style>
 </BaseLayout>
