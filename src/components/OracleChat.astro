@@ -108,7 +108,6 @@
     padding: 12px 16px; display: flex;
     justify-content: space-between; align-items: center;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    /* Ngăn header bị co lại trên mobile */
     flex-shrink: 0; 
   }
   
@@ -143,10 +142,8 @@
     display: flex; flex-direction: column; gap: 12px;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.2) transparent;
-    
-    /* [FIX QUAN TRỌNG] Ngăn scroll chain lên body */
     overscroll-behavior: contain; 
-    -webkit-overflow-scrolling: touch; /* Mượt mà trên iOS */
+    -webkit-overflow-scrolling: touch;
   }
   .chat-messages::-webkit-scrollbar { width: 6px; }
   .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
@@ -166,6 +163,32 @@
   .user-message { align-self: flex-end; }
   .user-message .message-content { background: var(--gold-primary); color: var(--bg-dark); border-bottom-right-radius: 2px; font-weight: 600; }
 
+  /* --- CSS MARKDOWN (ĐẬM & LINK) --- */
+  .message-content strong {
+    color: var(--gold-primary);
+    font-weight: 700;
+    text-shadow: 0 0 5px rgba(242, 201, 76, 0.3);
+  }
+  .message-content a {
+    color: var(--gold-primary);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .message-content a:hover {
+    text-shadow: 0 0 8px var(--gold-primary);
+  }
+  .message-content em {
+    color: #fff;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  .message-content p {
+    margin: 0 0 8px 0;
+  }
+  .message-content p:last-child {
+    margin-bottom: 0;
+  }
+
   .typing-indicator {
     font-size: 0.8rem; color: #888;
     margin-left: 10px; display: flex; align-items: center; gap: 4px;
@@ -177,7 +200,7 @@
     padding: 12px; background: rgba(0,0,0,0.2);
     display: flex; gap: 8px; align-items: flex-end;
     border-top: 1px solid rgba(255,255,255,0.05);
-    flex-shrink: 0; /* Không cho phép bị co lại */
+    flex-shrink: 0;
   }
   
   textarea {
@@ -205,14 +228,12 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* --- MOBILE FULLSCREEN & SAFARI FIXES --- */
   @media (max-width: 600px) {
     .chat-container {
       position: fixed; top: 0; left: 0; bottom: 0;
-      /* Dùng width 100% thay vì 100vw để tránh thanh scrollbar làm phình trang */
       width: 100%; 
       height: 100%; 
-      height: 100dvh; /* Dynamic viewport height cho mobile */
+      height: 100dvh;
       border-radius: 0; margin: 0; z-index: 10000;
       transform: none;
     }
@@ -234,7 +255,6 @@
     .chat-input-area { padding: 15px; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
     .close-btn { padding: 10px; font-size: 28px; }
 
-    /* [FIX SAFARI ZOOM] Bắt buộc font-size >= 16px */
     textarea {
         font-size: 16px !important;
     }
@@ -243,11 +263,10 @@
 
 <script>
   // --- CONFIG ---
-  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/1edf60a9-32a8-40cf-b9a7-a067487868fd';
+  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook-test/1edf60a9-32a8-40cf-b9a7-a067487868fd';
   const HISTORY_KEY = 'phogo_tarot_chat_history';
   const SESSION_KEY = 'phogo_tarot_session';
   
-  // --- ELEMENTS ---
   const toggleBtn = document.getElementById('oracle-toggle-btn');
   const chatBox = document.getElementById('oracle-chat-box');
   const closeBtn = document.getElementById('close-chat');
@@ -286,6 +305,7 @@
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
     messagesContainer.innerHTML = '';
     history.forEach(msg => {
+        // Khi load lại lịch sử, ta render luôn Markdown
         addMessage(msg.text, msg.sender, false, false);
     });
     scrollToBottom();
@@ -300,21 +320,17 @@
     }
   }
 
-  // --- LOGIC ĐÓNG MỞ CHAT (CÓ KHÓA SCROLL BODY) ---
   function toggleChat() {
     isOpen = !isOpen;
     if (isOpen) {
       chatBox.classList.remove('hidden');
       userInput.focus();
       scrollToBottom();
-      
-      // [FIX SCROLL BLEEDING] Khóa scroll của trang nền khi mở chat trên mobile
       if (window.innerWidth <= 600) {
           document.body.style.overflow = 'hidden';
       }
     } else {
       chatBox.classList.add('hidden');
-      // [FIX SCROLL BLEEDING] Mở lại scroll cho trang nền
       document.body.style.overflow = '';
     }
   }
@@ -341,7 +357,21 @@
     
     messagesContainer.appendChild(msgDiv);
 
+    // Hàm tiện ích render markdown dùng showdown (giả sử đã load từ BaseLayout)
+    const renderMarkdown = (rawText) => {
+        if (typeof showdown !== 'undefined') {
+            const converter = new showdown.Converter({
+                simpleLineBreaks: true, 
+                openLinksInNewWindow: true,
+                emoji: true 
+            });
+            return converter.makeHtml(rawText);
+        }
+        return rawText.replace(/\n/g, '<br>');
+    };
+
     if (animate && sender === 'bot') {
+        // HIỆU ỨNG GÕ CHỮ
         isTyping = true;
         let index = 0;
         const speed = 15;
@@ -359,11 +389,15 @@
                 setTimeout(typeText, speed);
             } else {
                 isTyping = false; 
+                // [QUAN TRỌNG] Gõ xong thì convert sang Markdown HTML
+                contentDiv.innerHTML = renderMarkdown(text);
+                scrollToBottom();
             }
         }
         typeText();
     } else {
-        contentDiv.innerHTML = text.replace(/\n/g, '<br>');
+        // Tin nhắn cũ hoặc tin user -> Render Markdown luôn
+        contentDiv.innerHTML = renderMarkdown(text);
         scrollToBottom();
     }
   }
