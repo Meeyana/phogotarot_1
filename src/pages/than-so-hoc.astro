@@ -1,17 +1,59 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const pageTitle = "Tra Cứu Thần Số Học - Phở Gõ Tarot";
-const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày Sinh. Tra cứu Số Chủ Đạo, Vận Mệnh, Linh Hồn miễn phí.";
+const pageTitle = "Tra Cứu Thần Số Học Miễn Phí - Luận Giải Chi Tiết | Phở Gõ Tarot";
+const pageDesc = "Công cụ tra cứu Thần Số Học miễn phí, chính xác nhất theo trường phái Pythagoras. Khám phá Số Chủ Đạo, Sứ Mệnh, Linh Hồn qua Họ Tên và Ngày Sinh.";
+
+// Cấu trúc dữ liệu SEO (Schema Markup)
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Công Cụ Tra Cứu Thần Số Học Phở Gõ",
+      "url": "https://phogotarot.com/than-so-hoc",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "VND"
+      },
+      "description": "Phần mềm tra cứu thần số học online miễn phí, luận giải chi tiết bản đồ cuộc đời."
+    },
+    {
+      "@type": "Article",
+      "headline": "Thần Số Học Là Gì? Hướng Dẫn Tra Cứu Bản Đồ Vận Mệnh Chuẩn Xác",
+      "image": "https://phogotarot.com/images/than-so-hoc-cover.jpg", 
+      "author": {
+        "@type": "Organization",
+        "name": "Phở Gõ Tarot"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Phở Gõ Tarot",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://phogotarot.com/images/logo.png"
+        }
+      },
+      "datePublished": "2023-10-25", 
+      "description": "Tìm hiểu về Thần số học Pythagoras và cách sử dụng công cụ tra cứu để thấu hiểu bản thân, định hướng tương lai."
+    }
+  ]
+};
 ---
 
 <BaseLayout title={pageTitle} description={pageDesc} >
-  <!-- Hiệu ứng sao nền đã có trong BaseLayout/body -->
+  <!-- Inject JSON-LD Schema -->
+  <script type="application/ld+json" slot="head" set:html={JSON.stringify(schema)}></script>
+
+  <!-- Hiệu ứng sao nền -->
   <div id="stars-bg"></div>
   
   <main class="numerology-container fade-in-up">
     
-    <!-- Header Section -->
+    <!-- 1. HERO & FORM SECTION -->
     <section class="hero-section text-center">
       <h1 class="hero-title">Tra Cứu Thần Số Học</h1>
       <p class="hero-subtitle">
@@ -36,7 +78,7 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
             <input type="text" id="fullName" class="mystic-input" placeholder="Ví dụ: NGUYEN VAN A" autocomplete="off">
           </div>
 
-          <!-- 2. Biệt Danh (MỚI) -->
+          <!-- 2. Biệt Danh -->
           <div class="input-group">
             <label for="nickname">Biệt Danh / Tên Thường Gọi</label>
             <input type="text" id="nickname" class="mystic-input" placeholder="Ví dụ: Anna" autocomplete="off">
@@ -48,7 +90,7 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
             <input type="date" id="dob" class="mystic-input">
           </div>
 
-          <!-- 4. Giới Tính (MỚI) -->
+          <!-- 4. Giới Tính -->
           <div class="input-group">
             <label for="gender">Giới Tính</label>
             <select id="gender" class="mystic-input">
@@ -65,8 +107,78 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
             </button>
             <p id="error-msg" class="error-text hidden">Vui lòng nhập đầy đủ thông tin bắt buộc.</p>
         </div>
-
       </div>
+    </section>
+
+    <div class="container"><div class="divider"></div></div>
+
+    <!-- 2. SEO ARTICLE CONTENT SECTION -->
+    <section class="content-section container">
+      
+      <article class="seo-article">
+        <h2 class="section-title text-center">Thần Số Học Là Gì? <br/>Khám Phá Bí Ẩn Đằng Sau Những Con Số</h2>
+        
+        <div class="content-wrapper">
+          <p class="section-text">
+            Bạn có bao giờ tự hỏi tại sao mình lại có những nét tính cách đặc biệt, hay tại sao cuộc đời mình lại trải qua những thăng trầm nhất định? <strong>Thần số học (Numerology)</strong> chính là chìa khóa để giải mã những bí ẩn đó.
+          </p>
+
+          <h3 class="section-subtitle-small">🪐 Khoa Học Của Những Con Số</h3>
+          <p class="section-text">
+            Thần số học, đặc biệt là trường phái <strong>Pythagoras</strong>, là một môn khoa học huyền bí nghiên cứu về sự rung động của các con số và ảnh hưởng của chúng lên đời sống con người. Mỗi con số từ 1 đến 9 (và các số Master 11, 22, 33) đều mang một tần số năng lượng riêng biệt, đại diện cho những đặc điểm tính cách, điểm mạnh, điểm yếu và bài học cuộc đời của mỗi người.
+          </p>
+          <p class="section-text">
+            Không giống như bói toán dựa trên sự may rủi, Thần số học dựa trên dữ liệu cụ thể là <span class="text-gold">Họ Tên</span> và <span class="text-gold">Ngày Sinh</span> của bạn để phân tích. Nó giống như một tấm bản đồ GPS cho tâm hồn, giúp bạn đi đúng hướng trên con đường đời.
+          </p>
+
+          <div class="highlight-box">
+            <h3 class="section-subtitle-small text-center" style="margin-top:0;">✨ 3 Chỉ Số Quan Trọng Nhất</h3>
+            <ul class="mystic-list">
+              <li><strong>Số Chủ Đạo (Life Path Number):</strong> Con số quyền năng nhất, tiết lộ con đường sự nghiệp, tính cách chủ đạo và bài học lớn nhất bạn cần tốt nghiệp trong kiếp sống này.</li>
+              <li><strong>Chỉ Số Linh Hồn (Soul Urge):</strong> Khát khao thầm kín bên trong, động lực thực sự khiến bạn cảm thấy hạnh phúc và thỏa mãn.</li>
+              <li><strong>Chỉ Số Sứ Mệnh (Destiny Number):</strong> Vai trò của bạn trong xã hội, năng lực bẩm sinh và những gì bạn được định sẵn để đạt được.</li>
+            </ul>
+          </div>
+
+          <h2 class="section-title text-center" style="margin-top: 3rem;">Hướng Dẫn Tra Cứu Chuẩn Xác</h2>
+          
+          <p class="section-text">
+            Để nhận được kết quả luận giải chính xác nhất từ công cụ của <strong>Phở Gõ Tarot</strong>, bạn vui lòng lưu ý các bước nhập liệu sau:
+          </p>
+
+          <div class="steps-container">
+            <div class="step-item">
+              <span class="step-number">1</span>
+              <div>
+                <h4 class="step-title">Họ Tên Khai Sinh</h4>
+                <p class="section-text">Nhập chính xác họ tên đầy đủ như trên giấy khai sinh (hoặc thẻ CCCD). Hệ thống sẽ tự động chuyển đổi sang Tiếng Việt không dấu để tính toán chính xác bảng chữ cái Pythagoras.</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <span class="step-number">2</span>
+              <div>
+                <h4 class="step-title">Ngày Sinh Dương Lịch</h4>
+                <p class="section-text">Thần số học Pythagoras chỉ sử dụng ngày sinh <strong>Dương Lịch</strong>. Nếu giấy tờ của bạn là ngày âm, hãy chuyển đổi sang dương lịch trước khi nhập nhé.</p>
+              </div>
+            </div>
+
+            <div class="step-item">
+              <span class="step-number">3</span>
+              <div>
+                <h4 class="step-title">Biệt Danh (Tùy Chọn)</h4>
+                <p class="section-text">Tên thường gọi ở nhà hoặc nghệ danh cũng mang một năng lượng bổ trợ. Nhập thêm biệt danh sẽ giúp bản luận giải của bạn phong phú hơn.</p>
+              </div>
+            </div>
+          </div>
+
+          <p class="section-text text-center" style="margin-top: 2rem;">
+            <em>"Nhân số học không quyết định số phận, nó giúp bạn hiểu mình để làm chủ số phận."</em> <br/>
+            Hãy bắt đầu hành trình khám phá bản thân ngay hôm nay cùng <strong>Phở Gõ Tarot</strong>!
+          </p>
+
+        </div>
+      </article>
     </section>
 
   </main>
@@ -126,182 +238,218 @@ const pageDesc = "Khám phá bản đồ cuộc đời qua Họ Tên và Ngày S
   </script>
 
   <style>
-    /* === LAYOUT & SPACING === */
+    /* === CÁC STYLE CŨ CỦA TRANG THẦN SỐ HỌC === */
     .numerology-container {
-        padding-top: 6rem; /* Tránh menu */
+        padding-top: 6rem;
         padding-bottom: 4rem;
         min-height: 90vh;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        /* Bỏ justify-center để content dài không bị căn giữa dọc */
         position: relative;
         z-index: 1;
     }
 
+    /* Các biến màu đã được định nghĩa trong Layout hoặc dùng trực tiếp */
+    :root {
+      --gold-color: #F2C94C;
+      --gold-shadow: rgba(242, 201, 76, 0.5);
+    }
+
+    /* === HERO & FORM (STYLE CŨ) === */
     .hero-section {
         margin-bottom: 3rem;
         padding: 0 1rem;
         text-align: center;
     }
     
-    /* Sử dụng biến từ style.css */
     .hero-title {
-        /* Đã có style từ global css */
-        margin-bottom: 1rem;
-        font-family: var(--font-title);
+        font-family: var(--font-title, sans-serif);
         color: #fff;
         font-size: clamp(2rem, 6vw, 3rem);
-        text-shadow: 0 0 15px rgba(242,201,76,.6),0 0 30px rgba(242,201,76,.3);
-        margin-bottom: .5rem;
+        /* Shadow vàng giống trang chủ */
+        text-shadow: 0 0 20px rgb(242 201 76), 0 0 8px rgba(242, 201, 76, 0.8);
+        margin-bottom: 1rem;
     }
     
     .hero-subtitle {
-        font-family: var(--font-body);
+        font-family: var(--font-body, sans-serif);
         font-size: 1.1rem;
         max-width: 600px;
         margin: 0 auto;
         line-height: 1.6;
         opacity: 0.9;
-        text-shadow: none;
+        color: #fff;
     }
-    .text-gold { color: var(--gold-color); font-weight: bold; }
+    .text-gold { color: #F2C94C; font-weight: bold; }
 
-    /* === MYSTIC FORM BOX === */
     .mystic-form-box {
-        background: rgba(11, 19, 43, 0.6); /* Dark blue trong suốt */
+        background: rgba(11, 19, 43, 0.6);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(242, 201, 76, 0.3); /* Viền vàng mờ */
+        border: 1px solid rgba(242, 201, 76, 0.3);
         border-radius: 20px;
         padding: 2.5rem;
-        
-        max-width: 700px; /* Tăng nhẹ max-width để grid đẹp hơn */
+        max-width: 700px;
         position: relative;
         box-shadow: 0 0 40px rgba(0, 0, 0, 0.4), inset 0 0 20px rgba(242, 201, 76, 0.05);
         margin: 0 1rem;
     }
 
-    /* Góc trang trí */
+    /* ... (Giữ nguyên các style input/corner/button cũ của bạn) ... */
     .corner-decoration {
-        position: absolute;
-        width: 20px; height: 20px;
-        border-color: var(--gold-color);
-        border-style: solid;
-        opacity: 0.8;
-        pointer-events: none;
+        position: absolute; width: 20px; height: 20px;
+        border-color: #F2C94C; border-style: solid;
+        opacity: 0.8; pointer-events: none;
     }
     .top-left { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-top-left-radius: 10px; }
     .top-right { top: -1px; right: -1px; border-width: 2px 2px 0 0; border-top-right-radius: 10px; }
     .bottom-left { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; border-bottom-left-radius: 10px; }
     .bottom-right { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-bottom-right-radius: 10px; }
 
-    /* Grid Inputs - Điều chỉnh để chứa 4 trường */
-    .form-grid {
-        display: grid;
-        gap: 1.5rem;
-    }
-    @media (min-width: 640px) { 
-        .form-grid { 
-            grid-template-columns: 1fr 1fr; /* Chia 2 cột */
-        } 
-    }
+    .form-grid { display: grid; gap: 1.5rem; }
+    @media (min-width: 640px) { .form-grid { grid-template-columns: 1fr 1fr; } }
 
     .input-group { display: flex; flex-direction: column; text-align: left; }
-    
     .input-group label {
-        font-family: var(--font-title);
-        color: var(--gold-color);
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        font-family: var(--font-title, sans-serif);
+        color: #F2C94C;
+        font-size: 0.9rem; margin-bottom: 0.5rem;
+        letter-spacing: 1px; text-transform: uppercase;
     }
     .required { color: #ff6b6b; margin-left: 3px; }
 
     .mystic-input {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        padding: 1rem;
-        color: #fff;
-        font-family: var(--font-body);
-        font-size: 1rem;
-        outline: none;
-        transition: all 0.3s ease;
-        text-shadow: none;
-        width: 100%; /* Đảm bảo full width */
+        border-radius: 8px; padding: 1rem;
+        color: #fff; font-size: 1rem; outline: none;
+        transition: all 0.3s ease; width: 100%;
     }
-
-    /* Style riêng cho Select để đồng bộ */
     select.mystic-input {
-        appearance: none;
-        cursor: pointer;
-        /* Custom arrow cho select */
+        appearance: none; cursor: pointer;
         background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23F2C94C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 1rem center;
-        background-size: 1em;
+        background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em;
     }
-    select.mystic-input option {
-        background-color: #0b132b; /* Màu nền dropdown option */
-        color: #fff;
-    }
-
+    select.mystic-input option { background-color: #0b132b; color: #fff; }
     .mystic-input:focus {
-        border-color: var(--gold-color);
-        background: rgba(255, 255, 255, 0.08);
+        border-color: #F2C94C; background: rgba(255, 255, 255, 0.08);
         box-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
     }
-    
-    /* Date picker icon fix */
     .mystic-input::-webkit-calendar-picker-indicator {
         filter: invert(1) sepia(1) saturate(5) hue-rotate(180deg);
-        cursor: pointer;
-        opacity: 0.7;
+        cursor: pointer; opacity: 0.7;
     }
 
-    /* === BUTTON & ACTION === */
     .action-area { margin-top: 2rem; text-align: center; }
-
     .mystic-btn {
-        width: 100%;
-        padding: 1rem;
-        font-size: 1.1rem;
-        letter-spacing: 1px;
-        font-family: var(--font-title);
-        box-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
+        width: 100%; padding: 1rem; font-size: 1.1rem;
+        letter-spacing: 1px; font-family: var(--font-title, sans-serif);
+        background-color: #F2C94C; color: #0b132b; border: none; border-radius: 8px; font-weight: 600;
+        box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
+        cursor: pointer; transition: all 0.3s;
         display: flex; justify-content: center; align-items: center; gap: 0.5rem;
     }
     .mystic-btn:hover {
+        background-color: #ffdb73;
         transform: translateY(-2px);
         box-shadow: 0 0 30px rgba(242, 201, 76, 0.5);
     }
-
-    .error-text {
-        color: #ff6b6b;
-        margin-top: 1rem;
-        font-size: 0.9rem;
-        animation: fadeIn 0.3s;
-    }
-
-    /* === ANIMATIONS === */
-    .fade-in-up { animation: fadeInUp 0.8s ease-out; }
-    
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .shake { animation: shake 0.5s; }
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        75% { transform: translateX(5px); }
-    }
-    
+    .error-text { color: #ff6b6b; margin-top: 1rem; font-size: 0.9rem; animation: fadeIn 0.3s; }
     .hidden { display: none; }
     .animate-spin { display: inline-block; animation: spin 1s linear infinite; }
     @keyframes spin { 100% { transform: rotate(360deg); } }
+    .fade-in-up { animation: fadeInUp 0.8s ease-out; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .shake { animation: shake 0.5s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    /* === NEW: SEO CONTENT STYLES (Đồng bộ với Index.astro) === */
+    .container {
+        max-width: 1000px; margin: 0 auto; padding: 0 1rem; width: 100%;
+    }
+    
+    .divider {
+        height: 1px; background-color: rgba(255, 255, 255, 0.15);
+        margin: 4rem auto; max-width: 800px;
+    }
+
+    .content-section {
+        padding-bottom: 4rem;
+        text-align: left; /* Mặc định căn trái cho dễ đọc */
+    }
+
+    .section-title {
+        font-family: var(--font-title, sans-serif);
+        color: #fff;
+        font-size: clamp(1.8rem, 5vw, 2.5rem);
+        /* Shadow vàng chuẩn */
+        text-shadow: 0 0 15px rgba(242, 201, 76, 0.5);
+        margin-bottom: 2rem;
+    }
+    .section-subtitle-small {
+        font-family: var(--font-title, sans-serif);
+        color: #F2C94C;
+        font-size: 1.4rem;
+        margin-top: 2.5rem; margin-bottom: 1rem;
+        text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+    }
+    
+    .section-text {
+        font-family: var(--font-body, sans-serif);
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #fff;
+        opacity: 0.9;
+        margin-bottom: 1.5rem;
+        text-align: justify;
+    }
+
+    /* Highlight Box (Khung nổi bật) */
+    .highlight-box {
+        background: rgba(242, 201, 76, 0.05);
+        border: 1px solid rgba(242, 201, 76, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+        margin: 2rem 0;
+    }
+    
+    .mystic-list { list-style: none; padding: 0; }
+    .mystic-list li {
+        position: relative; padding-left: 1.5rem; margin-bottom: 1rem;
+        color: #fff; opacity: 0.9; line-height: 1.6;
+    }
+    .mystic-list li::before {
+        content: '✦'; color: #F2C94C;
+        position: absolute; left: 0; top: 0px;
+    }
+    .mystic-list strong { color: #F2C94C; }
+
+    /* Steps (Các bước) */
+    .steps-container {
+        display: grid; gap: 2rem; margin-top: 2rem;
+    }
+    @media (min-width: 768px) { .steps-container { grid-template-columns: 1fr 1fr 1fr; } }
+    
+    .step-item {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 1.5rem; border-radius: 12px;
+        transition: transform 0.3s;
+    }
+    .step-item:hover { transform: translateY(-5px); border-color: #F2C94C; }
+    
+    .step-number {
+        display: block; width: 40px; height: 40px;
+        background: #F2C94C; color: #000;
+        border-radius: 50%; text-align: center; line-height: 40px;
+        font-weight: bold; margin-bottom: 1rem;
+        box-shadow: 0 0 10px rgba(242, 201, 76, 0.5);
+    }
+    .step-title {
+        color: #fff; margin-bottom: 0.5rem; font-family: var(--font-title, sans-serif);
+    }
+
   </style>
 </BaseLayout>
