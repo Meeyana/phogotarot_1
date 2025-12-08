@@ -50,7 +50,6 @@
   /* --- VARIABLES --- */
   :root {
     --gold-primary: #F2C94C;
-    --gold-soft: #fcefc7;
     --bg-dark: #0b132b;
     --bg-panel: rgba(20, 27, 45, 0.95);
     --text-white: #ffffff;
@@ -58,21 +57,15 @@
 
   /* --- WIDGET CONTAINER --- */
   #oracle-chat-widget {
-    position: fixed;
-    bottom: 25px;
-    right: 25px;
-    z-index: 9999;
+    position: fixed; bottom: 25px; right: 25px; z-index: 9999;
     font-family: 'Quicksand', sans-serif;
   }
 
   /* --- NÚT TRÒN --- */
   .oracle-btn {
-    width: 60px; height: 60px;
-    border-radius: 50%; padding: 0;
-    border: 2px solid var(--gold-primary);
-    background: var(--bg-dark); color: var(--gold-primary);
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 60px; height: 60px; border-radius: 50%; padding: 0;
+    border: 2px solid var(--gold-primary); background: var(--bg-dark); color: var(--gold-primary);
+    cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex; align-items: center; justify-content: center;
   }
@@ -92,178 +85,185 @@
     display: flex; flex-direction: column; overflow: hidden;
     box-shadow: 0 10px 40px rgba(0,0,0,0.5);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    
-    position: absolute; bottom: 80px; right: 0;
-    transform-origin: bottom right;
+    position: absolute; bottom: 80px; right: 0; transform-origin: bottom right;
   }
-
-  .chat-container.hidden {
-    opacity: 0; transform: scale(0.95) translateY(20px);
-    pointer-events: none; visibility: hidden;
-  }
+  .chat-container.hidden { opacity: 0; transform: scale(0.95) translateY(20px); pointer-events: none; visibility: hidden; }
 
   /* --- HEADER --- */
   .chat-header {
-    background: rgba(255, 255, 255, 0.03);
-    padding: 12px 16px; display: flex;
+    background: rgba(255, 255, 255, 0.03); padding: 12px 16px; display: flex;
     justify-content: space-between; align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    flex-shrink: 0; 
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); flex-shrink: 0;
   }
-  
   .header-info { display: flex; align-items: center; gap: 12px; }
-  .header-avatar {
-      width: 36px; height: 36px; border-radius: 50%; overflow: hidden;
-      border: 1px solid rgba(242, 201, 76, 0.5);
-  }
+  .header-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; border: 1px solid rgba(242, 201, 76, 0.5); }
   .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .header-text { display: flex; flex-direction: column; justify-content: center; }
   .oracle-name { color: var(--text-white); font-weight: 700; font-size: 1rem; line-height: 1.2; }
   .oracle-status { font-size: 0.75rem; color: var(--gold-primary); font-weight: 500; }
-
-  .close-btn {
-    background: none; border: none; color: #aaa;
-    font-size: 24px; cursor: pointer; line-height: 1; padding: 0;
-    transition: color 0.2s;
-  }
+  .close-btn { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; padding: 0; transition: color 0.2s; }
   .close-btn:hover { color: var(--text-white); }
-  
-  .icon-btn {
-    background: none; border: none; color: #aaa;
-    cursor: pointer; padding: 5px; display: flex;
-    transition: color 0.2s;
-  }
+  .icon-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 5px; display: flex; transition: color 0.2s; }
   .icon-btn:hover { color: #ff6b6b; }
 
   /* --- MESSAGES AREA --- */
   .chat-messages {
-    flex: 1; padding: 16px;
-    overflow-y: auto;
-    display: flex; flex-direction: column; gap: 12px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.2) transparent;
-    overscroll-behavior: contain; 
-    -webkit-overflow-scrolling: touch;
+    flex: 1; padding: 16px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 20px; /* Tăng khoảng cách để menu reaction không đè lên tin dưới */
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.2) transparent;
+    overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+    padding-bottom: 30px; /* Thêm padding bottom để menu reaction cuối cùng không bị che */
   }
   .chat-messages::-webkit-scrollbar { width: 6px; }
   .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(255,255,255,0.2); border-radius: 10px; }
 
-  /* Style tin nhắn */
+  /* Style tin nhắn Wrapper */
   .message {
-    max-width: 80%; display: flex; flex-direction: column;
+    max-width: 80%;
+    display: flex; flex-direction: column;
     animation: fadeIn 0.3s ease;
   }
+  
+  /* Wrapper bọc content và reaction để position absolute */
+  .message-wrapper {
+    position: relative;
+    width: fit-content;
+  }
+
   .message-content {
     padding: 10px 14px; border-radius: 14px;
     font-size: 0.95rem; line-height: 1.5; word-wrap: break-word;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative; z-index: 1; 
   }
+
   .bot-message { align-self: flex-start; }
   .bot-message .message-content { background: rgba(255, 255, 255, 0.1); color: #eee; border-bottom-left-radius: 2px; }
+  
   .user-message { align-self: flex-end; }
   .user-message .message-content { background: var(--gold-primary); color: var(--bg-dark); border-bottom-right-radius: 2px; font-weight: 600; }
 
-  /* --- CSS MARKDOWN (ĐẬM & LINK) --- */
-  .message-content strong {
-    color: var(--gold-primary);
-    font-weight: 700;
-    text-shadow: 0 0 5px rgba(242, 201, 76, 0.3);
-  }
-  .message-content a {
-    color: var(--gold-primary);
-    text-decoration: underline;
-    font-weight: 600;
-  }
-  .message-content a:hover {
-    text-shadow: 0 0 8px var(--gold-primary);
-  }
-  .message-content em {
-    color: #fff;
-    font-style: italic;
-    opacity: 0.9;
-  }
-  .message-content p {
-    margin: 0 0 8px 0;
-  }
-  .message-content p:last-child {
-    margin-bottom: 0;
+  /* --- REACTION STYLE (MỚI - MENU NẰM DƯỚI) --- */
+  
+  /* 1. Menu chọn reaction (Mặc định ẩn) */
+  .reaction-menu {
+    position: absolute;
+    top: 100%; /* Đẩy xuống phía DƯỚI tin nhắn */
+    left: 0; /* Căn trái theo tin nhắn (hoặc right: 0 nếu thích) */
+    margin-top: 5px; /* Cách ra một chút */
+    
+    background: var(--bg-dark);
+    border: 1px solid rgba(242, 201, 76, 0.3);
+    border-radius: 20px;
+    padding: 3px 5px; /* Đã giảm padding để nhỏ gọn hơn */
+    display: flex;
+    gap: 3px; /* Đã giảm khoảng cách giữa các icon */
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-5px); /* Hiệu ứng trượt xuống */
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
   }
 
-  .typing-indicator {
-    font-size: 0.8rem; color: #888;
-    margin-left: 10px; display: flex; align-items: center; gap: 4px;
-    font-style: italic;
+  /* Hiện menu khi hover (Desktop) hoặc khi có class show (Mobile) */
+  .message-wrapper:hover .reaction-menu,
+  .message-wrapper.show-options .reaction-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
+
+  .react-option-btn {
+    background: transparent; border: none;
+    font-size: 0.9rem; /* Đã giảm kích thước icon cho nhỏ lại */
+    cursor: pointer;
+    padding: 2px; border-radius: 50%;
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+  .react-option-btn:hover {
+    transform: scale(1.3);
+  }
+
+  /* 2. Badge đã chọn (Hiện đè lên góc phải dưới) */
+  .reaction-badge {
+    position: absolute;
+    bottom: -8px; /* Đè xuống dưới */
+    right: -5px;  /* Đè sang phải */
+    
+    background: var(--bg-dark);
+    border: 1px solid var(--gold-primary);
+    border-radius: 50%;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    
+    font-size: 0.7rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    z-index: 15; /* Cao hơn menu một chút */
+    cursor: pointer;
+    
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+
+  /* --- CSS MARKDOWN --- */
+  .message-content strong { color: var(--gold-primary); font-weight: 700; text-shadow: 0 0 5px rgba(242, 201, 76, 0.3); }
+  .message-content a { color: var(--gold-primary); text-decoration: underline; font-weight: 600; }
+  .message-content a:hover { text-shadow: 0 0 8px var(--gold-primary); }
+  .message-content em { color: #fff; font-style: italic; opacity: 0.9; }
+  .message-content p { margin: 0 0 8px 0; }
+  .message-content p:last-child { margin-bottom: 0; }
+
+  .typing-indicator { font-size: 0.8rem; color: #888; margin-left: 10px; display: flex; align-items: center; gap: 4px; font-style: italic; }
 
   /* --- INPUT AREA --- */
   .chat-input-area {
     padding: 12px; background: rgba(0,0,0,0.2);
     display: flex; gap: 8px; align-items: flex-end;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    flex-shrink: 0;
+    border-top: 1px solid rgba(255,255,255,0.05); flex-shrink: 0;
   }
-  
   textarea {
     flex: 1; background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 20px; color: white;
     padding: 10px 14px; resize: none;
-    font-family: inherit; outline: none;
-    font-size: 0.95rem; max-height: 80px;
+    font-family: inherit; outline: none; font-size: 0.95rem; max-height: 80px;
   }
   textarea:focus { border-color: var(--gold-primary); background: rgba(0,0,0,0.3); }
 
   #send-btn {
-    background: transparent; border: none;
-    color: var(--gold-primary);
-    width: 36px; height: 36px; border-radius: 50%;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
+    background: transparent; border: none; color: var(--gold-primary);
+    width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background 0.2s;
   }
   #send-btn:hover { background: rgba(242, 201, 76, 0.1); }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
   @media (max-width: 600px) {
     .chat-container {
       position: fixed; top: 0; left: 0; bottom: 0;
-      width: 100%; 
-      height: 100%; 
-      height: 100dvh;
-      border-radius: 0; margin: 0; z-index: 10000;
-      transform: none;
+      width: 100%; height: 100%; height: 100dvh;
+      border-radius: 0; margin: 0; z-index: 10000; transform: none;
     }
-
-    .chat-container.hidden {
-      opacity: 0; transform: translateY(100%);
-      pointer-events: none; visibility: hidden;
-    }
-
-    .chat-container:not(.hidden) {
-      animation: slideUpMobile 0.3s ease-out forwards;
-    }
-
-    @keyframes slideUpMobile {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
-
+    .chat-container.hidden { opacity: 0; transform: translateY(100%); pointer-events: none; visibility: hidden; }
+    .chat-container:not(.hidden) { animation: slideUpMobile 0.3s ease-out forwards; }
+    @keyframes slideUpMobile { from { transform: translateY(100%); } to { transform: translateY(0); } }
     .chat-input-area { padding: 15px; padding-bottom: max(15px, env(safe-area-inset-bottom)); }
     .close-btn { padding: 10px; font-size: 28px; }
-
-    textarea {
-        font-size: 16px !important;
-    }
+    textarea { font-size: 16px !important; }
   }
 </style>
 
 <script>
   // --- CONFIG ---
-  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook-test/1edf60a9-32a8-40cf-b9a7-a067487868fd';
+  const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/1edf60a9-32a8-40cf-b9a7-a067487868fd';
   const HISTORY_KEY = 'phogo_tarot_chat_history';
   const SESSION_KEY = 'phogo_tarot_session';
   
@@ -282,7 +282,7 @@
   function initChat() {
     loadHistory();
     if (messagesContainer.children.length === 0) {
-        addMessage("Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
+        addMessage("Chào bạn nè 👋 Mình là Joana. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
     }
   }
 
@@ -295,18 +295,30 @@
     return sessionId;
   }
 
-  function saveToHistory(text, sender) {
+  function saveToHistory(text, sender, reaction = null) {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-    history.push({ text, sender, timestamp: new Date().toISOString() });
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    if (!reaction) { 
+        history.push({ text, sender, timestamp: new Date().toISOString(), reaction: null });
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    }
+  }
+  
+  function updateReactionInHistory(text, reaction) {
+      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].text === text) {
+              history[i].reaction = reaction;
+              break;
+          }
+      }
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }
 
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
     messagesContainer.innerHTML = '';
     history.forEach(msg => {
-        // Khi load lại lịch sử, ta render luôn Markdown
-        addMessage(msg.text, msg.sender, false, false);
+        addMessage(msg.text, msg.sender, false, false, msg.reaction);
     });
     scrollToBottom();
   }
@@ -316,7 +328,7 @@
         localStorage.removeItem(HISTORY_KEY);
         localStorage.removeItem(SESSION_KEY);
         messagesContainer.innerHTML = '';
-        addMessage("Chào bạn nè 👋 Mình là Joana. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
+        addMessage("Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
     }
   }
 
@@ -341,7 +353,7 @@
     }
   }
 
-  function addMessage(text, sender, animate = false, save = true) {
+  function addMessage(text, sender, animate = false, save = true, savedReaction = null) {
     if (!messagesContainer) return;
 
     if (save) {
@@ -351,13 +363,18 @@
     const msgDiv = document.createElement('div');
     msgDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
     
+    const wrapperDiv = document.createElement('div');
+    wrapperDiv.className = 'message-wrapper';
+    
+    wrapperDiv.addEventListener('click', (e) => {
+        if (!e.target.closest('.react-option-btn')) {
+             wrapperDiv.classList.toggle('show-options');
+        }
+    });
+
     const contentDiv = document.createElement('div');
     contentDiv.classList.add('message-content');
-    msgDiv.appendChild(contentDiv);
     
-    messagesContainer.appendChild(msgDiv);
-
-    // Hàm tiện ích render markdown dùng showdown (giả sử đã load từ BaseLayout)
     const renderMarkdown = (rawText) => {
         if (typeof showdown !== 'undefined') {
             const converter = new showdown.Converter({
@@ -370,8 +387,67 @@
         return rawText.replace(/\n/g, '<br>');
     };
 
+    const reactions = [
+        { icon: '❤️', label: 'Yêu thích' },
+        { icon: '🙏', label: 'Cảm ơn' },
+        { icon: '👎', label: 'Không thích' }
+    ];
+
+    const menuDiv = document.createElement('div');
+    menuDiv.className = 'reaction-menu';
+    
+    const badgeDiv = document.createElement('div');
+    badgeDiv.className = 'reaction-badge';
+    badgeDiv.style.display = 'none'; 
+    badgeDiv.title = 'Bấm để hủy'; 
+
+    // Logic hủy reaction khi bấm vào badge
+    badgeDiv.addEventListener('click', (e) => {
+        e.stopPropagation(); // Ngăn sự kiện click lan ra wrapper (để không mở lại menu)
+        badgeDiv.style.display = 'none';
+        badgeDiv.innerHTML = '';
+        if (sender === 'bot') {
+            updateReactionInHistory(text, null);
+        }
+    });
+
+    const selectReaction = (icon) => {
+        // Nếu click vào icon đang chọn -> không làm gì (hoặc có thể toggle, nhưng user yêu cầu bấm badge để hủy)
+        // Ở đây ta cứ set đè
+        badgeDiv.style.display = 'flex';
+        badgeDiv.innerHTML = icon;
+        wrapperDiv.classList.remove('show-options');
+        if (sender === 'bot') { 
+             updateReactionInHistory(text, icon);
+        }
+    };
+
+    reactions.forEach(r => {
+        const btn = document.createElement('button');
+        btn.className = 'react-option-btn';
+        btn.innerHTML = r.icon;
+        btn.title = r.label;
+        btn.onclick = (e) => {
+            e.stopPropagation(); 
+            selectReaction(r.icon);
+        };
+        menuDiv.appendChild(btn);
+    });
+
+    if (savedReaction) {
+        selectReaction(savedReaction);
+    }
+
+    wrapperDiv.appendChild(contentDiv);
+    if (sender === 'bot') {
+        wrapperDiv.appendChild(menuDiv);
+        wrapperDiv.appendChild(badgeDiv);
+    }
+    
+    msgDiv.appendChild(wrapperDiv);
+    messagesContainer.appendChild(msgDiv);
+
     if (animate && sender === 'bot') {
-        // HIỆU ỨNG GÕ CHỮ
         isTyping = true;
         let index = 0;
         const speed = 15;
@@ -389,14 +465,12 @@
                 setTimeout(typeText, speed);
             } else {
                 isTyping = false; 
-                // [QUAN TRỌNG] Gõ xong thì convert sang Markdown HTML
                 contentDiv.innerHTML = renderMarkdown(text);
                 scrollToBottom();
             }
         }
         typeText();
     } else {
-        // Tin nhắn cũ hoặc tin user -> Render Markdown luôn
         contentDiv.innerHTML = renderMarkdown(text);
         scrollToBottom();
     }
