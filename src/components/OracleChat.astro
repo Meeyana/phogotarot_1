@@ -131,10 +131,69 @@
   }
 
   .message-content {
-    padding: 10px 14px; border-radius: 14px;
-    font-size: 0.95rem; line-height: 1.5; word-wrap: break-word;
+    padding: 10px 14px; 
+    border-radius: 14px;
+    font-size: 0.95rem; 
+    line-height: 1.5; 
+    
+    /* --- CÁC DÒNG QUAN TRỌNG ĐỂ CHỐNG TRÀN --- */
+    width: 100%;                /* Đảm bảo chiếm đúng chiều rộng cha */
+    min-width: 0;               /* Fix lỗi flexbox không co lại */
+    word-wrap: break-word;      /* Hỗ trợ trình duyệt cũ */
+    overflow-wrap: break-word;  /* Chuẩn mới: ép xuống dòng khi hết chỗ */
+    word-break: break-word;     /* Ngắt cả những từ dài ngoằng */
+    
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: relative; z-index: 1; 
+    position: relative; 
+    z-index: 1; 
+  }
+
+  /* --- XỬ LÝ ẢNH TRONG TIN NHẮN --- */
+  .message-content img {
+    max-width: 100% !important; /* Bắt buộc ảnh co lại theo khung */
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin: 5px 0;
+  }
+
+  /* --- XỬ LÝ KHỐI CODE (NGUYÊN NHÂN CHÍNH GÂY TRÀN) --- */
+  .message-content pre {
+    white-space: pre-wrap;       /* Quan trọng: Ép code xuống dòng thay vì chạy ngang */
+    word-wrap: break-word;       
+    background: rgba(0,0,0,0.3); /* Nền tối cho code dễ nhìn */
+    padding: 8px;
+    border-radius: 6px;
+    overflow-x: hidden;          /* Ẩn thanh cuộn ngang */
+    max-width: 100%;
+  }
+
+  /* Code inline (ví dụ `code`) */
+  .message-content code {
+    font-family: monospace;
+    background: rgba(255,255,255,0.15);
+    padding: 2px 4px;
+    border-radius: 4px;
+    word-break: break-all;       /* Ngắt từ nếu quá dài */
+  }
+
+  /* --- XỬ LÝ DANH SÁCH (UL/OL) --- */
+  .message-content ul, .message-content ol {
+    margin: 5px 0 5px 20px;      /* Căn lề để không bị thụt quá sâu */
+    padding: 0;
+  }
+
+  /* --- XỬ LÝ BẢNG (TABLE) --- */
+  .message-content table {
+    display: block;              /* Biến bảng thành block để cuộn được */
+    width: 100%;
+    overflow-x: auto;            /* Cho phép cuộn ngang RIÊNG bảng nếu quá rộng */
+    border-collapse: collapse;
+  }
+  .message-content th, .message-content td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 8px;
+    font-size: 0.85rem;
   }
 
   .bot-message { align-self: flex-start; }
@@ -259,6 +318,34 @@
     .close-btn { padding: 10px; font-size: 28px; }
     textarea { font-size: 16px !important; }
   }
+
+  .options-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+  animation: fadeIn 0.5s ease;
+}
+
+.option-chip {
+  background: transparent;
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.option-chip:hover {
+  background: var(--gold-primary);
+  color: var(--bg-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(242, 201, 76, 0.3);
+}
 </style>
 
 <script>
@@ -267,6 +354,7 @@
   const HISTORY_KEY = 'phogo_tarot_chat_history';
   const SESSION_KEY = 'phogo_tarot_session';
   
+  // Element References
   const toggleBtn = document.getElementById('oracle-toggle-btn');
   const chatBox = document.getElementById('oracle-chat-box');
   const closeBtn = document.getElementById('close-chat');
@@ -279,10 +367,25 @@
   let isThinking = false;
   let isTyping = false; 
 
+  // --- MENU OPTIONS BAN ĐẦU ---
+  const INITIAL_OPTIONS = [
+    { label: '🔮 Trải bài Tarot', value: '/tarot' },
+    { label: '⚖️ Yes/No', value: '/yes-no-reading' },
+    { label: '🔢 Thần số học', value: '/than-so-hoc' },
+    { label: '✨ Zodiac Daily', value: '/zodiac-daily' }
+  ];
+
   function initChat() {
     loadHistory();
     if (messagesContainer.children.length === 0) {
-        addMessage("Chào bạn nè 👋 Mình là Joana. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
+        addMessage(
+            "Chào bạn nè 👋 Mình là Joana. Bạn muốn Joana giúp gì hôm nay?", 
+            'bot', 
+            false, 
+            false, 
+            null, 
+            INITIAL_OPTIONS 
+        );
     }
   }
 
@@ -295,12 +398,17 @@
     return sessionId;
   }
 
-  function saveToHistory(text, sender, reaction = null) {
+  // --- SAVE HISTORY ---
+  function saveToHistory(text, sender, reaction = null, options = []) {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-    if (!reaction) { 
-        history.push({ text, sender, timestamp: new Date().toISOString(), reaction: null });
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-    }
+    history.push({ 
+        text, 
+        sender, 
+        timestamp: new Date().toISOString(), 
+        reaction: reaction || null,
+        options: options || [] 
+    });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }
   
   function updateReactionInHistory(text, reaction) {
@@ -314,21 +422,41 @@
       localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }
 
+  // --- HÀM MỚI: XÓA OPTIONS TRONG HISTORY (Để F5 không hiện lại) ---
+  function removeOptionsFromLastBotMessage() {
+      const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+      // Tìm tin nhắn bot gần nhất có chứa options và xóa options đi
+      for (let i = history.length - 1; i >= 0; i--) {
+          if (history[i].sender === 'bot' && history[i].options && history[i].options.length > 0) {
+              history[i].options = null; // Xóa danh sách options
+              break; // Chỉ xóa của tin vừa bấm, xong thoát vòng lặp
+          }
+      }
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  }
+
   function loadHistory() {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
     messagesContainer.innerHTML = '';
     history.forEach(msg => {
-        addMessage(msg.text, msg.sender, false, false, msg.reaction);
+        addMessage(msg.text, msg.sender, false, false, msg.reaction, msg.options);
     });
     scrollToBottom();
   }
 
   function clearHistory() {
-    if (confirm('Bạn có chắc muốn xóa toàn bộ lịch sử trò chuyện không?')) {
+    if (confirm('Joana sẽ quên hết chuyện tụi mình vừa nói đó, bạn chắc chưa?')) {
         localStorage.removeItem(HISTORY_KEY);
         localStorage.removeItem(SESSION_KEY);
         messagesContainer.innerHTML = '';
-        addMessage("Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 'bot', false, false);
+        addMessage(
+            "Chào bạn nè 👋 Mình là Joana. Bạn muốn Joana giúp gì hôm nay?", 
+            'bot', 
+            false, 
+            false, 
+            null,
+            INITIAL_OPTIONS
+        );
     }
   }
 
@@ -353,11 +481,12 @@
     }
   }
 
-  function addMessage(text, sender, animate = false, save = true, savedReaction = null) {
+  // --- ADD MESSAGE ---
+  function addMessage(text, sender, animate = false, save = true, savedReaction = null, options = []) {
     if (!messagesContainer) return;
-
+    
     if (save) {
-        saveToHistory(text, sender);
+        saveToHistory(text, sender, null, options);
     }
 
     const msgDiv = document.createElement('div');
@@ -367,7 +496,8 @@
     wrapperDiv.className = 'message-wrapper';
     
     wrapperDiv.addEventListener('click', (e) => {
-        if (!e.target.closest('.react-option-btn')) {
+        // Ngăn click vào option chip kích hoạt menu reaction
+        if (!e.target.closest('.react-option-btn') && !e.target.closest('.option-chip')) {
              wrapperDiv.classList.toggle('show-options');
         }
     });
@@ -387,23 +517,23 @@
         return rawText.replace(/\n/g, '<br>');
     };
 
+    // Reaction Logic
     const reactions = [
+        { icon: '👍', label: 'Thích' },
         { icon: '❤️', label: 'Yêu thích' },
         { icon: '🙏', label: 'Cảm ơn' },
         { icon: '👎', label: 'Không thích' }
     ];
-
     const menuDiv = document.createElement('div');
     menuDiv.className = 'reaction-menu';
     
     const badgeDiv = document.createElement('div');
     badgeDiv.className = 'reaction-badge';
-    badgeDiv.style.display = 'none'; 
+    badgeDiv.style.display = 'none';
     badgeDiv.title = 'Bấm để hủy'; 
 
-    // Logic hủy reaction khi bấm vào badge
     badgeDiv.addEventListener('click', (e) => {
-        e.stopPropagation(); // Ngăn sự kiện click lan ra wrapper (để không mở lại menu)
+        e.stopPropagation();
         badgeDiv.style.display = 'none';
         badgeDiv.innerHTML = '';
         if (sender === 'bot') {
@@ -412,8 +542,6 @@
     });
 
     const selectReaction = (icon) => {
-        // Nếu click vào icon đang chọn -> không làm gì (hoặc có thể toggle, nhưng user yêu cầu bấm badge để hủy)
-        // Ở đây ta cứ set đè
         badgeDiv.style.display = 'flex';
         badgeDiv.innerHTML = icon;
         wrapperDiv.classList.remove('show-options');
@@ -439,6 +567,33 @@
     }
 
     wrapperDiv.appendChild(contentDiv);
+    
+    // --- RENDER OPTIONS (QUICK REPLY) ---
+    // Chỉ hiển thị nếu là bot và có options
+    if (sender === 'bot' && options && options.length > 0) {
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = 'options-container';
+        
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-chip';
+            
+            const label = typeof opt === 'string' ? opt : opt.label;
+            const value = typeof opt === 'string' ? opt : opt.value;
+            
+            btn.innerText = label;
+            
+            // Xử lý sự kiện click
+            btn.onclick = (e) => {
+                e.stopPropagation(); 
+                // Truyền e.target để biết nút nào được bấm nhằm tìm container cha
+                handleOptionClick(label, value, e.target); 
+            };
+            optionsContainer.appendChild(btn);
+        });
+        wrapperDiv.appendChild(optionsContainer);
+    }
+
     if (sender === 'bot') {
         wrapperDiv.appendChild(menuDiv);
         wrapperDiv.appendChild(badgeDiv);
@@ -464,7 +619,7 @@
                 scrollToBottom();
                 setTimeout(typeText, speed);
             } else {
-                isTyping = false; 
+                isTyping = false;
                 contentDiv.innerHTML = renderMarkdown(text);
                 scrollToBottom();
             }
@@ -480,7 +635,7 @@
     const typingDiv = document.createElement('div');
     typingDiv.id = 'typing-indicator';
     typingDiv.className = 'typing-indicator';
-    typingDiv.innerText = 'Joana đang soạn tin...';
+    typingDiv.innerText = 'Joana đang suy nghĩ...';
     messagesContainer.appendChild(typingDiv);
     scrollToBottom();
   }
@@ -490,16 +645,30 @@
     if (typingDiv) typingDiv.remove();
   }
 
-  async function handleSend() {
-    const text = userInput.value.trim();
-    if (!text || isThinking || isTyping) return;
+  // --- XỬ LÝ KHI BẤM OPTION (CẬP NHẬT) ---
+  function handleOptionClick(label, value, element) {
+      if (isThinking || isTyping) return;
+      
+      // 1. Tìm container chứa các nút và xóa nó khỏi giao diện ngay lập tức
+      const container = element.closest('.options-container');
+      if (container) {
+          container.remove(); 
+      }
 
-    addMessage(text, 'user', false, true);
+      // 2. Cập nhật localStorage để xóa options của tin nhắn này (tránh hiện lại khi F5)
+      removeOptionsFromLastBotMessage();
+
+      // 3. Gửi tin nhắn đi xử lý
+      processMessage(label, value); 
+  }
+
+  async function processMessage(displayText, sendValue) {
+    addMessage(displayText, 'user', false, true);
     userInput.value = '';
     
     isThinking = true;
     addTypingIndicator();
-
+    
     const sessionId = getSessionId();
     
     try {
@@ -508,7 +677,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: sessionId,
-          chatInput: text,
+          chatInput: sendValue, 
           timestamp: new Date().toISOString()
         })
       });
@@ -519,8 +688,9 @@
       removeTypingIndicator();
       
       const botReply = data.output || data.text || "Joana đang bận xíu, thử lại sau nhé!";
-      
-      addMessage(botReply, 'bot', true, true);
+      const nextOptions = data.options || []; 
+
+      addMessage(botReply, 'bot', true, true, null, nextOptions);
 
     } catch (error) {
       console.error('Error:', error);
@@ -529,6 +699,12 @@
     } finally {
       isThinking = false;
     }
+  }
+
+  async function handleSend() {
+    const text = userInput.value.trim();
+    if (!text || isThinking || isTyping) return;
+    processMessage(text, text);
   }
 
   toggleBtn.addEventListener('click', toggleChat);
