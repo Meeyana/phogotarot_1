@@ -24,7 +24,7 @@
         </div>
       </div>
       <div style="display: flex; gap: 10px; align-items: center;">
-        <button id="clear-history-btn" class="icon-btn" title="Xóa lịch sử">
+        <button id="clear-chat-history-btn" class="icon-btn" title="Xóa lịch sử">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
         </button>
         <button id="close-chat" class="close-btn">&times;</button>
@@ -358,7 +358,7 @@
   const toggleBtn = document.getElementById('oracle-toggle-btn');
   const chatBox = document.getElementById('oracle-chat-box');
   const closeBtn = document.getElementById('close-chat');
-  const clearBtn = document.getElementById('clear-history-btn');
+  const clearChatBtn = document.getElementById('clear-chat-history-btn');
   const sendBtn = document.getElementById('send-btn');
   const userInput = document.getElementById('user-input');
   const messagesContainer = document.getElementById('chat-messages');
@@ -379,7 +379,7 @@
     loadHistory();
     if (messagesContainer.children.length === 0) {
         addMessage(
-            "Chào bạn nè 👋 Mình là Joana. Bạn muốn Joana giúp gì hôm nay?", 
+            "Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
             'bot', 
             false, 
             false, 
@@ -445,12 +445,12 @@
   }
 
   function clearHistory() {
-    if (confirm('Joana sẽ quên hết chuyện tụi mình vừa nói đó, bạn chắc chưa?')) {
+    if (confirm('Bạn muốn xóa cuộc trò chuyện này?')) {
         localStorage.removeItem(HISTORY_KEY);
         localStorage.removeItem(SESSION_KEY);
         messagesContainer.innerHTML = '';
         addMessage(
-            "Chào bạn nè 👋 Mình là Joana. Bạn muốn Joana giúp gì hôm nay?", 
+            "Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
             'bot', 
             false, 
             false, 
@@ -709,7 +709,7 @@
 
   toggleBtn.addEventListener('click', toggleChat);
   closeBtn.addEventListener('click', toggleChat);
-  clearBtn.addEventListener('click', clearHistory);
+  clearChatBtn.addEventListener('click', clearHistory);
   sendBtn.addEventListener('click', handleSend);
   userInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

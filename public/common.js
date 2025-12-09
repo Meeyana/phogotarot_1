@@ -28,11 +28,27 @@ const historyBackdrop = document.getElementById('history-modal-backdrop');
 const historyModal = document.getElementById('history-modal-content');
 const historyCloseBtn = document.getElementById('history-modal-close-btn');
 const historyList = document.getElementById('history-list');
+const clearTarotHistoryBtn = document.getElementById('clear-tarot-history-btn');
 
 // (MỚI) Thêm element cho dropdown tarot
 const tarotToggle = document.getElementById('tarot-dropdown-toggle');
 
 // --- History Functions ---
+
+/** (MỚI) Hàm xóa toàn bộ lịch sử */
+function clearHistory() {
+    // Hỏi xác nhận trước khi xóa để tránh bấm nhầm
+    if (confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử trải bài không? Hành động này không thể hoàn tác.")) {
+        // 1. Xóa mảng trong bộ nhớ
+        readingHistory = [];
+        
+        // 2. Xóa trong localStorage
+        localStorage.removeItem('tarotHistory');
+        
+        // 3. Render lại danh sách (lúc này sẽ hiện thông báo trống)
+        renderHistoryList();
+    }
+}
 
 /** Tải lịch sử từ localStorage */
 function loadHistory() {
@@ -57,22 +73,31 @@ function saveHistory(reading) {
 
 /** Hiển thị danh sách lịch sử trong modal */
 function renderHistoryList() {
-    if (!historyList) return; // Không làm gì nếu không có modal trên trang
+    if (!historyList) return; 
 
     historyList.innerHTML = '';
+    
+    // (MỚI) Logic ẩn hiện nút Xóa
     if (readingHistory.length === 0) {
         historyList.innerHTML = '<p style="opacity: 0.7; text-align: center;">Chưa có lịch sử trải bài.</p>';
+        // Nếu không có lịch sử, ẩn nút xóa đi
+        if (clearTarotHistoryBtn) clearTarotHistoryBtn.style.display = 'none';
         return;
     }
 
+    // Nếu có lịch sử, hiện nút xóa
+    if (clearTarotHistoryBtn) clearTarotHistoryBtn.style.display = 'inline-block';
+
     readingHistory.forEach(reading => {
+        // ... (Giữ nguyên logic render từng item như cũ) ...
         const itemEl = document.createElement('div');
         itemEl.className = 'history-item';
-
+        
+        // --- Code cũ render cardsHtml và itemEl.innerHTML giữ nguyên ---
+        // (Copy lại phần logic render cards và template literal của bạn ở đây)
         let cardsHtml = '';
-        // Kiểm tra xem có lá bài không (để phòng lỗi)
         if (reading.cards && Array.isArray(reading.cards)) { 
-            reading.cards.forEach(card => {
+             reading.cards.forEach(card => {
                 cardsHtml += `
                     <div class="history-card-item">
                         <img src="${card.image}" alt="${card.name}" class="${card.isReversed ? 'reversed' : ''}">
@@ -82,19 +107,17 @@ function renderHistoryList() {
                 `;
             });
         }
-
+        
         const shareButtonHtml = reading.text ? 
-            `<button class="history-share-btn" data-reading-id="${reading.readingId}">Chia sẻ</button>` :
-            '';
+            `<button class="history-share-btn" data-reading-id="${reading.readingId}">Chia sẻ</button>` : '';
 
         itemEl.innerHTML = `
             <h3>${reading.question}</h3>
             <div class="history-date">${new Date(reading.timestamp).toLocaleString('vi-VN')}</div>
-            <div class="history-cards-container">
-                ${cardsHtml}
-            </div>
-            ${shareButtonHtml} 
+            <div class="history-cards-container">${cardsHtml}</div>
+            ${shareButtonHtml}
         `;
+        
         historyList.appendChild(itemEl);
     });
 }
@@ -239,4 +262,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (historyBackdrop) historyBackdrop.addEventListener('click', closeHistoryModal);
     if (historyCloseBtn) historyCloseBtn.addEventListener('click', closeHistoryModal);
     if (historyList) historyList.addEventListener('click', handleHistoryClick);
+
+    if (clearTarotHistoryBtn) {
+        clearTarotHistoryBtn.addEventListener('click', clearHistory);
+    }
 });

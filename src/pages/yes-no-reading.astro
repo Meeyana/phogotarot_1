@@ -7,16 +7,54 @@ const pageTitle = "Trải Bài Tarot Yes/No - Câu Trả Lời Nhanh | Phở Gõ
 const pageDesc = "Nhận câu trả lời Yes (Có) hoặc No (Không) nhanh chóng cho các câu hỏi của bạn, cùng với luận giải AI chi tiết từ một lá bài Tarot.";
 const pageUrl = new URL('/yes-no-reading', Astro.site).href;
 
+// CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph cho Yes/No)
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Bói Bài Tarot Yes/No Online Miễn Phí",
+      "url": pageUrl,
+      "description": "Công cụ bói bài Tarot Yes/No giúp bạn đưa ra quyết định nhanh chóng. Chọn 1 lá để xem kết quả Có/Không tức thì hoặc 3 lá để xem chi tiết.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any"
+    },
+    {
+      "@type": "HowTo",
+      "name": "Cách Đặt Câu Hỏi Tarot Yes/No Chính Xác Nhất",
+      "description": "Hướng dẫn đặt câu hỏi đóng (Closed Questions) để nhận được câu trả lời dứt khoát từ các lá bài Tarot.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Chỉ hỏi một vấn đề duy nhất",
+          "text": "Tránh câu hỏi 'hoặc' (Ví dụ: 'Tôi nên đi du học hay ở lại làm việc?'). Hãy tách thành 2 câu hỏi riêng biệt."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Giới hạn thời gian",
+          "text": "Thêm mốc thời gian cụ thể như 'trong tuần này', 'trong tháng tới' để tăng độ chính xác."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Sẵn sàng đón nhận sự thật",
+          "text": "Giữ tâm thái trung lập, không cố ép các lá bài phải trả lời theo ý muốn của bạn."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Có nên bói Yes/No nhiều lần cho một câu hỏi?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Không nên. Việc hỏi đi hỏi lại cùng một vấn đề trong thời gian ngắn sẽ khiến năng lượng bị nhiễu loạn và kết quả không còn chính xác."
+          }
+        }
+      ]
+    }
+  ]
 };
 ---
 
@@ -24,6 +62,7 @@ const schema = {
   title={pageTitle}
   description={pageDesc}
 >
+    <!-- MÀN HÌNH 1: ĐẶT CÂU HỎI -->
     <div id="question-screen" class="screen active">
         <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
         <p class="subtitle">Bạn có thể chọn rút 1 lá để xem nhanh hoặc 3 lá để xem chi tiết.</p>
@@ -60,8 +99,45 @@ const schema = {
         
         <p id="question-error-display" class="error-message"></p>
 
+        <!-- --- PHẦN MỚI: BÀI VIẾT SEO / GEO (YES/NO SPECIFIC) --- -->
+        <div class="seo-divider"></div>
+        
+        <article class="seo-guide-container">
+            <h2 class="seo-title">Bí Quyết Đặt Câu Hỏi Yes/No Tarot Chuẩn Xác</h2>
+            <p class="seo-intro">
+                Trải bài Tarot Yes/No là công cụ tuyệt vời cho những quyết định nhanh. Tuy nhiên, để "Vũ trụ" gửi tín hiệu dứt khoát (Có hoặc Không), bạn cần tuân thủ nguyên tắc đặt câu hỏi đóng.
+            </p>
+
+            <div class="seo-tips-grid">
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">⚡ Một Vấn Đề Duy Nhất</h3>
+                    <p class="tip-content">Tuyệt đối không dùng từ <strong>"hoặc"</strong>. Ví dụ sai: <em>"Tôi nên chọn công ty A hay công ty B?"</em>. Hãy tách thành: <em>"Công ty A có tốt cho tôi không?"</em>.</p>
+                </div>
+                
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">🎯 Cụ Thể & Trực Tiếp</h3>
+                    <p class="tip-content">Hãy đi thẳng vào vấn đề. Thay vì <em>"Chuyện tình cảm thế nào?"</em>, hãy hỏi <em>"Người ấy có tình cảm với tôi không?"</em>.</p>
+                </div>
+
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">🚫 Không Hỏi Lại Ngay</h3>
+                    <p class="tip-content">Nếu nhận được câu trả lời không như ý (ví dụ: No), đừng rút bài lại ngay lập tức. Hãy chờ ít nhất 1-2 ngày để năng lượng ổn định.</p>
+                </div>
+            </div>
+
+            <div class="seo-examples">
+                <h3 class="example-title">💡 Ví Dụ Câu Hỏi Yes/No Điển Hình:</h3>
+                <ul class="example-list">
+                    <li><strong>Tình yêu:</strong> "Người yêu cũ có quay lại với tôi trong tháng này không?"</li>
+                    <li><strong>Công việc:</strong> "Dự án sắp tới có mang lại lợi nhuận tốt không?"</li>
+                    <li><strong>Đời sống:</strong> "Chuyến đi du lịch tuần sau có suôn sẻ không?"</li>
+                </ul>
+            </div>
+        </article>
+        <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->
+
         <div id="card-lookup-container-start" class="card-lookup-container">
-            <h2>Tra cứu nhanh ý nghĩa lá bài</h2>
+            <h2>Tra cứu nhanh ý nghĩa lá bài Yes/No</h2>
             
             <div id="card-search-wrapper">
                 <i class="fa-solid fa-search card-search-icon"></i>
@@ -72,8 +148,9 @@ const schema = {
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
             </div>
         </div>
-        </div>
+    </div>
 
+    <!-- MÀN HÌNH 2: XÁO BÀI -->
     <div id="shuffling-screen" class="screen">
         <div id="shuffling-question-display" class="question-display-header"></div>
         <div class="shuffling-animation-container">
@@ -88,6 +165,7 @@ const schema = {
         </p>
     </div>
 
+    <!-- MÀN HÌNH 3: CHỌN BÀI & KẾT QUẢ -->
     <div id="drawing-screen" class="screen">
         <div id="drawing-question-display" class="question-display-header"></div>
         
@@ -139,7 +217,7 @@ const schema = {
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải dữ liệu tra cứu...</p>
             </div>
         </div>
-        </div>
+    </div>
 
     <script 
       type="application/ld+json" 
@@ -668,6 +746,98 @@ const schema = {
         .card-lookup-container td:nth-child(3) { width: 15%; color: var(--gold-color, #F2C94C); font-weight: 600; } /* Cột Yes/No màu vàng */
         .card-lookup-container td:nth-child(4) { width: 27.5%; }
         .card-lookup-container td:nth-child(5) { width: 27.5%; }
+
+        /* === NEW STYLES FOR SEO CONTENT === */
+        .seo-divider {
+            width: 100%;
+            max-width: 600px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(242, 201, 76, 0.3), transparent);
+            margin: 3rem auto 2rem;
+        }
+
+        .seo-guide-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 1rem;
+            color: #e0e0e0;
+            text-align: left;
+        }
+
+        .seo-title {
+            font-family: var(--font-title);
+            color: var(--gold-color, #F2C94C);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+        }
+
+        .seo-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .seo-tips-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .seo-tips-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .seo-tip-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s;
+        }
+        .seo-tip-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(242, 201, 76, 0.3);
+        }
+
+        .tip-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-title);
+        }
+
+        .tip-content {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .seo-examples {
+            background: rgba(242, 201, 76, 0.05);
+            border-left: 3px solid #F2C94C;
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .example-title {
+            color: #F2C94C;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-family: var(--font-title);
+        }
+
+        .example-list li {
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+        .example-list strong {
+            color: #fff;
+        }
         
     </style>   
 

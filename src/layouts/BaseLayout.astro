@@ -91,6 +91,24 @@ const ogImageURL = new URL(ogImage, Astro.site);
         -webkit-user-select: auto;
         user-select: auto;
       }
+
+        .clear-history-btn {
+            background: transparent;
+            border: 1px solid #ff6b6b; /* Màu đỏ nhạt */
+            color: #ff6b6b;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 10px; /* Cách tiêu đề một chút */
+            transition: all 0.3s ease;
+            display: none; /* Mặc định ẩn, chỉ hiện khi có lịch sử */
+        }
+
+        .clear-history-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
     </style>
 </head>
 
@@ -196,6 +214,9 @@ const ogImageURL = new URL(ogImage, Astro.site);
         <div class="modal-header">
             <button id="history-modal-close-btn" class="modal-close-btn">&times;</button>
             <h2>Lịch sử trải bài</h2>
+            <button id="clear-tarot-history-btn" class="clear-history-btn" title="Xóa toàn bộ dữ liệu">
+                <i class="fa-solid fa-trash-can"></i> Xóa tất cả
+            </button>
         </div>
         <div id="history-list-wrapper" class="modal-scroll-wrapper">
             <div id="history-list"></div>

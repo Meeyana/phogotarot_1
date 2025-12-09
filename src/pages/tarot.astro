@@ -7,16 +7,54 @@ const pageTitle = "Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | P
 const pageDesc = "Sử dụng trải bài 3 lá (Quá khứ, Hiện tại, Tương lai) để nhận luận giải sâu sắc về các câu hỏi tình yêu, sự nghiệp và cuộc sống của bạn.";
 const pageUrl = new URL('/tarot', Astro.site).href;
 
+// CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph kết hợp Tool & Hướng dẫn)
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "Trải Bài Tarot 3 Lá Online - Phở Gõ Tarot",
+      "url": pageUrl,
+      "description": "Công cụ bói bài Tarot online miễn phí, giúp giải mã tình yêu, công việc qua trải bài Quá khứ - Hiện tại - Tương lai.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any"
+    },
+    {
+      "@type": "HowTo",
+      "name": "Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng Để Nhận Thông Điệp Chính Xác",
+      "description": "Hướng dẫn chi tiết cách đặt câu hỏi cho Tarot (Tarot Phrasing) để nhận được câu trả lời cụ thể, hữu ích nhất từ vũ trụ.",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "name": "Tránh câu hỏi Yes/No đóng",
+          "text": "Thay vì hỏi 'Anh ấy có yêu tôi không?', hãy hỏi 'Mối quan hệ này đang đi về đâu?' để nhận được bức tranh toàn cảnh."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Tập trung vào bản thân",
+          "text": "Đặt chủ ngữ là 'Tôi' để trao quyền cho chính mình. Ví dụ: 'Tôi cần làm gì để cải thiện tình hình tài chính?'."
+        },
+        {
+          "@type": "HowToStep",
+          "name": "Giữ tâm trí trung lập",
+          "text": "Hít thở sâu và thả lỏng kỳ vọng trước khi bấm nút trải bài để năng lượng được thuần khiết nhất."
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Nên xem Tarot bao lâu một lần?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Với cùng một vấn đề, bạn nên đợi ít nhất 1-3 tháng hoặc khi có tình tiết mới. Xem quá nhiều lần cho một câu hỏi sẽ gây nhiễu loạn năng lượng."
+          }
+        }
+      ]
+    }
+  ]
 };
 ---
 
@@ -51,6 +89,44 @@ const schema = {
         </div>
         
         <p id="question-error-display" class="error-message"></p>
+
+        <!-- --- PHẦN MỚI: BÀI VIẾT SEO / GEO --- -->
+        <div class="seo-divider"></div>
+        
+        <article class="seo-guide-container">
+            <h2 class="seo-title">Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng</h2>
+            <p class="seo-intro">
+                Kết quả của một trải bài Tarot phụ thuộc 50% vào năng lượng của Reader và 50% vào <strong>cách bạn đặt câu hỏi</strong>. Một câu hỏi đúng trọng tâm, cởi mở sẽ giúp "Vũ trụ" gửi đến bạn những thông điệp rõ ràng nhất.
+            </p>
+
+            <div class="seo-tips-grid">
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">❌ Tránh Câu Hỏi Yes/No Đóng</h3>
+                    <p class="tip-content">Tarot kể chuyện, không chỉ tung đồng xu. Thay vì hỏi <em>"Tôi có giàu không?"</em>, hãy hỏi <em>"Cơ hội tài chính nào đang đến với tôi?"</em>.</p>
+                </div>
+                
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">👤 Tập Trung Vào Chính Bạn</h3>
+                    <p class="tip-content">Bạn không thể thay đổi người khác, chỉ có thể thay đổi chính mình. Hãy hỏi <em>"Tôi cần làm gì..."</em> thay vì <em>"Tại sao anh ấy lại làm thế?"</em>.</p>
+                </div>
+
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">⏳ Giới Hạn Thời Gian Cụ Thể</h3>
+                    <p class="tip-content">Năng lượng luôn biến đổi. Hãy gắn thêm mốc thời gian như <em>"trong 3 tháng tới"</em> hoặc <em>"trong năm nay"</em> để có câu trả lời sát thực tế nhất.</p>
+                </div>
+            </div>
+
+            <div class="seo-examples">
+                <h3 class="example-title">💡 Công Thức Câu Hỏi "Quyền Năng":</h3>
+                <ul class="example-list">
+                    <li><strong>Tình cảm:</strong> "Điều gì đang cản trở tôi tìm thấy tình yêu đích thực?"</li>
+                    <li><strong>Công việc:</strong> "Tiềm năng phát triển của tôi tại công ty hiện tại trong 6 tháng tới là gì?"</li>
+                    <li><strong>Phát triển:</strong> "Thông điệp vũ trụ muốn gửi đến tôi ngay lúc này là gì?"</li>
+                </ul>
+            </div>
+        </article>
+        <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->
+
     </div>
 
     <!-- MÀN HÌNH 2: XÁO BÀI -->
@@ -468,6 +544,98 @@ const schema = {
             transform: rotateY(180deg);
         }
         .flying-card-front img { width: 100%; height: 100%; border-radius: 4px; }
+
+        /* === NEW STYLES FOR SEO CONTENT === */
+        .seo-divider {
+            width: 100%;
+            max-width: 600px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(242, 201, 76, 0.3), transparent);
+            margin: 3rem auto 2rem;
+        }
+
+        .seo-guide-container {
+            width: 100%;
+            max-width: 900px;
+            padding: 1rem;
+            color: #e0e0e0;
+            text-align: left;
+        }
+
+        .seo-title {
+            font-family: var(--font-title);
+            color: var(--gold-color, #F2C94C);
+            font-size: 1.8rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+        }
+
+        .seo-intro {
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .seo-tips-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        @media (min-width: 768px) {
+            .seo-tips-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .seo-tip-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s;
+        }
+        .seo-tip-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(242, 201, 76, 0.3);
+        }
+
+        .tip-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-title);
+        }
+
+        .tip-content {
+            font-size: 0.95rem;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .seo-examples {
+            background: rgba(242, 201, 76, 0.05);
+            border-left: 3px solid #F2C94C;
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .example-title {
+            color: #F2C94C;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            font-family: var(--font-title);
+        }
+
+        .example-list li {
+            margin-bottom: 0.8rem;
+            line-height: 1.6;
+        }
+        .example-list strong {
+            color: #fff;
+        }
 
     </style>
 
