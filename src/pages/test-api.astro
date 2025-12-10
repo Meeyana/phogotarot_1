@@ -1,33 +1,71 @@
 ---
-// src/pages/test-api.astro
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Test API SSR">
-  <div style="padding: 50px; text-align: center;">
-    <h1>Kiểm tra API (Chế độ Server SSR)</h1>
-    <button id="btnTest" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
-      GỌI API KIỂM TRA
+<BaseLayout title="Test API Environment">
+  <div style="padding: 50px; text-align: center; max-width: 600px; margin: 0 auto;">
+    <h1>🔍 Kiểm tra API (SSR)</h1>
+    
+    <p>Trạng thái: <span id="statusText">Sẵn sàng</span></p>
+
+    <button id="btnTest" style="background: #F2C94C; color: #000; padding: 15px 30px; font-weight: bold; border: none; cursor: pointer; border-radius: 8px; margin-top: 20px;">
+      GỌI API NGAY
     </button>
-    <div id="result" style="margin-top: 20px; padding: 20px; background: #eee; text-align: left;">
+    
+    <div id="result" style="margin-top: 30px; padding: 20px; background: #1a1a1a; color: #0f0; text-align: left; border-radius: 8px; font-family: monospace; min-height: 100px; white-space: pre-wrap;">
       Kết quả sẽ hiện ở đây...
     </div>
   </div>
 </BaseLayout>
 
-<script>
-  const btn = document.getElementById('btnTest');
-  const resultDiv = document.getElementById('result');
+<script is:inline>
+  // Chờ website tải xong hoàn toàn mới chạy code
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log("--> Script Frontend đã chạy!");
 
-  btn?.addEventListener('click', async () => {
-    resultDiv!.innerText = "Đang gọi /api/test-env ...";
-    try {
-      // Gọi API nội bộ (Astro sẽ tự định tuyến vào file .ts kia)
-      const res = await fetch('/api/test-env');
-      const data = await res.json();
-      resultDiv!.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-    } catch (e) {
-      resultDiv!.innerText = "Lỗi: " + e;
+    const btn = document.getElementById('btnTest');
+    const resultDiv = document.getElementById('result');
+    const statusText = document.getElementById('statusText');
+
+    if (!btn) {
+        console.error("LỖI: Không tìm thấy nút bấm có ID 'btnTest'");
+        return;
     }
+
+    btn.addEventListener('click', async () => {
+      console.log("--> Đã bấm nút! Đang gọi API...");
+      resultDiv.innerText = "⏳ Đang kết nối server...";
+      statusText.innerText = "Đang xử lý...";
+      
+      try {
+        // Gọi API
+        const response = await fetch('/api/test-env');
+        console.log("--> Server phản hồi status:", response.status);
+
+        // Đọc text trước để tránh lỗi JSON parse nếu server trả về HTML lỗi
+        const rawText = await response.text();
+        console.log("--> Dữ liệu thô:", rawText);
+
+        let data;
+        try {
+            data = JSON.parse(rawText);
+        } catch (e) {
+            throw new Error("Server trả về dữ liệu không phải JSON: " + rawText.substring(0, 100));
+        }
+
+        if (response.ok) {
+           resultDiv.innerHTML = "✅ KẾT QUẢ THÀNH CÔNG:\n\n" + JSON.stringify(data, null, 2);
+           statusText.innerText = "Thành công";
+        } else {
+           resultDiv.innerHTML = "❌ LỖI TỪ API:\n\n" + JSON.stringify(data, null, 2);
+           statusText.innerText = "Thất bại";
+        }
+
+      } catch (e) {
+        console.error("Lỗi fetch:", e);
+        resultDiv.innerText = "🔥 LỖI JAVASCRIPT:\n" + e.message;
+        statusText.innerText = "Lỗi nghiêm trọng";
+      }
+    });
   });
 </script>
