@@ -1,0 +1,33 @@
+---
+// src/pages/test-api.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Test API SSR">
+  <div style="padding: 50px; text-align: center;">
+    <h1>Kiểm tra API (Chế độ Server SSR)</h1>
+    <button id="btnTest" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+      GỌI API KIỂM TRA
+    </button>
+    <div id="result" style="margin-top: 20px; padding: 20px; background: #eee; text-align: left;">
+      Kết quả sẽ hiện ở đây...
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  const btn = document.getElementById('btnTest');
+  const resultDiv = document.getElementById('result');
+
+  btn?.addEventListener('click', async () => {
+    resultDiv!.innerText = "Đang gọi /api/test-env ...";
+    try {
+      // Gọi API nội bộ (Astro sẽ tự định tuyến vào file .ts kia)
+      const res = await fetch('/api/test-env');
+      const data = await res.json();
+      resultDiv!.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    } catch (e) {
+      resultDiv!.innerText = "Lỗi: " + e;
+    }
+  });
+</script>
