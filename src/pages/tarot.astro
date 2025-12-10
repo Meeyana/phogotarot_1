@@ -832,7 +832,7 @@ async function handleQuestionSubmit() {
     questionErrorDisplay.style.color = '#d4af37'; 
     
     try {
-        const response = await fetch(N8N_VALIDATE_URL, {
+        const response = await fetch('/api/tarot-validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: questionFromInput })
@@ -894,7 +894,7 @@ async function handleFollowUpSubmit() {
     followUpErrorDisplay.style.color = '#d4af37'; 
 
     try {
-        const response = await fetch(N8N_VALIDATE_URL, {
+        const response = await fetch('/api/tarot-validate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: questionFromInput })
