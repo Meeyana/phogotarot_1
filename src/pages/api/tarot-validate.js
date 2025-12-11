@@ -1,11 +1,11 @@
-// src/pages/api/tarot-interpret.js
+// src/pages/api/tarot-validate.js
 export const prerender = false;
 
 export async function POST({ request }) {
   try {
     const body = await request.json();
     
-    const response = await fetch(import.meta.env.N8N_WEBHOOK_TAROT, {
+    const response = await fetch(import.meta.env.N8N_VALIDATE_TAROT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
