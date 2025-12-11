@@ -1,0 +1,208 @@
+---
+// src/pages/demo-env.astro
+// Đọc environment variable từ server
+const myToken = import.meta.env.N8N_TAROT_VALIDATE || 'Token không tồn tại';
+const nodeEnv = import.meta.env.NODE_ENV || 'không xác định';
+const mode = import.meta.env.MODE || 'không xác định';
+
+// Lấy tất cả env variables (chỉ những cái bắt đầu bằng PUBLIC_)
+const publicVars = Object.keys(import.meta.env)
+  .filter(key => key.startsWith('PUBLIC_'))
+  .reduce((obj, key) => {
+    obj[key] = import.meta.env[key];
+    return obj;
+  }, {});
+---
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo Environment Variables - Netlify</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      max-width: 800px;
+      width: 100%;
+      padding: 2rem;
+    }
+    
+    h1 {
+      color: #667eea;
+      margin-bottom: 0.5rem;
+      font-size: 2rem;
+    }
+    
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+    
+    .env-section {
+      margin-bottom: 2rem;
+    }
+    
+    .env-section h2 {
+      color: #374151;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .env-item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .env-label {
+      font-weight: 600;
+      color: #6b7280;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .env-value {
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      padding: 0.75rem;
+      font-family: 'Courier New', monospace;
+      color: #111827;
+      word-break: break-all;
+      font-size: 0.95rem;
+    }
+    
+    .success {
+      border-left: 4px solid #10b981;
+    }
+    
+    .warning {
+      border-left: 4px solid #f59e0b;
+    }
+    
+    .error {
+      border-left: 4px solid #ef4444;
+    }
+    
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+    
+    .info-box h3 {
+      color: #1e40af;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .info-box ol {
+      margin-left: 1.5rem;
+      color: #1e3a8a;
+    }
+    
+    .info-box li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    
+    .info-box code {
+      background: #dbeafe;
+      padding: 0.125rem 0.375rem;
+      border-radius: 3px;
+      font-size: 0.875rem;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Demo Environment Variables</h1>
+    <p class="subtitle">Kiểm tra env variables trên Netlify Server</p>
+    
+    <!-- Token chính -->
+    <div class="env-section">
+      <h2>🎯 Token Test</h2>
+      <div class={`env-item ${myToken !== 'Token không tồn tại' ? 'success' : 'error'}`}>
+        <div class="env-label">MY_TOKEN</div>
+        <div class="env-value">{myToken}</div>
+      </div>
+    </div>
+    
+    <!-- System env -->
+    <div class="env-section">
+      <h2>⚙️ System Variables</h2>
+      <div class="env-item">
+        <div class="env-label">NODE_ENV</div>
+        <div class="env-value">{nodeEnv}</div>
+      </div>
+      <div class="env-item">
+        <div class="env-label">MODE</div>
+        <div class="env-value">{mode}</div>
+      </div>
+    </div>
+    
+    <!-- Public variables -->
+    <div class="env-section">
+      <h2>🌐 Public Variables (PUBLIC_*)</h2>
+      {Object.keys(publicVars).length > 0 ? (
+        Object.entries(publicVars).map(([key, value]) => (
+          <div class="env-item success">
+            <div class="env-label">{key}</div>
+            <div class="env-value">{value}</div>
+          </div>
+        ))
+      ) : (
+        <div class="empty-state">
+          <p>Không có public environment variables nào</p>
+        </div>
+      )}
+    </div>
+    
+    <!-- Hướng dẫn -->
+    <div class="info-box">
+      <h3>📝 Cách thiết lập trên Netlify:</h3>
+      <ol>
+        <li>Vào <strong>Site settings</strong> → <strong>Environment variables</strong></li>
+        <li>Thêm variable: <code>MY_TOKEN</code> = <code>your-secret-token-here</code></li>
+        <li>Nếu muốn dùng ở client-side, thêm prefix: <code>PUBLIC_API_KEY</code></li>
+        <li>Deploy lại site để áp dụng thay đổi</li>
+        <li>Kiểm tra trang này để xem kết quả</li>
+      </ol>
+    </div>
+  </div>
+</body>
+</html>
