@@ -1,0 +1,130 @@
+---
+// src/pages/test-api.astro
+---
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test API</title>
+  <style>
+    body {
+      font-family: system-ui;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #0b132b;
+      color: white;
+    }
+    button {
+      background: #F2C94C;
+      color: #0b132b;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin: 10px 5px;
+    }
+    button:hover {
+      background: #FFD700;
+    }
+    #result {
+      background: rgba(255,255,255,0.1);
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Test API Endpoints</h1>
+  
+  <div>
+    <button id="test-validate">Test Validate API</button>
+    <button id="test-interpret">Test Interpret API</button>
+    <button id="check-env">Check Environment</button>
+  </div>
+  
+  <div id="result"></div>
+
+  <script>
+    const resultDiv = document.getElementById('result');
+    
+    function showResult(title, data, isError = false) {
+      const className = isError ? 'error' : 'success';
+      resultDiv.className = className;
+      resultDiv.innerHTML = `<strong>${title}</strong>\n${JSON.stringify(data, null, 2)}`;
+    }
+
+    // Test Validate API
+    document.getElementById('test-validate').addEventListener('click', async () => {
+      resultDiv.textContent = 'Đang test...';
+      
+      try {
+        const response = await fetch('/api/tarot-validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            question: 'Test question from browser' 
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult('✅ Validate API Success', data);
+        } else {
+          showResult('❌ Validate API Error', data, true);
+        }
+      } catch (error) {
+        showResult('❌ Network Error', { error: error.message }, true);
+      }
+    });
+
+    // Test Interpret API
+    document.getElementById('test-interpret').addEventListener('click', async () => {
+      resultDiv.textContent = 'Đang test...';
+      
+      try {
+        const response = await fetch('/api/tarot-interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: 'Test question',
+            cards: [
+              { name: 'The Fool', orientation: 'Xuôi' }
+            ],
+            readingId: 'test-123'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showResult('✅ Interpret API Success', data);
+        } else {
+          showResult('❌ Interpret API Error', data, true);
+        }
+      } catch (error) {
+        showResult('❌ Network Error', { error: error.message }, true);
+      }
+    });
+
+    // Check Environment
+    document.getElementById('check-env').addEventListener('click', () => {
+      showResult('ℹ️ Environment Info', {
+        'Current URL': window.location.href,
+        'API Base': window.location.origin,
+        'Expected validate endpoint': window.location.origin + '/api/tarot-validate',
+        'Expected interpret endpoint': window.location.origin + '/api/tarot-interpret'
+      });
+    });
+  </script>
+</body>
+</html>
