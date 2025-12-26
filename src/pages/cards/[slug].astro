@@ -1,7 +1,9 @@
 ---
-// 1. Import Layout
+// 1. Import Layout & Assets
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+// (QUAN TRỌNG) Import component Image tối ưu
+import { Image } from 'astro:assets';
 
 // 2. Lấy 'slug' từ URL
 const { slug } = Astro.params;
@@ -30,6 +32,8 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
 }) : null;
 
 // 8. Schema JSON-LD
+// Lưu ý: Nếu 'image' là object import từ content collection, bạn cần dùng image.src. 
+// Ở đây giữ nguyên logic cũ của bạn với giả định image là string path hoặc tương thích.
 const schema = {
   "@context": "https://schema.org",
   "@type": "Article",
@@ -43,6 +47,7 @@ const schema = {
 
 // 9. URL chia sẻ
 const currentUrl = Astro.url.href;
+// (Lưu ý: shareImage cần đường dẫn tuyệt đối string cho meta tags)
 const shareImage = new URL(image, Astro.site).href;
 
 // 10. Lấy lá bài liên quan (Cùng group)
@@ -58,7 +63,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
   description={excerpt}
   ogImage={image} showChatbot={false}>
   <main id="homepage-content">
-    <section class="homepage-section" style="padding-top: 4rem; min-height: 80vh;">
+    <section class="homepage-section">
       <div class="container">
         
         <nav class="breadcrumbs">
@@ -71,24 +76,31 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 
         <div class="card-detail-layout">
           
-          <!-- SIDEBAR (Hình ảnh + Keywords) -->
           <aside class="card-sidebar">
             <div class="card-image-wrapper">
-               <img src={image} alt={title} class="card-main-image" />
+               <Image 
+                 src={image} 
+                 alt={title} 
+                 class="card-main-image"
+                 width={500}
+                 height={850}
+                 loading="eager"
+                 format="webp"
+               />
             </div>
             
             {upright_keywords && upright_keywords.length > 0 && (
               <div class="keywords-box">
                 <h4><i class="fa-solid fa-arrow-up"></i> Từ khoá Xuôi</h4>
                 <ul class="keywords-list">
-                  {upright_keywords.map(kw => <li>{kw}</li>)}
+                   {upright_keywords.map(kw => <li>{kw}</li>)}
                 </ul>
               </div>
             )}
 
             {reversed_keywords && reversed_keywords.length > 0 && (
               <div class="keywords-box reversed">
-                <h4><i class="fa-solid fa-arrow-down"></i> Từ khoá Ngược</h4>
+                 <h4><i class="fa-solid fa-arrow-down"></i> Từ khoá Ngược</h4>
                 <ul class="keywords-list">
                   {reversed_keywords.map(kw => <li>{kw}</li>)}
                 </ul>
@@ -96,7 +108,6 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
             )}
           </aside>
 
-          <!-- NỘI DUNG CHÍNH -->
           <article class="post-main-content">
             <h1 class="hero-title">{title}</h1>
 
@@ -111,9 +122,8 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
               <Content />
             </div>
 
-            <!-- Share Buttons -->
             <div class="share-buttons">
-              <span>Chia sẻ:</span>
+               <span>Chia sẻ:</span>
               <a 
                 href={`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`} 
                 class="share-btn facebook" 
@@ -133,20 +143,21 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
             </div>
 
             <div class="post-disclaimer">
-              <p><strong>Lưu ý:</strong> Những thông điệp từ Phở Gõ Tarot gửi đến bạn mang ý nghĩa tham khảo và chiêm nghiệm cá nhân. Chúng tôi không thay thế vai trò của các chuyên gia y tế, tài chính hay pháp lý. Mong bạn đón nhận các lá bài với tâm thế cởi mở, lắng nghe trực giác và tự làm chủ quyết định của chính mình.</p>
+              <p><strong>Lưu ý:</strong> Những thông điệp từ Phở Gõ Tarot gửi đến bạn mang ý nghĩa tham khảo và chiêm nghiệm cá nhân.
+              Chúng tôi không thay thế vai trò của các chuyên gia y tế, tài chính hay pháp lý.
+              Mong bạn đón nhận các lá bài với tâm thế cởi mở, lắng nghe trực giác và tự làm chủ quyết định của chính mình.</p>
             </div>
           
 
-            <!-- CTA Banner (Style Gold Mới) -->
             <div class="cta-banner">
               <div class="cta-content">
                 <h3>Bạn đang băn khoăn về lá bài này?</h3>
-                <p>Đôi khi ý nghĩa lá bài thay đổi tuỳ theo hoàn cảnh. Hãy để Reader của Phở Gõ giúp bạn giải mã thông điệp riêng.</p>
+                <p>Đôi khi ý nghĩa lá bài thay đổi tuỳ theo hoàn cảnh.
+                Hãy để Reader của Phở Gõ giúp bạn giải mã thông điệp riêng.</p>
               </div>
               <a href="/tarot" class="cta-button">Trải Bài Ngay</a>
             </div>
 
-            <!-- Related Cards -->
             {relatedCards.length > 0 && (
               <div class="related-cards-section">
                 <h3 class="widget-title">Các Lá Bài Cùng Nhóm {groupName}</h3>
@@ -154,10 +165,12 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
                   {relatedCards.map(related => (
                     <a href={`/cards/${related.slug}`} class="related-card-item">
                       <div class="related-img-wrapper">
-                          <img 
+                          <Image 
                             src={related.data.image} 
                             alt={related.data.title} 
-                            loading="lazy" 
+                            width={200}
+                            height={340}
+                            class="related-img"
                           />
                       </div>
                       <span>{related.data.title.replace("Ý nghĩa lá bài ", "")}</span>
@@ -183,7 +196,11 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 
   <style>
     /* --- Cài đặt chung --- */
-    .homepage-section { padding: 4rem 1rem; position: relative; z-index: 1; }
+    .homepage-section { 
+        padding: 4rem 1rem;
+        position: relative; z-index: 1; 
+        padding-top: 4rem; min-height: 80vh;
+    }
     .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
 
     /* --- LAYOUT 2 CỘT --- */
@@ -199,26 +216,30 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       }
     }
 
-    /* --- SIDEBAR STYLE (GOLD THEME) --- */
+    /* --- SIDEBAR STYLE --- */
     .card-sidebar { width: 100%; }
     
     .card-image-wrapper {
         border-radius: 16px;
         overflow: hidden;
-        border: 1px solid rgba(242, 201, 76, 0.3); /* Viền vàng nhẹ */
-        box-shadow: 0 0 20px rgba(242, 201, 76, 0.1); /* Glow nhẹ */
+        border: 1px solid rgba(242, 201, 76, 0.3);
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.1);
         margin-bottom: 2rem;
         transition: transform 0.3s;
+        /* Giữ khung hình cố định tránh nhảy layout khi ảnh đang load */
+        background: rgba(255,255,255,0.05);
+        aspect-ratio: 2 / 3.4; 
     }
     .card-image-wrapper:hover {
         transform: scale(1.02);
         box-shadow: 0 0 30px rgba(242, 201, 76, 0.2);
     }
     .card-main-image {
-      width: 100%; height: auto; display: block;
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
     }
 
-    /* Hộp từ khóa (Glassmorphism) */
+    /* Hộp từ khóa */
     .keywords-box {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -227,14 +248,11 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       margin-bottom: 1.5rem;
       backdrop-filter: blur(5px);
     }
-    /* Box keywords ngược có màu viền khác chút */
-    .keywords-box.reversed {
-        border-color: rgba(255, 255, 255, 0.05);
-    }
+    .keywords-box.reversed { border-color: rgba(255, 255, 255, 0.05); }
 
     .keywords-box h4 {
       font-family: var(--font-title);
-      color: var(--gold-color, #F2C94C); /* Tiêu đề vàng */
+      color: var(--gold-color, #F2C94C);
       margin: 0 0 1rem 0;
       font-size: 1.1rem;
       text-transform: uppercase;
@@ -268,13 +286,12 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 
     .hero-title { 
       font-family: var(--font-title); 
-      color: #ffffff; /* Chữ Trắng */
+      color: #ffffff;
       font-size: 3rem; 
       font-weight: 700;
       margin-bottom: 0.5rem; margin-top: 0;
-      text-align: left; 
+      text-align: left;
       line-height: 1.2;
-      /* Hiệu ứng Glow Vàng CHỈ CHO TITLE CHÍNH */
       text-shadow: 0 0 10px rgba(242, 201, 76, 0.5), 0 0 30px rgba(242, 201, 76, 0.2);
     }
 
@@ -287,21 +304,19 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     .post-meta { font-size: 0.95rem; color: #aaa; margin-bottom: 2rem; }
     .post-meta time { font-weight: 600; color: var(--gold-color, #F2C94C); }
 
-    /* === NỘI DUNG BÀI VIẾT (ĐÃ ĐIỀU CHỈNH LẠI) === */
+    /* === NỘI DUNG BÀI VIẾT === */
     #post-content { font-size: 1.1rem; line-height: 1.8; color: #e0e0e0; text-align: left; }
     
-    /* H2 (Heading lớn): Giữ vàng nhưng bỏ shadow chói */
     #post-content h2 { 
-        font-family: var(--font-title); 
+        font-family: var(--font-title);
         color: var(--gold-color, #F2C94C); 
         margin-top: 2.5rem; margin-bottom: 1rem;
         font-size: 2rem;
         border-bottom: 1px solid rgba(242, 201, 76, 0.2); 
         padding-bottom: 0.5rem;
-        text-shadow: none; /* Bỏ glow */
+        text-shadow: none;
     }
     
-    /* H3, H4...: Chuyển về màu TRẮNG BÌNH THƯỜNG */
     #post-content h3, #post-content h4 {
         font-family: var(--font-title);
         color: #ffffff; 
@@ -314,24 +329,19 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     #post-content ul { padding-left: 1.5rem; margin-bottom: 1.5rem; }
     #post-content :global(strong) { color: #fff; }
     
-    /* Link trong bài: Chuyển về màu trắng gạch chân bình thường */
     #post-content :global(a) { 
-        color: #fff; 
-        text-decoration: underline; 
-        font-weight: 600; 
-        border-bottom: none; 
-        transition: all 0.3s; 
+        color: #fff; text-decoration: underline; 
+        font-weight: 600; border-bottom: none; transition: all 0.3s; 
     }
     #post-content :global(a:hover) { 
-        color: var(--gold-color, #F2C94C); 
-        text-decoration: none;
+        color: var(--gold-color, #F2C94C); text-decoration: none;
     }
 
     /* --- SHARE BUTTONS --- */
     .share-buttons { 
         display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; 
         margin: 3rem 0; padding: 1.5rem 0; 
-        border-top: 1px solid rgba(255, 255, 255, 0.1); 
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
     }
     .share-buttons span { 
@@ -340,20 +350,22 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     .share-btn { 
         display: flex; align-items: center; justify-content: center; 
         width: 45px; height: 45px; border-radius: 50%; 
-        text-decoration: none; color: #fff; transition: all 0.3s; border: 1px solid rgba(255,255,255,0.1); 
+        text-decoration: none; color: #fff; transition: all 0.3s;
+        border: 1px solid rgba(255,255,255,0.1); 
     }
     .share-btn:hover { transform: translateY(-3px); }
     .share-btn.facebook { background-color: #1877F2; box-shadow: 0 0 10px rgba(24, 119, 242, 0.4); }
     .share-btn.pinterest { background-color: #E60023; box-shadow: 0 0 10px rgba(230, 0, 35, 0.4); }
 
-    /* --- CTA BANNER (Style Mới) --- */
+    /* --- CTA BANNER --- */
     .cta-banner {
       background: rgba(255, 255, 255, 0.03);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(242, 201, 76, 0.3);
       border-radius: 16px;
       padding: 2rem;
-      display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+      display: flex; flex-direction: column; justify-content: space-between;
+      align-items: center;
       gap: 1.5rem; margin-bottom: 3rem; text-align: center;
       box-shadow: 0 0 30px rgba(0,0,0,0.2);
     }
@@ -380,9 +392,13 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       .cta-content { flex-grow: 1; }
     }
 
-    /* --- RELATED CARDS --- */
+    /* --- RELATED CARDS (ĐÃ TỐI ƯU RENDER) --- */
     .related-cards-section {
-      margin-top: 3rem; margin-bottom: 2rem;
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+      /* (MỚI) Tối ưu: Chỉ render khi cuộn tới gần */
+      content-visibility: auto;
+      contain-intrinsic-size: 400px;
     }
     .widget-title {
       font-family: var(--font-title); color: #fff; font-size: 1.75rem;
@@ -393,7 +409,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     }
     .related-card-item {
       display: block; text-decoration: none;
-      border: 1px solid rgba(255, 255, 255, 0.1); /* Viền mảnh */
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px; overflow: hidden;
       background: rgba(255, 255, 255, 0.02);
       transition: all 0.3s ease;
@@ -404,15 +420,18 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       box-shadow: 0 5px 15px rgba(0,0,0,0.3), 0 0 10px rgba(242, 201, 76, 0.1);
     }
     .related-img-wrapper {
-        width: 100%; aspect-ratio: 1 / 1.6; overflow: hidden;
+        width: 100%; aspect-ratio: 1 / 1.6;
+        overflow: hidden;
     }
-    .related-card-item img {
-      width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
+    .related-card-item .related-img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s;
     }
-    .related-card-item:hover img { transform: scale(1.1); }
+    .related-card-item:hover .related-img { transform: scale(1.1); }
     
     .related-card-item span {
-      display: block; padding: 0.75rem; text-align: center;
+      display: block; padding: 0.75rem;
+      text-align: center;
       font-size: 0.9rem; font-weight: 600; color: #fff;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -424,7 +443,8 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 
     /* --- Buttons & Back Button --- */
     .btn-outline { 
-      display: inline-block; background: transparent; 
+      display: inline-block;
+      background: transparent; 
       border: 1px solid var(--gold-color, #F2C94C);
       color: var(--gold-color, #F2C94C); padding: 0.7rem 1.5rem; 
       border-radius: 8px; font-weight: 600; text-decoration: none;
@@ -437,7 +457,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
     }
     .back-btn:hover {
         background-color: var(--gold-color, #F2C94C);
-        color: #050A1F; 
+        color: #050A1F;
         box-shadow: 0 0 20px rgba(242, 201, 76, 0.5);
         transform: translateX(-5px);
     }
@@ -452,19 +472,18 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
       .hero-title { font-size: 2rem; }
     }
 
-    /* --- Style cho phần Disclaimer (Lưu ý) --- */
+    /* --- Disclaimer --- */
     .post-disclaimer {
-        margin-bottom: 3rem; /* Cách banner CTA một chút */
+        margin-bottom: 3rem;
         padding: 1.2rem;
-        background: rgba(255, 255, 255, 0.03); /* Nền tối mờ nhẹ */
-        border-left: 3px solid var(--gold-color, #F2C94C); /* Viền vàng bên trái tạo điểm nhấn */
+        background: rgba(255, 255, 255, 0.03); 
+        border-left: 3px solid var(--gold-color, #F2C94C);
         border-radius: 0 8px 8px 0;
-        font-size: 0.9rem; /* Chữ nhỏ hơn body một chút */
+        font-size: 0.9rem; 
         line-height: 1.6;
-        color: #aaa; /* Màu chữ xám nhẹ để không quá nổi bật nhưng vẫn dễ đọc */
-        font-style: italic; /* Chữ nghiêng tạo cảm giác lưu ý nhẹ nhàng */
+        color: #aaa; 
+        font-style: italic;
     }
-    
     .post-disclaimer strong {
         color: var(--gold-color, #F2C94C);
         font-style: normal;

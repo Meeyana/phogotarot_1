@@ -2,6 +2,8 @@
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+// (QUAN TRỌNG) Import component Image để tối ưu ảnh
+import { Image } from 'astro:assets';
 
 // 2. LẤY DỮ LIỆU & SẮP XẾP
 const allBlogPosts = await getCollection('blog');
@@ -9,10 +11,9 @@ const sortedPosts = allBlogPosts.sort((a, b) =>
   new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime()
 );
 
-// 3. TÁCH BÀI VIẾT NỔI BẬT (LOGIC CŨ)
+// 3. TÁCH BÀI VIẾT NỔI BẬT
 // Tìm bài có isFeatured: true
 let featuredPost = sortedPosts.find(post => post.data.isFeatured === true);
-
 // Nếu không có bài nào được ghim, lấy bài mới nhất làm featured
 if (!featuredPost && sortedPosts.length > 0) {
   featuredPost = sortedPosts[0];
@@ -22,7 +23,7 @@ if (!featuredPost && sortedPosts.length > 0) {
 const remainingPosts = sortedPosts.filter(post => post.slug !== featuredPost?.slug);
 
 // ==========================================================
-// 4. LOGIC PHÂN TRANG (Áp dụng cho remainingPosts)
+// 4. LOGIC PHÂN TRANG
 // ==========================================================
 const pageSize = 12; 
 const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
@@ -36,15 +37,17 @@ const postsForThisPage = remainingPosts.slice(
   currentPage * pageSize      
 );
 
-// Hàm tạo nút phân trang (Giữ nguyên)
+// Hàm tạo nút phân trang
 const range = (start, end) => Array.from({ length: end - start + 1 }, (_, idx) => idx + start);
 const generatePagination = (currentPage, totalPages) => {
   const totalVisiblePages = 7; const DOTS = '...';
+
   if (totalPages <= totalVisiblePages) return range(1, totalPages);
   
   const siblings = 1;
   const leftSiblingIndex = Math.max(currentPage - siblings, 1);
   const rightSiblingIndex = Math.min(currentPage + siblings, totalPages);
+  
   const showLeftDots = leftSiblingIndex > 2;
   const showRightDots = rightSiblingIndex < totalPages - 2;
 
@@ -91,19 +94,25 @@ const schema = {
   description="Tổng hợp các bài viết, kiến thức Tarot chuyên sâu từ Phở Gõ Tarot."
 >
   <main id="homepage-content">
-    <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+    <section class="homepage-section">
       <div class="container">
         
         <div class="section-header">
           <h2 class="section-title">Bài Viết Tarot</h2>
-          
         </div>
 
         {/* --- PHẦN FEATURED POST (CHỈ HIỆN Ở TRANG 1) --- */}
         {currentPage === 1 && featuredPost && (
           <div class="featured-post-card">
             <a href={`/blog/${featuredPost.slug}`} class="featured-image-link">
-              <img src={featuredPost.data.image} alt={featuredPost.data.title} class="section-image-featured" />
+              <Image 
+                src={featuredPost.data.image} 
+                alt={featuredPost.data.title} 
+                width={800}
+                height={450}
+                class="section-image-featured"
+                loading="eager"
+              />
             </a>
             <div class="featured-content">
               <a href={`/blog/${featuredPost.slug}`} class="title-link">
@@ -121,7 +130,14 @@ const schema = {
             <div class="blog-card">
               <a href={`/blog/${post.slug}`} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
-                   <img src={post.data.image} alt={post.data.title} class="section-image" loading="lazy" />
+                   <Image 
+                      src={post.data.image} 
+                      alt={post.data.title} 
+                      width={400}
+                      height={300}
+                      class="section-image" 
+                      loading="lazy" 
+                    />
                 </div>
               </a>
               <a href={`/blog/${post.slug}`} class="title-link">
@@ -164,20 +180,32 @@ const schema = {
 
   <style>
     /* === 1. STYLE CHUNG === */
-    .homepage-section { padding: 4rem 1rem; position: relative; }
+    .homepage-section { 
+        padding: 4rem 1rem;
+        position: relative; 
+        min-height: 80vh;
+        padding-top: 3rem;
+    }
     .container { max-width: 1200px; margin: auto; padding: 0; }
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+    
+    .grid-4 { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 2rem;
+        /* (MỚI) Tối ưu render cho grid */
+        content-visibility: auto;
+    }
     @media (min-width: 1024px) { .grid-4 { grid-template-columns: repeat(3, 1fr); } }
 
     /* HEADER */
     .section-header { justify-content: center; align-items: center; margin-bottom: 3.5rem; }
     .section-title { 
-        font-family: var(--font-title); color: #ffffff; font-size: 3.5rem; font-weight: 700; 
-        text-align: center; text-shadow: 0 0 10px rgba(242,201,76,0.5),0 0 20px rgba(242,201,76,0.3),0 0 40px rgba(242,201,76,0.1); 
+        font-family: var(--font-title); color: #ffffff; font-size: 3.5rem;
+        font-weight: 700; 
+        text-align: center; text-shadow: 0 0 10px rgba(242,201,76,0.5),0 0 20px rgba(242,201,76,0.3),0 0 40px rgba(242,201,76,0.1);
     }
 
-    /* === 2. (MỚI) FEATURED POST CARD STYLE === */
-    /* Lấy từ file blog.astro gốc */
+    /* === 2. FEATURED POST CARD STYLE === */
     .featured-post-card {
       background-color: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -193,7 +221,15 @@ const schema = {
       transform: translateY(-3px);
     }
     .featured-image-link { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
-    .section-image-featured { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    
+    .section-image-featured { 
+        width: 100%; height: 100%; 
+        object-fit: cover; 
+        transition: transform 0.6s ease; 
+        /* Reset các thuộc tính của img mặc định nếu có */
+        border: none; border-radius: 0;
+    }
+    
     .featured-image-link:hover .section-image-featured { transform: scale(1.05); }
     .featured-content { padding: 2rem; display: flex; flex-direction: column; justify-content: center;}
     
@@ -220,15 +256,22 @@ const schema = {
     }
     .image-link-wrapper { display: block; width: 100%; position: relative; }
     .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; }
-    .section-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; }
+    
+    .section-image { 
+        width: 100%; height: 100%; 
+        object-fit: cover; 
+        transition: transform 0.6s ease;
+        border: none; margin: 0;
+    }
     .blog-card:hover .section-image { transform: scale(1.05); }
     
     .blog-card .title-link, .blog-card .section-text, .blog-card .btn-outline { margin-left: 1.5rem; margin-right: 1.5rem; }
     .title-link { margin-top: 1.5rem; display: block; text-decoration: none; color: inherit; }
     
     .section-subtitle { 
-        font-family: var(--font-title); color: #fff; font-size: 1.35rem; font-weight: 700; 
-        margin-bottom: 1rem; margin-top: 0; line-height: 1.3; transition: all 0.3s ease; 
+        font-family: var(--font-title);
+        color: #fff; font-size: 1.35rem; font-weight: 700; 
+        margin-bottom: 1rem; margin-top: 0; line-height: 1.3; transition: all 0.3s ease;
     }
     .blog-card:hover .section-subtitle { text-shadow: 0 0 15px rgba(255,255,255,0.8); }
     .featured-content .section-subtitle { margin-bottom: 1rem; text-shadow: 0 0 15px rgba(242, 201, 76, 0.4); }
@@ -237,22 +280,25 @@ const schema = {
 
     /* BUTTONS */
     .btn-outline { 
-        display: inline-block; border: 1px solid #F2C94C; color: #F2C94C; 
+        display: inline-block;
+        border: 1px solid #F2C94C; color: #F2C94C; 
         padding: 0.6rem 1.8rem; border-radius: 8px; text-decoration: none; 
-        font-weight: 600; margin-bottom: 1.5rem; transition: 0.3s; align-self: flex-start;
+        font-weight: 600; margin-bottom: 1.5rem; transition: 0.3s;
+        align-self: flex-start;
     }
     .btn-outline:hover { background: rgba(242,201,76,0.1); color: #fff; }
 
     /* PAGINATION */
     .pagination-nav { display: flex; justify-content: center; gap: 0.5rem; margin-top: 4rem; }
     .page-item { 
-        display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; 
+        display: flex; align-items: center; justify-content: center;
+        width: 42px; height: 42px; 
         background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
         color: #fff; border-radius: 8px; text-decoration: none; font-weight: 700;
     }
     .page-item.active { background: #F2C94C; color: #050A1F; border-color: #F2C94C; }
-    .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C; color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
+    .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C;
+    color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
     .page-item.disabled { opacity: 0.3; pointer-events: none; }
-    
   </style>
 </BaseLayout>

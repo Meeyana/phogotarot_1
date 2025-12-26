@@ -5,6 +5,8 @@ import BaseLayout from '../layouts/BaseLayout.astro'; // (Giả sử đường d
 // --- (MỚI) THÊM ĐOẠN NÀY ĐỂ LẤY DATA BLOG ---
 import { getCollection } from "astro:content";
 
+import { Image } from 'astro:assets';
+
 // Lấy tất cả bài viết trong collection 'blog'
 const allPosts = await getCollection("blog");
 
@@ -139,11 +141,12 @@ const schema = {
                             {/* LINK ẢNH */}
                             <a href={`/blog/${post.slug}`} class="image-link-wrapper">
                                 <div class="image-wrapper-4-3">
-                                    <img 
+                                    <Image 
                                         src={post.data.image} 
                                         alt={post.data.title} 
+                                        width={400} /* Định kích thước cố định để tối ưu */
+                                        height={300}
                                         class="section-image"
-                                        loading="lazy"
                                     />
                                 </div>
                             </a>
@@ -239,66 +242,36 @@ const schema = {
             </div>
         </section>
     </main>
-    
-    <style>
-        /* === 1. HIỆU ỨNG SAO (GIỮ NGUYÊN GỐC) === */
-        #stars-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden; z-index: 0;
-        }
-        #stars-bg::after {
-            content: ''; position: absolute; top: 10%; right: 15%;
-            width: 50px; height: 50px; border-radius: 50%;
-            /* ĐỔI: Shadow trăng sang vàng nhẹ */
-            box-shadow: -10px 5px 0 0px #F2C94C; 
-            opacity: 0.5; animation: moon-glow 10s ease-in-out infinite alternate;
-        }
-        #stars-bg::before {
-            content: ''; position: absolute; bottom: 5%; left: 10%;
-            width: 200px; height: 100px;
-            /* ĐỔI: Gradient nền sao sang vàng nhạt */
-            background: radial-gradient(ellipse at center, rgba(242, 201, 76, 0.15) 0%, rgba(242, 201, 76, 0) 70%);
-            border-radius: 50%; transform: rotate(-30deg);
-            opacity: 0.5; animation: moon-glow 15s ease-in-out infinite alternate;
-        }
-        .star {
-            position: absolute; border-radius: 50%; background: white;
-            opacity: 0.6; animation: twinkle 3s infinite ease-in-out;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.2); }
-        }
-         @keyframes moon-glow {
-            from { opacity: 0.3; transform: rotate(-5deg); }
-            to { opacity: 0.6; transform: rotate(5deg); }
-        }
 
-        /* === 2. BỐ CỤC CHUNG (GIỮ NGUYÊN GỐC) === */
+    <style>
+        /* === 1. BỐ CỤC CHUNG === */
         .homepage-section {
-            padding: 4rem 1rem; position: relative; z-index: 1; width: 100%;
+            padding: 4rem 1rem;
+            position: relative; z-index: 1; width: 100%;
         }
         .homepage-section.bg-alt {
-            border-radius: 12px; margin: 2rem auto; max-width: 1200px;
+            border-radius: 12px;
+            margin: 2rem auto; max-width: 1200px;
         }
         .container {
-            max-width: 1200px; margin: 0 auto; padding: 0 1rem;
+            max-width: 1200px;
+            margin: 0 auto; padding: 0 1rem;
         }
-        /* Grid System giữ nguyên */
+        /* Grid System */
         .grid-2 { display: grid; grid-template-columns: 1fr; gap: 2rem; align-items: center; }
         @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
+        
         .grid-3 { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
         @media (min-width: 768px) { .grid-3 { grid-template-columns: repeat(3, 1fr); } }
+        
         .text-center { text-align: center; }
         .text-left { text-align: left; }
         
-        /* === 3. TYPOGRAPHY (CẬP NHẬT SHADOW VÀNG) === */
+        /* === 2. TYPOGRAPHY === */
         .hero-title {
             font-family: var(--font-title);
             color: var(--title-color);
             font-size: clamp(2.5rem, 7vw, 4rem);
-            /* ĐỔI: Shadow xanh -> Shadow vàng rực rỡ */
             text-shadow: 0 0 20px rgb(242 201 76), 0 0 8px rgba(242, 201, 76, 0.8);
             margin-bottom: 1.5rem;
         }
@@ -306,7 +279,6 @@ const schema = {
             font-family: var(--font-title);
             color: var(--title-color);
             font-size: clamp(2rem, 6vw, 3rem);
-            /* ĐỔI: Shadow xanh -> Shadow vàng */
             text-shadow: 0 0 15px var(--gold-shadow);
             margin-bottom: 3rem; text-align: center;
         }
@@ -314,38 +286,35 @@ const schema = {
             font-family: var(--font-title);
             color: var(--title-color);
             font-size: clamp(2rem,6vw,3rem);
-            /* ĐỔI: Shadow xanh -> Shadow vàng */
             text-shadow: 0 0 15px rgba(242, 201, 76, 0.8), 0 0 5px rgba(242, 201, 76, 0.6);
             margin-bottom: 1.5rem;
         }
         .section-text {
-            font-size: 1.1rem; line-height: 1.7; opacity: 0.9; margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            line-height: 1.7; opacity: 0.9; margin-bottom: 1.5rem;
             text-shadow: none; 
         }
 
-        /* === 4. BUTTONS (ĐỔI SANG MÀU VÀNG) === */
+        /* === 3. BUTTONS === */
         .btn-primary {
             display: inline-block;
-            /* ĐỔI: Nền vàng */
             background-color: #F2C94C; 
-            color: #0b132b; /* Chữ đen cho dễ đọc trên nền vàng */
+            color: #0b132b;
             border: none;
             padding: 0.8rem 2rem; border-radius: 8px;
             font-family: var(--font-body); font-size: 1rem; font-weight: 600;
             cursor: pointer; transition: all 0.3s;
             text-decoration: none; text-shadow: none;
-            /* Thêm shadow vàng cho nút */
             box-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
         }
         .btn-primary:hover {
-            background-color: #ffdb73; /* Vàng sáng hơn khi hover */
+            background-color: #ffdb73;
             box-shadow: 0 0 20px rgba(242, 201, 76, 0.7);
         }
 
         .btn-outline {
             display: inline-block;
             background-color: transparent;
-            /* ĐỔI: Viền vàng, chữ vàng */
             border: 1px solid #F2C94C;
             color: #F2C94C;
             padding: 0.75rem 1.5rem; border-radius: 8px;
@@ -354,18 +323,18 @@ const schema = {
             text-decoration: none; text-shadow: none;
         }
         .btn-outline:hover {
-            background-color: rgba(242, 201, 76, 0.2); /* Nền vàng trong suốt */
+            background-color: rgba(242, 201, 76, 0.2);
             color: #fff;
             box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
         }
 
-        /* === 5. CÁC CLASS CŨ TỪ FILE GỐC (MAGIC CARD & BLOG) === */
-        /* Giữ nguyên logic hiển thị icon/card như file gốc bạn gửi nhưng đổi màu */
-        
+        /* === 4. MAGIC CARDS === */
         .magic-card {
-            display: flex; flex-direction: column; align-items: center; text-align: center;
+            display: flex;
+            flex-direction: column; align-items: center; text-align: center;
             padding: 2.5rem 1.5rem;
             background: rgba(255, 255, 255, 0.03);
+            /* Nếu máy yếu bị lag, hãy xóa dòng backdrop-filter này */
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px; text-decoration: none;
@@ -374,15 +343,12 @@ const schema = {
         .magic-card:hover {
             transform: translateY(-8px);
             background: rgba(255, 255, 255, 0.08);
-            /* ĐỔI: Viền hover sang vàng */
             border-color: rgba(242, 201, 76, 0.5);
             box-shadow: 0 0 30px rgba(242, 201, 76, 0.15);
         }
-
         .icon-glow {
             width: 60px; height: 60px; margin-bottom: 1.5rem;
-            /* ĐỔI: Icon màu vàng */
-            color: #F2C94C; 
+            color: #F2C94C;
             filter: drop-shadow(0 0 8px rgba(242, 201, 76, 0.6));
             transition: transform 0.5s ease;
         }
@@ -391,77 +357,62 @@ const schema = {
             color: #fff;
             filter: drop-shadow(0 0 12px rgba(242, 201, 76, 1));
         }
-
         .magic-title {
-            font-family: var(--font-title); font-size: 1.5rem; color: var(--title-color); margin-bottom: 0.8rem;
+            font-family: var(--font-title);
+            font-size: 1.5rem; color: var(--title-color); margin-bottom: 0.8rem;
         }
         .magic-desc {
-            font-size: 0.95rem; color: var(--text-color); opacity: 0.8; line-height: 1.6; margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-color); opacity: 0.8; line-height: 1.6; margin-bottom: 1.5rem;
         }
         .magic-link {
-            font-size: 0.9rem; font-weight: bold; color: #F2C94C;
+            font-size: 0.9rem;
+            font-weight: bold; color: #F2C94C;
             text-transform: uppercase; letter-spacing: 1px; margin-top: auto; transition: all 0.3s;
         }
         .magic-card:hover .magic-link {
-            letter-spacing: 2px; text-shadow: 0 0 5px rgba(242, 201, 76, 0.8);
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px rgba(242, 201, 76, 0.8);
         }
 
-        /* === 6. HÌNH ẢNH & VÒNG XOAY (CÓ ÁNH VÀNG) === */
+        /* === 5. IMAGES & WHEEL === */
         .section-image {
             width: 100%; height: auto; border-radius: 12px;
             object-fit: cover; border: 1px solid var(--card-back-border);
         }
-        .blog-card .section-image {
-            margin-bottom: 1.5rem;
-        }
+        .blog-card .section-image { margin-bottom: 1.5rem; }
 
-        /* CSS CHO VÒNG XOAY & ÁNH VÀNG */
         .spinning-wheel-container {
-            max-width: 550px; margin: auto; width: 100%; aspect-ratio: 1 / 1;
+            max-width: 550px;
+            margin: auto; width: 100%; aspect-ratio: 1 / 1;
             border-radius: 50%; overflow: hidden;
-            /* ĐỔI: Thêm boxShadow vàng rực quanh vòng xoay */
-            
             background: radial-gradient(circle, rgb(242 201 76 / 20%) 0%, #0000000d 56%);
         }
-        .spinning-wheel-container .section-image {
-            border-radius: 0; border: none;
-        }
-        /* Animation xoay */
+        .spinning-wheel-container .section-image { border-radius: 0; border: none; }
+        
         @keyframes spin-clockwise {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         .spinning-wheel {
             animation: spin-clockwise 20s linear infinite;
-            /* ĐỔI: Thêm drop-shadow vàng cho chính tấm ảnh xoay */
             filter: drop-shadow(0 0 10px rgba(242, 201, 76, 0.5));
         }
 
-        /* === BỔ SUNG CSS CHO BLOG CARD (HOVER & LINK) === */
-
-        /* === FIX LẠI STYLE CHO BLOG CARD TRANG CHỦ === */
-
+        /* === 6. BLOG CARDS === */
         .blog-card {
             background-color: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
-            
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; 
-            transition: all 0.4s ease;
-            
-            height: 100%; /* QUAN TRỌNG: Để các thẻ trong cùng 1 hàng cao bằng nhau */
+            display: flex; flex-direction: column; 
+            overflow: hidden; transition: all 0.4s ease;
+            height: 100%;
         }
-
-        /* 2. KHI HOVER VÀO CARD: Viền chuyển Vàng + Nổi khối */
         .blog-card:hover {
-            border-color: rgba(242, 201, 76, 0.8); /* Viền vàng */
+            border-color: rgba(242, 201, 76, 0.8);
             transform: translateY(-5px);
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
         }
-
-        /* === XỬ LÝ ẢNH === */
         .image-link-wrapper {
             display: block; width: 100%; position: relative; overflow: hidden;
             border-radius: 12px 12px 0 0;
@@ -473,41 +424,23 @@ const schema = {
             transition: transform 0.6s ease;
             border: none; margin: 0; border-radius: 0;
         }
-        /* Hover: Phóng to ảnh */
-        .blog-card:hover .section-image {
-            transform: scale(1.05);
-        }
+        .blog-card:hover .section-image { transform: scale(1.05); }
 
-        /* === XỬ LÝ TIÊU ĐỀ (TITLE) === */
-        .title-link {
-            text-decoration: none; display: block;
-        }
+        .title-link { text-decoration: none; display: block; }
         .home-blog-title {
-            font-size: 1.25rem; 
-            text-align: left; 
-            padding: 1rem 1rem 0 1rem;
-            margin-bottom: 0.5rem;
-            
-            /* Mặc định: Chữ Trắng */
-            color: #ffffff !important; 
-            transition: all 0.3s ease;
+            font-size: 1.25rem; text-align: left; 
+            padding: 1rem 1rem 0 1rem; margin-bottom: 0.5rem;
+            color: #ffffff !important; transition: all 0.3s ease;
         }
-
-        /* KHI HOVER VÀO CARD: Title vẫn trắng nhưng thêm bóng sáng trắng */
         .blog-card:hover .home-blog-title {
-            color: #ffffff !important; /* Vẫn giữ trắng, KHÔNG đổi vàng */
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9); /* Hiệu ứng glow trắng */
+            color: #ffffff !important;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
         }
-
-        /* === NÚT ĐỌC TIẾP === */
         .home-blog-btn {
-            font-size: 0.9rem; 
-            /* Bỏ float: left đi vì trong flexbox không cần thiết */
-            
-            margin: 0 1rem 1.5rem; /* Canh lề trái phải và lề dưới */
-            align-self: flex-start; /* Canh nút sang trái */
-            
-            margin-top: auto; /* QUAN TRỌNG: Đẩy nút xuống sát đáy */
+            font-size: 0.9rem;
+            margin: 0 1rem 1.5rem;
+            align-self: flex-start;
+            margin-top: auto;
         }
         .divider {
             height: 1px; background-color: var(--card-back-border);
@@ -515,61 +448,55 @@ const schema = {
             margin-left: auto; margin-right: auto;
         }
         .mdf-blog{ padding: 0 !important; }
-        .mdf-sub{ padding: 0 1rem !important; }
 
-        /* === 7. FAQ (ĐỔI SANG STYLE VÀNG) === */
+        /* === 7. FAQ === */
         .faq-container { max-width: 800px; margin: 0 auto; }
         .faq-item {
-            background-color: var(--button-bg); border: 1px solid var(--card-back-border);
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
             border-radius: 12px; margin-bottom: 1rem; overflow: hidden; transition: all 0.3s ease;
         }
         .faq-item:hover {
-            box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); /* Shadow vàng */
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
             border-color: #F2C94C;
         }
         .faq-question {
-            padding: 1.2rem 1.5rem; font-family: var(--font-title); font-size: 1.1rem;
+            padding: 1.2rem 1.5rem;
+            font-family: var(--font-title); font-size: 1.1rem;
             color: var(--title-color); cursor: pointer; list-style: none;
             position: relative; font-weight: 600; display: flex; justify-content: space-between; align-items: center;
         }
         .faq-question::after {
-            content: '+'; font-size: 1.5rem; font-weight: bold;
-            color: #F2C94C; /* Dấu cộng màu vàng */
+            content: '+';
+            font-size: 1.5rem; font-weight: bold;
+            color: #F2C94C;
             transition: transform 0.3s ease;
         }
         details[open] .faq-question::after { transform: rotate(45deg); }
         .faq-question::-webkit-details-marker { display: none; }
         .faq-answer {
-            padding: 0 1.5rem 1.5rem 1.5rem; color: var(--text-color);
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            color: var(--text-color);
             font-size: 1rem; line-height: 1.6; opacity: 0.9;
             border-top: 1px solid rgba(142, 186, 255, 0.1); margin-top: 0; padding-top: 1rem;
         }
         details[open] .faq-answer { animation: fadeIn 0.5s ease; }
+        
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 0.9; transform: translateY(0); }
         }
 
-        /* === HIỆU ỨNG SCROLL REVEAL === */
-
-        /* 1. Trạng thái ban đầu: Ẩn, mờ và nằm thấp hơn vị trí gốc */
+        /* === SCROLL REVEAL === */
         .reveal-on-scroll {
             opacity: 0;
-            transform: translateY(50px); /* Đẩy xuống 50px */
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); /* Chuyển động mượt */
-            will-change: opacity, transform; /* Tối ưu hiệu năng cho trình duyệt */
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            will-change: opacity, transform;
         }
-
-        /* 2. Trạng thái khi đã vào khung hình: Hiện rõ và trồi lên vị trí gốc */
         .reveal-on-scroll.is-visible {
-            opacity: 1;
-            transform: translateY(0);
+            opacity: 1; transform: translateY(0);
         }
-
-        /* (Tùy chọn) Delay cho các phần tử con nếu muốn hiện lần lượt */
-        .reveal-delay-100 { transition-delay: 0.1s; }
-        .reveal-delay-200 { transition-delay: 0.2s; }
-        .reveal-delay-300 { transition-delay: 0.3s; }
     </style>
     <script>
       // Hàm khởi tạo hiệu ứng

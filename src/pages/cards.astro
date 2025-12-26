@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 
 // 1. Lấy tất cả các lá bài từ collection 'cards'
 const allCards = await getCollection('cards');
@@ -44,6 +45,8 @@ const schema = {
     "numberOfItems": sortedCards.length,
     "itemListElement": sortedCards.map((card, index) => {
       const cardUrl = new URL(`/cards/${card.slug}`, siteUrl).href;
+      // Lưu ý: Nếu card.data.image là object import thì logic lấy URL sẽ khác một chút, 
+      // ở đây giữ nguyên logic cũ của bạn nếu nó đang chạy đúng.
       const cardImage = card.data.image ? new URL(card.data.image, siteUrl).href : null;
       return {
         "@type": "ListItem",
@@ -69,30 +72,27 @@ const schema = {
   />
 
   <main id="card-library">
-    <section class="homepage-section" style="padding-top: 3rem;">
+    <section class="homepage-section">
       <div class="container">
         
-        <!-- Tiêu đề trang (Trắng + Glow) -->
         <h1 class="page-title">{pageTitle}</h1>
         <p class="page-description">{pageDesc}</p>
 
-        <!-- Lặp qua từng nhóm bài -->
         {cardGroups.map(group => (
           <div class="card-group-section">
-            <!-- Tiêu đề nhóm (ĐÃ SỬA: Trắng + Glow) -->
             <h2 class="group-title">{group.title}</h2>
             
             <div class="card-grid">
               {group.cards.map(card => (
                 <a href={`/cards/${card.slug}`} class="card-item-link" title={card.data.title}>
                   <div class="card-image-wrapper">
-                      <img 
+                      <Image 
                         src={card.data.image} 
                         alt={card.data.title} 
                         class="card-image"
-                        loading="lazy" 
-                        width="150"
-                        height="255"
+                        width={300}  
+                        height={510} 
+                        format="webp"
                       />
                   </div>
                   <span class="card-item-title">
@@ -110,42 +110,49 @@ const schema = {
 
   <style>
     /* --- CSS Chung --- */
-    .homepage-section { padding: 3rem 1rem; position: relative; z-index: 1; }
-    .container { max-width: 1200px; margin: auto; padding: 0 1rem; }
+    .homepage-section { 
+        padding: 3rem 1rem;
+        position: relative; z-index: 1; 
+    }
+    .container { 
+        max-width: 1200px; margin: auto; padding: 0 1rem;
+    }
 
     /* --- TYPOGRAPHY --- */
     .page-title {
       font-family: var(--font-title);
-      color: #ffffff; /* Chữ trắng */
+      color: #ffffff;
       font-size: 3.5rem;
       text-align: center;
       margin-top: 0; margin-bottom: 1rem;
-      /* Glow Vàng */
       text-shadow: 
         0 0 10px rgba(242,201,76,0.5),
-        0 0 20px rgba(242,201,76,0.3),
-        0 0 40px rgba(242,201,76,0.1)
+        0 0 20px rgba(242,201,76,0.3);
     }
     
     .page-description {
-      font-size: 1.1rem; text-align: center; opacity: 0.9;
+      font-size: 1.1rem;
+      text-align: center; opacity: 0.9;
       max-width: 800px; margin: 0 auto 4rem auto;
-      text-shadow: none; color: #ccc;
+      color: #ccc;
     }
 
     /* --- NHÓM BÀI --- */
-    .card-group-section { margin-bottom: 4rem; }
+    .card-group-section { 
+        margin-bottom: 4rem;
+        /* (MỚI) Tối ưu render: Chỉ vẽ khi cuộn tới gần (giảm lag cực nhiều cho list dài) */
+        content-visibility: auto; 
+        contain-intrinsic-size: 1000px; /* Chiều cao ước lượng của mỗi block để thanh cuộn không bị nhảy */
+    }
     
-    /* (ĐÃ CHỈNH SỬA) Group Title: Trắng + Glow Vàng */
     .group-title {
       font-family: var(--font-title);
-      color: #ffffff; /* Chuyển về màu trắng */
+      color: #ffffff;
       font-size: 1.8rem;
       margin-bottom: 1.5rem;
       border-bottom: 1px solid rgba(255,255,255,0.1);
       padding-bottom: 0.5rem;
       text-align: left;
-      /* Thêm Glow Vàng */
       text-shadow: 
         0 0 10px rgba(242, 201, 76, 0.5),
         0 0 20px rgba(242, 201, 76, 0.3);
@@ -154,6 +161,7 @@ const schema = {
     /* --- LƯỚI BÀI --- */
     .card-grid {
       display: grid;
+      /* Giữ nguyên logic responsive grid rất tốt của bạn */
       grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
       gap: 1.5rem;
     }
@@ -162,34 +170,34 @@ const schema = {
     .card-item-link {
       display: block;
       text-decoration: none;
-      text-shadow: none;
       background: rgba(255, 255, 255, 0.02); 
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      /* Giảm độ phức tạp animation để mượt hơn trên mobile */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
       position: relative;
+      /* Khắc phục lỗi Safari bo góc bị lẹm */
+      -webkit-mask-image: -webkit-radial-gradient(white, black); 
     }
     
     .card-item-link:hover {
-      transform: translateY(-8px);
+      transform: translateY(-5px); /* Giảm độ nảy xuống 5px cho đỡ giật */
       border-color: var(--gold-color, #F2C94C);
       box-shadow: 
         0 10px 20px rgba(0, 0, 0, 0.4), 
-        0 0 15px rgba(242, 201, 76, 0.3),
-        inset 0 0 10px rgba(242, 201, 76, 0.05);
+        0 0 15px rgba(242, 201, 76, 0.3);
     }
 
     .card-image-wrapper {
-        width: 100%;
-        overflow: hidden;
+        width: 100%; overflow: hidden;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        aspect-ratio: 2 / 3.3; /* Giữ khung cố định để không bị nhảy layout khi ảnh load */
+        background-color: rgba(255,255,255,0.05); /* Màu nền tạm trong khi chờ ảnh load */
     }
 
     .card-image {
-      width: 100%;
-      height: auto;
-      aspect-ratio: 2 / 3.3; 
+      width: 100%; height: 100%;
       object-fit: cover;
       display: block;
       transition: transform 0.6s ease;
@@ -203,7 +211,7 @@ const schema = {
       display: block;
       padding: 0.8rem 0.5rem;
       text-align: center;
-      font-size: 0.85rem; 
+      font-size: 0.85rem;
       font-weight: 600;
       color: #ddd;
       white-space: nowrap;
@@ -219,13 +227,9 @@ const schema = {
 
     /* --- Responsive --- */
     @media (max-width: 600px) {
-      .card-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.8rem;
-      }
+      .card-grid { grid-template-columns: repeat(3, 1fr); gap: 0.8rem; }
       .page-title { font-size: 2rem; }
       .group-title { font-size: 1.4rem; margin-top: 1rem; }
-      
       .card-item-link { border-radius: 8px; }
       .card-item-title { font-size: 0.75rem; padding: 0.5rem 0.2rem; }
     }
