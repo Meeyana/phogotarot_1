@@ -1,25 +1,33 @@
 ---
 // src/layouts/BaseLayout.astro
 
-// 1. Nhận "props"
+// 1. IMPORT FONT (Tối ưu LCP - Thay thế cho Google Fonts Link)
+import '@fontsource/playfair-display/700.css'; // Chỉ nạp weight 700
+import '@fontsource/quicksand/400.css';
+import '@fontsource/quicksand/600.css';
+import '@fontsource/quicksand/700.css';
+
+// 2. IMPORT CSS LOCAL
+// Lưu ý: Tốt nhất bạn nên di chuyển file 'style.css' từ 'public/' vào 'src/styles/'
+// Nếu bạn vẫn để ở public thì giữ nguyên thẻ link bên dưới, nhưng Astro khuyên dùng import thế này để nén code:
+import '../styles/global.css'; 
+
 export interface Props {
   title: string;
   description: string;
   ogImage?: string;
-  showChatbot?: boolean; // (MỚI) Thêm prop tùy chọn hiển thị chatbot
+  showChatbot?: boolean;
 }
 
-// (MỚI) IMPORT COMPONENT CHATBOT
-import OracleChat from '../components/OracleChat.astro'; 
+import OracleChat from '../components/OracleChat.astro';
 
 const { 
   title, 
   description, 
   ogImage = '/images/phogotarot-og-image.jpg',
-  showChatbot = true // (MỚI) Mặc định là true (hiện ở mọi trang)
+  showChatbot = true 
 } = Astro.props;
 
-// 2. Lấy URL chuẩn
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
 ---
@@ -28,9 +36,8 @@ const ogImageURL = new URL(ogImage, Astro.site);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://phogotarot.com/images/favicon.png">
-    <link rel="apple-touch-icon" href="https://phogotarot.com/images/favicon.png">
-
+    <link rel="icon" type="image/png" href="/images/favicon.png">
+    
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
@@ -40,15 +47,20 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:type" content="website" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
- 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <link rel="stylesheet" href="/style.css">
+    <link 
+      rel="stylesheet" 
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
+      integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" 
+      crossorigin="anonymous" 
+      referrerpolicy="no-referrer"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    </noscript>
     
-    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
     <script is:inline>
@@ -86,23 +98,22 @@ const ogImageURL = new URL(ogImage, Astro.site);
         pointer-events: none;
       }
       
-      /* (Tùy chọn) Cho phép copy ở các ô input/textarea để người dùng nhập liệu được */
       input, textarea {
         -webkit-user-select: auto;
         user-select: auto;
       }
 
-        .clear-history-btn {
+      .clear-history-btn {
             background: transparent;
-            border: 1px solid #ff6b6b; /* Màu đỏ nhạt */
+            border: 1px solid #ff6b6b;
             color: #ff6b6b;
             padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.9rem;
-            margin-top: 10px; /* Cách tiêu đề một chút */
+            margin-top: 10px;
             transition: all 0.3s ease;
-            display: none; /* Mặc định ẩn, chỉ hiện khi có lịch sử */
+            display: none;
         }
 
         .clear-history-btn:hover {
@@ -118,7 +129,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="/" class="nav-link logo-link">
-                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image">
+                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image" width="50" height="50">
             </a>
         </div>
         
@@ -157,7 +168,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
         <div class="footer-container">
             <div class="footer-column brand">
                 <a href="/" class="footer-logo">
-                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image">
+                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image" loading="lazy" width="100" height="100">
                 </a>
                 <p class="footer-description">
                     Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những 
@@ -236,7 +247,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                 if (!element) return;
                 element.style.color = 'var(--gold-color, #F2C94C)';
                 element.style.textShadow = '0 0 10px rgba(242, 201, 76, 0.5)';
-                element.classList.add('active'); // Thêm class active để dự phòng
+                element.classList.add('active');
                 
                 // Nếu là SVG mũi tên bên trong, cũng cho sáng luôn
                 const arrow = element.querySelector('.dropdown-arrow');
@@ -273,22 +284,6 @@ const ogImageURL = new URL(ogImage, Astro.site);
                 }
             });
         });
-    </script>
-    <script>
-      /*document.addEventListener('copy', (event) => {
-          event.preventDefault();
-      });
-      document.addEventListener('contextmenu', (event) => {
-          event.preventDefault();
-      });
-      document.addEventListener('keydown', (event) => {
-          if (event.ctrlKey && event.key === 'c') {
-              event.preventDefault();
-          }
-          if (event.key === 'F12') {
-              event.preventDefault();
-          }
-      });*/
     </script>
 </body>
 </html>
