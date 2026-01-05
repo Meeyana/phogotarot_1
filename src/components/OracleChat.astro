@@ -4,7 +4,7 @@
 
 <div id="oracle-chat-widget">
   <!-- NÚT MỞ CHAT -->
-  <button id="oracle-toggle-btn" class="oracle-btn" aria-label="Trò chuyện với Joana">
+  <button id="oracle-toggle-btn" class="oracle-btn" aria-label="Trò chuyện với Joanna">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
@@ -16,10 +16,10 @@
     <div class="chat-header">
       <div class="header-info">
         <div class="header-avatar">
-             <img src="/images/witcher-bot.jpg" alt="Joana Avatar" onerror="this.src='https://ui-avatars.com/api/?name=Joana&background=F2C94C&color=0b132b&size=128'"/>
+             <img src="/images/witcher-bot.jpg" alt="Joanna Avatar" onerror="this.src='https://ui-avatars.com/api/?name=Joanna&background=F2C94C&color=0b132b&size=128'"/>
         </div>
         <div class="header-text">
-            <span class="oracle-name">Joana</span>
+            <span class="oracle-name">Joanna</span>
             <span class="oracle-status">Tarot Reader</span>
         </div>
       </div>
@@ -38,7 +38,7 @@
 
     <!-- Input Area -->
     <div class="chat-input-area">
-      <textarea id="user-input" placeholder="Nhắn tin cho Joana..." rows="1"></textarea>
+      <textarea id="user-input" placeholder="Nhắn tin cho Joanna..." rows="1"></textarea>
       <button id="send-btn">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
       </button>
@@ -379,7 +379,7 @@
     loadHistory();
     if (messagesContainer.children.length === 0) {
         addMessage(
-            "Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
+            "Chào bạn 👋 Mình là Joanna, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
             'bot', 
             false, 
             false, 
@@ -450,7 +450,7 @@
         localStorage.removeItem(SESSION_KEY);
         messagesContainer.innerHTML = '';
         addMessage(
-            "Chào bạn 👋 Mình là Joana, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
+            "Chào bạn 👋 Mình là Joanna, trợ lý ảo của Phở Gõ Tarot. Hôm nay tâm trạng bạn thế nào? Có chuyện gì muốn kể cho mình nghe hông?", 
             'bot', 
             false, 
             false, 
@@ -635,7 +635,7 @@
     const typingDiv = document.createElement('div');
     typingDiv.id = 'typing-indicator';
     typingDiv.className = 'typing-indicator';
-    typingDiv.innerText = 'Joana đang suy nghĩ...';
+    typingDiv.innerText = 'Joanna đang suy nghĩ...';
     messagesContainer.appendChild(typingDiv);
     scrollToBottom();
   }
@@ -687,7 +687,7 @@
       const data = await response.json();
       removeTypingIndicator();
       
-      const botReply = data.output || data.text || "Joana đang bận xíu, thử lại sau nhé!";
+      const botReply = data.output || data.text || "Joanna đang bận xíu, thử lại sau nhé!";
       const nextOptions = data.options || []; 
 
       addMessage(botReply, 'bot', true, true, null, nextOptions);

@@ -72,21 +72,43 @@ const ogImageURL = new URL(ogImage, Astro.site);
     
     {Astro.url.pathname === '/' && (
       <script type="application/ld+json" is:inline>
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Phở Gõ Tarot",
-        "url": "https://phogotarot.com/",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Phở Gõ Tarot",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://phogotarot.com/images/logo.png"
-          }
+        {
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": "https://phogotarot.com/#website",
+              "url": "https://phogotarot.com/",
+              "name": "Phở Gõ Tarot",
+              "description": "Nền tảng xem Tarot Online và giải mã thần số học uy tín.",
+              "publisher": {
+                "@id": "https://phogotarot.com/#organization"
+              },
+              "inLanguage": "vi-VN"
+            },
+            {
+              "@type": "Organization",
+              "@id": "https://phogotarot.com/#organization",
+              "name": "Phở Gõ Tarot",
+              "alternateName": ["Pho Go Tarot", "Tiệm Phở Gõ Tarot"],
+              "url": "https://phogotarot.com/",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://phogotarot.com/images/logo.png",
+                "width": 112,
+                "height": 112
+              },
+              "description": "Dịch vụ xem Tarot trực tuyến, chữa lành tâm hồn và định hướng tương lai. Không bán phở, chỉ bán lời khuyên.",
+              "sameAs": [
+                "https://www.facebook.com/phogotarot",
+                "https://www.tiktok.com/@phogo_tarot",
+                "https://www.instagram.com/pho_go_tarot/",
+                "https://www.youtube.com/@phogotarot"
+              ]
+            }
+          ]
         }
-      }
-      </script>
+        </script>
     )}
     <slot name="head" />
 
@@ -175,10 +197,10 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     gợi ý để bạn tự khám phá và quyết định con đường của mình.
                 </p>
                 <div class="footer-social-links">
-                    <a href="#" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                    <a href="#" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.facebook.com/phogotarot" target="_blank" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="https://www.youtube.com/@phogotarot" target="_blank" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
                     <a href="https://www.instagram.com/pho_go_tarot/" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" target="_blank" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="https://www.tiktok.com/@phogo_tarot" target="_blank" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
                 </div>
             </div>
             
