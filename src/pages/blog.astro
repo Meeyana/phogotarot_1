@@ -31,6 +31,12 @@ const currentPage = parseInt(Astro.url.searchParams.get('page') || '1');
 // Tính tổng trang dựa trên danh sách ĐÃ TRỪ bài featured
 const totalPages = Math.ceil(remainingPosts.length / pageSize);
 
+// --- [FIX] CHẶN TRUY CẬP TRANG KHÔNG TỒN TẠI ---
+// Nếu user hoặc bot cố truy cập page=60 trong khi chỉ có 5 trang, đá về trang 1
+if (currentPage < 1 || (currentPage > totalPages && totalPages > 0)) {
+  return Astro.redirect('/blog');
+}
+
 // Cắt danh sách bài viết cho trang hiện tại
 const postsForThisPage = remainingPosts.slice(
   (currentPage - 1) * pageSize, 
@@ -58,9 +64,18 @@ const generatePagination = (currentPage, totalPages) => {
 
 const paginationItems = generatePagination(currentPage, totalPages);
 
+// --- [FIX] CANONICAL URL TÙY CHỈNH ---
+// Nếu là trang 1 thì canonical là /blog, nếu trang > 1 thì giữ nguyên query string
+const customCanonical = currentPage > 1 
+  ? `/blog?page=${currentPage}` 
+  : '/blog';
+
 // 5. SCHEMA
 const siteUrl = Astro.site ? Astro.site.href : '/';
-const pageUrl = new URL(`/blog?page=${currentPage}`, siteUrl).href;
+// URL trong schema cũng nên đồng bộ với logic Canonical
+const pageUrl = currentPage > 1 
+  ? new URL(`/blog?page=${currentPage}`, siteUrl).href 
+  : new URL('/blog', siteUrl).href;
 
 // Schema bao gồm cả Featured Post nếu đang ở trang 1
 const schemaPosts = currentPage === 1 && featuredPost 
@@ -92,6 +107,7 @@ const schema = {
 <BaseLayout
   title={`Blog - Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
   description="Tổng hợp các bài viết, kiến thức Tarot chuyên sâu từ Phở Gõ Tarot."
+  canonical={customCanonical}
 >
   <main id="homepage-content">
     <section class="homepage-section">
@@ -104,7 +120,7 @@ const schema = {
         {/* --- PHẦN FEATURED POST (CHỈ HIỆN Ở TRANG 1) --- */}
         {currentPage === 1 && featuredPost && (
           <div class="featured-post-card">
-            <a href={`/blog/${featuredPost.slug}`} class="featured-image-link">
+             <a href={`/blog/${featuredPost.slug}`} class="featured-image-link">
               <Image 
                 src={featuredPost.data.image} 
                 alt={featuredPost.data.title} 
@@ -126,7 +142,7 @@ const schema = {
 
         {/* --- GRID BÀI VIẾT THƯỜNG --- */}
         <div class="grid-4">
-          {postsForThisPage.map(post => (
+           {postsForThisPage.map(post => (
             <div class="blog-card">
               <a href={`/blog/${post.slug}`} class="image-link-wrapper">
                 <div class="image-wrapper-4-3">
@@ -149,14 +165,14 @@ const schema = {
           ))}
         </div>
 
-        {/* --- PHÂN TRANG --- */}
+        {/* --- PHÂN TRANG (ĐÃ TỐI ƯU CRAWL BUDGET) --- */}
         <nav class="pagination-nav">
-          <a 
-            href={`/blog?page=${currentPage - 1}`} 
-            class:list={["page-item", "prev", { "disabled": currentPage === 1 }]}
-          >
-             &larr;
-          </a>
+           {/* Nút Prev: Nếu ở trang 1 thì dùng span (không link), ngược lại dùng a */}
+           {currentPage > 1 ? (
+              <a href={`/blog?page=${currentPage - 1}`} class="page-item prev">&larr;</a>
+           ) : (
+              <span class="page-item prev disabled">&larr;</span>
+           )}
 
           {paginationItems.map((item) => {
             if (item === '...') return <span class="page-item dots disabled">...</span>;
@@ -164,12 +180,12 @@ const schema = {
             return <a href={`/blog?page=${item}`} class="page-item">{item}</a>;
           })}
 
-          <a 
-            href={`/blog?page=${currentPage + 1}`} 
-            class:list={["page-item", "next", { "disabled": currentPage === totalPages }]}
-          >
-            &rarr;
-          </a>
+          {/* Nút Next: Nếu ở trang cuối thì dùng span (không link) */}
+          {currentPage < totalPages ? (
+            <a href={`/blog?page=${currentPage + 1}`} class="page-item next">&rarr;</a>
+          ) : (
+            <span class="page-item next disabled">&rarr;</span>
+          )}
         </nav>
 
       </div>
@@ -189,7 +205,7 @@ const schema = {
     .container { max-width: 1200px; margin: auto; padding: 0; }
     
     .grid-4 { 
-        display: grid; 
+        display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
         gap: 2rem;
         /* (MỚI) Tối ưu render cho grid */
@@ -223,11 +239,13 @@ const schema = {
     .featured-image-link { display: block; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
     
     .section-image-featured { 
-        width: 100%; height: 100%; 
+        width: 100%;
+        height: 100%; 
         object-fit: cover; 
         transition: transform 0.6s ease; 
         /* Reset các thuộc tính của img mặc định nếu có */
-        border: none; border-radius: 0;
+        border: none;
+        border-radius: 0;
     }
     
     .featured-image-link:hover .section-image-featured { transform: scale(1.05); }
@@ -258,7 +276,8 @@ const schema = {
     .image-wrapper-4-3 { width: 100%; aspect-ratio: 4 / 3; }
     
     .section-image { 
-        width: 100%; height: 100%; 
+        width: 100%;
+        height: 100%; 
         object-fit: cover; 
         transition: transform 0.6s ease;
         border: none; margin: 0;
@@ -297,8 +316,7 @@ const schema = {
         color: #fff; border-radius: 8px; text-decoration: none; font-weight: 700;
     }
     .page-item.active { background: #F2C94C; color: #050A1F; border-color: #F2C94C; }
-    .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C;
-    color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
+    .page-item:hover:not(.active):not(.disabled) { border-color: #F2C94C; color: #F2C94C; background: rgba(242, 201, 76, 0.1); }
     .page-item.disabled { opacity: 0.3; pointer-events: none; }
   </style>
 </BaseLayout>
