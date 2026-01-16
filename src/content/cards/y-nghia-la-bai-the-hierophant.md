@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Hierophant"
-image: "../../images/uploads/cards/5-The-Hierophant.jpg"
+image: "../../assets/uploads/cards/5-The-Hierophant.jpg"
 excerpt: "Trong vũ trụ Tarot, The Hierophant là lá bài của truyền thống, đức tin và những hệ thống tri thức đã được thiết lập. Mang con số V, ngài là cây cầu nối giữa thế..."
 index: 5
 group: "major"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Seven of Cups"
-image: "../../images/uploads/cards/42-Seven-of-Cups.jpg"
+image: "../../assets/uploads/cards/42-Seven-of-Cups.jpg"
 excerpt: "Seven of Cups: Hành trình lựa chọn và ảo ảnh Khi lá Seven of Cups xuất hiện, nó đưa chúng ta vào một không gian mơ màng, nơi những giấc mơ, sự lựa chọn và nhữn..."
 index: 42
 group: "cups"

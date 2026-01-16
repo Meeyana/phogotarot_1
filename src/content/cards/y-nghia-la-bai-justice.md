@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Justice"
-image: "../../images/uploads/cards/11-Justice.jpg"
+image: "../../assets/uploads/cards/11-Justice.jpg"
 excerpt: "Justice – biểu tượng của sự công bằng, cân bằng và sự thật. Khi lá bài Justice xuất hiện, nó như một lời nhắc nhở khắc khoải từ tận sâu tâm hồn ta rằng mọi hành..."
 index: 11
 group: "major"

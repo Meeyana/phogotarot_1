@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Wheel of Fortune"
-image: "../../images/uploads/cards/10-Wheel-of-Fortune.jpg"
+image: "../../assets/uploads/cards/10-Wheel-of-Fortune.jpg"
 excerpt: "Wheel of Fortune, chiếc Bánh Xe Định Mệnh, là biểu tượng của sự vận hành không ngừng của cuộc sống với những chu kỳ đổi thay, lên xuống bất ngờ nhưng luôn có mụ..."
 index: 10
 group: "major"

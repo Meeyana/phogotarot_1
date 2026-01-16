@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Two of Swords"
-image: "../../images/uploads/cards/51-Two-of-Swords.jpg"
+image: "../../assets/uploads/cards/51-Two-of-Swords.jpg"
 excerpt: "Two of Swords mãnh liệt hiện lên như một bức tranh tĩnh mịch giữa trận chiến nội tâm. Khi khẩu hiệu của sự cân bằng và quyết định không dễ dàng được khắc họa qu..."
 index: 51
 group: "swords"

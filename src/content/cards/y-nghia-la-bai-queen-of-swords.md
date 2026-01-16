@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Queen of Swords"
-image: "../../images/uploads/cards/62-Queen-of-Swords.jpg"
+image: "../../assets/uploads/cards/62-Queen-of-Swords.jpg"
 excerpt: "Queen of Swords — Nữ Hoàng Gươm: Sức Mạnh Của Trí Tuệ Và Sự Sáng Suốt   Queen of Swords, khi xuất hiện trong trải bài Tarot, là biểu tượng của sự sắc bén trí t..."
 index: 62
 group: "swords"

@@ -1,6 +1,6 @@
 ---
 title: "Tarot Sự nghiệp: Khi nào nên nhảy việc hoặc thăng chức?"
-image: "/images/uploads/tarot-su-nghiep-khi-nao-nen-nhay-viec-hoac-thang-chuc.png"
+image: "../../assets/uploads/tarot-su-nghiep-khi-nao-nen-nhay-viec-hoac-thang-chuc.png"
 excerpt: "Bạn đang phân vân giữa việc nhảy việc hay thăng chức? Khám phá thông điệp Tarot để đưa ra quyết định sự nghiệp sáng suốt và tìm thấy con đường phát triển phù hợp nhất."
 pubDate: 2025-11-22
 ---

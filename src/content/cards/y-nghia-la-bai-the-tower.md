@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Tower"
-image: "../../images/uploads/cards/16-The-Tower.jpg"
+image: "../../assets/uploads/cards/16-The-Tower.jpg"
 excerpt: "The Tower, lá bài đáng sợ bậc nhất trong Tarot, không phải là một lời nguyền, mà là một sự giải thoát dữ dội. Nó là khoảnh khắc chân lý không thể chối cãi, một..."
 index: 16
 group: "major"

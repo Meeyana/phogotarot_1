@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Five of Pentacles"
-image: "../../images/uploads/cards/68-Five-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/68-Five-of-Pentacles.jpg"
 excerpt: "Five of Pentacles là lá bài chứa đựng năng lượng sâu sắc về sự thiếu thốn, mất mát và cả bài học về niềm tin trong những thời điểm thử thách. Năng lượng của nó,..."
 index: 68
 group: "pentacles"

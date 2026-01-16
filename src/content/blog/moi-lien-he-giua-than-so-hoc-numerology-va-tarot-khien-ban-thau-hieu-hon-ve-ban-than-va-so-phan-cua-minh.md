@@ -1,6 +1,6 @@
 ---
 title: "Mối liên hệ giữa Thần số học (Numerology) và Tarot"
-image: "/images/uploads/moi-lien-he-giua-than-so-hoc-numerology-va-tarot-khien-ban-thau-hieu-hon-ve-ban-than-va-so-phan-cua-minh.png"
+image: "../../assets/uploads/moi-lien-he-giua-than-so-hoc-numerology-va-tarot-khien-ban-thau-hieu-hon-ve-ban-than-va-so-phan-cua-minh.png"
 excerpt: "Khám phá mối liên hệ độc đáo giữa Thần số học và Tarot, hai công cụ hé mở bí mật về bản thân và tương lai. Tìm hiểu sâu hơn về hành trình cuộc đời bạn ngay hôm nay!"
 pubDate: 2025-11-23
 ---

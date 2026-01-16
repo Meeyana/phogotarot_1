@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ten of Swords"
-image: "../../images/uploads/cards/59-Ten-of-Swords.jpg"
+image: "../../assets/uploads/cards/59-Ten-of-Swords.jpg"
 excerpt: "Ten of Swords là một trong những lá bài mang hình ảnh gây ám ảnh nhất trong bộ Tarot. Một thân người nằm úp, bị mười thanh kiếm găm chặt trên lưng, dưới một bầu..."
 index: 59
 group: "swords"

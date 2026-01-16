@@ -2,13 +2,13 @@ import { defineCollection, z } from 'astro:content';
 
 // 1. Collection 'blog'
 const blogCollection = defineCollection({
-  schema: z.object({
+  // Thay đổi ở đây: Thêm ({ image }) vào đầu hàm schema
+  schema: ({ image }) => z.object({
     title: z.string(),
-    // Nên để optional cho ảnh, phòng khi bạn chưa kịp tìm ảnh bìa
-    image: z.string().optional(), 
+    // Sửa z.string() thành image()
+    image: image().optional(), 
     excerpt: z.string().optional(),
     pubDate: z.date(),
-    // Nếu không chọn nổi bật, mặc định là false (không lỗi)
     isFeatured: z.boolean().default(false), 
     category: z.enum([
       "tarot căn bản",
@@ -21,35 +21,24 @@ const blogCollection = defineCollection({
   }),
 });
 
-// 2. Collection 'cards' (Đã tối ưu)
+// 2. Collection 'cards'
 const cardsCollection = defineCollection({
-  schema: z.object({
+  // Thay đổi ở đây: Thêm ({ image }) vào đầu hàm schema
+  schema: ({ image }) => z.object({
     title: z.string(), 
     
-    // Bắt buộc có ảnh (vì là xem bài Tarot), nhưng cứ để string là chuẩn với Decap
-    image: z.string(), 
+    // QUAN TRỌNG: Sửa z.string() thành image()
+    // Decap CMS vẫn lưu là string trong file .md, nhưng Astro sẽ đọc nó và convert thành ảnh thật.
+    image: image(), 
     
-    excerpt: z.string().optional(), // Có thể để trống mô tả ngắn
-
+    excerpt: z.string().optional(),
     index: z.number(),
-
-    // Khớp chính xác với giá trị 'value' trong file config.yml
-    group: z.enum([
-      'major',     
-      'wands',     
-      'cups',      
-      'swords',    
-      'pentacles'  
-    ]),
-    
-    // QUAN TRỌNG: Thêm .default([]) 
-    // Lý do: Nếu bạn lỡ tay xóa hết từ khóa trên CMS, nó sẽ trả về mảng rỗng thay vì làm sập web
+    group: z.enum(['major', 'wands', 'cups', 'swords', 'pentacles']),
     upright_keywords: z.array(z.string()).default([]), 
     reversed_keywords: z.array(z.string()).default([]), 
   }),
 });
 
-// 3. Xuất cả hai collection
 export const collections = {
   'blog': blogCollection,
   'cards': cardsCollection,

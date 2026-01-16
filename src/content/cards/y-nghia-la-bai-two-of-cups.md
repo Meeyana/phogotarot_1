@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Two of Cups"
-image: "../../images/uploads/cards/37-Two-of-Cups.jpg"
+image: "../../assets/uploads/cards/37-Two-of-Cups.jpg"
 excerpt: "Lá bài Two of Cups (Hai Cốc) là một trong những hình ảnh đẹp đẽ và ấm áp nhất trong bộ bài Tarot. Nó nói về sự kết nối, sự hợp nhất và vẻ đẹp nảy sinh khi hai t..."
 index: 37
 group: "cups"

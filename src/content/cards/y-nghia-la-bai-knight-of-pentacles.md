@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Knight of Pentacles"
-image: "../../images/uploads/cards/75-Knight-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/75-Knight-of-Pentacles.jpg"
 excerpt: "Knight of Pentacles — Người Hiệp Sĩ Chăm Chỉ và Bền Bỉ Khi Knight of Pentacles xuất hiện ở chiều thẳng đứng, nó mang đến năng lượng của sự kiên trì, trách nhiệ..."
 index: 75
 group: "pentacles"

@@ -1,7 +1,7 @@
 ---
 title: "Bộ Ẩn Phụ (Minor Arcana): Chi tiết 4 nhóm nguyên tố"
 pubDate: 2025-11-22
-image: /images/uploads/bo-an-phu-4-nguyen-to-tarot.png
+image: ../../assets/uploads/bo-an-phu-4-nguyen-to-tarot.png
 category: tarot căn bản
 excerpt: Khám phá ý nghĩa sâu sắc của 4 nhóm nguyên tố trong Bộ Ẩn Phụ Tarot.
   Hiểu rõ hơn về cuộc sống thường nhật và đưa ra quyết định sáng suốt hơn.

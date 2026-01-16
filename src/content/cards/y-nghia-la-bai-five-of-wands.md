@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Five of Wands"
-image: "../../images/uploads/cards/26-Five-of-Wands.jpg"
+image: "../../assets/uploads/cards/26-Five-of-Wands.jpg"
 excerpt: "Five of Wands — Năng lượng Xung Đột & Thách Thức Five of Wands là lá bài biểu trưng cho sự cạnh tranh, tranh đấu và những xáo trộn năng lượng mang tính thử thá..."
 index: 26
 group: "wands"

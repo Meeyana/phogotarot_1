@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Nine of Pentacles"
-image: "../../images/uploads/cards/72-Nine-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/72-Nine-of-Pentacles.jpg"
 excerpt: "Nine of Pentacles — Lá Bài Của Tự Do và Thịnh Vượng Nội Tâm Khi Nine of Pentacles xuất hiện ở chiều thẳng đứng, năng lượng nó mang đến là một bức tranh tràn đầ..."
 index: 72
 group: "pentacles"

@@ -1,6 +1,6 @@
 ---
 title: "Nghệ thuật đặt câu hỏi trong Tarot: Hỏi đúng để nhận câu trả lời hay"
-image: "/images/uploads/nghe-thuat-dat-cau-hoi-tarot-hoi-dung-de-nhan-cau-tra-loi-hay.png"
+image: "../../assets/uploads/nghe-thuat-dat-cau-hoi-tarot-hoi-dung-de-nhan-cau-tra-loi-hay.png"
 excerpt: "Khám phá cách đặt câu hỏi Tarot hiệu quả để nhận thông điệp sâu sắc và đưa ra quyết định sáng suốt. Biến mỗi trải bài thành hành trình khám phá ý nghĩa."
 pubDate: 2025-11-22
 ---

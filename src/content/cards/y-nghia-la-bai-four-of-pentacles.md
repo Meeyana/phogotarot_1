@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Four of Pentacles"
-image: "../../images/uploads/cards/67-Four-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/67-Four-of-Pentacles.jpg"
 excerpt: "Four of Pentacles là lá bài của sự sở hữu, kiểm soát và ranh giới. Nó soi chiếu mối quan hệ của chúng ta với thế giới vật chất, với những gì ta gọi là “của mình..."
 index: 67
 group: "pentacles"

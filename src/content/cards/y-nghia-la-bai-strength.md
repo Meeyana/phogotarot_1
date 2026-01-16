@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Strength"
-image: "../../images/uploads/cards/8-Strength.jpg"
+image: "../../assets/uploads/cards/8-Strength.jpg"
 excerpt: "Lá bài Strength, mang số VIII trong bộ Ẩn Chính, không nói về sức mạnh cơ bắp hay quyền lực thống trị. Nó là bản giao hưởng của lòng dũng cảm nội tại, sự kiên n..."
 index: 8
 group: "major"

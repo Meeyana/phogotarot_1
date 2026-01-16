@@ -1,7 +1,7 @@
 ---
 title: Hướng Dẫn Tự Học Tarot Cho Người Mới Bắt Đầu (A-Z)
 pubDate: 2025-11-18
-image: /images/uploads/huong-dan-tu-hoc-tarot-cho-nguoi-moi-bat-dau1.png
+image: ../../assets/uploads/huong-dan-tu-hoc-tarot-cho-nguoi-moi-bat-dau1.png
 excerpt: Khám phá lộ trình tự học Tarot bài bản từ A-Z, xây dựng nền tảng vững
   chắc, rèn luyện kỹ năng giải nghĩa biểu tượng và phát triển thói quen thực
   hành. Bắt đầu hành trình Tarot của bạn ngay!

@@ -1,6 +1,6 @@
 ---
 title: "Tarot là gì? Sự thật Giải mã những lầm tưởng phổ biến."
-image: "/images/uploads/tarot-la-gi-su-that-va-giai-ma-lam-tuong.png"
+image: "../../assets/uploads/tarot-la-gi-su-that-va-giai-ma-lam-tuong.png"
 excerpt: "Khám phá Tarot không phải là sách định mệnh mà là bản đồ tâm thức. Giải mã ý nghĩa biểu tượng và tìm hiểu trí tuệ nội tại qua 78 lá bài. Đọc ngay để thấu hiểu bản thân!"
 pubDate: 2025-11-18
 ---

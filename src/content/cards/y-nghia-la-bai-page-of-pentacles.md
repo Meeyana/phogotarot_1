@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Page of Pentacles"
-image: "../../images/uploads/cards/74-Page-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/74-Page-of-Pentacles.jpg"
 excerpt: "Page of Pentacles — Lá Bài Của Những Khởi Đầu Thực Tế Và Học Hỏi Chân Thành Page of Pentacles mở ra cánh cửa của sự học hỏi, phát triển và hiện thực hóa tiềm n..."
 index: 74
 group: "pentacles"

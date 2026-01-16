@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Five of Swords"
-image: "../../images/uploads/cards/54-Five-of-Swords.jpg"
+image: "../../assets/uploads/cards/54-Five-of-Swords.jpg"
 excerpt: "Five of Swords: Ván cờ đấu tranh và bài học từ thất bại"
 index: 54
 group: "swords"

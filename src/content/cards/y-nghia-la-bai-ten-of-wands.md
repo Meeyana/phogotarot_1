@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ten of Wands"
-image: "../../images/uploads/cards/31-Ten-of-Wands.jpg"
+image: "../../assets/uploads/cards/31-Ten-of-Wands.jpg"
 excerpt: "Ten of Wands — Gánh Nặng Và Trách Nhiệm Đầy Sức Nặng Khi Ten of Wands xuất hiện ở chiều thẳng đứng, năng lượng được gửi đến là sự chất chứa gánh nặng, trách nh..."
 index: 31
 group: "wands"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Sun"
-image: "../../images/uploads/cards/19-The-Sun.jpg"
+image: "../../assets/uploads/cards/19-The-Sun.jpg"
 excerpt: "Sau một hành trình dài qua những thử thách của bóng tối, The Sun hiện ra như một lời hứa về bình minh rực rỡ. Đây là lá bài của sự sống, của niềm vui thuần khiế..."
 index: 19
 group: "major"

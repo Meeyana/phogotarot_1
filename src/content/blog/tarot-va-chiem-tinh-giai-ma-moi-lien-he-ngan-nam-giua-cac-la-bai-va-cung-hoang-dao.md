@@ -2,7 +2,7 @@
 title: Tarot và Chiêm tinh- Giải mã mối liên hệ ngàn năm giữa các lá bài và Cung
   Hoàng Đạo
 pubDate: 2025-11-17
-image: /images/uploads/tarot-va-chiem-tinh-hoc-bi-an-nghin-nam-giua-cac-la-bai-va-cung-hoang-dao.png
+image: ../../assets/uploads/tarot-va-chiem-tinh-hoc-bi-an-nghin-nam-giua-cac-la-bai-va-cung-hoang-dao.png
 excerpt: Từ xa xưa, Tarot và Chiêm tinh (Astrology) đã có mối quan hệ mật thiết,
   rất nhiều bộ bài được xây dựng dựa trên hệ thống Chiêm tinh. Hãy cùng khám phá
   mối liên hệ kỳ diệu này nhé!
@@ -14,7 +14,7 @@ Thực tế từ lâu, Tarot và Chiêm tinh đã có mối quan hệ mật thi�
 
 ## **Phần 1: Cầu nối cơ bản nhất - 4 Nguyên tố**
 
-![](/images/uploads/4-suits-of-tarot-y-nghia-4-bo-bai-tarot.png)
+![](../../assets/uploads/4-suits-of-tarot-y-nghia-4-bo-bai-tarot.png)
 
 Cách dễ nhất để thấy mối liên hệ này là thông qua 4 nhóm Ẩn Phụ (Minor Arcana) và 4 Nguyên tố (Elements) của Chiêm tinh.
 
@@ -61,7 +61,7 @@ Mỗi bộ Ẩn Phụ tương ứng trực tiếp với một nguyên tố, và 
 
 ## **Phần 2: "Trái tim" của mối liên kết - Ẩn Chính và 12 Cung Hoàng Đạo**
 
-![](/images/uploads/moi-lien-he-giua-cac-la-bai-bo-an-phu-va-cung-hoang-dao.png)
+![](../../assets/uploads/moi-lien-he-giua-cac-la-bai-bo-an-phu-va-cung-hoang-dao.png)
 
 Đây là phần thú vị nhất! 22 lá Ẩn Chính (Major Arcana) đều có sự tương ứng với một Cung Hoàng Đạo, một Hành Tinh, hoặc một Nguyên Tố. Dưới đây là sự liên kết trực tiếp giữa các lá Ẩn Chính và 12 Cung Hoàng Đạo.
 
@@ -185,7 +185,7 @@ Mỗi bộ Ẩn Phụ tương ứng trực tiếp với một nguyên tố, và 
 
 ## **Phần 3: Tại sao bạn nên biết điều này?**
 
-![](/images/uploads/viec-ket-hop-chiem-tinh-va-tarot-mang-lai-loi-ich-trong-trai-bai.png)
+![](../../assets/uploads/viec-ket-hop-chiem-tinh-va-tarot-mang-lai-loi-ich-trong-trai-bai.png)
 
 Việc kết hợp Tarot và Chiêm tinh mang lại lợi ích gì cho một buổi đọc bài?
 

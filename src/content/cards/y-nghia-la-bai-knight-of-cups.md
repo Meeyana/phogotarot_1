@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Knight of Cups"
-image: "../../images/uploads/cards/47-Knight-of-Cups.jpg"
+image: "../../assets/uploads/cards/47-Knight-of-Cups.jpg"
 excerpt: "Knight of Cups là lá bài của những sứ giả lãng mạn, của những lời mời gọi từ trái tim và hành trình đi theo tiếng gọi của cảm xúc. Chàng Kỵ sĩ này không phi nướ..."
 index: 47
 group: "cups"

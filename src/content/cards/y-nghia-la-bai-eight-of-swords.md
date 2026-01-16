@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Eight of Swords"
-image: "../../images/uploads/cards/57-Eight-of-Swords.jpg"
+image: "../../assets/uploads/cards/57-Eight-of-Swords.jpg"
 excerpt: "Eight of Swords là lá bài của sự giam cầm, nhưng không phải bởi những song sắt hữu hình. Đây là nhà tù của tâm trí, được dựng nên từ chính những suy nghĩ, nỗi s..."
 index: 57
 group: "swords"

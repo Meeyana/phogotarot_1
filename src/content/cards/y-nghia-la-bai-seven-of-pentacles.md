@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Seven of Pentacles"
-image: "../../images/uploads/cards/70-Seven-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/70-Seven-of-Pentacles.jpg"
 excerpt: "Seven of Pentacles nhắc nhở chúng ta về sự kiên nhẫn và năng lượng tích lũy qua thời gian. Lá bài không phải dấu hiệu của thành công nhanh chóng mà là minh chứn..."
 index: 70
 group: "pentacles"

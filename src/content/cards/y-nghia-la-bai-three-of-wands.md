@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Three of Wands"
-image: "../../images/uploads/cards/24-Three-of-Wands.jpg"
+image: "../../assets/uploads/cards/24-Three-of-Wands.jpg"
 excerpt: "Trong khoảnh khắc tĩnh lặng giữa hành động và kết quả, có một không gian thiêng liêng của sự chờ đợi. Three of Wands chính là hiện thân của không gian đó. Lá bà..."
 index: 24
 group: "wands"

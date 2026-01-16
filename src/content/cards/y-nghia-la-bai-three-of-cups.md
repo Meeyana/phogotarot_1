@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Three of Cups"
-image: "../../images/uploads/cards/38-Three-of-Cups.jpg"
+image: "../../assets/uploads/cards/38-Three-of-Cups.jpg"
 excerpt: "Khi lá bài Three of Cups hiện diện, không gian như vang lên tiếng cười giòn tan, tiếng ly chạm vào nhau đầy hân hoan và cảm giác ấm áp của sự sum vầy. Đây không..."
 index: 38
 group: "cups"

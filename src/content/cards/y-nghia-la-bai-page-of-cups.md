@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Page of Cups"
-image: "../../images/uploads/cards/46-Page-of-Cups.jpg"
+image: "../../assets/uploads/cards/46-Page-of-Cups.jpg"
 excerpt: "Page of Cups là một sứ giả thầm lặng từ miền sâu của tâm thức, mang đến những thông điệp của trái tim và những lời mời gọi của tâm hồn. Chàng thiếu niên của bộ..."
 index: 46
 group: "cups"

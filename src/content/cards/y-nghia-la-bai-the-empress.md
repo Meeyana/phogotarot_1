@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Empress"
-image: "../../images/uploads/cards/3-The-Empress.jpg"
+image: "../../assets/uploads/cards/3-The-Empress.jpg"
 excerpt: "The Empress, mang số 3 trong bộ Ẩn Chính, là hiện thân của Mẹ Trái Đất, biểu tượng tối cao của sự sáng tạo, nuôi dưỡng và đủ đầy. Nàng là nguồn sống, là khu vườ..."
 index: 3
 group: "major"

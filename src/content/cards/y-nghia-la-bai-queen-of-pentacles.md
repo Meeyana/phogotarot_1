@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Queen of Pentacles"
-image: "../../images/uploads/cards/76-Queen-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/76-Queen-of-Pentacles.jpg"
 excerpt: "Queen of Pentacles: Nữ Hoàng của Sự Ấm Áp và Thịnh Vượng Queen of Pentacles hiện hữu như một biểu tượng mạnh mẽ của sự nuôi dưỡng, ổn định và sung túc trong cu..."
 index: 76
 group: "pentacles"

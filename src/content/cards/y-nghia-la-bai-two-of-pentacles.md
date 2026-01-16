@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Two of Pentacles"
-image: "../../images/uploads/cards/65-Two-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/65-Two-of-Pentacles.jpg"
 excerpt: "Trong dòng chảy bất tận của cuộc đời, Two of Pentacles hiện ra như một vũ công đang xoay mình giữa những con sóng. Lá bài không hứa hẹn sự tĩnh lặng, mà mời gọi..."
 index: 65
 group: "pentacles"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Knight of Swords"
-image: "../../images/uploads/cards/61-Knight-of-Swords.jpg"
+image: "../../assets/uploads/cards/61-Knight-of-Swords.jpg"
 excerpt: "Knight of Swords: Hành Trình Của Công Tước Gió Có những lúc trong cuộc đời, ta cảm nhận sự thôi thúc bùng nổ từ tận sâu bên trong – một luồng khí mạnh mẽ, dữ d..."
 index: 61
 group: "swords"

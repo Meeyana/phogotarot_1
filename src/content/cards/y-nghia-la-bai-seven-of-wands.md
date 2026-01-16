@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Seven of Wands"
-image: "../../images/uploads/cards/28-Seven-of-Wands.jpg"
+image: "../../assets/uploads/cards/28-Seven-of-Wands.jpg"
 excerpt: "Seven of Wands là biểu tượng của sự kiên cường, tinh thần chiến đấu và sự bảo vệ chính mình trong những thử thách bất ngờ. Khi lá bài này xuất hiện, nó khơi dậy..."
 index: 28
 group: "wands"

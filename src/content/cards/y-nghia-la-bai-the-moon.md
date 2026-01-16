@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Moon"
-image: "../../images/uploads/cards/18-The-Moon.jpg"
+image: "../../assets/uploads/cards/18-The-Moon.jpg"
 excerpt: "Trong vũ trụ Tarot, có những lá bài là ánh sáng ban ngày rực rỡ, nhưng cũng có những lá bài đưa ta vào cuộc hành trình của đêm sâu. The Moon là một cuộc du hành..."
 index: 18
 group: "major"

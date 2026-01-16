@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Chariot"
-image: "../../images/uploads/cards/7-The-Chariot.jpg"
+image: "../../assets/uploads/cards/7-The-Chariot.jpg"
 excerpt: "The Chariot, lá bài mang số 7 trong bộ Ẩn Chính, là hiện thân của ý chí, sự kiểm soát và chiến thắng. Nó là tiếng vang của những cuộc diễu hành khải hoàn, nơi n..."
 index: 7
 group: "major"

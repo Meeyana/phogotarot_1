@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài King of Cups"
-image: "../../images/uploads/cards/49-King-of-Cups.jpg"
+image: "../../assets/uploads/cards/49-King-of-Cups.jpg"
 excerpt: "Trong thế giới của bộ Cups, nơi cảm xúc là đại dương và trái tim là la bàn, King of Cups chính là vị vua cai trị tối cao. Ngài không chỉ là người làm chủ vương..."
 index: 49
 group: "cups"

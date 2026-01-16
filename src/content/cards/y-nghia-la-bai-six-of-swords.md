@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Six of Swords"
-image: "../../images/uploads/cards/55-Six-of-Swords.jpg"
+image: "../../assets/uploads/cards/55-Six-of-Swords.jpg"
 excerpt: "Six of Swords thường được biết đến như một hành trình chuyển mình, đề cập đến sự di chuyển qua những vùng nước tĩnh lặng đến một bến bờ mới. Lá bài gợi lên nhữn..."
 index: 55
 group: "swords"

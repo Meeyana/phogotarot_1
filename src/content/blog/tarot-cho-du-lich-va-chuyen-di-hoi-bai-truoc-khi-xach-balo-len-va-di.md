@@ -1,6 +1,6 @@
 ---
 title: "Tarot Cho Du Lịch Chuyến Đi: Hỏi Bài Trước Khi Xách Balo Và Đi"
-image: "/images/uploads/tarot-cho-du-lich-va-chuyen-di-hoi-bai-truoc-khi-xach-balo-len-va-di.png"
+image: "../../assets/uploads/tarot-cho-du-lich-va-chuyen-di-hoi-bai-truoc-khi-xach-balo-len-va-di.png"
 excerpt: "Chuẩn bị cho mọi chuyến đi với Tarot! Khám phá những thông điệp ý nghĩa giúp bạn đưa ra lựa chọn, tránh bất trắc và tận hưởng hành trình trọn vẹn."
 pubDate: 2025-11-25
 ---

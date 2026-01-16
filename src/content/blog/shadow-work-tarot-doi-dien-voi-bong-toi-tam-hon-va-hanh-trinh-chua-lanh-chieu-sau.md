@@ -1,6 +1,6 @@
 ---
 title: "Shadow Work là gì? Dùng Tarot để đối diện với bóng tối tâm hồn"
-image: "/images/uploads/shadow-work-tarot-doi-dien-voi-bong-toi-tam-hon-va-hanh-trinh-chua-lanh-chieu-sau.png"
+image: "../../assets/uploads/shadow-work-tarot-doi-dien-voi-bong-toi-tam-hon-va-hanh-trinh-chua-lanh-chieu-sau.png"
 excerpt: "Khám phá Shadow Work và cách Tarot giúp bạn đối diện với bóng tối tâm hồn. Hé mở sức mạnh tiềm ẩn và bắt đầu hành trình chữa lành."
 pubDate: 2025-11-23
 ---

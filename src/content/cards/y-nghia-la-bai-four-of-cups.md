@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Four of Cups"
-image: "../../images/uploads/cards/39-Four-of-Cups.jpg"
+image: "../../assets/uploads/cards/39-Four-of-Cups.jpg"
 excerpt: "Four of Cups là lá bài của sự trầm ngâm, một khoảng lặng cần thiết giữa dòng chảy hối hả của cuộc đời. Nó xuất hiện khi ta đang mải mê nhìn vào những gì đã có h..."
 index: 39
 group: "cups"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Emperor"
-image: "../../images/uploads/cards/4-The-Emperor.jpg"
+image: "../../assets/uploads/cards/4-The-Emperor.jpg"
 excerpt: "The Emperor, mang số IV trong bộ Ẩn Chính, là hiện thân của trật tự, cấu trúc và quyền lực. Ngài là người cha, người kiến tạo, người đặt ra luật lệ để biến sự h..."
 index: 4
 group: "major"

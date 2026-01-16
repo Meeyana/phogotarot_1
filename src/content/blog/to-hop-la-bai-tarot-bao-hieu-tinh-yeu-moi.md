@@ -1,6 +1,6 @@
 ---
 title: "Tổ Hợp Lá Bài Tarot Báo Hiệu Tình Yêu Mới Sắp Đến: Chuyện Gì Đang Chờ Đợi Bạn?"
-image: "/images/uploads/to-hop-la-bai-tarot-bao-hieu-tinh-yeu-moi.png"
+image: "../../assets/uploads/to-hop-la-bai-tarot-bao-hieu-tinh-yeu-moi.png"
 excerpt: "Khám phá những tổ hợp bài Tarot ẩn chứa thông điệp về tình yêu mới sắp chớm nở. Tìm hiểu ngay để đón đầu hạnh phúc!"
 pubDate: 2025-11-15
 ---

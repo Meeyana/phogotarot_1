@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài King of Wands"
-image: "../../images/uploads/cards/35-King-of-Wands.jpg"
+image: "../../assets/uploads/cards/35-King-of-Wands.jpg"
 excerpt: "King of Wands — Vương Quyền Của Năng Lượng Lãnh Đạo   King of Wands là ngọn lửa tinh thần thắp sáng cho sự mạnh mẽ, quyết đoán và tầm nhìn xa. Khi lá bài xuất..."
 index: 35
 group: "wands"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Page of Wands"
-image: "../../images/uploads/cards/32-Page-of-Wands.jpg"
+image: "../../assets/uploads/cards/32-Page-of-Wands.jpg"
 excerpt: "Page of Wands là lá bài trẻ trung tràn đầy năng lượng của sự khởi đầu, sáng tạo và niềm đam mê bùng cháy. Khi xuất hiện, nó như một ngọn lửa mới bùng lên trong..."
 index: 32
 group: "wands"

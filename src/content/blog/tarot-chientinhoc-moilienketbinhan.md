@@ -1,6 +1,6 @@
 ---
 title: "TIẾT LỘ CHẤN ĐỘNG: Tarot & Chiêm Tinh Học - Mối Liên Kết Bí Ẩn Thay Đổi Cuộc Đời Bạn!"
-image: "/images/uploads/tarot-chientinhoc-moilienketbinhan.png"
+image: "../../assets/uploads/tarot-chientinhoc-moilienketbinhan.png"
 excerpt: "Khám phá sự kết hợp đỉnh cao giữa Tarot và Chiêm tinh học, giải mã những bí ẩn vũ trụ và thấu hiểu bản thân sâu sắc. Đọc ngay để mở ra cánh cửa mới!"
 pubDate: 2025-11-15
 ---

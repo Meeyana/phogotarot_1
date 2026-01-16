@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Five of Cups"
-image: "../../images/uploads/cards/40-Five-of-Cups.jpg"
+image: "../../assets/uploads/cards/40-Five-of-Cups.jpg"
 excerpt: "Trong khu vườn tĩnh lặng của tâm hồn, có những góc khuất mà chúng ta ít khi muốn nhìn lại. Đó là nơi những chiếc ly cảm xúc đã đổ, để lại những vệt loang lổ của..."
 index: 40
 group: "cups"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Six of Wands"
-image: "../../images/uploads/cards/27-Six-of-Wands.jpg"
+image: "../../assets/uploads/cards/27-Six-of-Wands.jpg"
 excerpt: "Six of Wands là biểu tượng của chiến thắng và sự công nhận, như một ánh sáng rực rỡ soi chiếu trên con đường bạn đã đi qua. Lá bài mang năng lượng của sự thành..."
 index: 27
 group: "wands"

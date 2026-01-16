@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Nine of Swords"
-image: "../../images/uploads/cards/58-Nine-of-Swords.jpg"
+image: "../../assets/uploads/cards/58-Nine-of-Swords.jpg"
 excerpt: "Trong bóng đêm tĩnh lặng của tâm hồn, có những khoảnh khắc mà tâm trí không chịu ngủ yên. Lá bài Nine of Swords là tấm gương phản chiếu những đêm dài trằn trọc..."
 index: 58
 group: "swords"

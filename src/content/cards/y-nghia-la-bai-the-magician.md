@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Magician"
-image: "../../images/uploads/cards/1-The-Magician.jpg"
+image: "../../assets/uploads/cards/1-The-Magician.jpg"
 excerpt: "The Magician là biểu tượng của sự biến hóa đầy quyền năng, nơi ý chí, trí tuệ được hòa quyện vào năng lượng sáng tạo không giới hạn. Khi lá bài này xuất hiện, đ..."
 index: 1
 group: "major"

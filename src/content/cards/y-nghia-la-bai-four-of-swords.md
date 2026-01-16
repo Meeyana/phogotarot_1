@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Four of Swords"
-image: "../../images/uploads/cards/53-Four-of-Swords.jpg"
+image: "../../assets/uploads/cards/53-Four-of-Swords.jpg"
 excerpt: "Lá bài Four of Swords mở ra một không gian tĩnh lặng, một khoảnh khắc dừng lại giữa dòng chảy bận rộn của cuộc sống. Đây là tín hiệu của sự nghỉ ngơi cần thiết,..."
 index: 53
 group: "swords"

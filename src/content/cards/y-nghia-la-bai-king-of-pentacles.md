@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài King of Pentacles"
-image: "../../images/uploads/cards/77-King-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/77-King-of-Pentacles.jpg"
 excerpt: "King of Pentacles, vị vua của sự thịnh vượng và ổn định, là biểu tượng mạnh mẽ của năng lượng kiên định, trách nhiệm và thành tựu vật chất. Khi xuất hiện, lá bà..."
 index: 77
 group: "pentacles"

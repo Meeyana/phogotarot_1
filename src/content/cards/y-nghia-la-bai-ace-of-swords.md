@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ace of Swords"
-image: "../../images/uploads/cards/50-Ace-of-Swords.jpg"
+image: "../../assets/uploads/cards/50-Ace-of-Swords.jpg"
 excerpt: "Ace of Swords là lá bài mở ra cánh cửa của trí tuệ sắc bén và sự khởi đầu của những ý tưởng mới mẻ. Khi chiếc kiếm này xuất hiện, nó mang đến sức mạnh của sự sá..."
 index: 50
 group: "swords"

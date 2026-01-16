@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài King of Swords"
-image: "../../images/uploads/cards/63-King-of-Swords.jpg"
+image: "../../assets/uploads/cards/63-King-of-Swords.jpg"
 excerpt: "Vị Vua ngự trên ngai đá, tay nắm chắc thanh gươm quyền lực giơ thẳng lên trời, ánh mắt nhìn thẳng về phía trước, không một chút dao động. Bầu trời phía sau tron..."
 index: 63
 group: "swords"

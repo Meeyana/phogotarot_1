@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Fool"
-image: "../../images/uploads/cards/0-The-Fool.jpg"
+image: "../../assets/uploads/cards/0-The-Fool.jpg"
 excerpt: "The Fool là lá bài của khởi đầu, tự do và những bước nhảy đầy niềm tin. Ở chiều xuôi mang năng lượng lạc quan — ở chiều ngược cảnh báo sự liều lĩnh và bốc đồng."
 index: 0
 group: "major"

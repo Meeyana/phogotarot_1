@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Six of Cups"
-image: "../../images/uploads/cards/41-Six-of-Cups.jpg"
+image: "../../assets/uploads/cards/41-Six-of-Cups.jpg"
 excerpt: "Trong dòng chảy bất tận của thời gian, có những khoảnh khắc ta muốn neo lại mãi mãi. Đó là những miền ký ức ngọt ngào, nơi tâm hồn được trở về với sự ngây thơ,..."
 index: 41
 group: "cups"

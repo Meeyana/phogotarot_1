@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Lovers"
-image: "../../images/uploads/cards/6-The-Lovers.jpg"
+image: "../../assets/uploads/cards/6-The-Lovers.jpg"
 excerpt: "The Lovers không chỉ là lá bài về tình yêu đôi lứa, mà còn là chương hùng ca về sự lựa chọn, sự hợp nhất và tiếng nói sâu thẳm của giá trị cá nhân. Khi lá bài n..."
 index: 6
 group: "major"

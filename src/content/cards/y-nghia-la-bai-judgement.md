@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Judgement"
-image: "../../images/uploads/cards/20-Judgement.jpg"
+image: "../../assets/uploads/cards/20-Judgement.jpg"
 excerpt: "Judgement là lá bài của sự thức tỉnh, sự tái sinh và lời mời gọi nhìn nhận lại chính mình với sự công bằng và tỉnh thức sâu sắc. Khi lá bài này xuất hiện, nó gi..."
 index: 20
 group: "major"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Queen of Cups"
-image: "../../images/uploads/cards/48-Queen-of-Cups.jpg"
+image: "../../assets/uploads/cards/48-Queen-of-Cups.jpg"
 excerpt: "Queen of Cups là biểu tượng của sự thấu cảm sâu sắc, cảm xúc phong phú và khả năng kết nối với cõi nội tâm một cách tinh tế. Khi lá bài này xuất hiện, nó mở ra..."
 index: 48
 group: "cups"

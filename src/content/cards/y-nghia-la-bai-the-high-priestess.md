@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The High Priestess"
-image: "../../images/uploads/cards/2-The-High-Priestess.jpg"
+image: "../../assets/uploads/cards/2-The-High-Priestess.jpg"
 excerpt: "The High Priestess — Người Giữ Bí Mật Nội Tâm The High Priestess ngự trị một thế giới bí mật, vương quốc của trực giác và sự thấu hiểu sâu sắc. Khi The High Pr..."
 index: 2
 group: "major"

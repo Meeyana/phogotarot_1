@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Three of Pentacles"
-image: "../../images/uploads/cards/66-Three-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/66-Three-of-Pentacles.jpg"
 excerpt: "Trong hành trình của những đồng xu, nơi chúng ta học cách biến ý tưởng thành hiện thực, Three of Pentacles hiện ra như một thánh đường của sự cộng tác. Đây khôn..."
 index: 66
 group: "pentacles"

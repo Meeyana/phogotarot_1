@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Temperance"
-image: "../../images/uploads/cards/14-Temperance.jpg"
+image: "../../assets/uploads/cards/14-Temperance.jpg"
 excerpt: "Temperance (Lá Thượng Lưu) là biểu tượng của sự hòa hợp, cân bằng và sự điều hòa sâu sắc giữa các yếu tố trong cuộc sống. Khi lá bài này xuất hiện, nó như một l..."
 index: 14
 group: "major"

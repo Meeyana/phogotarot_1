@@ -1,7 +1,7 @@
 ---
 title: Bộ Swords trong Tarot — Lưỡi kiếm vô tình hay liều thuốc đắng dã tật?
 pubDate: 2025-11-17
-image: /images/uploads/bo-kiem-tarot-luoi-kiem-vo-tinh-hay-lieu-thuoc-dang-da-tat.png
+image: ../../assets/uploads/bo-kiem-tarot-luoi-kiem-vo-tinh-hay-lieu-thuoc-dang-da-tat.png
 excerpt: Đây có lẽ là bộ Ẩn Phụ đáng sợ nhất nhưng nếu vượt qua được nó, quả
   ngọt và thành công sẽ đến với bạn.
 ---
@@ -15,7 +15,7 @@ Nhưng sự thật vốn dĩ **trần trụi, sắc lạnh và không chiều l�
 
 ## Ý nghĩa tổng quan của bộ Swords: Sự thật – Trí tuệ – Xung đột
 
-![](/images/uploads/bo-sword-tarot-y-nghia-tong-quat.png)
+![](../../assets/uploads/bo-sword-tarot-y-nghia-tong-quat.png)
 
 Bộ Kiếm đại diện cho **nguyên tố Khí**: tư duy, logic, giao tiếp, phân tích và đôi khi là sự sắc bén đến mức gây tổn thương.
 
@@ -25,7 +25,7 @@ Khí có thể tĩnh lặng và gần như không được chú ý hoặc trở 
 
 ## Điều gì xảy ra khi bộ Swords chiếm ưu thế trong Tarot?
 
-![](/images/uploads/dieu-gi-se-xay-ra-neu-bo-kiem-chiem-uu-the.png)
+![](../../assets/uploads/dieu-gi-se-xay-ra-neu-bo-kiem-chiem-uu-the.png)
 
 Khi lá bài Swords xuất hiện dày đặc trong trải bài Tarot, điều này có nghĩa bạn đang có những đấu tranh về việc 
 
@@ -42,7 +42,7 @@ Nhưng đừng quên: Swords không chỉ báo hiệu đau đớn. Nó cũng là
 
 ## Hãy biết ơn thanh kiếm
 
-![](/images/uploads/biet-on-thanh-kiem-bo-sword-tarot.png)
+![](../../assets/uploads/biet-on-thanh-kiem-bo-sword-tarot.png)
 
 Chúng không đến để hạ gục bạn mà để nhắc rằng:
 

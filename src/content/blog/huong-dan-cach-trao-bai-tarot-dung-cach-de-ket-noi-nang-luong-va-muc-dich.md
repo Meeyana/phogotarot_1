@@ -1,7 +1,7 @@
 ---
 title: Hướng dẫn cách tráo bài Tarot đúng cách để kết nối năng lượng
 pubDate: 2025-11-22
-image: /images/uploads/huong-dan-cach-trao-bai-tarot-dung-cach-de-ket-noi-nang-luong-va-muc-dich.png
+image: ../../assets/uploads/huong-dan-cach-trao-bai-tarot-dung-cach-de-ket-noi-nang-luong-va-muc-dich.png
 category: kỹ năng đọc bài
 excerpt: Bạn đang cảm thấy việc tráo bài Tarot có vẻ đơn giản, nhưng liệu bạn đã
   thực sự biết cách biến hành động này thành một nghi thức kết nối năng lượng

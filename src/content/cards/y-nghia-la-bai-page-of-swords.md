@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Page of Swords"
-image: "../../images/uploads/cards/60-Page-of-Swords.jpg"
+image: "../../assets/uploads/cards/60-Page-of-Swords.jpg"
 excerpt: "Page of Swords là một biểu tượng của trí tuệ sắc bén, sự nhanh nhẹn của suy nghĩ và tinh thần sẵn sàng đối mặt với thách thức. Khi lá bài này xuất hiện, nó mang..."
 index: 60
 group: "swords"

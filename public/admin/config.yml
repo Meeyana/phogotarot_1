@@ -6,8 +6,8 @@ backend:
   branch: main # Tên nhánh GitHub chính của bạn. (Có thể là 'master', hãy kiểm tra lại)
 
 # Cấu hình nơi tải ảnh lên
-media_folder: "public/images/uploads" # Khi bạn tải ảnh, nó sẽ lưu vào đây
-public_folder: "/images/uploads" # Đường dẫn public để chèn vào bài viết
+media_folder: "src/assets/uploads" # Khi bạn tải ảnh, nó sẽ lưu vào đây
+public_folder: "../../assets/uploads" # Đường dẫn public để chèn vào bài viết
 
 # Định nghĩa các loại nội dung
 collections:

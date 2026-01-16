@@ -1,6 +1,6 @@
 ---
 title: "BÓC TRẦN VẬN MỆNH: Bói Bài Tarot Online MIỄN PHÍ & Chính Xác Đến Bất Ngờ!"
-image: "/images/uploads/boi-bai-tarot-online-mien-phi-va-chinh-xac.png"
+image: "../../assets/uploads/boi-bai-tarot-online-mien-phi-va-chinh-xac.png"
 excerpt: "Bạn muốn giải mã vận mệnh? Bói bài Tarot online miễn phí và chính xác giúp bạn khai mở tiềm năng, kết nối tiềm thức và định hướng tương lai rõ ràng. Khám phá ngay để tìm câu trả lời!"
 pubDate: 2025-11-15
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Hermit"
-image: "../../images/uploads/cards/9-The-Hermit.jpg"
+image: "../../assets/uploads/cards/9-The-Hermit.jpg"
 excerpt: "Ẩn mình trên đỉnh núi tuyết, The Hermit là hiện thân cho cuộc hành trình đi vào bên trong, một cuộc tìm kiếm tri thức và sự thật không nằm ở thế giới ồn ào bên..."
 index: 9
 group: "major"

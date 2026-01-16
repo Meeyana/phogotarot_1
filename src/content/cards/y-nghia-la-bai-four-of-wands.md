@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Four of Wands"
-image: "../../images/uploads/cards/25-Four-of-Wands.jpg"
+image: "../../assets/uploads/cards/25-Four-of-Wands.jpg"
 excerpt: "Four of Wands là một trong những lá bài rạng rỡ và ấm áp nhất trong bộ Gậy. Nó không nói về những trận chiến hay cuộc chinh phục, mà về khoảnh khắc bình yên sau..."
 index: 25
 group: "wands"

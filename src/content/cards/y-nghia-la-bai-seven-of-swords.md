@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Seven of Swords"
-image: "../../images/uploads/cards/56-Seven-of-Swords.jpg"
+image: "../../assets/uploads/cards/56-Seven-of-Swords.jpg"
 excerpt: "Seven of Swords là một lời thì thầm trong bóng tối, một kế hoạch được vạch ra trong im lặng. Nó không phải là tiếng gươm đao vang dội của trận chiến, mà là tiến..."
 index: 56
 group: "swords"

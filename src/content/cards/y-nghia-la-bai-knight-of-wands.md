@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Knight of Wands"
-image: "../../images/uploads/cards/33-Knight-of-Wands.jpg"
+image: "../../assets/uploads/cards/33-Knight-of-Wands.jpg"
 excerpt: "Knight of Wands: Ngọn lửa của sự dấn thân và nhiệt huyết bất tận Khi lá Knight of Wands xuất hiện, năng lượng mà nó truyền tải là ngọn lửa nội tại của sự phấn..."
 index: 33
 group: "wands"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Six of Pentacles"
-image: "../../images/uploads/cards/69-Six-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/69-Six-of-Pentacles.jpg"
 excerpt: "Six of Pentacles là lá bài tượng trưng cho sự san sẻ, công bằng và cân bằng trong năng lượng cho và nhận. Lá bài mời gọi bạn nhìn vào sự hài hòa của các mối qua..."
 index: 69
 group: "pentacles"

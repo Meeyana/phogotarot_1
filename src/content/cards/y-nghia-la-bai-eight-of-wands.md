@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Eight of Wands"
-image: "../../images/uploads/cards/29-Eight-of-Wands.jpg"
+image: "../../assets/uploads/cards/29-Eight-of-Wands.jpg"
 excerpt: "Eight of Wands — Làn Gió Mạnh Mẽ Của Sự Tiến Bộ và Động Lực Eight of Wands là lá bài tượng trưng cho vận tốc, hành động nhanh chóng và sự tiến triển không ngừn..."
 index: 29
 group: "wands"

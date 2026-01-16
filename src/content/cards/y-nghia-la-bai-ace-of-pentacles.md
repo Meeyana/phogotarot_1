@@ -2,7 +2,7 @@
 title: Ý nghĩa lá bài Ace of Pentacles
 index: 64
 group: pentacles
-image: ../../images/uploads/cards/64-Ace-of-Pentacles.jpg
+image: ../../assets/uploads/cards/64-Ace-of-Pentacles.jpg
 upright_keywords:
   - Cơ hội tài chính mới
   - Khởi đầu thịnh vượng

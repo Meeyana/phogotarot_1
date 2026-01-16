@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Death"
-image: "../../images/uploads/cards/13-Death.jpg"
+image: "../../assets/uploads/cards/13-Death.jpg"
 excerpt: "Death — Chuyển Hóa Và Sự Tái Sinh Death trong Tarot không phải là dấu chấm hết, mà là biểu tượng của sự chuyển hóa sâu sắc. Khi Death xuất hiện ở chiều thẳng đ..."
 index: 13
 group: "major"

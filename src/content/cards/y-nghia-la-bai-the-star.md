@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Star"
-image: "../../images/uploads/cards/17-The-Star.jpg"
+image: "../../assets/uploads/cards/17-The-Star.jpg"
 excerpt: "Sau cơn bão dữ dội của The Tower, bầu trời đêm quang đãng trở lại, và một ngôi sao sáng nhất xuất hiện. Đó chính là The Star – lá bài của hy vọng, sự chữa lành..."
 index: 17
 group: "major"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Hanged Man"
-image: "../../images/uploads/cards/12-The-Hanged-Man.jpg"
+image: "../../assets/uploads/cards/12-The-Hanged-Man.jpg"
 excerpt: "The Hanged Man – Hành Trình Trỗi Dậy Qua Sự Tĩnh Lặng The Hanged Man là một lá bài đặc biệt trong bộ Ẩn Chính, biểu thị sự tạm dừng có ý nghĩa sâu sắc, một kho..."
 index: 12
 group: "major"

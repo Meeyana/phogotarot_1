@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Queen of Wands"
-image: "../../images/uploads/cards/34-Queen-of-Wands.jpg"
+image: "../../assets/uploads/cards/34-Queen-of-Wands.jpg"
 excerpt: "Queen of Wands — Nữ Hoàng của Ngọn Lửa Sáng Tạo và Quyền Năng Queen of Wands là biểu tượng của năng lượng rực rỡ, sức sống mạnh mẽ cùng sự tự tin không gì lay..."
 index: 34
 group: "wands"

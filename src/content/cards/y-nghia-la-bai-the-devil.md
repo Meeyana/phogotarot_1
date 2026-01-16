@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The Devil"
-image: "../../images/uploads/cards/15-The-Devil.jpg"
+image: "../../assets/uploads/cards/15-The-Devil.jpg"
 excerpt: "The Devil - Hào Quang Ám Ảnh và Sự Giam Giữ Tâm Linh Khi The Devil xuất hiện, lá bài không chỉ là bóng đen nhắc nhở về cạm bẫy của vật chất, dục vọng và ràng b..."
 index: 15
 group: "major"

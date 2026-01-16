@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Nine of Wands"
-image: "../../images/uploads/cards/30-Nine-of-Wands.jpg"
+image: "../../assets/uploads/cards/30-Nine-of-Wands.jpg"
 excerpt: "Nine of Wands — Chiến Binh Mệt Mỏi Nhưng Kiên Cường Khi lá Nine of Wands xuất hiện ở chiều thẳng đứng, ta nhìn thấy hình ảnh của một chiến binh mệt mỏi nhưng k..."
 index: 30
 group: "wands"

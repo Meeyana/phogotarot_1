@@ -1,6 +1,6 @@
 ---
 title: "Bộ Wands trong Tarot: Khi đam mê biến thành hành động"
-image: "/images/uploads/bo-wands-tarot-dam-me-thanh-hanh-dong.png"
+image: "../../assets/uploads/bo-wands-tarot-dam-me-thanh-hanh-dong.png"
 excerpt: "Mỗi hành trình vĩ đại đều bắt đầu từ một tia lửa ý tưởng, một thôi thúc hành động không thể cưỡng lại. Trong thế giới Tarot, nguồn năng lượng nguyên sơ, bùng nổ và đầy nhiệt huyết đó được gói gọn trong bộ Wands (bộ Gậy)"
 pubDate: 2025-11-16
 ---

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Three of Swords"
-image: "../../images/uploads/cards/52-Three-of-Swords.jpg"
+image: "../../assets/uploads/cards/52-Three-of-Swords.jpg"
 excerpt: "Three of Swords - Nỗi Đau và Sự Thanh Lọc Tâm Hồn Khi lá bài Three of Swords xuất hiện, ta như nghe thấy tiếng kim nhọn xuyên qua trái tim, một âm thanh đau đớ..."
 index: 52
 group: "swords"

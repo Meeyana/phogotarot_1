@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Two of Wands"
-image: "../../images/uploads/cards/23-Two-of-Wands.jpg"
+image: "../../assets/uploads/cards/23-Two-of-Wands.jpg"
 excerpt: "Giữa tia lửa khai phá của Ace of Wands và hành động đầu tiên của Three of Wands, là khoảnh khắc tĩnh lặng của Two of Wands. Lá bài này đại diện cho thời điểm bạ..."
 index: 23
 group: "wands"

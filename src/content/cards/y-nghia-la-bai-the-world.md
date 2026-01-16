@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài The World"
-image: "../../images/uploads/cards/21-The-World.jpg"
+image: "../../assets/uploads/cards/21-The-World.jpg"
 excerpt: "The World là lá bài đại diện cho sự viên mãn, hoàn thiện và chu kỳ trọn vẹn. Đây là điểm dừng chân sau một hành trình dài, biểu tượng của thành công, sự hòa hợp..."
 index: 21
 group: "major"

@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ten of Cups"
-image: "../../images/uploads/cards/45-Ten-of-Cups.jpg"
+image: "../../assets/uploads/cards/45-Ten-of-Cups.jpg"
 excerpt: "Ten of Cups là hiện thân của một viên ngọc quý trong bộ bài Tarot — biểu tượng của sự viên mãn cảm xúc, hòa hợp và hạnh phúc trọn vẹn trong cuộc sống. Khi đây l..."
 index: 45
 group: "cups"

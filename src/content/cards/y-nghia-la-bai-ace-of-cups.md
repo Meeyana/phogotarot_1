@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ace of Cups"
-image: "../../images/uploads/cards/36-Ace-of-Cups.jpg"
+image: "../../assets/uploads/cards/36-Ace-of-Cups.jpg"
 excerpt: "Giữa cõi vô hình, một bàn tay từ đám mây vươn ra, trao tặng chiếc cốc thiêng liêng. Ace of Cups, lá bài số một của nguyên tố Nước, là món quà khởi đầu của cảm x..."
 index: 36
 group: "cups"

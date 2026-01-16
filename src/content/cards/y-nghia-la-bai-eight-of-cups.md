@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Eight of Cups"
-image: "../../images/uploads/cards/43-Eight-of-Cups.jpg"
+image: "../../assets/uploads/cards/43-Eight-of-Cups.jpg"
 excerpt: "Eight of Cups: Hành Trình Rời Bỏ Và Tìm Kiếm Ý Nghĩa Khi Eight of Cups xuất hiện, nó không chỉ là một khoảnh khắc trong hành trình mà còn như lời mời gọi bí ẩn..."
 index: 43
 group: "cups"

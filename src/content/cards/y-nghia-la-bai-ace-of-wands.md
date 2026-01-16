@@ -2,7 +2,7 @@
 title: Ý nghĩa lá bài Ace of Wands
 index: 22
 group: wands
-image: ../../images/uploads/cards/22-Ace-of-Wands.jpg
+image: ../../assets/uploads/cards/22-Ace-of-Wands.jpg
 upright_keywords:
   - sáng tạo
   - nguồn cảm hứng

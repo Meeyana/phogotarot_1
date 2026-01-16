@@ -1,6 +1,6 @@
 ---
 title: "Bộ Cups Tarot: Khám Phá Thế Giới Cảm Xúc và Tình Yêu Qua Những Lá Bài"
-image: "/images/uploads/bo-cups-tarot.png"
+image: "../../assets/uploads/bo-cups-tarot.png"
 excerpt: "Tìm hiểu ý nghĩa sâu sắc của bộ Cups trong Tarot - tấm gương soi chiếu tâm hồn, tình yêu và trực giác. Khám phá chìa khóa thấu hiểu và chữa lành."
 pubDate: 2025-11-16
 ---

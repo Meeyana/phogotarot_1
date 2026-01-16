@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Ten of Pentacles"
-image: "../../images/uploads/cards/73-Ten-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/73-Ten-of-Pentacles.jpg"
 excerpt: "Ten of Pentacles là lá bài của sự viên mãn, an ổn và sự thịnh vượng bền vững trong đời sống vật chất. Khi lá bài này xuất hiện, nó mở ra một câu chuyện vẽ nên b..."
 index: 73
 group: "pentacles"

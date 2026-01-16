@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Eight of Pentacles"
-image: "../../images/uploads/cards/71-Eight-of-Pentacles.jpg"
+image: "../../assets/uploads/cards/71-Eight-of-Pentacles.jpg"
 excerpt: "Eight of Pentacles - Lá Bài Của Sự Tập Trung và Nỗ Lực Kiên Trì Trong vòng xoáy cuộc sống, khi Eight of Pentacles xuất hiện, nó như một ánh sáng dịu dàng dẫn d..."
 index: 71
 group: "pentacles"

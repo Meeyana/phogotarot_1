@@ -1,6 +1,6 @@
 ---
 title: "Ý nghĩa lá bài Nine of Cups"
-image: "../../images/uploads/cards/44-Nine-of-Cups.jpg"
+image: "../../assets/uploads/cards/44-Nine-of-Cups.jpg"
 excerpt: "Nine of Cups — Hạnh Phúc Được Hoàn Thiện Nine of Cups, còn gọi là “Lá Bài Ước Nguyện Trọn Vẹn,” là biểu tượng của thành tựu, hài lòng và những ước mơ được hiện..."
 index: 44
 group: "cups"

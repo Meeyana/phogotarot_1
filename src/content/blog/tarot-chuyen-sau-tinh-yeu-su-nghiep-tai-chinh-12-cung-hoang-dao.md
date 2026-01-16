@@ -2,7 +2,7 @@
 title: Các Trải Bài Tarot Chuyên Sâu (Tình Yêu, Sự Nghiệp, Tài Chính 12 Cung
   Hoàng Đạo)
 pubDate: 2025-11-18
-image: /images/uploads//tarot-chuyen-sau-tinh-yeu-su-nghiep-tai-chinh-12-cung-hoang-dao.png
+image: ../../assets/uploads//tarot-chuyen-sau-tinh-yeu-su-nghiep-tai-chinh-12-cung-hoang-dao.png
 excerpt: Giải mã vận mệnh với các trải bài Tarot chuyên sâu. Khám phá bí mật
   tình yêu, sự nghiệp, tài chính và 12 cung hoàng đạo. Đọc ngay để thấu hiểu bản
   thân!
