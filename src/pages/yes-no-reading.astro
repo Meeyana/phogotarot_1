@@ -894,7 +894,11 @@ let selectedCards = [];
 let userQuestion = '';
 let isAnimating = false;
 let allCardImagesLoaded = false;
-let currentReadingId = null; 
+let currentReadingId = localStorage.getItem('phogo_reading_id');
+if (!currentReadingId) {
+    currentReadingId = crypto.randomUUID();
+    localStorage.setItem('phogo_reading_id', currentReadingId);
+}
 let numCardsToChoose = 1; 
 let cardMeaningsHtml = '';
 // Biến lưu trữ HTML của bảng
@@ -1164,7 +1168,7 @@ async function handleQuestionSubmit() {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: questionFromInput })
+            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId })
         });
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
@@ -1178,7 +1182,6 @@ async function handleQuestionSubmit() {
         const validationResult = n8nResponse;
         if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
             userQuestion = questionFromInput;
-            currentReadingId = crypto.randomUUID(); 
             startNewReadingFlow();
             submitQuestionBtn.disabled = false;
             submitQuestionBtn.innerHTML = sendIcon;
@@ -1223,7 +1226,7 @@ async function handleFollowUpSubmit() {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: questionFromInput })
+            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId })
         });
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
@@ -1238,7 +1241,6 @@ async function handleFollowUpSubmit() {
         if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
             userQuestion = questionFromInput;
             followUpInput.value = '';
-            currentReadingId = crypto.randomUUID(); 
             startNewReadingFlow();
             followUpSubmitBtn.disabled = false;
             followUpSubmitBtn.innerHTML = sendIcon;

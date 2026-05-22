@@ -109,7 +109,7 @@ function renderHistoryList() {
         }
         
         const shareButtonHtml = reading.text ? 
-            `<button class="history-share-btn" data-reading-id="${reading.readingId}">Chia sẻ</button>` : '';
+            `<button class="history-share-btn" data-timestamp="${reading.timestamp}">Chia sẻ</button>` : '';
 
         itemEl.innerHTML = `
             <h3>${reading.question}</h3>
@@ -147,8 +147,8 @@ function handleHistoryClick(event) {
     const shareButton = event.target.closest('.history-share-btn');
     if (shareButton) {
         shareButton.disabled = true;
-        const readingId = shareButton.dataset.readingId;
-        const reading = readingHistory.find(r => r.readingId == readingId);
+        const timestamp = shareButton.dataset.timestamp;
+        const reading = readingHistory.find(r => r.timestamp == timestamp);
         
         if (reading && reading.text) {
             shareReading(reading, shareButton); 
