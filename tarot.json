@@ -9,86 +9,18 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -784,
-        112
-      ],
+      "position": [-784, 112],
       "id": "09747b1e-11b0-44bf-b7bc-aa6a1dffee99",
       "name": "Check câu hỏi",
       "webhookId": "7179b8ca-c774-47a9-9ed4-6bf975344059"
     },
     {
       "parameters": {
-        "jsCode": "const questionRaw = $input.first().json.body.question || \"\";\nconst question = questionRaw.toLowerCase().trim();\n\n// ======= ⚙️ Hàm bỏ dấu tiếng Việt =======\nfunction removeDiacritics(str) {\n  return str\n    .normalize(\"NFD\")\n    .replace(/[\\u0300-\\u036f]/g, \"\")\n    .replace(/đ/g, \"d\")\n    .replace(/Đ/g, \"D\");\n}\n\n// Bỏ dấu cho input để check so khớp\nconst questionNormalized = removeDiacritics(question);\n\n// ======= 🧠 Danh sách từ khóa liên quan Tarot =======\nconst keywords = [\n  \"tinh cam\",\"moi quan he\",\"hop nhau\",\"loi khuyen\",\"nen lam gi\",\"nghi gi ve\",\n  \"tim hieu\",\"de y den\",\"an tuong\",\"xuat hien\",\"quay lai\",\"nguoi thu ba\",\n  \"qua khu\",\"tuong lai\",\"sap toi\",\"ngoai tinh\",\"gia dinh\",\"lua doi\",\"mqh\",\n  \"suc khoe\",\"cong viec\",\"du hoc\",\"vuot qua\",\"nguoi yeu cu\",\"crush\",\"yeu minh\",\n  \"thich minh\",\"co ai khac\",\"dinh menh\",\"duyen phan\",\"co hoi\",\"thanh cong\",\n  \"doi viec\",\"thi cu\",\"dinh huong\",\"muc tieu\",\"so phan\",\"vu tru\",\"stress\",\n  \"chua lanh\",\"thang tien\",\"tai chinh\",\"phong van\",\"kinh doanh\",\"may man\",\n  \"vo\",\"chong\"\n];\n\n// ======= 🚫 Từ nhạy cảm / bị chặn =======\nconst banned = [\n  \"chet\",\"tu tu\",\"giet\",\"ma\",\"bua\",\"yem\",\"ngai\",\"phap su\",\"hai nguoi\",\"danh de\",\"trung so\"\n];\n\n// ======= 🧩 Kiểm tra nhanh =======\nconst tooShort = questionNormalized.length < 15;\nconst hasBanned = banned.some(b => questionNormalized.includes(b));\nconst hasKeyword = keywords.some(k => questionNormalized.includes(k));\n\n// ======= 🧠 Logic quyết định =======\nlet isTarot = false;\n\nif (!tooShort && !hasBanned && hasKeyword) {\n  isTarot = true;\n}\n\n// ======= 🔚 Output cực gọn =======\nreturn [{ isTarot }];\n"
+        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi rõ ràng cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi ra sao?\", \"Tôi có nên đổi việc không?\", \"Cho tôi một lời khuyên\").\n- reason BẮT BUỘC phải là \"ok\".\n\n2. isValid = true, pick_card = false:\n- Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề, hỏi thời tiết).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -560,
-        112
-      ],
-      "id": "bfa8e7cd-e405-4d9a-8a6e-95c73c6a36c7",
-      "name": "check keyword"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "d3408faf-4c85-48d9-8e85-9424fec1fffd",
-              "leftValue": "={{ $json.isTarot }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -336,
-        112
-      ],
-      "id": "0a85d1ee-6cd0-4747-9288-5eb786ae41d5",
-      "name": "If"
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "={\n\t\"isValid\": {{ $('check keyword').item.json.isTarot }},\n\t\"pick_card\": true,\n\t\"reason\": \"ok\"\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -112,
-        16
-      ],
-      "id": "eb052cc0-3035-4a01-8c56-3dcf740b948a",
-      "name": "Respond to Webhook2"
-    },
-    {
-      "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi rõ ràng cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi ra sao?\", \"Tôi có nên đổi việc không?\", \"Cho tôi một lời khuyên\").\n- reason BẮT BUỘC phải là \"ok\".\n\n2. isValid = true, pick_card = false:\n- Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -112,
-        208
-      ],
+      "position": [-560, 112],
       "id": "d4a4ef3e-8712-4d65-a446-ac6d72398eeb",
       "name": "build check question prompt"
     },
@@ -99,14 +31,8 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "Authorization",
-              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
-            }
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
           ]
         },
         "sendBody": true,
@@ -116,23 +42,17 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [
-        112,
-        208
-      ],
+      "position": [-336, 112],
       "id": "41df9f22-2ae7-4920-b999-35852d7ce73d",
       "name": "Check câu hỏi AI API"
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  let isValid = false;\n  let pick_card = false;\n  let reason = \"Câu hỏi chưa rõ ràng hoặc không liên quan đến Tarot.\";\n\n  // 1. Trích xuất kết quả từ API\n  let rawText = \"\";\n  if (data.choices && data.choices[0] && data.choices[0].message) {\n    rawText = data.choices[0].message.content || \"\";\n  } else {\n    rawText = data.output || data.text || \"\";\n  }\n\n  if (typeof rawText === 'object') {\n    rawText = JSON.stringify(rawText);\n  }\n  rawText = rawText.trim();\n\n  // Loại bỏ markdown code block nếu có\n  if (rawText.includes('```')) {\n    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  }\n\n  try {\n    const parsed = JSON.parse(rawText);\n    isValid = parsed.isValid;\n    pick_card = parsed.pick_card;\n    reason = parsed.reason || \"ok\";\n  } catch (e) {\n    // Fallback bằng Regex\n    const lowerText = rawText.toLowerCase();\n    if (lowerText.includes('\"isvalid\": true') || lowerText.includes('isvalid: true') || lowerText.includes('true')) {\n      isValid = true;\n      if (lowerText.includes('\"pick_card\": true') || lowerText.includes('pick_card: true')) {\n          pick_card = true;\n      }\n      reason = \"ok\";\n    } else {\n      isValid = false;\n      const match = rawText.match(/\"reason\"\\s*:\\s*\"([^\"]+)\"/i);\n      if (match && match[1]) {\n        reason = match[1];\n      }\n    }\n  }\n\n  // 2. Ép kiểu chuẩn\n  if (typeof isValid === 'string') {\n    isValid = (isValid.toLowerCase() === 'true');\n  } else {\n    isValid = Boolean(isValid);\n  }\n  \n  if (typeof pick_card === 'string') {\n    pick_card = (pick_card.toLowerCase() === 'true');\n  } else {\n    pick_card = Boolean(pick_card);\n  }\n\n  // 3. Chuẩn hóa giá trị\n  if (isValid && pick_card) {\n    reason = \"ok\";\n  } else if (!isValid && (!reason || reason === \"ok\" || reason === \"undefined\")) {\n    reason = \"Câu hỏi không phù hợp. Vui lòng đặt câu hỏi liên quan đến chủ đề Tarot.\";\n  }\n\n  results.push({\n    json: {\n      output: {\n        isValid: isValid,\n        pick_card: pick_card,\n        reason: reason\n      }\n    }\n  });\n}\n\nreturn results;"
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  let isValid = false;\n  let pick_card = false;\n  let reason = \"Câu hỏi chưa rõ ràng hoặc không liên quan đến Tarot.\";\n\n  // 1. Trích xuất kết quả từ API\n  let rawText = \"\";\n  if (data.choices && data.choices[0] && data.choices[0].message) {\n    rawText = data.choices[0].message.content || \"\";\n  } else {\n    rawText = data.output || data.text || \"\";\n  }\n\n  if (typeof rawText === 'object') {\n    rawText = JSON.stringify(rawText);\n  }\n  rawText = rawText.trim();\n\n  // Loại bỏ markdown code block nếu có\n  if (rawText.includes('```')) {\n    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  }\n\n  try {\n    const parsed = JSON.parse(rawText);\n    isValid = parsed.isValid;\n    pick_card = parsed.pick_card;\n    reason = parsed.reason || \"ok\";\n  } catch (e) {\n    // Fallback bằng Regex\n    const lowerText = rawText.toLowerCase();\n    if (lowerText.includes('\"isvalid\": true') || lowerText.includes('isvalid: true')) {\n      isValid = true;\n      if (lowerText.includes('\"pick_card\": true') || lowerText.includes('pick_card: true')) {\n        pick_card = true;\n      }\n      reason = \"ok\";\n    } else {\n      isValid = false;\n      const match = rawText.match(/\"reason\"\\s*:\\s*\"([^\"]+)\"/i);\n      if (match && match[1]) {\n        reason = match[1];\n      }\n    }\n  }\n\n  // 2. Ép kiểu chuẩn\n  if (typeof isValid === 'string') {\n    isValid = (isValid.toLowerCase() === 'true');\n  } else {\n    isValid = Boolean(isValid);\n  }\n\n  if (typeof pick_card === 'string') {\n    pick_card = (pick_card.toLowerCase() === 'true');\n  } else {\n    pick_card = Boolean(pick_card);\n  }\n\n  // 3. Chuẩn hóa giá trị\n  if (isValid && pick_card) {\n    reason = \"ok\";\n  } else if (!isValid && (!reason || reason === \"ok\" || reason === \"undefined\")) {\n    reason = \"Câu hỏi không phù hợp. Vui lòng đặt câu hỏi liên quan đến chủ đề Tarot.\";\n  }\n\n  results.push({\n    json: {\n      output: {\n        isValid: isValid,\n        pick_card: pick_card,\n        reason: reason\n      }\n    }\n  });\n}\n\nreturn results;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        336,
-        208
-      ],
+      "position": [-112, 112],
       "id": "ef638b25-6d80-431c-ad02-ac9f6633ba93",
       "name": "Code in JavaScript"
     },
@@ -163,10 +83,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [
-        560,
-        208
-      ],
+      "position": [112, 112],
       "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
       "name": "check pick_card"
     },
@@ -178,10 +95,7 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [
-        784,
-        112
-      ],
+      "position": [336, 16],
       "id": "31832bf8-daf4-47d3-ae07-b5fa47c08673",
       "name": "Respond to Webhook"
     },
@@ -191,10 +105,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        784,
-        320
-      ],
+      "position": [336, 208],
       "id": "conv-prompt-node-001",
       "name": "build conversational prompt"
     },
@@ -205,14 +116,8 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "Authorization",
-              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
-            }
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
           ]
         },
         "sendBody": true,
@@ -222,10 +127,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [
-        1008,
-        320
-      ],
+      "position": [560, 208],
       "id": "conv-api-node-002",
       "name": "Conversational AI API"
     },
@@ -237,10 +139,7 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [
-        1232,
-        320
-      ],
+      "position": [784, 208],
       "id": "conv-respond-node-003",
       "name": "Respond conversational"
     },
@@ -253,10 +152,7 @@
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [
-        -544,
-        576
-      ],
+      "position": [-544, 576],
       "id": "57e9e293-8899-4271-a0c6-8d5873753963",
       "name": "Luận giải tarot",
       "webhookId": "fc76868a-6ee3-4376-98fe-b5db66b7a3ed"
@@ -272,23 +168,17 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [
-        -336,
-        576
-      ],
+      "position": [-336, 576],
       "id": "4d1775cf-f04c-4e63-8e31-7e94c3d24580",
       "name": "Tra cứu Ý Nghĩa Bài"
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = item.json.cards || [];\n  \n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có cuộc trò chuyện nào trước đó.\";\n  \n  // Lấy mảng history do Astro Webhook truyền sang\n  const history = $('Luận giải tarot').first().json.body.history || [];\n  \n  if (history.length > 0) {\n    isFollowUp = true;\n    \n    // Lọc ra các câu hỏi của user từ mảng history\n    previousQuestions = history.filter(msg => msg.role === 'user').map(msg => msg.content);\n    \n    if (previousQuestions.length > 0) {\n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi lữ khách đã hỏi trước đó:\\n${questionsStr}`;\n    }\n  }\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Hãy giải đáp câu hỏi của lữ khách dựa trên các lá bài đã bốc và ý nghĩa tương ứng được cung cấp.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc, cuốn hút và ý nghĩa đối với câu hỏi của khách hàng.\n2. Với mỗi lá bài, hãy lồng ghép cả \"mặt sáng\" (thuận lợi, thế mạnh) và \"bài học cần học\" để mang lại góc nhìn đa chiều và mang tính chữa lành thực tế, tuyệt đối không mang xu hướng mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm, chân thành, tựa như một người bạn tâm giao đang trò chuyện thật sự.\n4. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, hệ thống, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Luôn dùng các cách gọi khác như: Hướng thuận, mặt thuận lợi, v.v.).\n5. Trình bày đẹp mắt bằng Markdown. Giới hạn độ dài trong khoảng 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC (GIỮ NGUYÊN FORMAT MARKDOWN):\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm. Lữ khách đang có thắc mắc tiếp nối về trải bài Tarot trước đó. Hãy trực tiếp giải đáp thắc mắc mới này.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào vấn đề giải đáp câu hỏi mới, KHÔNG CẦN lặp lại lời chào mở đầu sến súa.\n2. Trình bày nội dung một cách tự nhiên, linh hoạt, giống như một cuộc trò chuyện sâu sắc. KHÔNG tuân theo outline rập khuôn (Mở đầu, Dòng chảy, Kết nối, Lời khuyên) như lần đầu.\n3. Hãy ngắt đoạn linh hoạt cho đỡ nhàm chán, có thể dùng bullet points tự do nếu phù hợp.\n4. Liên kết câu trả lời với ý nghĩa các lá bài đã bốc ban đầu và các vấn đề lữ khách đã hỏi trước đó để tạo sự liền mạch. Tuân thủ tuyệt đối ý nghĩa gốc của các lá bài được cung cấp.\n5. Giọng văn trầm ổn, đồng cảm, chân thành và mang tính chữa lành. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [CHI TIẾT TRẢI BÀI & Ý NGHĨA GỐC TỪ D1]\n- **Lá bài Quá khứ**: ${cardPast.card_name || \"—\"} (${cardPast.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPast.meaning || \"—\"}\n  \n- **Lá bài Hiện tại**: ${cardPresent.card_name || \"—\"} (${cardPresent.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPresent.meaning || \"—\"}\n  \n- **Lá bài Tương lai**: ${cardFuture.card_name || \"—\"} (${cardFuture.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardFuture.meaning || \"—\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI CỦA LỮ KHÁCH]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH LỊCH SỬ CÂU HỎI TRƯỚC ĐÓ]\n${historyText}\n\nHãy thấu cảm và giải đáp câu hỏi mới của lữ khách.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      {\n        role: \"system\",\n        content: mySystemPrompt\n      },\n      {\n        role: \"user\",\n        content: myUserPrompt\n      }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = item.json.cards || [];\n  \n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có cuộc trò chuyện nào trước đó.\";\n  \n  // Lấy mảng history do Astro Webhook truyền sang\n  const history = $('Luận giải tarot').first().json.body.history || [];\n  \n  if (history.length > 0) {\n    isFollowUp = true;\n    \n    // Lọc ra các câu hỏi của user từ mảng history\n    previousQuestions = history.filter(msg => msg.role === 'user').map(msg => msg.content);\n    \n    if (previousQuestions.length > 0) {\n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi lữ khách đã hỏi trước đó:\\n${questionsStr}`;\n    }\n  }\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Hãy giải đáp câu hỏi của lữ khách dựa trên các lá bài đã bốc và ý nghĩa tương ứng được cung cấp.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc, cuốn hút và ý nghĩa đối với câu hỏi của khách hàng.\n2. Với mỗi lá bài, hãy lồng ghép cả \"mặt sáng\" (thuận lợi, thế mạnh) và \"bài học cần học\" để mang lại góc nhìn đa chiều và mang tính chữa lành thực tế, tuyệt đối không mang xu hướng mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm, chân thành, tựa như một người bạn tâm giao đang trò chuyện thật sự.\n4. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, hệ thống, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Luôn dùng các cách gọi khác như: Hướng thuận, mặt thuận lợi, v.v.).\n5. Trình bày đẹp mắt bằng Markdown. Giới hạn độ dài trong khoảng 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC (GIỮ NGUYÊN FORMAT MARKDOWN):\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm. Lữ khách đang có thắc mắc tiếp nối về trải bài Tarot trước đó. Hãy trực tiếp giải đáp thắc mắc mới này.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào vấn đề giải đáp câu hỏi mới, KHÔNG CẦN lặp lại lời chào mở đầu sến súa.\n2. Trình bày nội dung một cách tự nhiên, linh hoạt, giống như một cuộc trò chuyện sâu sắc. KHÔNG tuân theo outline rập khuôn (Mở đầu, Dòng chảy, Kết nối, Lời khuyên) như lần đầu.\n3. Hãy ngắt đoạn linh hoạt cho đỡ nhàm chán, có thể dùng bullet points tự do nếu phù hợp.\n4. Liên kết câu trả lời với ý nghĩa các lá bài đã bốc ban đầu và các vấn đề lữ khách đã hỏi trước đó để tạo sự liền mạch. Tuân thủ tuyệt đối ý nghĩa gốc của các lá bài được cung cấp.\n5. Giọng văn trầm ổn, đồng cảm, chân thành và mang tính chữa lành. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [CHI TIẾT TRẢI BÀI & Ý NGHĨA GỐC TỪ D1]\n- **Lá bài Quá khứ**: ${cardPast.card_name || \"—\"} (${cardPast.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPast.meaning || \"—\"}\n  \n- **Lá bài Hiện tại**: ${cardPresent.card_name || \"—\"} (${cardPresent.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPresent.meaning || \"—\"}\n  \n- **Lá bài Tương lai**: ${cardFuture.card_name || \"—\"} (${cardFuture.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardFuture.meaning || \"—\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI CỦA LỮ KHÁCH]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH LỊCH SỬ CÂU HỎI TRƯỚC ĐÓ]\n${historyText}\n\nHãy thấu cảm và giải đáp câu hỏi mới của lữ khách.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        -144,
-        576
-      ],
+      "position": [-144, 576],
       "id": "dd09d616-0e44-4639-9dc4-719193e7ef59",
       "name": "build interpretation prompt"
     },
@@ -299,14 +189,8 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            },
-            {
-              "name": "Authorization",
-              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
-            }
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
           ]
         },
         "sendBody": true,
@@ -316,10 +200,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [
-        64,
-        576
-      ],
+      "position": [64, 576],
       "id": "8be09b46-b308-48ef-8e21-83a6746727dc",
       "name": "Luận giải AI API"
     },
@@ -331,171 +212,47 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [
-        272,
-        576
-      ],
+      "position": [272, 576],
       "id": "52ad19b4-4c3c-42ad-8708-ef7dc07de01b",
       "name": "Respond to Webhook1"
     }
   ],
   "connections": {
     "Check câu hỏi": {
-      "main": [
-        [
-          {
-            "node": "check keyword",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "check keyword": {
-      "main": [
-        [
-          {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook2",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "build check question prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "build check question prompt", "type": "main", "index": 0 }]]
     },
     "build check question prompt": {
-      "main": [
-        [
-          {
-            "node": "Check câu hỏi AI API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Check câu hỏi AI API", "type": "main", "index": 0 }]]
     },
     "Check câu hỏi AI API": {
-      "main": [
-        [
-          {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Code in JavaScript", "type": "main", "index": 0 }]]
     },
     "Code in JavaScript": {
-      "main": [
-        [
-          {
-            "node": "check pick_card",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "check pick_card", "type": "main", "index": 0 }]]
     },
     "check pick_card": {
       "main": [
-        [
-          {
-            "node": "Respond to Webhook",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "build conversational prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }],
+        [{ "node": "build conversational prompt", "type": "main", "index": 0 }]
       ]
     },
     "build conversational prompt": {
-      "main": [
-        [
-          {
-            "node": "Conversational AI API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Conversational AI API", "type": "main", "index": 0 }]]
     },
     "Conversational AI API": {
-      "main": [
-        [
-          {
-            "node": "Respond conversational",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Respond conversational", "type": "main", "index": 0 }]]
     },
     "Luận giải tarot": {
-      "main": [
-        [
-          {
-            "node": "Tra cứu Ý Nghĩa Bài",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Tra cứu Ý Nghĩa Bài", "type": "main", "index": 0 }]]
     },
     "Tra cứu Ý Nghĩa Bài": {
-      "main": [
-        [
-          {
-            "node": "build interpretation prompt",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "build interpretation prompt", "type": "main", "index": 0 }]]
     },
     "build interpretation prompt": {
-      "main": [
-        [
-          {
-            "node": "Luận giải AI API",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Luận giải AI API", "type": "main", "index": 0 }]]
     },
     "Luận giải AI API": {
-      "main": [
-        [
-          {
-            "node": "Respond to Webhook1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[{ "node": "Respond to Webhook1", "type": "main", "index": 0 }]]
     }
   },
   "pinData": {},
