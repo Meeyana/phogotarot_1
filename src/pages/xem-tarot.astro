@@ -834,6 +834,14 @@ if (db && Astro.locals.user) {
                     addMessage(msg.text, msg.sender, false, msg.cards);
                 });
 
+                // Phục hồi trạng thái chờ xác nhận bốc bài
+                const pendingConfirm = localStorage.getItem('waitingForTarotConfirm');
+                if (pendingConfirm) {
+                    userQuestion = pendingConfirm;
+                    showConfirmationBox(pendingConfirm);
+                    return; // Không chạy logic self-healing bên dưới nữa
+                }
+
                 // Tự phục hồi trạng thái (Self-healing UX):
                 // Nếu tin nhắn cuối cùng là của user, nghĩa là tiến trình bị gián đoạn giữa chừng (do F5).
                 // Ta sẽ tự động chạy lại câu hỏi này để trả về hộp thoại xác nhận hoặc câu trả lời tương ứng.
@@ -1090,6 +1098,9 @@ if (db && Astro.locals.user) {
         // --- INTERACTIVE CONFIRMATION & FOLLOW-UP INTERPRETATION ---
 
         function showConfirmationBox(question) {
+            // Ghi nhớ trạng thái đang chờ xác nhận
+            localStorage.setItem('waitingForTarotConfirm', question);
+
             // Tạo bong bóng chat của Bot có kèm 2 nút tương tác Xác nhận / Từ chối (save = false vì đây là tin nhắn tương tác tạm thời)
             const msgDiv = addMessage("Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?", 'bot', false);
             
@@ -1116,11 +1127,13 @@ if (db && Astro.locals.user) {
                 const noBtn = confirmBox.querySelector('.no-btn');
 
                 yesBtn.addEventListener('click', () => {
+                    localStorage.removeItem('waitingForTarotConfirm');
                     msgDiv.remove();
                     openTarotModal();
                 });
 
                 noBtn.addEventListener('click', () => {
+                    localStorage.removeItem('waitingForTarotConfirm');
                     msgDiv.remove();
                     addMessage("Được chứ, lữ khách cứ tự nhiên. Mình luôn sẵn sàng chia sẻ thêm hoặc trò chuyện cùng bạn. Bạn muốn hỏi gì khác không?", 'bot', true);
                     isThinking = false;
