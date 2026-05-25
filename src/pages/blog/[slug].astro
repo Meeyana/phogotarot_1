@@ -3,19 +3,15 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-// 2. (MỚI) Lấy 'slug' từ URL của người dùng
-const { slug } = Astro.params;
-
-// 3. (MỚI) Lấy TẤT CẢ bài viết để tìm bài viết hiện tại
-const allPosts = await getCollection('blog');
-
-// 4. (MỚI) Tìm bài viết hiện tại dựa trên slug
-const post = allPosts.find(p => p.slug === slug);
-
-// 5. (MỚI) Xử lý 404 nếu không tìm thấy bài viết
-if (!post) {
-  return Astro.redirect('/404');
+export async function getStaticPaths() {
+  const allPosts = await getCollection('blog');
+  return allPosts.map(post => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
 }
+const { post } = Astro.props;
+const allPosts = await getCollection('blog');
 
 // 6. (GIỮ NGUYÊN) Render và lấy dữ liệu
 const { Content } = await post.render();

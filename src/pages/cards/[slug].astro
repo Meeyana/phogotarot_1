@@ -5,19 +5,15 @@ import { getCollection } from 'astro:content';
 // (QUAN TRỌNG) Import component Image tối ưu
 import { Image } from 'astro:assets';
 
-// 2. Lấy 'slug' từ URL
-const { slug } = Astro.params;
-
-// 3. Lấy TẤT CẢ lá bài
-const allCards = await getCollection('cards');
-
-// 4. Tìm lá bài hiện tại
-const card = allCards.find(c => c.slug === slug);
-
-// 5. Xử lý 404
-if (!card) {
-  return Astro.redirect('/404');
+export async function getStaticPaths() {
+  const allCards = await getCollection('cards');
+  return allCards.map(card => ({
+    params: { slug: card.slug },
+    props: { card },
+  }));
 }
+const { card } = Astro.props;
+const allCards = await getCollection('cards');
 
 // 6. Render dữ liệu
 const { Content } = await card.render();
