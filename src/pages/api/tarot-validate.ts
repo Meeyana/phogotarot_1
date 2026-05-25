@@ -29,11 +29,14 @@ export const POST: APIRoute = async (context) => {
             const safeUserId = user.id;
             const safeReadingId = readingId || crypto.randomUUID();
             const isValid = data.isValid === "true" || data.isValid === true;
+            const pickCard = data.pick_card === "true" || data.pick_card === true;
             
-            // Nếu là follow-up và câu hỏi hợp lệ, KHÔNG ghi D1 ở đây vì tarot-interpret.ts sẽ ghi nhận đầy đủ sau đó.
-            if (isFollowUp && isValid) {
-                // Bỏ qua ghi D1 ở validate step này
-            } else {
+            // CHỈ LƯU VÀO DB NẾU:
+            // 1. Câu hỏi không hợp lệ (isValid = false) -> Bị từ chối
+            // 2. Câu hỏi trò chuyện thông thường (isValid = true, pick_card = false) -> LLM trả lời trực tiếp
+            // NẾU CÂU HỎI LÀ BỐC BÀI (isValid = true, pick_card = true) -> KHÔNG LƯU Ở ĐÂY!
+            // Sẽ được lưu ở tarot-interpret.ts khi user ấn "Đồng ý" bốc bài.
+            if (!isValid || !pickCard) {
                 // 1. Đảm bảo Conversation tồn tại
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
                 await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, "Trò chuyện: " + title).run();
@@ -41,13 +44,8 @@ export const POST: APIRoute = async (context) => {
                 // 2. Lưu tin nhắn User
                 await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
                 
-                // 3. Lưu tin nhắn Bot (dựa vào data trả về, ví dụ lấy reason hoặc câu thoại mặc định nếu isValid = true)
-                // Nếu isValid = true và pick_card = true, UI thường tự render câu hỏi "Bạn có đồng ý rút bài không", nên có thể không lưu hoặc lưu cứng.
-                // Để đồng bộ với những gì UI hiển thị, ta sẽ lưu lại thông điệp tương ứng:
+                // 3. Lưu tin nhắn Bot
                 let botReply = data.reason || "Vui lòng đặt câu hỏi cụ thể hơn.";
-                if (isValid && (data.pick_card !== false && data.pick_card !== "false")) {
-                     botReply = "Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?";
-                }
                 
                 const actualModel = data.model || 'n8n_validate_agent';
                 const promptTokens = data.usage?.prompt_tokens || 0;
