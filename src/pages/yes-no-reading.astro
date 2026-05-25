@@ -899,6 +899,11 @@ if (!currentReadingId) {
     currentReadingId = crypto.randomUUID();
     localStorage.setItem('phogo_reading_id', currentReadingId);
 }
+let currentUserId = localStorage.getItem('phogo_user_id');
+if (!currentUserId) {
+    currentUserId = 'guest_' + crypto.randomUUID();
+    localStorage.setItem('phogo_user_id', currentUserId);
+}
 let numCardsToChoose = 1; 
 let cardMeaningsHtml = '';
 // Biến lưu trữ HTML của bảng
@@ -1168,7 +1173,7 @@ async function handleQuestionSubmit() {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId })
+            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId, userId: currentUserId })
         });
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
@@ -1226,7 +1231,7 @@ async function handleFollowUpSubmit() {
         const response = await fetch(N8N_VALIDATE_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId })
+            body: JSON.stringify({ question: questionFromInput, readingId: currentReadingId, userId: currentUserId })
         });
         if (N8N_VALIDATE_URL.includes('YOUR-VALIDATION-WEBHOOK-ID')) {
              throw new Error('Vui lòng thay thế URL N8N_VALIDATE_URL');
@@ -1531,7 +1536,8 @@ async function handleGetInterpretation() {
     const payload = {
         question: userQuestion,
         cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
-        readingId: currentReadingId 
+        readingId: currentReadingId,
+        userId: currentUserId
     };
     try {
         const response = await fetch(N8N_WEBHOOK_URL, {

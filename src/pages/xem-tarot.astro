@@ -539,6 +539,11 @@ const schema = {
             currentReadingId = crypto.randomUUID();
             localStorage.setItem(READING_ID_KEY, currentReadingId);
         }
+        let currentUserId = localStorage.getItem('phogo_user_id');
+        if (!currentUserId) {
+            currentUserId = 'guest_' + crypto.randomUUID();
+            localStorage.setItem('phogo_user_id', currentUserId);
+        }
 
         // DOM Elements
         const chatMessages = document.getElementById('chat-messages');
@@ -767,7 +772,7 @@ const schema = {
                 const response = await fetch(N8N_VALIDATE_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question, readingId: currentReadingId })
+                    body: JSON.stringify({ question, readingId: currentReadingId, userId: currentUserId })
                 });
 
                 if (!response.ok) throw new Error('Lỗi xác thực');
@@ -1066,7 +1071,8 @@ const schema = {
                     body: JSON.stringify({
                         question: userQuestion,
                         cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
-                        readingId: currentReadingId
+                        readingId: currentReadingId,
+                        userId: currentUserId
                     })
                 });
 

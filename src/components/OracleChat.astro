@@ -398,6 +398,15 @@
     return sessionId;
   }
 
+  function getUserId() {
+    let userId = localStorage.getItem('phogo_user_id');
+    if (!userId) {
+      userId = 'guest_' + crypto.randomUUID();
+      localStorage.setItem('phogo_user_id', userId);
+    }
+    return userId;
+  }
+
   // --- SAVE HISTORY ---
   function saveToHistory(text, sender, reaction = null, options = []) {
     const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
@@ -677,6 +686,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           sessionId: sessionId,
+          userId: getUserId(),
           chatInput: sendValue, 
           timestamp: new Date().toISOString()
         })

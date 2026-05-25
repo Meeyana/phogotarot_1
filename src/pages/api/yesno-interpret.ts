@@ -16,6 +16,37 @@ export const POST: APIRoute = async (context) => {
     });
 
     const data = await response.json();
+
+    // === LƯU VÀO D1 DATABASE ===
+    if (data && data.interpretation && env.DB) {
+      try {
+        const db = env.DB;
+        const { question, cards, readingId, userId } = body;
+        const safeUserId = userId || 'anonymous';
+        const safeReadingId = readingId || crypto.randomUUID();
+        
+        // 1. Lưu User (nếu chưa tồn tại)
+        await db.prepare(`INSERT OR IGNORE INTO users (id, role) VALUES (?, 'user')`).bind(safeUserId).run();
+        
+        // 2. Lưu Conversation
+        const title = question ? (question.length > 50 ? question.substring(0, 50) + '...' : question) : 'Trải bài Yes/No';
+        await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, title).run();
+        
+        // 3. Lưu Tarot Reading
+        const cardsPayload = JSON.stringify(cards || []);
+        await db.prepare(`INSERT OR IGNORE INTO tarot_readings (id, conversation_id, question, cards_payload, spread_type) VALUES (?, ?, ?, ?, ?)`).bind(crypto.randomUUID(), safeReadingId, question || '', cardsPayload, 'yes_no').run();
+        
+        // 4. Lưu Message Logs (User & Assistant)
+        if (question) {
+           await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
+        }
+        await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model) VALUES (?, 'assistant', ?, 'n8n_agent')`).bind(safeReadingId, data.interpretation).run();
+        
+      } catch (dbError) {
+        console.error("Lỗi lưu D1 (yesno):", dbError);
+      }
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }

@@ -16,6 +16,33 @@ export const POST: APIRoute = async (context) => {
     });
 
     const data = await response.json();
+
+    // === LƯU VÀO D1 DATABASE ===
+    if (data && data.output && env.DB) {
+      try {
+        const db = env.DB;
+        const { sessionId, userId, chatInput } = body;
+        const safeUserId = userId || 'anonymous';
+        const safeSessionId = sessionId || crypto.randomUUID();
+        
+        // 1. Lưu User (nếu chưa tồn tại)
+        await db.prepare(`INSERT OR IGNORE INTO users (id, role) VALUES (?, 'user')`).bind(safeUserId).run();
+        
+        // 2. Lưu Conversation
+        const title = chatInput ? (chatInput.length > 50 ? chatInput.substring(0, 50) + '...' : chatInput) : 'Oracle Chat';
+        await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeSessionId, safeUserId, title).run();
+        
+        // 3. Lưu Message Logs (User & Assistant)
+        if (chatInput) {
+           await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeSessionId, chatInput).run();
+        }
+        await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model) VALUES (?, 'assistant', ?, 'oracle_agent')`).bind(safeSessionId, data.output).run();
+        
+      } catch (dbError) {
+        console.error("Lỗi lưu D1 (chat):", dbError);
+      }
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
