@@ -11,6 +11,26 @@ export const POST: APIRoute = async (context) => {
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
     const db = env.DB;
+    
+    // Lấy thông tin cá nhân hóa của user
+    const user = context.locals.user;
+    let profile = { name: 'lữ khách', gender: 'bạn' };
+    if (db) {
+        const queryUserId = user?.id || body.userId;
+        if (queryUserId) {
+            try {
+                const row = await db.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                if (row) {
+                    profile.name = row.nickname || row.full_name || 'lữ khách';
+                    profile.gender = row.gender || 'bạn';
+                }
+            } catch (err) {
+                console.error("Lỗi lấy user_profiles:", err);
+            }
+        }
+    }
+    body.userProfile = profile;
+    
     let history = [];
     if (db && body.readingId) {
       try {

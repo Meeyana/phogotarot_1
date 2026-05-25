@@ -9,6 +9,25 @@ export const POST: APIRoute = async (context) => {
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
+    // Lấy thông tin cá nhân hóa của user
+    const user = context.locals.user;
+    let profile = { name: 'lữ khách', gender: 'bạn' };
+    if (env.DB) {
+        const queryUserId = user?.id || body.userId;
+        if (queryUserId) {
+            try {
+                const row = await env.DB.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                if (row) {
+                    profile.name = row.nickname || row.full_name || 'lữ khách';
+                    profile.gender = row.gender || 'bạn';
+                }
+            } catch (err) {
+                console.error("Lỗi lấy user_profiles:", err);
+            }
+        }
+    }
+    body.userProfile = profile;
+    
       // Enrich thẻ bài với ý nghĩa từ DB
       if (body.cards && body.cards.length > 0 && env.DB) {
         for (let i = 0; i < body.cards.length; i++) {
