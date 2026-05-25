@@ -21,12 +21,16 @@ export const POST: APIRoute = async (context) => {
     if (data && data.output && env.DB) {
       try {
         const db = env.DB;
-        const { sessionId, userId, chatInput } = body;
-        const safeUserId = userId || 'anonymous';
-        const safeSessionId = sessionId || crypto.randomUUID();
+        const { sessionId, chatInput } = body;
         
-        // 1. Lưu User (nếu chưa tồn tại)
-        await db.prepare(`INSERT OR IGNORE INTO users (id, role) VALUES (?, 'user')`).bind(safeUserId).run();
+        // Lấy userId từ Middleware thay vì từ body để bảo mật
+        const user = context.locals.user;
+        if (!user) {
+          throw new Error("Unauthorized: Cannot save reading without user");
+        }
+        
+        const safeUserId = user.id;
+        const safeSessionId = sessionId || crypto.randomUUID();
         
         // 2. Lưu Conversation
         const title = chatInput ? (chatInput.length > 50 ? chatInput.substring(0, 50) + '...' : chatInput) : 'Oracle Chat';

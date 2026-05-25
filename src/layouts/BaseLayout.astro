@@ -179,8 +179,29 @@ const ogImageURL = new URL(ogImage, Astro.site);
             <a href="/about-us" class="nav-link">Về chúng tôi</a>
             <a href="/cards" class="nav-link">Các lá bài Tarot</a>
             <a href="/blog" class="nav-link">Blog</a>
-            <a href="/contact" class="nav-link">Liên hệ</a>
-            <a href="#" id="history-nav-link" class="nav-link">Lịch sử</a>
+            
+            {Astro.locals.user ? (
+                <div class="nav-item nav-dropdown">
+                    <div class="nav-link user-profile-link" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                        {Astro.locals.user.avatar ? (
+                            <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
+                        ) : (
+                            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--gold-color, #F2C94C); display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 14px;">
+                                {Astro.locals.user.name ? Astro.locals.user.name.charAt(0).toUpperCase() : Astro.locals.user.email?.charAt(0).toUpperCase() || 'U'}
+                            </div>
+                        )}
+                        <span>{Astro.locals.user.name || 'Tài khoản'}</span>
+                    </div>
+                    <div class="dropdown-submenu" style="right: 0; left: auto; min-width: 150px;">
+                        <a href="#" id="history-nav-link" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
+                        <form action="/api/auth/logout" method="POST" style="margin:0; padding:0;">
+                            <button type="submit" class="nav-link submenu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
+            ) : (
+                <a href="/login" class="nav-link login-btn" style="background: rgba(242, 201, 76, 0.15); border: 1px solid var(--gold-color, #F2C94C); border-radius: 20px; padding: 5px 15px; color: var(--gold-color, #F2C94C);">Đăng Nhập</a>
+            )}
         </div>
 
         <button class="nav-toggle" id="nav-toggle" aria-label="toggle navigation">
@@ -260,7 +281,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
         </div>
     </div>
     
-    {showChatbot && <OracleChat />}
+    {showChatbot && Astro.locals.user && <OracleChat />}
 
     <script src="/common.js" defer></script>
     

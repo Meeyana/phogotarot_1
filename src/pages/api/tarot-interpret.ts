@@ -22,14 +22,18 @@ export const POST: APIRoute = async (context) => {
     if (data && data.interpretation && env.DB) {
       try {
         const db = env.DB;
-        const { question, cards, readingId, userId } = body;
-        const safeUserId = userId || 'anonymous';
+        const { question, cards, readingId } = body;
+        
+        // Lấy userId từ Middleware thay vì từ body để bảo mật
+        const user = context.locals.user;
+        if (!user) {
+          throw new Error("Unauthorized: Cannot save reading without user");
+        }
+        
+        const safeUserId = user.id;
         const safeReadingId = readingId || crypto.randomUUID();
         
-        // 1. Lưu User (nếu chưa tồn tại)
-        await db.prepare(`INSERT OR IGNORE INTO users (id, role) VALUES (?, 'user')`).bind(safeUserId).run();
-        
-        // 2. Lưu Conversation
+        // 2. Lưu Conversation (Bỏ qua bước lưu User vì user bắt buộc đã tồn tại khi đăng nhập)
         const title = question ? (question.length > 50 ? question.substring(0, 50) + '...' : question) : 'Trải bài Tarot';
         await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, title).run();
         

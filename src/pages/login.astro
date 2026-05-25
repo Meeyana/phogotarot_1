@@ -1,0 +1,289 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Nếu đã đăng nhập, chuyển hướng sang trang chủ
+if (Astro.locals.user) {
+  return Astro.redirect('/');
+}
+---
+
+<BaseLayout title="Đăng Nhập - Phở Gõ Tarot" description="Đăng nhập để xem Tarot và trò chuyện cùng Oracle" showChatbot={false}>
+  <main class="auth-page">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1>Đăng Nhập</h1>
+          <p>Mở cánh cửa bước vào thế giới huyền học</p>
+        </div>
+
+        <!-- Đăng nhập bằng Google -->
+        <a href="/api/auth/google" class="google-btn">
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
+          Tiếp tục với Google
+        </a>
+
+        <div class="divider">
+          <span>hoặc</span>
+        </div>
+
+        <!-- Form Đăng nhập Email -->
+        <form id="login-form" class="auth-form">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Nhập email của bạn" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Mật khẩu</label>
+            <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required />
+          </div>
+
+          <div id="error-message" class="error-message" style="display: none;"></div>
+
+          <button type="submit" class="submit-btn" id="submit-btn">Đăng Nhập</button>
+        </form>
+
+        <div class="auth-footer">
+          <p>Chưa có tài khoản? <a href="/register">Đăng ký ngay</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (loginForm && errorMessage && submitBtn) {
+      loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorMessage.style.display = 'none';
+        
+        // Disable button while loading
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = 'Đang xử lý...';
+        submitBtn.setAttribute('disabled', 'true');
+
+        const formData = new FormData(loginForm as HTMLFormElement);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+          });
+
+          const result = await res.json();
+
+          if (!res.ok) {
+            errorMessage.innerText = result.error || 'Đã có lỗi xảy ra.';
+            errorMessage.style.display = 'block';
+            submitBtn.innerText = originalText;
+            submitBtn.removeAttribute('disabled');
+          } else if (result.success) {
+            window.location.href = result.redirect || '/';
+          }
+        } catch (error) {
+          errorMessage.innerText = 'Lỗi kết nối. Vui lòng thử lại sau.';
+          errorMessage.style.display = 'block';
+          submitBtn.innerText = originalText;
+          submitBtn.removeAttribute('disabled');
+        }
+      });
+    }
+  </script>
+
+  <style>
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 1rem 2rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .auth-container {
+      width: 100%;
+      max-width: 450px;
+    }
+
+    .auth-card {
+      background: rgba(10, 15, 36, 0.7);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(242, 201, 76, 0.2);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(242, 201, 76, 0.1);
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .auth-header h1 {
+      font-family: var(--font-title);
+      color: var(--gold-color, #F2C94C);
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
+    }
+
+    .auth-header p {
+      color: #aaa;
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    /* Google Button */
+    .google-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 0.8rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      gap: 12px;
+    }
+
+    .google-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .google-icon {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin: 2rem 0;
+      color: #666;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .divider span {
+      padding: 0 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #ddd;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 1rem 1.2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--gold-color, #F2C94C);
+      box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .error-message {
+      background: rgba(231, 76, 60, 0.1);
+      color: #ff6b6b;
+      border: 1px solid rgba(231, 76, 60, 0.3);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+      color: #050A1F;
+      border: none;
+      padding: 1rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .submit-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
+      background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #aaa;
+    }
+
+    .auth-footer a {
+      color: var(--gold-color, #F2C94C);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .auth-footer a:hover {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(242, 201, 76, 0.5);
+    }
+    
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 2rem 1.5rem;
+      }
+      .auth-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</BaseLayout>
