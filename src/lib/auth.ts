@@ -88,3 +88,14 @@ export async function deleteSession(context: APIContext, db: any) {
   }
   context.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
 }
+
+// Băm mật khẩu sử dụng Web Crypto API (Nhanh và không bị giới hạn CPU trên Cloudflare Workers)
+export async function hashPassword(password: string): Promise<string> {
+  const encoder = new TextEncoder();
+  // Thêm một đoạn salt tĩnh (có thể cải thiện bằng salt động sau)
+  const data = encoder.encode(password + 'phogo_tarot_secret_salt_2026');
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+

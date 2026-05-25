@@ -16,13 +16,11 @@
     "@netlify/functions": "^5.1.0",
     "arctic": "^3.7.0",
     "astro": "^5.16.4",
-    "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260524.1",
-    "@types/bcryptjs": "^2.4.6",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.22.3"
   }

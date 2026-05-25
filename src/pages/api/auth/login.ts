@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import bcrypt from 'bcryptjs';
-import { createSession, setSessionCookie } from '../../../lib/auth';
+import { createSession, setSessionCookie, hashPassword } from '../../../lib/auth';
 
 export const prerender = false;
 
@@ -28,8 +27,8 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Kiểm tra mật khẩu
-    const isValid = await bcrypt.compare(password, user.password_hash as string);
-    if (!isValid) {
+    const hash = await hashPassword(password);
+    if (hash !== user.password_hash) {
       return new Response(JSON.stringify({ error: 'Email hoặc mật khẩu không chính xác' }), { status: 400 });
     }
 

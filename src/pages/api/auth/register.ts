@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import bcrypt from 'bcryptjs';
-import { createSession, setSessionCookie } from '../../../lib/auth';
+import { createSession, setSessionCookie, hashPassword } from '../../../lib/auth';
 
 export const prerender = false;
 
@@ -28,7 +27,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     const userId = crypto.randomUUID();
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await hashPassword(password);
 
     // Tạo user
     await db.prepare('INSERT INTO users (id, email, name, password_hash, role) VALUES (?, ?, ?, ?, ?)')
