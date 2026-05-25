@@ -1,5 +1,5 @@
 import { defineConfig } from 'astro/config';
-import netlify from '@astrojs/netlify';
+import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
 // Import module 'fs' và 'path'
@@ -43,7 +43,11 @@ const allCustomPages = [...cardUrls, ...blogUrls];
 export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'server',
-  adapter: netlify(),
+  adapter: cloudflare({
+    platformProxy: {
+      enabled: true
+    }
+  }),
   integrations: [
     sitemap({
       customPages: allCustomPages, // Sitemap sẽ chứa link mới (/cards/...)

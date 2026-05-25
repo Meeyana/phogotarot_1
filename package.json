@@ -9,12 +9,19 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/cloudflare": "^12.2.0",
     "@astrojs/netlify": "^6.6.3",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource/playfair-display": "^5.2.8",
     "@fontsource/quicksand": "^5.2.10",
     "@netlify/functions": "^5.1.0",
     "astro": "^5.16.4",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "drizzle-orm": "^0.45.2"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260524.1",
+    "drizzle-kit": "^0.31.10",
+    "tsx": "^4.22.3"
   }
 }

@@ -1,0 +1,1163 @@
+---
+// src/pages/xem-tarot.astro
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const pageTitle = "Trò Chuyện & Trải Bài Tarot Cùng Joanna | Phở Gõ Tarot";
+const pageDesc = "Trải nghiệm xem Tarot qua giao diện trò chuyện tương tác. Hỏi bất cứ điều gì, chọn bài và nhận thông điệp trực tiếp từ vũ trụ.";
+const pageUrl = new URL('/xem-tarot', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Trải Bài Tarot Dạng Chat - Phở Gõ Tarot",
+  "url": pageUrl,
+  "description": pageDesc,
+  "applicationCategory": "LifestyleApplication",
+  "operatingSystem": "Any"
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+  showChatbot={false}
+>
+    <!-- GIAO DIỆN CHAT CHÍNH -->
+    <div class="chat-page-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="header-info">
+                <div class="header-avatar">
+                    <img src="https://ui-avatars.com/api/?name=Pho+Go&background=F2C94C&color=0b132b&size=128" alt="Phở Gõ Tarot Avatar" />
+                </div>
+                <div class="header-text">
+                    <h1 class="oracle-name">Phở Gõ Tarot</h1>
+                    <span class="oracle-status">Người truyền tin từ Vũ Trụ</span>
+                </div>
+            </div>
+            <button id="clear-chat-history-btn" class="icon-btn" title="Xóa lịch sử trò chuyện">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2v2"></path></svg>
+            </button>
+        </div>
+
+        <!-- Khung Chat -->
+        <div id="chat-messages" class="chat-messages">
+            <!-- Tin nhắn sẽ được JS tải vào đây -->
+        </div>
+
+        <div id="initial-greeting" class="initial-greeting">
+            <h1>Khi bạn sẵn sàng là chúng ta có thể bắt đầu.</h1>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+            <textarea id="question-input" placeholder="Nhập câu hỏi của bạn cho Tarot..." rows="1"></textarea>
+            <button id="submit-question-btn" title="Gửi câu hỏi">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL RÚT BÀI (Chỉ hiện khi hỏi xong) -->
+    <div id="tarot-modal" class="tarot-modal hidden">
+        <div class="tarot-modal-content">
+            <!-- MÀN HÌNH 2: XÁO BÀI -->
+            <div id="shuffling-screen" class="screen">
+                <div id="shuffling-question-display" class="question-display-header"></div>
+                <div class="shuffling-animation-container">
+                    <div class="shuffle-card"></div>
+                    <div class="shuffle-card"></div>
+                    <div class="shuffle-card"></div>
+                </div>
+                <p class="shuffling-instruction">
+                    Hít thở sâu...<br>
+                    Vũ trụ đang lắng nghe năng lượng của bạn.
+                </p>
+            </div>
+
+            <!-- MÀN HÌNH 3: CHỌN BÀI -->
+            <div id="drawing-screen" class="screen">
+                <div id="drawing-question-display" class="question-display-header"></div>
+                <h2 class="drawing-subheader">Hãy chọn 3 lá bài theo trực giác</h2>
+                
+                <!-- Khu vực hiển thị 3 lá đã chọn -->
+                <div id="chosen-cards-display">
+                    <div class="chosen-card-placeholder"><span>1</span></div>
+                    <div class="chosen-card-placeholder"><span>2</span></div>
+                    <div class="chosen-card-placeholder"><span>3</span></div>
+                </div>
+                
+                <!-- Bộ bài trải ra -->
+                <div id="card-spread-container">
+                    <div class="card-row" id="card-row-1"></div>
+                    <div class="card-row" id="card-row-2"></div>
+                    <div class="card-row mobile-row" id="card-row-3"></div>
+                    <div class="card-row mobile-row" id="card-row-4"></div>
+                    <div class="card-row mobile-row" id="card-row-5"></div>
+                    <div class="card-row mobile-row" id="card-row-6"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <link rel="preload" href="/card-back.jpg" as="image">
+
+    <style is:inline>
+        :root {
+            --gold-primary: #F2C94C;
+            --bg-dark: #0b132b;
+            --bg-panel: rgba(11, 19, 43, 0.8);
+            --text-white: #ffffff;
+            --font-title: 'Playfair Display', serif;
+            --font-body: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-white);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- CHAT PAGE CONTAINER --- */
+        .chat-page-container {
+            width: 100%;
+            height: calc(100vh - 85px);
+            height: calc(100dvh - 85px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            font-family: var(--font-body);
+            position: relative;
+        }
+
+        /* --- HEADER --- */
+        .chat-header {
+            width: 100%;
+            max-width: 900px;
+            background: transparent;
+            padding: 20px 20px 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            flex-shrink: 0;
+        }
+        .header-info { display: flex; align-items: center; gap: 15px; }
+        .header-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 2px solid var(--gold-primary); }
+        .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .header-text { display: flex; flex-direction: column; }
+        .oracle-name { color: var(--gold-primary); font-family: var(--font-title); font-weight: 700; font-size: 1.5rem; margin: 0; line-height: 1.2; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3); }
+        .oracle-status { font-size: 0.9rem; color: #ccc; }
+        .icon-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 8px; transition: color 0.3s; }
+        .icon-btn:hover { color: #ff6b6b; }
+
+        /* --- MESSAGES AREA --- */
+        .chat-messages {
+            flex: 1;
+            width: 100%;
+            max-width: 900px;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(242, 201, 76, 0.5) transparent;
+            padding-bottom: 40px;
+        }
+        
+        .initial-greeting {
+            display: none;
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+            padding: 0 20px;
+        }
+        .initial-greeting h1 {
+            font-family: var(--font-body);
+            color: #fff;
+            font-size: 2.2rem;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+            font-weight: 500;
+        }
+
+        /* --- INITIAL STATE --- */
+        .chat-page-container.initial-state {
+            justify-content: center;
+        }
+        .chat-page-container.initial-state .chat-header,
+        .chat-page-container.initial-state .chat-messages {
+            display: none;
+        }
+        .chat-page-container.initial-state .initial-greeting {
+            display: block;
+        }
+        .chat-page-container.initial-state .chat-input-area {
+            margin-bottom: 0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            width: calc(100% - 40px);
+            max-width: 860px;
+        }
+        .chat-messages::-webkit-scrollbar { width: 8px; }
+        .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(242, 201, 76, 0.5); border-radius: 10px; }
+
+        .message {
+            max-width: 85%;
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.4s ease;
+        }
+        .message-content {
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .message-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+        .message-content pre { white-space: pre-wrap; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; }
+        .message-content code { font-family: monospace; color: var(--gold-primary); background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 4px; }
+        .message-content a { color: var(--gold-primary); font-weight: bold; }
+        .message-content strong { color: var(--gold-primary); }
+        .message-content h1, .message-content h2, .message-content h3 { color: var(--gold-primary); font-family: var(--font-title); margin-top: 10px; font-size: 1.2rem; }
+
+        .bot-message { align-self: flex-start; }
+        .bot-message .message-content { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-bottom-left-radius: 4px; color: #eee; }
+        
+        .user-message { align-self: flex-end; }
+        .user-message .message-content { background: linear-gradient(135deg, rgba(212, 175, 55, 0.8) 0%, rgba(242, 201, 76, 0.8) 100%); color: #0b132b; border-bottom-right-radius: 4px; font-weight: 600; }
+
+        /* Loader inside chat */
+        .typing-indicator {
+            align-self: flex-start;
+            background: transparent;
+            color: var(--gold-primary);
+            font-style: italic;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* --- DRAWN CARDS IN CHAT --- */
+        .chat-drawn-cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .chat-card-item {
+            width: 80px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .chat-card-item img {
+            width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            margin: 0 !important;
+        }
+        .chat-card-item img.reversed {
+            transform: rotate(180deg);
+        }
+        .chat-card-name {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 8px;
+            line-height: 1.2;
+            color: #fff;
+            text-shadow: none;
+        }
+        .chat-card-orientation {
+            font-size: 0.7rem;
+            color: var(--gold-color, #F2C94C);
+            text-shadow: none;
+        }
+
+        /* --- CONFIRMATION BOX STYLE --- */
+        .confirm-reading-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .confirm-reading-box p {
+            margin: 0;
+            font-size: 1rem;
+            color: #eee;
+        }
+        .confirm-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+        .confirm-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .confirm-btn.yes-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+            color: #111827;
+        }
+        .confirm-btn.yes-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(224, 169, 109, 0.3);
+        }
+        .confirm-btn.no-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #eee;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .confirm-btn.no-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* --- INPUT AREA --- */
+        .chat-input-area {
+            width: calc(100% - 40px);
+            max-width: 860px;
+            background: rgba(11, 19, 43, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-end;
+            gap: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+        #question-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 12px 5px;
+            resize: none;
+            font-family: inherit;
+            font-size: 1.05rem;
+            max-height: 120px;
+        }
+        #question-input:focus {
+            outline: none;
+        }
+        #submit-question-btn {
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+            border: none;
+            color: #0b132b;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+            flex-shrink: 0;
+        }
+        #submit-question-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(242, 201, 76, 0.5);
+        }
+        #submit-question-btn:disabled {
+            filter: grayscale(1);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* --- MODAL RÚT BÀI --- */
+        .tarot-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(11, 19, 43, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.4s ease;
+            overflow-y: auto;
+        }
+        .tarot-modal.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .tarot-modal-content {
+            width: 100%;
+            max-width: 900px;
+            min-height: 80vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        /* Copy Styles from tarot.astro cho màn hình rút bài */
+        .screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+        .screen.active { display: flex; animation: fadeIn 0.5s ease; }
+
+        .question-display-header {
+            font-family: var(--font-title); color: var(--gold-primary); font-size: 1.5rem;
+            margin-bottom: 1.5rem; text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; width: 100%;
+        }
+
+        .shuffling-animation-container { position: relative; width: 120px; height: 180px; margin: 3rem auto; }
+        .shuffle-card {
+            position: absolute; width: 100%; height: 100%;
+            background-image: url('/card-back.jpg'); background-size: cover;
+            border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: shuffle 1.5s ease-in-out infinite;
+        }
+        .shuffle-card:nth-child(1) { animation-delay: 0s; }
+        .shuffle-card:nth-child(2) { animation-delay: -0.5s; }
+        .shuffle-card:nth-child(3) { animation-delay: -1s; }
+        @keyframes shuffle {
+            0%, 100% { transform: translateX(-40px) rotate(-10deg); z-index: 1;}
+            50% { transform: translateX(40px) rotate(10deg); z-index: 3;}
+        }
+        .shuffling-instruction { font-size: 1.2rem; color: #ccc; text-align: center; line-height: 1.6; }
+
+        .drawing-subheader { font-family: var(--font-body); color: #fff; font-size: 1.2rem; margin-bottom: 2rem; text-align: center; }
+
+        #chosen-cards-display { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 3rem; min-height: 180px; }
+        .chosen-card-placeholder {
+            width: 110px; height: 170px; border: 2px dashed rgba(242, 201, 76, 0.3);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            color: rgba(242, 201, 76, 0.3); font-size: 1.5rem; font-weight: 700; background: rgba(255,255,255,0.02);
+        }
+        .chosen-card-item { width: 110px; text-align: center; }
+        .chosen-card-item img { width: 100%; border-radius: 8px; box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); }
+        .chosen-card-item img.reversed { transform: rotate(180deg); }
+        .chosen-card-item .card-name { margin-top: 0.5rem; font-weight: 700; color: #fff; font-size: 0.9rem; text-shadow: none; }
+        
+        #card-spread-container { display: flex; flex-direction: column; gap: 10px; width: 100%; align-items: center; }
+        .card-row { display: flex; justify-content: center; width: 100%; }
+        .facedown-card {
+            width: 60px; height: 90px; background-image: url('/card-back.jpg'); background-size: cover;
+            border-radius: 4px; margin-left: -40px; cursor: pointer; transition: transform 0.3s;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.3);
+        }
+        .facedown-card:hover { transform: translateY(-15px) scale(1.1); z-index: 10; }
+        .facedown-card.is-chosen { opacity: 0; pointer-events: none; }
+        
+        .mobile-row { display: none; }
+        @media (max-width: 768px) {
+            #card-row-1, #card-row-2 { display: none; }
+            .mobile-row { display: flex; }
+            .facedown-card { margin-left: -45px; }
+        }
+
+        .flying-card-animator {
+            position: absolute; z-index: 10000; pointer-events: none; width: 60px; height: 90px;
+            transition: all 0.8s ease-in-out; transform-style: preserve-3d;
+        }
+        .flying-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s; }
+        .flying-card-front, .flying-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 4px; }
+        .flying-card-back { background-image: url('/card-back.jpg'); background-size: cover; }
+        .flying-card-front { transform: rotateY(180deg); }
+        .flying-card-front img { width: 100%; height: 100%; border-radius: 4px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes revealCard { from { opacity: 0; transform: translateY(20px) rotateY(-90deg); } to { opacity: 1; transform: translateY(0) rotateY(0); } }
+        @keyframes dealCardIn { from { opacity: 0; transform: translateY(-50px) scale(0.5); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+        
+        /* Loading planet animation styles */
+        .loader-planet-system {
+            position: relative; width: 80px; height: 80px; display: inline-flex;
+            align-items: center; justify-content: center; transform-style: preserve-3d;
+            animation: system-wobble 15s infinite ease-in-out;
+            margin-right: 15px;
+        }
+        .loader-planet-sphere {
+            width: 40px; height: 40px; border-radius: 50%;
+            background-image: url('/planet.png'); background-size: cover; background-position: center;
+            position: absolute; animation: planet-glow 2.5s infinite ease-in-out;
+        }
+        .loader-orbit {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            border-radius: 50%; transform-style: preserve-3d;
+            animation-iteration-count: infinite; animation-timing-function: linear;
+        }
+        .orbit-1 { animation: orbit-spin-1 3s linear infinite; }
+        .orbit-2 { animation: orbit-spin-2 5s linear infinite; }
+        .orbit-1::before, .orbit-2::before {
+            content: ''; position: absolute; border-radius: 50%; top: 50%; left: 0;
+            transform: translate(-50%, -50%); filter: blur(2px);
+        }
+        .orbit-1::before { width: 5px; height: 5px; background: #fff; box-shadow: 0 0 10px #fff; }
+        .orbit-2::before { width: 4px; height: 4px; background: #ffc; box-shadow: 0 0 10px #ffc; }
+        @keyframes system-wobble { 0%, 100% { transform: rotateY(-10deg) rotateX(5deg); } 50% { transform: rotateY(10deg) rotateX(-5deg); } }
+        @keyframes orbit-spin-1 { from { transform: rotateX(65deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateZ(360deg); } }
+        @keyframes orbit-spin-2 { from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); } }
+        @keyframes planet-glow { 0%, 100% { filter: drop-shadow(0 0 3px #fff); } 50% { filter: drop-shadow(0 0 8px #fff); } }
+    </style>
+
+    <!-- Thư viện Showdown để parse markdown -->
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+
+    <script>
+        // CONFIG
+        const N8N_VALIDATE_URL = '/api/tarot-validate'; // API Validate câu hỏi
+        const N8N_WEBHOOK_URL = '/api/tarot-interpret'; // API Luận giải
+        const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
+        const CHAT_HISTORY_KEY = 'phogo_tarot_chat_page_history';
+        const READING_ID_KEY = 'phogo_reading_id';
+
+        let currentReadingId = localStorage.getItem(READING_ID_KEY);
+        if (!currentReadingId) {
+            currentReadingId = crypto.randomUUID();
+            localStorage.setItem(READING_ID_KEY, currentReadingId);
+        }
+
+        // DOM Elements
+        const chatMessages = document.getElementById('chat-messages');
+        const questionInput = document.getElementById('question-input');
+        const submitBtn = document.getElementById('submit-question-btn');
+        const clearBtn = document.getElementById('clear-chat-history-btn');
+        
+        const tarotModal = document.getElementById('tarot-modal');
+        const screens = document.querySelectorAll('.screen');
+        const shufflingQuestionDisplay = document.getElementById('shuffling-question-display');
+        const drawingQuestionDisplay = document.getElementById('drawing-question-display');
+        
+        // Tarot Elements
+        const cardRow1 = document.getElementById('card-row-1');
+        const cardRow2 = document.getElementById('card-row-2');
+        const cardRow3 = document.getElementById('card-row-3'); 
+        const cardRow4 = document.getElementById('card-row-4');
+        const cardRow5 = document.getElementById('card-row-5');
+        const cardRow6 = document.getElementById('card-row-6');
+        const chosenCardsDisplay = document.getElementById('chosen-cards-display');
+
+        // State
+        let cardData = [];
+        let allCardImagesLoaded = false;
+        let selectedCards = [];
+        let isAnimating = false;
+        let isThinking = false;
+        let userQuestion = '';
+
+        const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`;
+        const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
+
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `@keyframes spin { 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(styleSheet);
+
+        // === CHAT LOGIC ===
+
+        function initChat() {
+            const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            const container = document.querySelector('.chat-page-container');
+            if (history.length === 0) {
+                container.classList.add('initial-state');
+            } else {
+                container.classList.remove('initial-state');
+                history.forEach(msg => {
+                    addMessage(msg.text, msg.sender, false, msg.cards);
+                });
+
+                // Tự phục hồi trạng thái (Self-healing UX):
+                // Nếu tin nhắn cuối cùng là của user, nghĩa là tiến trình bị gián đoạn giữa chừng (do F5).
+                // Ta sẽ tự động chạy lại câu hỏi này để trả về hộp thoại xác nhận hoặc câu trả lời tương ứng.
+                const lastMsg = history[history.length - 1];
+                if (lastMsg && lastMsg.sender === 'user') {
+                    // Xóa tin nhắn vừa vẽ tạm thời trên UI để tránh bị trùng lặp
+                    const messageElements = chatMessages.querySelectorAll('.message');
+                    if (messageElements.length > 0) {
+                        messageElements[messageElements.length - 1].remove();
+                    }
+                    // Xóa khỏi localStorage để khi handleSend chạy lại sẽ ghi nhận mới
+                    history.pop();
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+
+                    // Điền lại câu hỏi và tự động gửi
+                    setTimeout(() => {
+                        questionInput.value = lastMsg.text;
+                        handleSend();
+                    }, 300);
+                }
+            }
+        }
+
+        function saveMessage(text, sender, cards = null) {
+            const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            history.push({ text, sender, cards, timestamp: new Date().toISOString() });
+            localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+        }
+
+        function addMessage(text, sender, save = true, cards = null) {
+            if (save) saveMessage(text, sender, cards);
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${sender}-message`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            
+            // Xử lý markdown đơn giản
+            const renderMarkdown = (rawText) => {
+                if (typeof showdown !== 'undefined') {
+                    const converter = new showdown.Converter({ simpleLineBreaks: true, emoji: true });
+                    return converter.makeHtml(rawText);
+                }
+                return rawText.replace(/\n/g, '<br>');
+            };
+            
+            // Thêm bài đã chọn vào bong bóng chat (Nằm TRÊN)
+            if (cards && cards.length > 0) {
+                const cardsContainer = document.createElement('div');
+                cardsContainer.className = 'chat-drawn-cards';
+                cards.forEach(c => {
+                    cardsContainer.innerHTML += `
+                        <div class="chat-card-item">
+                            <img src="${c.image}" class="${c.isReversed ? 'reversed' : ''}" alt="${c.name}">
+                            <div class="chat-card-name">${c.name}</div>
+                            <div class="chat-card-orientation">(${c.orientation})</div>
+                        </div>
+                    `;
+                });
+                contentDiv.appendChild(cardsContainer);
+            }
+
+            const textDiv = document.createElement('div');
+            textDiv.innerHTML = renderMarkdown(text);
+            contentDiv.appendChild(textDiv);
+            msgDiv.appendChild(contentDiv);
+            chatMessages.appendChild(msgDiv);
+            scrollToBottom();
+            return msgDiv;
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typing-indicator';
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="loader-planet-system" style="width:30px; height:30px;">
+                    <div class="loader-planet-sphere" style="width:15px; height:15px;"></div>
+                    <div class="loader-orbit orbit-1"></div>
+                    <div class="loader-orbit orbit-2"></div>
+                </div>
+                Vũ trụ đang truyền thông điệp...
+            `;
+            chatMessages.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const el = document.getElementById('typing-indicator');
+            if (el) el.remove();
+        }
+
+        function autoGrow(element) {
+            element.style.height = 'auto';
+            element.style.height = Math.min(120, Math.max(48, element.scrollHeight)) + 'px';
+        }
+
+        // === TAROT DATA LOAD ===
+        
+        async function loadTarotData() {
+            try {
+                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
+                const response = await fetch(url);
+                const text = await response.text();
+                const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
+                const table = JSON.parse(jsonText).table;
+
+                cardData = table.rows.map((row, index) => ({
+                    id: index,
+                    name: row.c[0]?.v || 'Unknown Card',
+                    image: row.c[1]?.v || 'https://placehold.co/200x340'
+                }));
+
+                // Preload images
+                const promises = cardData.map(card => {
+                    return new Promise((res) => { 
+                        const img = new Image(); img.src = card.image;
+                        img.onload = res; img.onerror = res;
+                    });
+                });
+                Promise.all(promises).then(() => allCardImagesLoaded = true);
+            } catch (err) {
+                console.error("Lỗi tải data bài:", err);
+            }
+        }
+
+        // === FLOW XỬ LÝ CÂU HỎI & RÚT BÀI ===
+
+        async function handleSend() {
+            const question = questionInput.value.trim();
+            if (!question || isThinking) return;
+
+            const container = document.querySelector('.chat-page-container');
+            if (container.classList.contains('initial-state')) {
+                container.classList.remove('initial-state');
+                addMessage("Chào bạn 👋 Mình là Phở Gõ Tarot. Bạn có vấn đề gì đang trăn trở về tình yêu, công việc hay cuộc sống không? Hãy đặt một câu hỏi cụ thể nhé!", 'bot', true);
+            }
+
+            // 1. Thêm tin nhắn user vào chat
+            addMessage(question, 'user');
+            questionInput.value = '';
+            questionInput.style.height = 'auto';
+            userQuestion = question;
+            isThinking = true;
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = spinnerIcon;
+
+            // KIỂM TRA LỊCH SỬ BỐC BÀI NGAY LÚC NÀY
+            const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            // Lọc bỏ tin nhắn user vừa gửi ở trên để kiểm tra lịch sử trước đó
+            const priorHistory = history.slice(0, -1);
+            const hasDrawnBefore = priorHistory.some(m => m.sender === 'bot' && m.cards && m.cards.length === 3);
+
+            if (hasDrawnBefore) {
+                try {
+                    // Nếu đã từng bốc bài thành công trong phiên: Bỏ qua hoàn toàn bước validate, chạy thẳng giải thích tiếp nối
+                    await requestFollowUpInterpretation(question);
+                } catch (err) {
+                    // Bỏ qua vì lỗi đã được xử lý hiển thị nút Thử lại trong requestFollowUpInterpretation
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = sendIcon;
+                }
+                return; // Kết thúc sớm luồng
+            }
+
+            // --- NẾU CHƯA TỪNG BỐC BÀI: TIẾP TỤC CHẠY LUỒNG VALIDATE ---
+            try {
+                // 2. Validate câu hỏi
+                const response = await fetch(N8N_VALIDATE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question, readingId: currentReadingId })
+                });
+
+                if (!response.ok) throw new Error('Lỗi xác thực');
+                const result = await response.json();
+
+                if (result && (result.isValid === "true" || result.isValid === true)) {
+                    if (result.pick_card === false || result.pick_card === "false") {
+                        // Trả lời câu chào xã giao trực tiếp từ result.reason
+                        addMessage(result?.reason || "Chào bạn, mình luôn ở đây để giúp bạn giải đáp những thắc mắc qua lăng kính Tarot. Bạn có câu hỏi nào không?", 'bot');
+                        isThinking = false;
+                    } else {
+                        // Câu hỏi hợp lệ (pick_card = true hoặc undefined) -> Hiện box xác nhận trải bài
+                        showConfirmationBox(question);
+                    }
+                } else {
+                    // Không hợp lệ -> Trả lời từ chối lịch sự trong chat
+                    addMessage(result?.reason || "Câu hỏi của bạn chưa phù hợp, hãy đặt câu hỏi mở hơn nhé.", 'bot');
+                    isThinking = false;
+                }
+            } catch (err) {
+                // Fallback khi lỗi validate: Cho hiện box xác nhận bốc bài luôn để tránh nghẽn flow test
+                showConfirmationBox(question);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = sendIcon;
+            }
+        }
+
+        // --- INTERACTIVE CONFIRMATION & FOLLOW-UP INTERPRETATION ---
+
+        function showConfirmationBox(question) {
+            // Tạo bong bóng chat của Bot có kèm 2 nút tương tác Xác nhận / Từ chối (save = false vì đây là tin nhắn tương tác tạm thời)
+            const msgDiv = addMessage("Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?", 'bot', false);
+            
+            const contentDiv = msgDiv.querySelector('.message-content');
+            if (contentDiv) {
+                const confirmBox = document.createElement('div');
+                confirmBox.className = 'confirm-reading-box';
+                confirmBox.innerHTML = `
+                    <div class="confirm-buttons">
+                        <button class="confirm-btn yes-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="m4.93 4.93 4.24 4.24M14.83 9.17l4.24-4.24M14.83 14.83l4.24 4.24M9.17 14.83l-4.24 4.24"/>
+                            </svg>
+                            Đồng ý trải bài 🔮
+                        </button>
+                        <button class="confirm-btn no-btn">
+                            Từ chối / Hỏi câu khác 💬
+                        </button>
+                    </div>
+                `;
+
+                const yesBtn = confirmBox.querySelector('.yes-btn');
+                const noBtn = confirmBox.querySelector('.no-btn');
+
+                yesBtn.addEventListener('click', () => {
+                    msgDiv.remove();
+                    openTarotModal();
+                });
+
+                noBtn.addEventListener('click', () => {
+                    msgDiv.remove();
+                    addMessage("Được chứ, lữ khách cứ tự nhiên. Mình luôn sẵn sàng chia sẻ thêm hoặc trò chuyện cùng bạn. Bạn muốn hỏi gì khác không?", 'bot', true);
+                    isThinking = false;
+                });
+
+                contentDiv.appendChild(confirmBox);
+            }
+        }
+
+        async function requestFollowUpInterpretation(question) {
+            addTypingIndicator();
+            
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: question,
+                        cards: [], // Không bốc bài ở lượt trò chuyện này
+                        readingId: currentReadingId
+                    })
+                });
+
+                if (!response.ok) throw new Error('Lỗi luận giải tiếp nối');
+                const result = await response.json();
+
+                removeTypingIndicator();
+                if (result && result.interpretation) {
+                    addMessage(result.interpretation, 'bot', true, null); // Không đính kèm bài vẽ trong tin nhắn text này
+                } else {
+                    throw new Error('Không nhận được câu trả lời');
+                }
+            } catch (err) {
+                removeTypingIndicator();
+                // addMessage với save=false vì đây là tin nhắn lỗi tạm thời, cho phép thử lại
+                const errorMsgDiv = addMessage("Kết nối vũ trụ bị gián đoạn. Vui lòng thử lại sau nha.", 'bot', false, null);
+                const contentDiv = errorMsgDiv?.querySelector('.message-content');
+                if (contentDiv) {
+                    const retryContainer = document.createElement('div');
+                    retryContainer.className = 'retry-container';
+                    retryContainer.style.marginTop = '12px';
+                    retryContainer.style.display = 'flex';
+                    retryContainer.style.justifyContent = 'flex-start';
+
+                    const retryBtn = document.createElement('button');
+                    retryBtn.className = 'retry-btn';
+                    retryBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; display: inline-block; vertical-align: middle;">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                        Thử lại
+                    `;
+                    retryBtn.style.padding = '8px 16px';
+                    retryBtn.style.background = 'linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%)';
+                    retryBtn.style.color = '#111827';
+                    retryBtn.style.fontWeight = '600';
+                    retryBtn.style.border = 'none';
+                    retryBtn.style.borderRadius = '8px';
+                    retryBtn.style.cursor = 'pointer';
+                    retryBtn.style.fontSize = '13px';
+                    retryBtn.style.display = 'inline-flex';
+                    retryBtn.style.alignItems = 'center';
+                    retryBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    retryBtn.style.transition = 'all 0.2s ease';
+
+                    retryBtn.onmouseover = () => {
+                        retryBtn.style.transform = 'translateY(-1px)';
+                        retryBtn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
+                    };
+                    retryBtn.onmouseout = () => {
+                        retryBtn.style.transform = 'none';
+                        retryBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    };
+
+                    retryBtn.addEventListener('click', async () => {
+                        errorMsgDiv.remove();
+                        isThinking = true;
+                        await requestFollowUpInterpretation(question);
+                    });
+
+                    retryContainer.appendChild(retryBtn);
+                    contentDiv.appendChild(retryContainer);
+                }
+            } finally {
+                isThinking = false;
+            }
+        }
+
+        // --- MODAL LOGIC ---
+
+        function showScreen(id) {
+            screens.forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function openTarotModal() {
+            document.body.style.overflow = 'hidden';
+            tarotModal.classList.remove('hidden');
+            shufflingQuestionDisplay.textContent = userQuestion;
+            drawingQuestionDisplay.textContent = userQuestion;
+            
+            showScreen('shuffling-screen');
+            const shuffleTime = 2500;
+            const startTime = Date.now();
+
+            function check() {
+                if (allCardImagesLoaded && (Date.now() - startTime) >= shuffleTime) {
+                    startDrawing();
+                } else {
+                    setTimeout(check, 100);
+                }
+            }
+            check();
+        }
+
+        function closeTarotModal() {
+            document.body.style.overflow = '';
+            tarotModal.classList.add('hidden');
+        }
+
+        function startDrawing() {
+            cardRow1.innerHTML = ''; cardRow2.innerHTML = ''; cardRow3.innerHTML = '';
+            cardRow4.innerHTML = ''; cardRow5.innerHTML = ''; cardRow6.innerHTML = '';
+            selectedCards = [];
+            updateChosenCards();
+            showScreen('drawing-screen');
+
+            for (let i = 0; i < 78; i++) {
+                const cDesktop = document.createElement('div');
+                cDesktop.className = 'facedown-card'; cDesktop.dataset.idx = i;
+                cDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
+                
+                const cMobile = cDesktop.cloneNode(true);
+                
+                const clickHandler = (e) => handleCardSelect(e.currentTarget);
+                cDesktop.addEventListener('click', clickHandler);
+                cMobile.addEventListener('click', clickHandler);
+                
+                if (i < 39) cardRow1.appendChild(cDesktop); else cardRow2.appendChild(cDesktop);
+                if (i < 20) cardRow3.appendChild(cMobile);
+                else if (i < 40) cardRow4.appendChild(cMobile);
+                else if (i < 60) cardRow5.appendChild(cMobile);
+                else cardRow6.appendChild(cMobile);
+            }
+        }
+
+        function handleCardSelect(el) {
+            if (selectedCards.length >= 3 || isAnimating) return;
+            const idx = el.dataset.idx;
+            const cards = document.querySelectorAll(`.facedown-card[data-idx="${idx}"]`);
+            if (cards[0].classList.contains('is-chosen')) return;
+
+            isAnimating = true;
+            cards.forEach(c => c.classList.add('is-chosen'));
+
+            const avail = cardData.filter(c => !selectedCards.some(sc => sc.id === c.id));
+            const randomCard = avail[Math.floor(Math.random() * avail.length)];
+            const isReversed = Math.random() < 0.5;
+            const chosen = { ...randomCard, isReversed, orientation: isReversed ? 'Ngược' : 'Xuôi' };
+
+            const target = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
+            if (target) {
+                animateFlight(el, target, chosen);
+            }
+        }
+
+        function animateFlight(startEl, endEl, cardInfo) {
+            const img = new Image();
+            img.onload = () => {
+                const sRect = startEl.getBoundingClientRect();
+                const eRect = endEl.getBoundingClientRect();
+                const flying = document.createElement('div');
+                flying.className = 'flying-card-animator';
+                flying.innerHTML = `<div class="flying-card-inner"><div class="flying-card-back"></div><div class="flying-card-front"><img src="${cardInfo.image}" class="${cardInfo.isReversed ? 'reversed' : ''}"></div></div>`;
+                
+                flying.style.top = `${sRect.top}px`;
+                flying.style.left = `${sRect.left}px`;
+                flying.style.width = `${sRect.width}px`;
+                flying.style.height = `${sRect.height}px`;
+                
+                document.getElementById('tarot-modal').appendChild(flying);
+                
+                requestAnimationFrame(() => {
+                    flying.style.top = `${eRect.top}px`;
+                    flying.style.left = `${eRect.left}px`;
+                    flying.style.width = `${eRect.width}px`;
+                    flying.style.height = `${eRect.height}px`;
+                    flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
+                });
+
+                flying.addEventListener('transitionend', function handler(e) {
+                    if(e.target !== flying) return;
+                    flying.removeEventListener('transitionend', handler);
+                    flying.remove();
+                    
+                    selectedCards.push(cardInfo);
+                    updateChosenCards();
+                    isAnimating = false;
+
+                    if (selectedCards.length === 3) {
+                        setTimeout(() => {
+                            closeTarotModal();
+                            requestInterpretation();
+                        }, 1500); // Đợi 1.5s cho user nhìn rõ 3 lá bài
+                    }
+                });
+            };
+            img.src = cardInfo.image;
+        }
+
+        function updateChosenCards() {
+            chosenCardsDisplay.innerHTML = '';
+            selectedCards.forEach(c => {
+                chosenCardsDisplay.innerHTML += `
+                    <div class="chosen-card-item">
+                        <img src="${c.image}" class="${c.isReversed ? 'reversed' : ''}">
+                        <div class="card-name">${c.name} ${c.isReversed ? '(Ngược)' : ''}</div>
+                    </div>`;
+            });
+            for (let i = 0; i < 3 - selectedCards.length; i++) {
+                chosenCardsDisplay.innerHTML += `<div class="chosen-card-placeholder"><span>${selectedCards.length + i + 1}</span></div>`;
+            }
+        }
+
+        // === FETCH API LUẬN GIẢI ===
+
+        async function requestInterpretation() {
+            addTypingIndicator();
+            
+            try {
+                const response = await fetch(N8N_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        question: userQuestion,
+                        cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
+                        readingId: currentReadingId
+                    })
+                });
+
+                if (!response.ok) throw new Error('Lỗi luận giải');
+                const result = await response.json();
+
+                removeTypingIndicator();
+                if (result && result.interpretation) {
+                    addMessage(result.interpretation, 'bot', true, selectedCards);
+                } else {
+                    throw new Error('Không nhận được thông điệp');
+                }
+            } catch (err) {
+                removeTypingIndicator();
+                // addMessage với save=false vì đây là tin nhắn lỗi tạm thời, có thể thử lại
+                const errorMsgDiv = addMessage("Kết nối vũ trụ bị gián đoạn. Vui lòng thử lại sau nha.", 'bot', false, selectedCards);
+                const contentDiv = errorMsgDiv?.querySelector('.message-content');
+                if (contentDiv) {
+                    const retryContainer = document.createElement('div');
+                    retryContainer.className = 'retry-container';
+                    retryContainer.style.marginTop = '12px';
+                    retryContainer.style.display = 'flex';
+                    retryContainer.style.justifyContent = 'flex-start';
+
+                    const retryBtn = document.createElement('button');
+                    retryBtn.className = 'retry-btn';
+                    retryBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; display: inline-block; vertical-align: middle;">
+                            <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+                        </svg>
+                        Thử lại
+                    `;
+                    retryBtn.style.padding = '8px 16px';
+                    retryBtn.style.background = 'linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%)';
+                    retryBtn.style.color = '#111827';
+                    retryBtn.style.fontWeight = '600';
+                    retryBtn.style.border = 'none';
+                    retryBtn.style.borderRadius = '8px';
+                    retryBtn.style.cursor = 'pointer';
+                    retryBtn.style.fontSize = '13px';
+                    retryBtn.style.display = 'inline-flex';
+                    retryBtn.style.alignItems = 'center';
+                    retryBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    retryBtn.style.transition = 'all 0.2s ease';
+
+                    retryBtn.onmouseover = () => {
+                        retryBtn.style.transform = 'translateY(-1px)';
+                        retryBtn.style.boxShadow = '0 4px 6px rgba(0,0,0,0.3)';
+                    };
+                    retryBtn.onmouseout = () => {
+                        retryBtn.style.transform = 'none';
+                        retryBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                    };
+
+                    retryBtn.addEventListener('click', async () => {
+                        errorMsgDiv.remove();
+                        isThinking = true;
+                        await requestInterpretation();
+                    });
+
+                    retryContainer.appendChild(retryBtn);
+                    contentDiv.appendChild(retryContainer);
+                }
+            } finally {
+                isThinking = false;
+            }
+        }
+
+        // INIT
+        document.addEventListener('DOMContentLoaded', () => {
+            initChat();
+            loadTarotData();
+
+            questionInput.addEventListener('input', () => autoGrow(questionInput));
+            
+            questionInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                }
+            });
+
+            submitBtn.addEventListener('click', handleSend);
+
+            clearBtn.addEventListener('click', () => {
+                if (confirm('Xóa lịch sử trò chuyện?')) {
+                    localStorage.removeItem(CHAT_HISTORY_KEY);
+                    chatMessages.innerHTML = '';
+                    initChat();
+                }
+            });
+        });
+    </script>
+</BaseLayout>
