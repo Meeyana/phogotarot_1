@@ -35,7 +35,7 @@ const schema = {
   "@type": "Article",
   "headline": title,
   "description": excerpt,
-  "image": new URL(image, Astro.site).href,
+  "image": image ? new URL(image.src, Astro.site).href : '',
   "author": { "@type": "Organization", "name": "Phở Gõ Tarot" },
   "publisher": { "@type": "Organization", "name": "Phở Gõ Tarot", "logo": { "@type": "ImageObject", "url": "https://phogotarot.com/images/logo.png" }},
   ...(postDate && { "datePublished": postDate.toISOString() })
@@ -44,7 +44,7 @@ const schema = {
 // 9. URL chia sẻ
 const currentUrl = Astro.url.href;
 // (Lưu ý: shareImage cần đường dẫn tuyệt đối string cho meta tags)
-const shareImage = new URL(image, Astro.site).href;
+const shareImage = image ? new URL(image.src, Astro.site).href : '';
 
 // 10. Lấy lá bài liên quan (Cùng group)
 const relatedCards = allCards
@@ -57,7 +57,7 @@ const groupName = group.charAt(0).toUpperCase() + group.slice(1);
 <BaseLayout
   title={`${title} - Phở Gõ Tarot`}
   description={excerpt}
-  ogImage={image} showChatbot={false}>
+  ogImage={image ? image.src : ''} showChatbot={false}>
   <main id="homepage-content">
     <section class="homepage-section">
       <div class="container">
