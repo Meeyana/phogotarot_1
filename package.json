@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.2.0",
-    "@astrojs/netlify": "^6.6.3",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource/playfair-display": "^5.2.8",
     "@fontsource/quicksand": "^5.2.10",
