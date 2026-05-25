@@ -1,0 +1,346 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Bảo vệ route: Nếu chưa đăng nhập thì đẩy ra trang chủ hoặc trang đăng nhập
+// (Thực ra middleware đã bảo vệ route /profile rồi, nhưng ta check lại cho chắc và lấy db)
+if (!Astro.locals.user) {
+  return Astro.redirect('/login');
+}
+
+const db = Astro.locals.runtime?.env?.DB;
+let profile = {
+  full_name: Astro.locals.user.name || '',
+  nickname: '',
+  date_of_birth: '',
+  gender: '',
+  location: '',
+  occupation: '',
+  relationship_status: '',
+  recent_events: ''
+};
+
+if (db) {
+  try {
+    const data = await db.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(Astro.locals.user.id).first();
+    if (data) {
+      profile = {
+        ...profile,
+        ...data
+      };
+    }
+  } catch (error) {
+    console.error("Lỗi lấy thông tin profile:", error);
+  }
+}
+
+const pageTitle = "Hồ Sơ Của Bạn | Phở Gõ Tarot";
+const pageDesc = "Cập nhật hồ sơ cá nhân để những trải bài Tarot của bạn được cá nhân hoá và chính xác hơn.";
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} showChatbot={false}>
+    <main class="profile-page-container">
+        <div class="profile-card">
+            <h1 class="profile-title">Hồ Sơ Của Bạn</h1>
+            <p class="profile-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
+
+            <form id="profile-form" class="profile-form">
+                <div class="form-grid">
+                    <!-- Cột 1 -->
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="full_name">Tên hiển thị <span class="text-danger">*</span></label>
+                            <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A">
+                        </div>
+                        <div class="form-group">
+                            <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
+                            <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
+                        </div>
+                        <div class="form-group">
+                            <label for="date_of_birth">Ngày tháng năm sinh</label>
+                            <input type="date" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Cách muốn được xưng hô</label>
+                            <select id="gender" name="gender">
+                                <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
+                                <option value="Bạn" selected={profile.gender === 'Bạn'}>Bạn (Trung tính)</option>
+                                <option value="Anh" selected={profile.gender === 'Anh'}>Anh / Nam</option>
+                                <option value="Chị" selected={profile.gender === 'Chị'}>Chị / Nữ</option>
+                                <option value="Em" selected={profile.gender === 'Em'}>Em</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Cột 2 -->
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="location">Nơi sinh sống hiện tại</label>
+                            <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội...">
+                        </div>
+                        <div class="form-group">
+                            <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
+                            <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
+                        </div>
+                        <div class="form-group">
+                            <label for="relationship_status">Tình trạng quan hệ</label>
+                            <select id="relationship_status" name="relationship_status">
+                                <option value="" disabled selected={!profile.relationship_status}>-- Chọn --</option>
+                                <option value="Độc thân" selected={profile.relationship_status === 'Độc thân'}>Độc thân</option>
+                                <option value="Đang tìm hiểu" selected={profile.relationship_status === 'Đang tìm hiểu'}>Đang tìm hiểu</option>
+                                <option value="Đang yêu" selected={profile.relationship_status === 'Đang yêu'}>Đang yêu / Đã kết hôn</option>
+                                <option value="Phức tạp" selected={profile.relationship_status === 'Phức tạp'}>Phức tạp / Mới chia tay</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="recent_events">Biến cố / Chuyện quan tâm gần đây</label>
+                    <textarea id="recent_events" name="recent_events" rows="3" placeholder="Ví dụ: Vừa chuyển việc, đang phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
+                    <small style="color: rgba(255,255,255,0.5); display: block; margin-top: 5px;">* Thông tin này giúp Tarot Reader (AI) hiểu bối cảnh của bạn để luận giải chính xác hơn.</small>
+                </div>
+
+                <div id="form-error" class="error-message" style="display: none;"></div>
+                <div id="form-success" class="success-message" style="display: none;">Đã lưu hồ sơ thành công!</div>
+
+                <div class="form-actions">
+                    <button type="submit" id="submit-btn" class="btn-primary" style="width: 100%; max-width: 300px;">
+                        <span class="btn-text">Lưu Hồ Sơ</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <style>
+        .profile-page-container {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .profile-card {
+            background: rgba(11, 19, 43, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--card-back-border, rgba(242, 201, 76, 0.3));
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(242, 201, 76, 0.1);
+        }
+
+        .profile-title {
+            font-family: var(--font-title);
+            color: var(--title-color, #F2C94C);
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .text-danger {
+            color: #ff6b6b;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        select option {
+            background: #0b132b;
+            color: #fff;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--gold-color, #F2C94C);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            background: rgba(46, 213, 115, 0.1);
+            border: 1px solid rgba(46, 213, 115, 0.3);
+            color: #2ed573;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--gold-color, #F2C94C);
+            color: #0b132b;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .btn-primary:hover {
+            background-color: #ffdb73;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(242, 201, 76, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(11, 19, 43, 0.3);
+            border-radius: 50%;
+            border-top-color: #0b132b;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        const profileForm = document.getElementById('profile-form');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.querySelector('.btn-text');
+        const spinner = document.querySelector('.spinner');
+        const errorMsg = document.getElementById('form-error');
+        const successMsg = document.getElementById('form-success');
+
+        if (profileForm) {
+            profileForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                // Trạng thái loading
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                spinner.style.display = 'block';
+                errorMsg.style.display = 'none';
+                successMsg.style.display = 'none';
+
+                const formData = new FormData(profileForm);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    const response = await fetch('/api/profile/update', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        successMsg.style.display = 'block';
+                        // Cập nhật lại tên trên Navbar nếu có đổi tên
+                        const desktopName = document.querySelector('.desktop-only-profile strong');
+                        const mobileName = document.querySelector('.mobile-only-profile strong');
+                        if (desktopName) desktopName.textContent = data.full_name;
+                        if (mobileName) mobileName.textContent = data.full_name;
+                    } else {
+                        errorMsg.textContent = result.error || 'Đã có lỗi xảy ra, vui lòng thử lại.';
+                        errorMsg.style.display = 'block';
+                    }
+                } catch (error) {
+                    errorMsg.textContent = 'Mất kết nối. Vui lòng kiểm tra mạng của bạn.';
+                    errorMsg.style.display = 'block';
+                } finally {
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'block';
+                    spinner.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</BaseLayout>

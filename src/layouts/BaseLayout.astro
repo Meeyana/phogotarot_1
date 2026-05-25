@@ -181,24 +181,47 @@ const ogImageURL = new URL(ogImage, Astro.site);
             <a href="/blog" class="nav-link">Blog</a>
             
             {Astro.locals.user ? (
-                <div class="nav-item nav-dropdown">
-                    <div class="nav-link user-profile-link" style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                        {Astro.locals.user.avatar ? (
-                            <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
-                        ) : (
-                            <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--gold-color, #F2C94C); display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 14px;">
-                                {Astro.locals.user.name ? Astro.locals.user.name.charAt(0).toUpperCase() : Astro.locals.user.email?.charAt(0).toUpperCase() || 'U'}
+                <>
+                    {/* Giao diện Desktop: Dạng Icon + Dropdown */}
+                    <div class="nav-item nav-dropdown desktop-only-profile">
+                        <div class="nav-link user-profile-link" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; hover: background: rgba(255,255,255,0.1);">
+                            {Astro.locals.user.avatar ? (
+                                <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
+                            ) : (
+                                <i class="fa-solid fa-circle-user" style="font-size: 28px; color: var(--gold-color, #F2C94C);"></i>
+                            )}
+                        </div>
+                        <div class="dropdown-submenu" style="right: 0; left: auto; min-width: 180px; padding: 10px 0;">
+                            <div style="padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px;">
+                                <strong style="color: #fff; display: block; font-size: 0.95rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
+                                <span style="color: rgba(255,255,255,0.6); font-size: 0.8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{Astro.locals.user.email}</span>
                             </div>
-                        )}
-                        <span>{Astro.locals.user.name || 'Tài khoản'}</span>
+                            <a href="/profile" class="nav-link submenu-link"><i class="fa-solid fa-user" style="width: 20px;"></i> Hồ sơ</a>
+                            <a href="#" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left" style="width: 20px;"></i> Lịch sử</a>
+                            <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px;">
+                                <button type="submit" class="nav-link submenu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket" style="width: 20px;"></i> Đăng xuất</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="dropdown-submenu" style="right: 0; left: auto; min-width: 150px;">
-                        <a href="#" id="history-nav-link" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
-                        <form action="/api/auth/logout" method="POST" style="margin:0; padding:0;">
-                            <button type="submit" class="nav-link submenu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+
+                    {/* Giao diện Mobile: Hiển thị thẳng ra danh sách */}
+                    <div class="mobile-only-profile" style="width: 100%; text-align: center; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 0.5rem;">
+                             {Astro.locals.user.avatar ? (
+                                <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C); margin-bottom: 5px;" />
+                            ) : (
+                                <i class="fa-solid fa-circle-user" style="font-size: 40px; color: var(--gold-color, #F2C94C); margin-bottom: 5px;"></i>
+                            )}
+                            <strong style="color: #fff; font-size: 1.1rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
+                            <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">{Astro.locals.user.email}</span>
+                        </div>
+                        <a href="/profile" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-user"></i> Hồ sơ</a>
+                        <a href="#" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
+                        <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; width: 100%;">
+                            <button type="submit" class="nav-link" style="background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); width: 100%; border-radius: 8px; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
                         </form>
                     </div>
-                </div>
+                </>
             ) : (
                 <a href="/login" class="nav-link login-btn" style="background: rgba(242, 201, 76, 0.15); border: 1px solid var(--gold-color, #F2C94C); border-radius: 20px; padding: 5px 15px; color: var(--gold-color, #F2C94C);">Đăng Nhập</a>
             )}

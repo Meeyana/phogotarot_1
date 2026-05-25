@@ -224,11 +224,16 @@
             .nav-dropdown:hover .dropdown-submenu {
                 display: block;
             }
+            .mobile-only-profile {
+                display: none !important;
+            }
         }
-
 
         /* (MỚI) CSS cho mobile menu */
         @media (max-width: 768px) {
+            .desktop-only-profile {
+                display: none !important;
+            }
             .main-nav {
                 padding: 1rem;
             }

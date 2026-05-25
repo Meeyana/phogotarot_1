@@ -15,6 +15,33 @@ const schema = {
   "applicationCategory": "LifestyleApplication",
   "operatingSystem": "Any"
 };
+
+// Lấy thông tin profile
+const db = Astro.locals.runtime?.env?.DB;
+let profile = {
+  full_name: Astro.locals.user?.name || '',
+  nickname: '',
+  date_of_birth: '',
+  gender: '',
+  location: '',
+  occupation: '',
+  relationship_status: '',
+  recent_events: ''
+};
+
+if (db && Astro.locals.user) {
+  try {
+    const data = await db.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(Astro.locals.user.id).first();
+    if (data) {
+      profile = {
+        ...profile,
+        ...data
+      };
+    }
+  } catch (error) {
+    console.error("Lỗi lấy thông tin profile:", error);
+  }
+}
 ---
 
 <BaseLayout
@@ -46,7 +73,15 @@ const schema = {
         </div>
 
         <div id="initial-greeting" class="initial-greeting">
-            <h1>Khi bạn sẵn sàng là chúng ta có thể bắt đầu.</h1>
+            <h1 class="title" style="font-family: var(--font-title); font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(242, 201, 76, 0.6);">Vấn đề bạn đang trăn trở là gì?</h1>
+            <p class="subtitle" style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể.</p>
+            
+            <div style="background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); padding: 15px 20px; border-radius: 8px; margin-bottom: 2rem; display: inline-block; text-align: left; max-width: 600px;">
+                <p style="margin: 0 0 10px 0; font-size: 0.95rem;">💡 <strong>Để nhận được thông điệp chính xác nhất:</strong> Vũ trụ cần kết nối với năng lượng và bối cảnh hiện tại của bạn.</p>
+                <button type="button" id="open-profile-modal-btn" style="background: none; border: none; padding: 0; font: inherit; cursor: pointer; color: var(--gold-primary); font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
+                    Cập nhật hồ sơ của bạn ngay <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+            </div>
         </div>
 
         <!-- Input Area -->
@@ -55,6 +90,18 @@ const schema = {
             <button id="submit-question-btn" title="Gửi câu hỏi">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
             </button>
+        </div>
+        
+        <div class="dropdown-container initial-only-dropdown">
+            <button id="suggested-questions-toggle" class="dropdown-toggle">
+                <span><i class="fa-regular fa-lightbulb"></i> Gợi ý câu hỏi</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16" class="arrow-icon">
+                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                </svg>
+            </button>
+            <div id="suggested-questions-list" class="dropdown-menu">
+                <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
+            </div>
         </div>
     </div>
 
@@ -96,6 +143,84 @@ const schema = {
                     <div class="card-row mobile-row" id="card-row-5"></div>
                     <div class="card-row mobile-row" id="card-row-6"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CẬP NHẬT HỒ SƠ -->
+    <div id="profile-modal-container" class="tarot-modal hidden" style="align-items: flex-start; padding-top: 5vh;">
+        <div class="tarot-modal-content" style="max-width: 800px; min-height: auto; padding: 0;">
+            <div class="profile-card" style="margin: 0; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+                <button id="close-profile-modal-btn" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+                <h2 class="profile-title" style="font-size: 1.8rem; margin-top: 10px;">Hồ Sơ Của Bạn</h2>
+                <p class="profile-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
+
+                <form id="inline-profile-form" class="profile-form">
+                    <div class="form-grid">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="full_name">Tên hiển thị <span class="text-danger">*</span></label>
+                                <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A">
+                            </div>
+                            <div class="form-group">
+                                <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
+                                <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
+                            </div>
+                            <div class="form-group">
+                                <label for="date_of_birth">Ngày tháng năm sinh</label>
+                                <input type="date" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Cách muốn được xưng hô</label>
+                                <select id="gender" name="gender">
+                                    <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
+                                    <option value="Bạn" selected={profile.gender === 'Bạn'}>Bạn (Trung tính)</option>
+                                    <option value="Anh" selected={profile.gender === 'Anh'}>Anh / Nam</option>
+                                    <option value="Chị" selected={profile.gender === 'Chị'}>Chị / Nữ</option>
+                                    <option value="Em" selected={profile.gender === 'Em'}>Em</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="location">Nơi sinh sống hiện tại</label>
+                                <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội...">
+                            </div>
+                            <div class="form-group">
+                                <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
+                                <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
+                            </div>
+                            <div class="form-group">
+                                <label for="relationship_status">Tình trạng quan hệ</label>
+                                <select id="relationship_status" name="relationship_status">
+                                    <option value="" disabled selected={!profile.relationship_status}>-- Chọn --</option>
+                                    <option value="Độc thân" selected={profile.relationship_status === 'Độc thân'}>Độc thân</option>
+                                    <option value="Đang tìm hiểu" selected={profile.relationship_status === 'Đang tìm hiểu'}>Đang tìm hiểu</option>
+                                    <option value="Đang yêu" selected={profile.relationship_status === 'Đang yêu'}>Đang yêu / Đã kết hôn</option>
+                                    <option value="Phức tạp" selected={profile.relationship_status === 'Phức tạp'}>Phức tạp / Mới chia tay</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="recent_events">Biến cố / Chuyện quan tâm gần đây</label>
+                        <textarea id="recent_events" name="recent_events" rows="3" placeholder="Ví dụ: Vừa chuyển việc, đang phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
+                    </div>
+
+                    <div id="inline-form-error" class="error-message" style="display: none;"></div>
+                    <div id="inline-form-success" class="success-message" style="display: none;">Đã lưu hồ sơ thành công! Sẵn sàng xem Tarot rồi đó.</div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" id="inline-submit-btn" class="btn-primary" style="width: 100%; max-width: 300px;">
+                            <span class="btn-text">Lưu Hồ Sơ</span>
+                            <div class="spinner" style="display: none;"></div>
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -193,6 +318,7 @@ const schema = {
         /* --- INITIAL STATE --- */
         .chat-page-container.initial-state {
             justify-content: center;
+            overflow: visible;
         }
         .chat-page-container.initial-state .chat-header,
         .chat-page-container.initial-state .chat-messages {
@@ -391,6 +517,93 @@ const schema = {
             cursor: not-allowed;
             opacity: 0.6;
         }
+
+        /* --- DROPDOWN GỢI Ý --- */
+        .dropdown-container { width: 100%; max-width: 700px; margin: 1.5rem 0; position: relative; }
+        .dropdown-toggle {
+            width: 100%; 
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            color: #ddd;
+            padding: 0.8rem 1.2rem; border-radius: 12px; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 1.05rem; font-family: var(--font-body);
+            transition: all 0.3s ease;
+        }
+        .dropdown-toggle:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(242, 201, 76, 0.5); }
+        .dropdown-arrow { transition: transform 0.3s; }
+        .dropdown-toggle.open .dropdown-arrow { transform: rotate(180deg); }
+        .dropdown-menu {
+            display: none;
+            position: absolute; top: 100%; left: 0; width: 100%;
+            background: var(--bg-panel);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            border-top: none; border-radius: 0 0 12px 12px;
+            z-index: 9999; margin-top: 0; padding-top: 5px;
+            overflow-y: auto; max-height: 250px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .dropdown-menu.open { display: block; animation: slideDown 0.3s ease; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .suggested-q-item:hover { background: rgba(242, 201, 76, 0.15) !important; color: var(--gold-primary) !important; }
+
+        .chat-page-container:not(.initial-state) .initial-only-dropdown { display: none !important; }
+
+        /* --- CSS CHO MODAL HỒ SƠ --- */
+        .profile-card {
+            background: rgba(11, 19, 43, 0.95);
+            border-radius: 16px;
+            padding: 2.5rem;
+            width: 100%;
+        }
+        .profile-title {
+            font-family: var(--font-title); color: var(--gold-primary); text-align: center;
+        }
+        .profile-subtitle {
+            text-align: center; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem; font-size: 0.95rem;
+        }
+        .form-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; gap: 0; }
+        }
+        .form-group { margin-bottom: 1.2rem; }
+        .full-width { grid-column: 1 / -1; }
+        .form-group label {
+            display: block; margin-bottom: 0.5rem; color: #fff; font-weight: 500; font-size: 0.95rem; text-align: left;
+        }
+        .text-danger { color: #ff6b6b; }
+        .form-group input[type="text"], .form-group input[type="date"], .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 15px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 8px; color: #fff;
+            font-family: var(--font-body); font-size: 1rem; transition: all 0.3s;
+        }
+        .form-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        .form-group select option { background: #0b132b; color: #fff; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: var(--gold-primary); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+        }
+        .btn-primary {
+            display: inline-flex; justify-content: center; align-items: center;
+            background-color: var(--gold-primary); color: #0b132b; border: none;
+            padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 1rem;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(242, 201, 76, 0.4); }
+        .spinner { width: 20px; height: 20px; border: 2px solid rgba(11, 19, 43, 0.3); border-radius: 50%; border-top-color: #0b132b; animation: spin 1s linear infinite; }
+        .error-message {
+            background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.3); color: #ff6b6b;
+            padding: 10px 15px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem;
+        }
+        .success-message {
+            background: rgba(46, 213, 115, 0.1); border: 1px solid rgba(46, 213, 115, 0.3); color: #2ed573;
+            padding: 10px 15px; border-radius: 8px; margin-bottom: 1.5rem; text-align: center; font-size: 0.9rem;
+        }
+
 
         /* --- MODAL RÚT BÀI --- */
         .tarot-modal {
@@ -1164,6 +1377,122 @@ const schema = {
                     initChat();
                 }
             });
+            
+            // LOGIC GỢI Ý CÂU HỎI
+            const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
+            const suggestedQuestionsList = document.getElementById('suggested-questions-list');
+            
+            if (suggestedQuestionsToggle && suggestedQuestionsList) {
+                const suggestions = [
+                    "Khi nào tôi sẽ gặp được tình yêu mới?",
+                    "Làm sao để tôi cải thiện tài chính trong 3 tháng tới?",
+                    "Thông điệp vũ trụ muốn gửi đến tôi ngay lúc này là gì?",
+                    "Tôi cần học bài học gì từ mối quan hệ hiện tại?",
+                    "Định hướng công việc nào phù hợp với tôi nhất?"
+                ];
+                
+                let html = '';
+                suggestions.forEach(q => {
+                    html += `<a href="#" class="suggested-q-item" style="display: block; padding: 12px 15px; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: background 0.2s;">${q}</a>`;
+                });
+                suggestedQuestionsList.innerHTML = html;
+
+                suggestedQuestionsToggle.addEventListener('click', () => {
+                    suggestedQuestionsList.classList.toggle('open');
+                    suggestedQuestionsToggle.classList.toggle('open');
+                });
+
+                suggestedQuestionsList.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (e.target.classList.contains('suggested-q-item')) {
+                        questionInput.value = e.target.textContent;
+                        suggestedQuestionsList.classList.remove('open');
+                        suggestedQuestionsToggle.classList.remove('open');
+                        autoGrow(questionInput);
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!suggestedQuestionsToggle.contains(e.target) && !suggestedQuestionsList.contains(e.target)) {
+                        suggestedQuestionsList.classList.remove('open');
+                        suggestedQuestionsToggle.classList.remove('open');
+                    }
+                });
+            }
+
+            // LOGIC MODAL PROFILE
+            const openProfileModalBtn = document.getElementById('open-profile-modal-btn');
+            const closeProfileModalBtn = document.getElementById('close-profile-modal-btn');
+            const profileModalContainer = document.getElementById('profile-modal-container');
+            
+            if (openProfileModalBtn && profileModalContainer && closeProfileModalBtn) {
+                openProfileModalBtn.addEventListener('click', () => {
+                    profileModalContainer.classList.remove('hidden');
+                });
+                closeProfileModalBtn.addEventListener('click', () => {
+                    profileModalContainer.classList.add('hidden');
+                });
+                // Nhấn ngoài modal để đóng
+                profileModalContainer.addEventListener('click', (e) => {
+                    if (e.target === profileModalContainer) {
+                        profileModalContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            const inlineProfileForm = document.getElementById('inline-profile-form');
+            if (inlineProfileForm) {
+                inlineProfileForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const submitBtn = document.getElementById('inline-submit-btn');
+                    const btnText = submitBtn.querySelector('.btn-text');
+                    const spinner = submitBtn.querySelector('.spinner');
+                    const errorMsg = document.getElementById('inline-form-error');
+                    const successMsg = document.getElementById('inline-form-success');
+
+                    submitBtn.disabled = true;
+                    btnText.style.display = 'none';
+                    spinner.style.display = 'block';
+                    errorMsg.style.display = 'none';
+                    successMsg.style.display = 'none';
+
+                    const formData = new FormData(inlineProfileForm);
+                    const data = Object.fromEntries(formData.entries());
+
+                    try {
+                        const response = await fetch('/api/profile/update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data),
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            successMsg.style.display = 'block';
+                            const desktopName = document.querySelector('.desktop-only-profile strong');
+                            const mobileName = document.querySelector('.mobile-only-profile strong');
+                            if (desktopName) desktopName.textContent = data.full_name;
+                            if (mobileName) mobileName.textContent = data.full_name;
+                            
+                            // Tự động đóng modal sau 2s
+                            setTimeout(() => {
+                                profileModalContainer.classList.add('hidden');
+                                successMsg.style.display = 'none';
+                            }, 2000);
+                        } else {
+                            errorMsg.textContent = result.error || 'Đã có lỗi xảy ra.';
+                            errorMsg.style.display = 'block';
+                        }
+                    } catch (error) {
+                        errorMsg.textContent = 'Mất kết nối. Vui lòng kiểm tra mạng.';
+                        errorMsg.style.display = 'block';
+                    } finally {
+                        submitBtn.disabled = false;
+                        btnText.style.display = 'block';
+                        spinner.style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
 </BaseLayout>
