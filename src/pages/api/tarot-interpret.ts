@@ -23,6 +23,21 @@ export const POST: APIRoute = async (context) => {
       }
     }
 
+    // Enrich thẻ bài với ý nghĩa từ DB
+    if (body.cards && body.cards.length > 0 && db) {
+      for (let i = 0; i < body.cards.length; i++) {
+          const card = body.cards[i];
+          try {
+              const cardInfo = await db.prepare('SELECT upright_meaning, reversed_meaning FROM tarot_database WHERE card_name = ?').bind(card.name).first();
+              if (cardInfo) {
+                  card.meaning = card.isReversed ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
+              }
+          } catch (err) {
+              console.error(`Lỗi lấy ý nghĩa lá ${card.name}:`, err);
+          }
+      }
+    }
+
     const payload = {
       ...body,
       history: history

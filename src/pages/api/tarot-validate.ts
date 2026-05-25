@@ -9,6 +9,21 @@ export const POST: APIRoute = async (context) => {
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
+      // Enrich thẻ bài với ý nghĩa từ DB
+      if (body.cards && body.cards.length > 0 && env.DB) {
+        for (let i = 0; i < body.cards.length; i++) {
+            const card = body.cards[i];
+            try {
+                const cardInfo = await env.DB.prepare('SELECT upright_meaning, reversed_meaning FROM tarot_database WHERE card_name = ?').bind(card.name).first();
+                if (cardInfo) {
+                    card.meaning = card.isReversed ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
+                }
+            } catch (err) {
+                console.error(`Lỗi lấy ý nghĩa lá ${card.name}:`, err);
+            }
+        }
+      }
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
