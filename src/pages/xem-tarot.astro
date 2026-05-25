@@ -998,13 +998,13 @@ if (db && Astro.locals.user) {
 
                     if (result && (result.isValid === "true" || result.isValid === true)) {
                         if (result.pick_card === false || result.pick_card === "false") {
-                            // pick_card=false: n8n đã gọi LLM với context đầy đủ, trả về reason là câu trả lời thực sự
+                            // pick_card=false: n8n đã gọi LLM conversational, trả về câu trả lời trong reason
                             addMessage(result?.reason || "Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì về trải bài này không?", 'bot');
                             isThinking = false;
                         } else {
-                            // pick_card=true (hoặc undefined): Câu hỏi tarot thực sự
-                            // Gọi interpret với history để AI trả lời dựa trên ngữ cảnh các lá bài đã bốc
-                            await requestFollowUpInterpretation(question);
+                            // pick_card=true: Câu hỏi tarot mới -> Hiện box xác nhận bốc bài (giống Turn 1)
+                            // isThinking giữ nguyên = true cho đến khi user click Đồng ý / Từ chối
+                            showConfirmationBox(question);
                         }
                     } else {
                         // Không hợp lệ -> Từ chối lịch sự
@@ -1012,8 +1012,8 @@ if (db && Astro.locals.user) {
                         isThinking = false;
                     }
                 } catch (err) {
-                    // Fallback khi lỗi validate: Vẫn cho giải thích tiếp để tránh nghẽn flow
-                    await requestFollowUpInterpretation(question);
+                    // Fallback khi lỗi validate: Cho hiện box xác nhận để tránh nghẽn flow
+                    showConfirmationBox(question);
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = sendIcon;
