@@ -41,6 +41,6 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify({ success: true, redirect: '/' }), { status: 200 });
   } catch (error: any) {
     console.error('Lỗi đăng nhập:', error);
-    return new Response(JSON.stringify({ error: 'Đã có lỗi xảy ra, vui lòng thử lại' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Lỗi Database: ' + (error.message || JSON.stringify(error)) }), { status: 500 });
   }
 };
