@@ -1,9 +1,10 @@
 import type { APIRoute } from 'astro';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async (context) => {
   try {
-    const body = await request.json();
-    const webhookUrl = import.meta.env.N8N_WEBHOOK_YESNO || process.env.N8N_WEBHOOK_YESNO;
+    const body = await context.request.json();
+    const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const webhookUrl = env.N8N_WEBHOOK_YESNO;
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 

@@ -1,10 +1,11 @@
 import type { APIRoute } from 'astro';
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async (context) => {
   console.log('🔵 tarot-validate API route called');
   try {
-    const body = await request.json();
-    const webhookUrl = import.meta.env.N8N_VALIDATE_TAROT || process.env.N8N_VALIDATE_TAROT;
+    const body = await context.request.json();
+    const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const webhookUrl = env.N8N_VALIDATE_TAROT;
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
