@@ -5,6 +5,8 @@ import { getCollection } from 'astro:content';
 // (QUAN TRỌNG) Import component Image tối ưu
 import { Image } from 'astro:assets';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   const allCards = await getCollection('cards');
   return allCards.map(card => ({

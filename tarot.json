@@ -1,5 +1,4 @@
 {
-  "name": "tarot",
   "nodes": [
     {
       "parameters": {
@@ -162,35 +161,12 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -752,
+        -544,
         576
       ],
       "id": "57e9e293-8899-4271-a0c6-8d5873753963",
       "name": "Luận giải tarot",
       "webhookId": "fc76868a-6ee3-4376-98fe-b5db66b7a3ed"
-    },
-    {
-      "parameters": {
-        "url": "=https://phogotarot-api.tuanphan1112-working.workers.dev/readings?session_id={{ $('Luận giải tarot').first().json.body.readingId }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Accept",
-              "value": "application/json"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        -544,
-        576
-      ],
-      "id": "02131673-3ac1-4234-adb3-65b185d6de23",
-      "name": "Lấy Lịch Sử D1"
     },
     {
       "parameters": {
@@ -212,7 +188,7 @@
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = item.json.cards || [];\n  \n  // Kiểm tra và lấy Lịch sử trải bài từ node Lấy Lịch Sử D1\n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có cuộc trò chuyện nào trước đó.\";\n  let cardsListText = \"\";\n  \n  try {\n    const historyNode = $('Lấy Lịch Sử D1').first().json;\n    if (historyNode && historyNode.exists) {\n      isFollowUp = true;\n      \n      // Lấy danh sách lá bài cũ\n      const cardsList = (historyNode.cards_payload || []).map(c => `${c.name || c.card_name} (${c.orientation || 'Xuôi'})`).join(', ');\n      cardsListText = `Lá bài đã bốc: ${cardsList}`;\n      \n      // Lấy câu hỏi đầu tiên\n      previousQuestions.push(historyNode.question);\n      \n      // Trích xuất các câu hỏi tiếp theo từ interpretation (nếu có)\n      if (historyNode.interpretation) {\n        const regex = /Lữ khách hỏi tiếp: \"(.*?)\"/g;\n        let match;\n        while ((match = regex.exec(historyNode.interpretation)) !== null) {\n          previousQuestions.push(match[1]);\n        }\n      }\n      \n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi lữ khách đã hỏi trước đó:\\n${questionsStr}`;\n    }\n  } catch (e) {\n    // Bỏ qua\n  }\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Hãy giải đáp câu hỏi của lữ khách dựa trên các lá bài đã bốc và ý nghĩa tương ứng được cung cấp.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc, cuốn hút và ý nghĩa đối với câu hỏi của khách hàng.\n2. Với mỗi lá bài, hãy lồng ghép cả \"mặt sáng\" (thuận lợi, thế mạnh) và \"bài học cần học\" để mang lại góc nhìn đa chiều và mang tính chữa lành thực tế, tuyệt đối không mang xu hướng mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm, chân thành, tựa như một người bạn tâm giao đang trò chuyện thật sự.\n4. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, hệ thống, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Luôn dùng các cách gọi khác như: Hướng thuận, mặt thuận lợi, v.v.).\n5. Trình bày đẹp mắt bằng Markdown. Giới hạn độ dài trong khoảng 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC (GIỮ NGUYÊN FORMAT MARKDOWN):\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm. Lữ khách đang có thắc mắc tiếp nối về trải bài Tarot trước đó. Hãy trực tiếp giải đáp thắc mắc mới này.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào vấn đề giải đáp câu hỏi mới, KHÔNG CẦN lặp lại lời chào mở đầu sến súa.\n2. Trình bày nội dung một cách tự nhiên, linh hoạt, giống như một cuộc trò chuyện sâu sắc. KHÔNG tuân theo outline rập khuôn (Mở đầu, Dòng chảy, Kết nối, Lời khuyên) như lần đầu.\n3. Hãy ngắt đoạn linh hoạt cho đỡ nhàm chán, có thể dùng bullet points tự do nếu phù hợp.\n4. Liên kết câu trả lời với ý nghĩa các lá bài đã bốc ban đầu và các vấn đề lữ khách đã hỏi trước đó để tạo sự liền mạch. Tuân thủ tuyệt đối ý nghĩa gốc của các lá bài được cung cấp.\n5. Giọng văn trầm ổn, đồng cảm, chân thành và mang tính chữa lành. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [CHI TIẾT TRẢI BÀI & Ý NGHĨA GỐC TỪ D1]\n- **Lá bài Quá khứ**: ${cardPast.card_name || \"—\"} (${cardPast.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPast.meaning || \"—\"}\n  \n- **Lá bài Hiện tại**: ${cardPresent.card_name || \"—\"} (${cardPresent.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPresent.meaning || \"—\"}\n  \n- **Lá bài Tương lai**: ${cardFuture.card_name || \"—\"} (${cardFuture.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardFuture.meaning || \"—\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI CỦA LỮ KHÁCH]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH LỊCH SỬ CÂU HỎI TRƯỚC ĐÓ]\n${historyText}\n\nHãy thấu cảm và giải đáp câu hỏi mới của lữ khách.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      {\n        role: \"system\",\n        content: mySystemPrompt\n      },\n      {\n        role: \"user\",\n        content: myUserPrompt\n      }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();\n"
+        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = item.json.cards || [];\n  \n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có cuộc trò chuyện nào trước đó.\";\n  \n  // Lấy mảng history do Astro Webhook truyền sang\n  const history = $('Luận giải tarot').first().json.body.history || [];\n  \n  if (history.length > 0) {\n    isFollowUp = true;\n    \n    // Lọc ra các câu hỏi của user từ mảng history\n    previousQuestions = history.filter(msg => msg.role === 'user').map(msg => msg.content);\n    \n    if (previousQuestions.length > 0) {\n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi lữ khách đã hỏi trước đó:\\n${questionsStr}`;\n    }\n  }\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Hãy giải đáp câu hỏi của lữ khách dựa trên các lá bài đã bốc và ý nghĩa tương ứng được cung cấp.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc, cuốn hút và ý nghĩa đối với câu hỏi của khách hàng.\n2. Với mỗi lá bài, hãy lồng ghép cả \"mặt sáng\" (thuận lợi, thế mạnh) và \"bài học cần học\" để mang lại góc nhìn đa chiều và mang tính chữa lành thực tế, tuyệt đối không mang xu hướng mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm, chân thành, tựa như một người bạn tâm giao đang trò chuyện thật sự.\n4. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, hệ thống, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Luôn dùng các cách gọi khác như: Hướng thuận, mặt thuận lợi, v.v.).\n5. Trình bày đẹp mắt bằng Markdown. Giới hạn độ dài trong khoảng 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC (GIỮ NGUYÊN FORMAT MARKDOWN):\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm. Lữ khách đang có thắc mắc tiếp nối về trải bài Tarot trước đó. Hãy trực tiếp giải đáp thắc mắc mới này.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào vấn đề giải đáp câu hỏi mới, KHÔNG CẦN lặp lại lời chào mở đầu sến súa.\n2. Trình bày nội dung một cách tự nhiên, linh hoạt, giống như một cuộc trò chuyện sâu sắc. KHÔNG tuân theo outline rập khuôn (Mở đầu, Dòng chảy, Kết nối, Lời khuyên) như lần đầu.\n3. Hãy ngắt đoạn linh hoạt cho đỡ nhàm chán, có thể dùng bullet points tự do nếu phù hợp.\n4. Liên kết câu trả lời với ý nghĩa các lá bài đã bốc ban đầu và các vấn đề lữ khách đã hỏi trước đó để tạo sự liền mạch. Tuân thủ tuyệt đối ý nghĩa gốc của các lá bài được cung cấp.\n5. Giọng văn trầm ổn, đồng cảm, chân thành và mang tính chữa lành. TUYỆT ĐỐI KHÔNG nhắc đến các từ liên quan đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [CHI TIẾT TRẢI BÀI & Ý NGHĨA GỐC TỪ D1]\n- **Lá bài Quá khứ**: ${cardPast.card_name || \"—\"} (${cardPast.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPast.meaning || \"—\"}\n  \n- **Lá bài Hiện tại**: ${cardPresent.card_name || \"—\"} (${cardPresent.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardPresent.meaning || \"—\"}\n  \n- **Lá bài Tương lai**: ${cardFuture.card_name || \"—\"} (${cardFuture.orientation || \"Xuôi\"})\n  * Ý nghĩa cốt lõi: ${cardFuture.meaning || \"—\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI CỦA LỮ KHÁCH]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH LỊCH SỬ CÂU HỎI TRƯỚC ĐÓ]\n${historyText}\n\nHãy thấu cảm và giải đáp câu hỏi mới của lữ khách.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      {\n        role: \"system\",\n        content: mySystemPrompt\n      },\n      {\n        role: \"user\",\n        content: myUserPrompt\n      }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -256,24 +232,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://phogotarot-api.tuanphan1112-working.workers.dev/readings",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"session_id\": \"{{ $('Luận giải tarot').first().json.body.readingId }}\",\n  \"question\": {{ JSON.stringify($('Luận giải tarot').first().json.body.question || '') }},\n  \"cards_payload\": {{ JSON.stringify($('Luận giải tarot').first().json.body.cards || []) }},\n  \"interpretation\": {{ JSON.stringify($('Luận giải AI API').first().json.choices[0].message.content) }},\n  \"model\": \"{{ $('Luận giải AI API').first().json.model || 'unknown' }}\",\n  \"prompt_tokens\": {{ $('Luận giải AI API').first().json.usage?.prompt_tokens || 0 }},\n  \"completion_tokens\": {{ $('Luận giải AI API').first().json.usage?.completion_tokens || 0 }},\n  \"total_tokens\": {{ $('Luận giải AI API').first().json.usage?.total_tokens || 0 }}\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.1,
-      "position": [
-        256,
-        464
-      ],
-      "id": "80bac199-7676-4df6-8f01-1454080f5290",
-      "name": "Lưu Nhật Ký Chi Tiết"
-    },
-    {
-      "parameters": {
         "respondWith": "text",
         "responseBody": "={\n    \"interpretation\": {{ JSON.stringify($('Luận giải AI API').item.json.choices[0].message.content) }}\n}",
         "options": {}
@@ -281,14 +239,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        256,
-        688
+        272,
+        576
       ],
       "id": "52ad19b4-4c3c-42ad-8708-ef7dc07de01b",
       "name": "Respond to Webhook1"
     }
   ],
-  "pinData": {},
   "connections": {
     "Check câu hỏi": {
       "main": [
@@ -367,17 +324,6 @@
       "main": [
         [
           {
-            "node": "Lấy Lịch Sử D1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Lấy Lịch Sử D1": {
-      "main": [
-        [
-          {
             "node": "Tra cứu Ý Nghĩa Bài",
             "type": "main",
             "index": 0
@@ -411,11 +357,6 @@
       "main": [
         [
           {
-            "node": "Lưu Nhật Ký Chi Tiết",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Respond to Webhook1",
             "type": "main",
             "index": 0
@@ -424,15 +365,8 @@
       ]
     }
   },
-  "active": true,
-  "settings": {
-    "executionOrder": "v1",
-    "binaryMode": "separate"
-  },
-  "versionId": "1a1cb7a8-64e1-4e7e-b821-ec2e5ae36027",
+  "pinData": {},
   "meta": {
     "instanceId": "6f90c3216065e3becef20c965e0ebc68e58fb683b4d316f2caed0db02340b2c1"
-  },
-  "id": "caS62cqbNHi8Q3Ra",
-  "tags": []
+  }
 }

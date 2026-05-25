@@ -62,8 +62,8 @@ if (db && Astro.locals.user) {
                     <span class="oracle-status">Người truyền tin từ Vũ Trụ</span>
                 </div>
             </div>
-            <button id="clear-chat-history-btn" class="icon-btn" title="Xóa lịch sử trò chuyện">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2v2"></path></svg>
+            <button id="clear-chat-history-btn" class="icon-btn" title="Bắt đầu cuộc trò chuyện mới">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path><line x1="9" y1="10" x2="15" y2="10"></line><line x1="12" y1="7" x2="12" y2="13"></line></svg>
             </button>
         </div>
 
@@ -1371,10 +1371,10 @@ if (db && Astro.locals.user) {
             submitBtn.addEventListener('click', handleSend);
 
             clearBtn.addEventListener('click', () => {
-                if (confirm('Xóa lịch sử trò chuyện?')) {
+                if (confirm('Bắt đầu một phiên trò chuyện mới? Các tin nhắn hiện tại đã được lưu vào lịch sử.')) {
                     localStorage.removeItem(CHAT_HISTORY_KEY);
-                    chatMessages.innerHTML = '';
-                    initChat();
+                    localStorage.removeItem(READING_ID_KEY); // Force new conversation_id
+                    window.location.reload(); // Reload for a fresh state
                 }
             });
             

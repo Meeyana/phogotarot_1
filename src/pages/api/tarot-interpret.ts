@@ -61,7 +61,10 @@ export const POST: APIRoute = async (context) => {
         
         // 4. Lưu Message Logs (User & Assistant)
         if (question) {
-           await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
+           const questionAlreadySaved = history.some((msg: any) => msg.role === 'user' && msg.content === question);
+           if (!questionAlreadySaved) {
+               await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
+           }
         }
         await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model) VALUES (?, 'assistant', ?, 'n8n_agent')`).bind(safeReadingId, data.interpretation).run();
         

@@ -197,7 +197,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                                 <span style="color: rgba(255,255,255,0.6); font-size: 0.8rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{Astro.locals.user.email}</span>
                             </div>
                             <a href="/profile" class="nav-link submenu-link"><i class="fa-solid fa-user" style="width: 20px;"></i> Hồ sơ</a>
-                            <a href="#" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left" style="width: 20px;"></i> Lịch sử</a>
+                            <a href="/history" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left" style="width: 20px;"></i> Lịch sử</a>
                             <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px;">
                                 <button type="submit" class="nav-link submenu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket" style="width: 20px;"></i> Đăng xuất</button>
                             </form>
@@ -216,7 +216,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                             <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">{Astro.locals.user.email}</span>
                         </div>
                         <a href="/profile" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-user"></i> Hồ sơ</a>
-                        <a href="#" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
+                        <a href="/history" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
                         <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; width: 100%;">
                             <button type="submit" class="nav-link" style="background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); width: 100%; border-radius: 8px; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
                         </form>
