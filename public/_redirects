@@ -1,4 +1,4 @@
-/api/*   /.netlify/functions/ssr   200
+
 
 # Redirect trang danh sách
 /y-nghia-la-bai   /cards   301
