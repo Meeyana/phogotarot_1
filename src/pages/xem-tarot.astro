@@ -739,8 +739,9 @@ if (db && Astro.locals.user) {
     <!-- Thư viện Showdown để parse markdown -->
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
-    <script define:vars={{ isLoggedIn: !!Astro.locals.user }}>
+    <script define:vars={{ isLoggedIn: !!Astro.locals.user, serverUserId: Astro.locals.user?.id }}>
         window.IS_LOGGED_IN = isLoggedIn;
+        window.SERVER_USER_ID = serverUserId || null;
     </script>
 
     <script>
@@ -756,10 +757,19 @@ if (db && Astro.locals.user) {
             currentReadingId = crypto.randomUUID();
             localStorage.setItem(READING_ID_KEY, currentReadingId);
         }
-        let currentUserId = localStorage.getItem('phogo_user_id');
-        if (!currentUserId) {
-            currentUserId = 'guest_' + crypto.randomUUID();
+        
+        let currentUserId;
+        if (window.IS_LOGGED_IN && window.SERVER_USER_ID) {
+            currentUserId = window.SERVER_USER_ID;
             localStorage.setItem('phogo_user_id', currentUserId);
+        } else {
+            currentUserId = localStorage.getItem('phogo_user_id');
+            // Nếu chưa đăng nhập mà ID cũ trong storage không phải dạng guest_ (do phiên trước đăng nhập để lại)
+            // thì phải xóa đi và cấp guest ID mới để tránh Guest dùng nhầm ID của user thật.
+            if (!currentUserId || !currentUserId.startsWith('guest_')) {
+                currentUserId = 'guest_' + crypto.randomUUID();
+                localStorage.setItem('phogo_user_id', currentUserId);
+            }
         }
 
         // DOM Elements
@@ -838,8 +848,35 @@ if (db && Astro.locals.user) {
                 const pendingConfirm = localStorage.getItem('waitingForTarotConfirm');
                 if (pendingConfirm) {
                     userQuestion = pendingConfirm;
+                    lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
+                    lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
                     showConfirmationBox(pendingConfirm);
                     return; // Không chạy logic self-healing bên dưới nữa
+                }
+
+                // Phục hồi trạng thái đang bốc bài xong nhưng bị rớt mạng / F5 trước khi có kết quả
+                const pendingCardsStr = localStorage.getItem('pending_tarot_cards');
+                if (pendingCardsStr) {
+                    const lastMsg = history[history.length - 1];
+                    if (lastMsg && lastMsg.sender === 'user') {
+                        userQuestion = lastMsg.text;
+                        selectedCards = JSON.parse(pendingCardsStr);
+                        // Khôi phục token usage
+                        lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
+                        lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
+                        
+                        // Tự động gọi lại luận giải
+                        isThinking = true;
+                        setTimeout(() => {
+                            requestInterpretation();
+                        }, 500);
+                        return; // Bỏ qua self-healing cơ bản
+                    } else {
+                        // Rác, dọn dẹp
+                        localStorage.removeItem('pending_tarot_cards');
+                        localStorage.removeItem('pending_validation_usage');
+                        localStorage.removeItem('pending_validation_model');
+                    }
                 }
 
                 // Tự phục hồi trạng thái (Self-healing UX):
@@ -866,8 +903,14 @@ if (db && Astro.locals.user) {
         }
 
         function saveMessage(text, sender, cards = null, usage = null, model = null) {
-            const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            let history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
             history.push({ text, sender, cards, usage, model, timestamp: new Date().toISOString() });
+            
+            // Giới hạn lịch sử lưu ở Client để không bị tràn RAM/LocalStorage (Issue #5)
+            if (history.length > 50) {
+                history = history.slice(history.length - 50);
+            }
+            
             localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
         }
 
@@ -948,16 +991,15 @@ if (db && Astro.locals.user) {
         
         async function loadTarotData() {
             try {
-                const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
-                const response = await fetch(url);
-                const text = await response.text();
-                const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-                const table = JSON.parse(jsonText).table;
-
-                cardData = table.rows.map((row, index) => ({
-                    id: index,
-                    name: row.c[0]?.v || 'Unknown Card',
-                    image: row.c[1]?.v || 'https://placehold.co/200x340'
+                const response = await fetch('/api/tarot-cards');
+                if (!response.ok) throw new Error('Không thể tải dữ liệu bài Tarot từ Database');
+                
+                const cards = await response.json();
+                
+                cardData = cards.map(card => ({
+                    id: card.id,
+                    name: card.name,
+                    image: card.image
                 }));
 
                 // Preload images
@@ -1100,6 +1142,8 @@ if (db && Astro.locals.user) {
         function showConfirmationBox(question) {
             // Ghi nhớ trạng thái đang chờ xác nhận
             localStorage.setItem('waitingForTarotConfirm', question);
+            localStorage.setItem('pending_validation_usage', JSON.stringify(lastValidationUsage));
+            localStorage.setItem('pending_validation_model', JSON.stringify(lastValidationModel));
 
             // Tạo bong bóng chat của Bot có kèm 2 nút tương tác Xác nhận / Từ chối (save = false vì đây là tin nhắn tương tác tạm thời)
             const msgDiv = addMessage("Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?", 'bot', false);
@@ -1134,6 +1178,8 @@ if (db && Astro.locals.user) {
 
                 noBtn.addEventListener('click', () => {
                     localStorage.removeItem('waitingForTarotConfirm');
+                    localStorage.removeItem('pending_validation_usage');
+                    localStorage.removeItem('pending_validation_model');
                     msgDiv.remove();
                     addMessage("Được chứ, lữ khách cứ tự nhiên. Mình luôn sẵn sàng chia sẻ thêm hoặc trò chuyện cùng bạn. Bạn muốn hỏi gì khác không?", 'bot', true);
                     isThinking = false;
@@ -1257,6 +1303,9 @@ if (db && Astro.locals.user) {
                     isAnimating = false;
 
                     if (selectedCards.length === 3) {
+                        // Lưu bài đã bốc vào LocalStorage để phòng ngừa rớt mạng/F5
+                        localStorage.setItem('pending_tarot_cards', JSON.stringify(selectedCards));
+                        
                         setTimeout(() => {
                             closeTarotModal();
                             requestInterpretation();
@@ -1286,6 +1335,14 @@ if (db && Astro.locals.user) {
         async function requestInterpretation() {
             addTypingIndicator();
             
+            // Khôi phục lại usage nếu bị refresh
+            if (!lastValidationUsage) {
+                lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
+            }
+            if (!lastValidationModel) {
+                lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
+            }
+            
             try {
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
@@ -1310,6 +1367,10 @@ if (db && Astro.locals.user) {
                 removeTypingIndicator();
                 if (result && result.interpretation) {
                     addMessage(result.interpretation, 'bot', true, selectedCards, result.usage, result.model);
+                    // Dọn dẹp pending vì đã thành công
+                    localStorage.removeItem('pending_tarot_cards');
+                    localStorage.removeItem('pending_validation_usage');
+                    localStorage.removeItem('pending_validation_model');
                 } else {
                     throw new Error('Không nhận được thông điệp');
                 }
