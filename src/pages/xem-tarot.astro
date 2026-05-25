@@ -739,6 +739,10 @@ if (db && Astro.locals.user) {
     <!-- Thư viện Showdown để parse markdown -->
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
+    <script define:vars={{ isLoggedIn: !!Astro.locals.user }}>
+        window.IS_LOGGED_IN = isLoggedIn;
+    </script>
+
     <script>
         // CONFIG
         const N8N_VALIDATE_URL = '/api/tarot-validate'; // API Validate câu hỏi
@@ -796,8 +800,29 @@ if (db && Astro.locals.user) {
 
         // === CHAT LOGIC ===
 
+        async function syncHistoryIfLoggedin(history) {
+            if (!window.IS_LOGGED_IN || history.length === 0) return;
+            
+            const SYNC_KEY = `is_synced_${currentReadingId}`;
+            if (localStorage.getItem(SYNC_KEY)) return;
+
+            try {
+                const response = await fetch('/api/tarot-sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history, readingId: currentReadingId })
+                });
+                if (response.ok) {
+                    localStorage.setItem(SYNC_KEY, 'true');
+                }
+            } catch (err) {
+                console.error('Lỗi sync lịch sử:', err);
+            }
+        }
+
         function initChat() {
             const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            syncHistoryIfLoggedin(history);
             const container = document.querySelector('.chat-page-container');
             if (history.length === 0) {
                 container.classList.add('initial-state');
