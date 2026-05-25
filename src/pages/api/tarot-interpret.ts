@@ -66,10 +66,21 @@ export const POST: APIRoute = async (context) => {
                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
            }
         }
-        const actualModel = data.model || 'n8n_agent';
-        const promptTokens = data.usage?.prompt_tokens || 0;
-        const completionTokens = data.usage?.completion_tokens || 0;
-        const totalTokens = data.usage?.total_tokens || 0;
+        const actualModel = data.model || body.validationModel || 'n8n_agent';
+        const valUsage = body.validationUsage || {};
+        const dataUsage = data.usage || {};
+        
+        const promptTokens = (valUsage.prompt_tokens || 0) + (dataUsage.prompt_tokens || 0);
+        const completionTokens = (valUsage.completion_tokens || 0) + (dataUsage.completion_tokens || 0);
+        const totalTokens = (valUsage.total_tokens || 0) + (dataUsage.total_tokens || 0);
+
+        // Trả về usage tổng hợp cho frontend để lưu vào localStorage
+        data.usage = {
+            prompt_tokens: promptTokens,
+            completion_tokens: completionTokens,
+            total_tokens: totalTokens
+        };
+        data.model = actualModel;
 
         await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, data.interpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
         
