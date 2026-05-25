@@ -968,10 +968,52 @@ if (db && Astro.locals.user) {
 
             if (hasDrawnBefore) {
                 try {
-                    // Nếu đã từng bốc bài thành công trong phiên: Bỏ qua hoàn toàn bước validate, chạy thẳng giải thích tiếp nối
-                    await requestFollowUpInterpretation(question);
+                    // Trích xuất 3 lá bài đã bốc từ localStorage để gửi kèm cho n8n
+                    const drawnMsg = priorHistory.find(m => m.sender === 'bot' && m.cards && m.cards.length === 3);
+                    const drawnCards = drawnMsg
+                        ? drawnMsg.cards.map(c => ({ name: c.name, orientation: c.orientation, isReversed: c.isReversed }))
+                        : [];
+
+                    // Trích xuất lịch sử hội thoại (chuyển về format {role, content} cho LLM)
+                    const chatHistory = priorHistory
+                        .filter(m => m.text && m.text.trim())
+                        .map(m => ({ role: m.sender === 'user' ? 'user' : 'assistant', content: m.text }));
+
+                    // Luôn validate trước - mọi turn đều phải qua bước này
+                    const response = await fetch(N8N_VALIDATE_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            question,
+                            readingId: currentReadingId,
+                            userId: currentUserId,
+                            isFollowUp: true,
+                            cards: drawnCards,    // 3 lá bài đã bốc
+                            history: chatHistory  // Lịch sử hội thoại để LLM có context
+                        })
+                    });
+
+                    if (!response.ok) throw new Error('Lỗi xác thực');
+                    const result = await response.json();
+
+                    if (result && (result.isValid === "true" || result.isValid === true)) {
+                        if (result.pick_card === false || result.pick_card === "false") {
+                            // pick_card=false: n8n đã gọi LLM với context đầy đủ, trả về reason là câu trả lời thực sự
+                            addMessage(result?.reason || "Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì về trải bài này không?", 'bot');
+                            isThinking = false;
+                        } else {
+                            // pick_card=true (hoặc undefined): Câu hỏi tarot thực sự
+                            // Gọi interpret với history để AI trả lời dựa trên ngữ cảnh các lá bài đã bốc
+                            await requestFollowUpInterpretation(question);
+                        }
+                    } else {
+                        // Không hợp lệ -> Từ chối lịch sự
+                        addMessage(result?.reason || "Câu hỏi của bạn chưa phù hợp, hãy đặt câu hỏi mở hơn nhé.", 'bot');
+                        isThinking = false;
+                    }
                 } catch (err) {
-                    // Bỏ qua vì lỗi đã được xử lý hiển thị nút Thử lại trong requestFollowUpInterpretation
+                    // Fallback khi lỗi validate: Vẫn cho giải thích tiếp để tránh nghẽn flow
+                    await requestFollowUpInterpretation(question);
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = sendIcon;

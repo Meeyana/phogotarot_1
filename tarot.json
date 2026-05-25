@@ -67,7 +67,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={\n\t\"isValid\": {{ $('check keyword').item.json.isTarot }},\n\t\"reason\": \"ok\"\n}",
+        "responseBody": "={\n\t\"isValid\": {{ $('check keyword').item.json.isTarot }},\n\t\"pick_card\": true,\n\t\"reason\": \"ok\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",
@@ -81,7 +81,7 @@
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi rõ ràng cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi ra sao?\", \"Tôi có nên đổi việc không?\", \"Cho tôi một lời khuyên\").\n- reason BẮT BUỘC phải là \"ok\".\n\n2. isValid = true, pick_card = false:\n- Người dùng chỉ đang chào hỏi hoặc cảm ơn lịch sự (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Chào buổi sáng\", \"Ok mình hiểu rồi\").\n- reason phải là một câu đối đáp lịch sự (ví dụ: \"Chào bạn, mình có thể giúp gì cho bạn qua các lá bài Tarot?\", \"Không có gì, chúc bạn một ngày tốt lành!\").\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi rõ ràng cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi ra sao?\", \"Tôi có nên đổi việc không?\", \"Cho tôi một lời khuyên\").\n- reason BẮT BUỘC phải là \"ok\".\n\n2. isValid = true, pick_card = false:\n- Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -138,6 +138,40 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "pick-card-check-condition",
+              "leftValue": "={{ $json.output.pick_card }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        208
+      ],
+      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "name": "check pick_card"
+    },
+    {
+      "parameters": {
         "respondWith": "json",
         "responseBody": "={{ $json.output }}",
         "options": {}
@@ -145,11 +179,70 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        544,
-        208
+        784,
+        112
       ],
       "id": "31832bf8-daf4-47d3-ae07-b5fa47c08673",
       "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const question = $('Check câu hỏi').first().json.body.question || '';\n  const history = $('Check câu hỏi').first().json.body.history || [];\n  const cards = $('Check câu hỏi').first().json.body.cards || [];\n\n  // Xây dựng context 3 lá bài\n  let cardsSection = '';\n  if (cards.length >= 3) {\n    cardsSection = `### Các lá bài đã bốc trong phiên này:\\n- Lá 1 (Quá khứ): ${cards[0].name || '?'} (${cards[0].orientation || 'Xuôi'})\\n- Lá 2 (Hiện tại): ${cards[1].name || '?'} (${cards[1].orientation || 'Xuôi'})\\n- Lá 3 (Tương lai): ${cards[2].name || '?'} (${cards[2].orientation || 'Xuôi'})`;\n  } else if (cards.length > 0) {\n    const cardLines = cards.map((c, i) => `- Lá ${i+1}: ${c.name || '?'} (${c.orientation || 'Xuôi'})`).join('\\n');\n    cardsSection = `### Các lá bài đã bốc:\\n${cardLines}`;\n  }\n\n  // Xây dựng lịch sử hội thoại\n  let historyText = 'Đây là lần đầu tiên lữ khách nhắn tin.';\n  if (history.length > 0) {\n    historyText = history.map(msg => `${msg.role === 'user' ? 'Khách' : 'Tarot Reader'}: ${msg.content}`).join('\\n');\n  }\n\n  const systemPrompt = `## ROLE: Master Tarot Reader ấm áp, thân thiện, thấu cảm\n## TASK: Lữ khách đang gửi một tin nhắn trò chuyện tiếp nối sau khi đã xem trải bài Tarot. Hãy phản hồi tự nhiên, phù hợp với toàn bộ ngữ cảnh cuộc trò chuyện.\n\n## QUY TẮC:\n1. Phản hồi ngắn gọn, tự nhiên (2-5 câu). Không cần format markdown phức tạp.\n2. Luôn dựa vào lịch sử hội thoại và ý nghĩa các lá bài để cho câu trả lời phù hợp ngữ cảnh.\n3. Giọng văn ấm áp, đồng cảm - như người bạn tâm giao, không sến súa.\n4. Nếu lữ khách hỏi thêm về lá bài, hãy giải thích sâu hơn dựa trên lá bài được đề cập.\n5. Nếu lữ khách chào hỏi hoặc cảm ơn, hãy đáp lại lịch sự và gợi mở tiếp.\n6. TUYỆT ĐỐI không nhắc đến AI, thuật toán, hay máy tính.`;\n\n  const userPrompt = `${cardsSection}\\n\\n### Lịch sử cuộc trò chuyện:\\n${historyText}\\n\\n### Tin nhắn mới của lữ khách:\\n\"${question}\"\\n\\nHãy phản hồi tự nhiên và phù hợp với ngữ cảnh.`;\n\n  item.json.conversationalPayload = {\n    model: 'n8n2',\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userPrompt }\n    ],\n    temperature: 0.8\n  };\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        784,
+        320
+      ],
+      "id": "conv-prompt-node-001",
+      "name": "build conversational prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.conversationalPayload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1008,
+        320
+      ],
+      "id": "conv-api-node-002",
+      "name": "Conversational AI API"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\t\"isValid\": true,\n\t\"pick_card\": false,\n\t\"reason\": {{ JSON.stringify($('Conversational AI API').item.json.choices[0].message.content || 'Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì không?') }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1232,
+        320
+      ],
+      "id": "conv-respond-node-003",
+      "name": "Respond conversational"
     },
     {
       "parameters": {
@@ -313,7 +406,47 @@
       "main": [
         [
           {
+            "node": "check pick_card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check pick_card": {
+      "main": [
+        [
+          {
             "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "build conversational prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build conversational prompt": {
+      "main": [
+        [
+          {
+            "node": "Conversational AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversational AI API": {
+      "main": [
+        [
+          {
+            "node": "Respond conversational",
             "type": "main",
             "index": 0
           }
