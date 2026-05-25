@@ -14,7 +14,7 @@
     "@fontsource/playfair-display": "^5.2.8",
     "@fontsource/quicksand": "^5.2.10",
     "@netlify/functions": "^5.1.0",
-    "arctic": "^3.7.0",
+    "@supabase/supabase-js": "^2.106.2",
     "astro": "^5.16.4",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.2"
