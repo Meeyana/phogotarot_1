@@ -1,8 +1,9 @@
 export const prerender = false;
 import fs from "fs";
 import path from "path";
+import type { APIRoute } from 'astro';
 
-export async function POST({ request }: { request: Request }) {
+export const POST: APIRoute = async ({ request }) => {
   try {
     // 👇 Đọc thô body text thay vì request.json()
     const rawBody = await request.text();
