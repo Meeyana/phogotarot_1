@@ -48,7 +48,13 @@ export const POST: APIRoute = async (context) => {
                 if (isValid && (data.pick_card !== false && data.pick_card !== "false")) {
                      botReply = "Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?";
                 }
-                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model) VALUES (?, 'assistant', ?, 'n8n_validate_agent')`).bind(safeReadingId, botReply).run();
+                
+                const actualModel = data.model || 'n8n_validate_agent';
+                const promptTokens = data.usage?.prompt_tokens || 0;
+                const completionTokens = data.usage?.completion_tokens || 0;
+                const totalTokens = data.usage?.total_tokens || 0;
+
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, botReply, actualModel, promptTokens, completionTokens, totalTokens).run();
             }
         }
       } catch (dbError) {
