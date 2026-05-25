@@ -4,7 +4,9 @@ export const POST: APIRoute = async ({ request }) => {
   console.log('🔵 tarot-validate API route called');
   try {
     const body = await request.json();
-    const webhookUrl = 'https://n8n.phogotarot.com/webhook-test/7179b8ca-c774-47a9-9ed4-6bf975344059';
+    const webhookUrl = import.meta.env.N8N_VALIDATE_TAROT || process.env.N8N_VALIDATE_TAROT;
+    
+    if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
     const response = await fetch(webhookUrl, {
       method: 'POST',
