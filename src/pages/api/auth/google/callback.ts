@@ -58,8 +58,11 @@ export const GET: APIRoute = async (context) => {
       } else {
         // Tạo tài khoản mới hoàn toàn
         userId = crypto.randomUUID();
-        await db.prepare('INSERT INTO users (id, email, name, avatar_url, role) VALUES (?, ?, ?, ?, ?)')
-          .bind(userId, email, name, picture, 'user').run();
+        await db.prepare('INSERT INTO users (id, email) VALUES (?, ?)')
+          .bind(userId, email).run();
+          
+        await db.prepare('INSERT INTO user_profiles (user_id, full_name) VALUES (?, ?)')
+          .bind(userId, name).run();
         
         await db.prepare('INSERT INTO auth_providers (id, user_id, provider, provider_user_id, access_token) VALUES (?, ?, ?, ?, ?)')
           .bind(crypto.randomUUID(), userId, 'google', googleId, tokens.accessToken).run();

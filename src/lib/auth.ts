@@ -25,9 +25,10 @@ export async function createSession(db: any, userId: string): Promise<string> {
 // Xác thực session
 export async function validateSession(db: any, sessionId: string) {
   const result = await db.prepare(`
-    SELECT sessions.*, users.id as user_id, users.email, users.name, users.avatar_url, users.role 
+    SELECT sessions.*, users.id as user_id, users.email, user_profiles.full_name as name 
     FROM sessions 
     INNER JOIN users ON sessions.user_id = users.id 
+    LEFT JOIN user_profiles ON sessions.user_id = user_profiles.user_id
     WHERE sessions.id = ?
   `).bind(sessionId).first();
 
@@ -45,8 +46,8 @@ export async function validateSession(db: any, sessionId: string) {
     id: result.user_id,
     email: result.email,
     name: result.name,
-    avatar: result.avatar_url,
-    role: result.role
+    avatar: null,
+    role: 'user'
   };
 
   // Kiểm tra hết hạn

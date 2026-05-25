@@ -10,10 +10,28 @@ export const POST: APIRoute = async (context) => {
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
+    const db = env.DB;
+    let history = [];
+    if (db && body.readingId) {
+      try {
+        const logs = await db.prepare('SELECT role, content FROM message_logs WHERE conversation_id = ? ORDER BY id ASC').bind(body.readingId).all();
+        if (logs && logs.results) {
+          history = logs.results;
+        }
+      } catch (err) {
+        console.error("Lỗi lấy lịch sử:", err);
+      }
+    }
+
+    const payload = {
+      ...body,
+      history: history
+    };
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(payload)
     });
 
     const data = await response.json();

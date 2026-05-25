@@ -30,8 +30,13 @@ export const POST: APIRoute = async (context) => {
     const passwordHash = await hashPassword(password);
 
     // Tạo user
-    await db.prepare('INSERT INTO users (id, email, name, password_hash, role) VALUES (?, ?, ?, ?, ?)')
-      .bind(userId, email, name, passwordHash, 'user')
+    await db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')
+      .bind(userId, email, passwordHash)
+      .run();
+      
+    // Tạo user profile
+    await db.prepare('INSERT INTO user_profiles (user_id, full_name) VALUES (?, ?)')
+      .bind(userId, name)
       .run();
 
     // Tạo session
