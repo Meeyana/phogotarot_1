@@ -1,10 +1,12 @@
 import { defineConfig } from 'astro/config';
-import cloudflare from '@astrojs/cloudflare';
+import netlify from '@astrojs/netlify';
 import sitemap from '@astrojs/sitemap';
 
 // Import module 'fs' và 'path'
 import fs from 'fs';
 import path from 'path';
+
+import cloudflare from "@astrojs/cloudflare";
 
 /**
  * Hàm đọc file từ thư mục content để lấy URL động
@@ -30,7 +32,7 @@ function getDynamicRoutes(collectionPath, urlPrefix) {
 
 // (QUAN TRỌNG) CẬP NHẬT URL PREFIX TẠI ĐÂY:
 // Đổi từ '.../y-nghia-la-bai' sang '.../cards' để khớp với cấu trúc trang mới
-const cardUrls = getDynamicRoutes('cards', 'https://phogotarot.com/cards'); 
+const cardUrls = getDynamicRoutes('cards', 'https://phogotarot.com/cards');
 
 // Blog vẫn giữ nguyên
 const blogUrls = getDynamicRoutes('blog', 'https://phogotarot.com/blog');
@@ -43,11 +45,7 @@ const allCustomPages = [...cardUrls, ...blogUrls];
 export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'server',
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: true
-    }
-  }),
+  adapter: cloudflare(),
   integrations: [
     sitemap({
       customPages: allCustomPages, // Sitemap sẽ chứa link mới (/cards/...)
