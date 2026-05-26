@@ -1070,7 +1070,13 @@ if (db && Astro.locals.user) {
                         })
                     });
 
-                    if (!response.ok) throw new Error('Lỗi xác thực');
+                    if (!response.ok) {
+                        if (response.status === 402) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.error || 'OUT_OF_CREDITS');
+                        }
+                        throw new Error('Lỗi xác thực');
+                    }
                     const result = await response.json();
 
                     if (result && (result.isValid === "true" || result.isValid === true)) {
@@ -1078,6 +1084,9 @@ if (db && Astro.locals.user) {
                             // pick_card=false: n8n đã gọi LLM conversational, trả về câu trả lời trong reason
                             addMessage(result?.reason || "Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì về trải bài này không?", 'bot', true, null, result.usage, result.model);
                             isThinking = false;
+                            
+                            // Gọi hàm fetchBalance() toàn cục để cập nhật số dư nếu bị trừ
+                            if (typeof window.fetchBalance === 'function') window.fetchBalance();
                         } else {
                             // pick_card=true: Câu hỏi tarot mới -> Hiện box xác nhận bốc bài (giống Turn 1)
                             // isThinking giữ nguyên = true cho đến khi user click Đồng ý / Từ chối
@@ -1091,8 +1100,13 @@ if (db && Astro.locals.user) {
                         isThinking = false;
                     }
                 } catch (err) {
-                    // Fallback khi lỗi validate: Cho hiện box xác nhận để tránh nghẽn flow
-                    showConfirmationBox(question);
+                    if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {
+                        addMessage(err.message, 'bot', false);
+                        isThinking = false;
+                    } else {
+                        // Fallback khi lỗi validate: Cho hiện box xác nhận để tránh nghẽn flow
+                        showConfirmationBox(question);
+                    }
                 } finally {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = sendIcon;
@@ -1109,7 +1123,13 @@ if (db && Astro.locals.user) {
                     body: JSON.stringify({ question, readingId: currentReadingId, userId: currentUserId })
                 });
 
-                if (!response.ok) throw new Error('Lỗi xác thực');
+                if (!response.ok) {
+                    if (response.status === 402) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'OUT_OF_CREDITS');
+                    }
+                    throw new Error('Lỗi xác thực');
+                }
                 const result = await response.json();
 
                 if (result && (result.isValid === "true" || result.isValid === true)) {
@@ -1117,6 +1137,8 @@ if (db && Astro.locals.user) {
                         // Trả lời câu chào xã giao trực tiếp từ result.reason
                         addMessage(result?.reason || "Chào bạn, mình luôn ở đây để giúp bạn giải đáp những thắc mắc qua lăng kính Tarot. Bạn có câu hỏi nào không?", 'bot', true, null, result.usage, result.model);
                         isThinking = false;
+                        
+                        if (typeof window.fetchBalance === 'function') window.fetchBalance();
                     } else {
                         // Câu hỏi hợp lệ (pick_card = true hoặc undefined) -> Hiện box xác nhận trải bài
                         lastValidationUsage = result.usage || null;
@@ -1129,8 +1151,13 @@ if (db && Astro.locals.user) {
                     isThinking = false;
                 }
             } catch (err) {
-                // Fallback khi lỗi validate: Cho hiện box xác nhận bốc bài luôn để tránh nghẽn flow test
-                showConfirmationBox(question);
+                if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {
+                    addMessage(err.message, 'bot', false);
+                    isThinking = false;
+                } else {
+                    // Fallback khi lỗi validate: Cho hiện box xác nhận bốc bài luôn để tránh nghẽn flow test
+                    showConfirmationBox(question);
+                }
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = sendIcon;
@@ -1361,7 +1388,13 @@ if (db && Astro.locals.user) {
                 lastValidationUsage = null;
                 lastValidationModel = null;
 
-                if (!response.ok) throw new Error('Lỗi luận giải');
+                if (!response.ok) {
+                    if (response.status === 402) {
+                        const errorData = await response.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'OUT_OF_CREDITS');
+                    }
+                    throw new Error('Lỗi luận giải');
+                }
                 const result = await response.json();
 
                 removeTypingIndicator();
@@ -1371,11 +1404,21 @@ if (db && Astro.locals.user) {
                     localStorage.removeItem('pending_tarot_cards');
                     localStorage.removeItem('pending_validation_usage');
                     localStorage.removeItem('pending_validation_model');
+                    
+                    if (typeof window.fetchBalance === 'function') window.fetchBalance();
                 } else {
                     throw new Error('Không nhận được thông điệp');
                 }
             } catch (err) {
                 removeTypingIndicator();
+                
+                if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {
+                    addMessage(err.message, 'bot', false, selectedCards);
+                    // Dọn dẹp state để user có thể nạp tiền và bốc bài mới
+                    localStorage.removeItem('pending_tarot_cards');
+                    return;
+                }
+                
                 // addMessage với save=false vì đây là tin nhắn lỗi tạm thời, có thể thử lại
                 const errorMsgDiv = addMessage("Kết nối vũ trụ bị gián đoạn. Vui lòng thử lại sau nha.", 'bot', false, selectedCards);
                 const contentDiv = errorMsgDiv?.querySelector('.message-content');

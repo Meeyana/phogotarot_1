@@ -19,13 +19,22 @@ export const POST: APIRoute = async (context) => {
         const queryUserId = user?.id || body.userId;
         if (queryUserId) {
             try {
+                // Kiểm tra Credit trước
+                const wallet = await db.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(queryUserId).first();
+                if (!wallet || wallet.balance <= 0) {
+                    return new Response(JSON.stringify({ 
+                        error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
+                        code: 'OUT_OF_CREDITS' 
+                    }), { status: 402 });
+                }
+
                 const row = await db.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
                 if (row) {
                     profile.name = row.nickname || row.full_name || 'lữ khách';
                     profile.gender = row.gender || 'bạn';
                 }
             } catch (err) {
-                console.error("Lỗi lấy user_profiles:", err);
+                console.error("Lỗi lấy thông tin user:", err);
             }
         }
     }
@@ -118,6 +127,10 @@ export const POST: APIRoute = async (context) => {
         data.model = actualModel;
 
         await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, data.interpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
+        
+        // 5. TRỪ CREDIT
+        await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
+        await db.prepare(`INSERT INTO credit_transactions (id, user_id, amount, type, reason) VALUES (?, ?, -1, 'deduction', 'Tarot Reading')`).bind(crypto.randomUUID(), safeUserId).run();
         
       } catch (dbError) {
         console.error("Lỗi lưu D1 (tarot):", dbError);

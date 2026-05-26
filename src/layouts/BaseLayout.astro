@@ -184,12 +184,17 @@ const ogImageURL = new URL(ogImage, Astro.site);
                 <>
                     {/* Giao diện Desktop: Dạng Icon + Dropdown */}
                     <div class="nav-item nav-dropdown desktop-only-profile">
-                        <div class="nav-link user-profile-link" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; hover: background: rgba(255,255,255,0.1);">
-                            {Astro.locals.user.avatar ? (
-                                <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
-                            ) : (
-                                <i class="fa-solid fa-circle-user" style="font-size: 28px; color: var(--gold-color, #F2C94C);"></i>
-                            )}
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div class="credit-badge" title="Số lượt xem bài còn lại" style="background: rgba(242, 201, 76, 0.1); border: 1px solid var(--gold-color, #F2C94C); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--gold-color, #F2C94C); display: flex; align-items: center; gap: 5px; cursor: help;">
+                                <i class="fa-regular fa-gem"></i> <span id="desktop-credit-balance">...</span>
+                            </div>
+                            <div class="nav-link user-profile-link" style="cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;">
+                                {Astro.locals.user.avatar ? (
+                                    <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
+                                ) : (
+                                    <i class="fa-solid fa-circle-user" style="font-size: 28px; color: var(--gold-color, #F2C94C);"></i>
+                                )}
+                            </div>
                         </div>
                         <div class="dropdown-submenu" style="right: 0; left: auto; min-width: 180px; padding: 10px 0;">
                             <div style="padding: 10px 15px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 5px;">
@@ -213,7 +218,10 @@ const ogImageURL = new URL(ogImage, Astro.site);
                                 <i class="fa-solid fa-circle-user" style="font-size: 40px; color: var(--gold-color, #F2C94C); margin-bottom: 5px;"></i>
                             )}
                             <strong style="color: #fff; font-size: 1.1rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
-                            <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">{Astro.locals.user.email}</span>
+                            <div class="credit-badge" style="background: rgba(242, 201, 76, 0.1); border: 1px solid var(--gold-color, #F2C94C); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--gold-color, #F2C94C); margin-top: 5px; display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-gem"></i> <span id="mobile-credit-balance">...</span>
+                            </div>
+                            <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 5px;">{Astro.locals.user.email}</span>
                         </div>
                         <a href="/profile" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-user"></i> Hồ sơ</a>
                         <a href="/history" class="nav-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
@@ -353,6 +361,29 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     }
                 }
             });
+
+            // 3. Fetch Credit Balance
+            const fetchBalance = async () => {
+                const desktopBadge = document.getElementById('desktop-credit-balance');
+                const mobileBadge = document.getElementById('mobile-credit-balance');
+                
+                if (!desktopBadge && !mobileBadge) return; // Khách chưa đăng nhập
+
+                try {
+                    const response = await fetch('/api/user/balance');
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.success) {
+                            if (desktopBadge) desktopBadge.innerText = data.balance + ' Lượt';
+                            if (mobileBadge) mobileBadge.innerText = data.balance + ' Lượt';
+                        }
+                    }
+                } catch (error) {
+                    console.error("Lỗi fetch balance:", error);
+                }
+            };
+            window.fetchBalance = fetchBalance;
+            fetchBalance();
         });
     </script>
 </body>

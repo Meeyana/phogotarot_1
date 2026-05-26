@@ -59,17 +59,17 @@ Hệ thống Database Schema đã có đầy đủ trong thư mục `database/sc
 ### PHASE 1: Triển khai Authentication với Database có sẵn
 Mục tiêu: Đưa các bảng `users`, `user_profiles`, `auth_providers`, `sessions` vào hoạt động thực tế.
 
-- [ ] **Giao diện Login/Register:** Cập nhật Navbar, tạo modal/trang đăng nhập hỗ trợ Email/Pass hoặc OAuth (Google/Facebook).
-- [ ] **Xử lý Backend Auth:** 
+- [x] **Giao diện Login/Register:** Cập nhật Navbar, tạo modal/trang đăng nhập hỗ trợ Email/Pass hoặc OAuth (Google/Facebook).
+- [x] **Xử lý Backend Auth:** 
   - Viết API `POST /api/auth/login`, `POST /api/auth/register`.
   - Viết logic tạo session (ghi vào bảng `sessions`), cấp Cookie cho Client.
-- [ ] **Cập nhật Middleware (`middleware.ts`):** 
+- [x] **Cập nhật Middleware (`middleware.ts`):** 
   - Đọc Cookie, join bảng `sessions` và `users` để xác thực, gán vào `context.locals.user`.
 
 ### PHASE 2: Triển khai Hệ thống Credit (Lượt hỏi)
 Mục tiêu: Mỗi câu hỏi/trải bài sẽ tiêu tốn 1 lượng Credit từ bảng `credit_wallets`.
 
-- [ ] **Gán Credit mặc định:** Khi tạo User mới, tự động chèn 1 bản ghi vào `credit_wallets` với `balance` khởi tạo (VD: 3 lượt miễn phí).
+- [x] **Gán Credit mặc định:** Khi tạo User mới, tự động chèn 1 bản ghi vào `credit_wallets` với `balance` khởi tạo (VD: 3 lượt miễn phí).
 - [ ] **Logic Trừ Credit (`tarot-validate.ts` / `tarot-interpret.ts`):**
   - Trước khi gọi n8n: Query bảng `credit_wallets`. Nếu `balance <= 0` -> Trả lỗi 402 Payment Required.
   - Sau khi n8n phản hồi thành công: Thực hiện lệnh `UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?` và ghi lại 1 log vào `credit_transactions`.
@@ -104,5 +104,5 @@ Mục tiêu: Đa dạng hóa trải nghiệm để tăng giá trị sản phẩm
     - *Chuyên gia thẳng thắn* (Trực diện, sắc sảo).
     - *Trưởng lão huyền bí* (Uyên thâm, dùng nhiều ẩn dụ).
   - Cập nhật Payload: Truyền biến `reader_tone` vào n8n để nội suy (bundle) trực tiếp vào System Prompt.
-- [ ] **Tích hợp Đăng nhập Mạng xã hội (OAuth):**
+- [x] **Tích hợp Đăng nhập Mạng xã hội (OAuth):**
   - Do đã có form Email/Password cơ bản, cần bổ sung Google/Facebook Auth để giảm rào cản đăng ký cho user.

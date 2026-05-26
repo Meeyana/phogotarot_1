@@ -28,6 +28,21 @@ export const POST: APIRoute = async (context) => {
     }
     body.userProfile = profile;
     
+      // Kiểm tra Credit trước khi gọi AI
+      if (user && env.DB) {
+        try {
+          const wallet = await env.DB.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(user.id).first();
+          if (!wallet || wallet.balance <= 0) {
+             return new Response(JSON.stringify({ 
+                error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
+                code: 'OUT_OF_CREDITS' 
+             }), { status: 402 });
+          }
+        } catch (dbErr) {
+          console.error("Lỗi kiểm tra Credit:", dbErr);
+        }
+      }
+
       // Enrich thẻ bài với ý nghĩa từ DB
       if (body.cards && body.cards.length > 0 && env.DB) {
         for (let i = 0; i < body.cards.length; i++) {
@@ -87,6 +102,12 @@ export const POST: APIRoute = async (context) => {
                 const totalTokens = data.usage?.total_tokens || 0;
 
                 await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, botReply, actualModel, promptTokens, completionTokens, totalTokens).run();
+                
+                // 4. TRỪ CREDIT (Chỉ trừ nếu là chat hợp lệ, KHÔNG trừ nếu câu hỏi bị từ chối)
+                if (isValid && !pickCard) {
+                    await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
+                    await db.prepare(`INSERT INTO credit_transactions (id, user_id, amount, type, reason) VALUES (?, ?, -1, 'deduction', 'Chat with Oracle')`).bind(crypto.randomUUID(), safeUserId).run();
+                }
             }
         }
       } catch (dbError) {
