@@ -49,8 +49,10 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
             ) : (
                 <div class="history-list">
                     {historyList.map(item => {
-                        const dateObj = new Date(item.created_at);
+                        const dateStr = item.created_at.replace(' ', 'T') + 'Z'; // Ép kiểu về UTC chuẩn
+                        const dateObj = new Date(dateStr);
                         const formattedDate = dateObj.toLocaleDateString('vi-VN', {
+                            timeZone: 'Asia/Ho_Chi_Minh',
                             year: 'numeric', month: '2-digit', day: '2-digit',
                             hour: '2-digit', minute: '2-digit'
                         });

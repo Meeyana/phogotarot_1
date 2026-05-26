@@ -24,6 +24,7 @@ const { title, excerpt, image, upright_keywords, reversed_keywords, pubDate, gro
 // 7. Xử lý ngày đăng
 const postDate = pubDate ? new Date(pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'

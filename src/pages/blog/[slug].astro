@@ -22,6 +22,7 @@ const { Content } = await post.render();
 // 7. (GIỮ NGUYÊN) Xử lý ngày đăng
 const postDate = post.data.pubDate ? new Date(post.data.pubDate) : null;
 const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
     day: '2-digit',
     month: '2-digit',
     year: 'numeric'

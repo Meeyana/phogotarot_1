@@ -68,7 +68,7 @@ const pageDesc = "Cập nhật hồ sơ cá nhân để những trải bài Taro
                     <div class="info-item">
                         <span class="info-label">Thời hạn Premium:</span>
                         <span class="info-value premium-text">
-                            {wallet.subscription_expires_at ? new Date(wallet.subscription_expires_at).toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day: '2-digit', month: '2-digit', year: 'numeric'}) : 'Vô cực (Trọn đời)'}
+                            {wallet.subscription_expires_at ? new Date(wallet.subscription_expires_at.replace(' ', 'T') + (wallet.subscription_expires_at.includes('+') ? '' : 'Z')).toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour: '2-digit', minute:'2-digit', day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Vô cực (Trọn đời)'}
                         </span>
                     </div>
                     )}

@@ -89,7 +89,7 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
 
         <div class="reading-header">
             <h1 class="title">{conversation.title}</h1>
-            <p class="date">{new Date(conversation.created_at).toLocaleString('vi-VN')}</p>
+            <p class="date">{new Date(conversation.created_at.replace(' ', 'T') + 'Z').toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</p>
         </div>
 
         <div class="chat-history">
