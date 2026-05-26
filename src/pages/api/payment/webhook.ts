@@ -54,16 +54,16 @@ export const POST: APIRoute = async (context) => {
         await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 10, 'purchase', 'Nạp thẻ gói 129K')`).bind(crypto.randomUUID(), userId).run();
     } else if (reqAmount === 199000) {
         // Premium 1 tháng
-        const expiresAt = new Date();
+        const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
         expiresAt.setMonth(expiresAt.getMonth() + 1);
-        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19);
+        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
         await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
         await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Tháng')`).bind(crypto.randomUUID(), userId).run();
     } else if (reqAmount === 599000) {
         // Premium 1 năm
-        const expiresAt = new Date();
+        const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
         expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19);
+        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
         await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
         await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Năm')`).bind(crypto.randomUUID(), userId).run();
     } else if (reqAmount === 799000) {

@@ -378,18 +378,44 @@ const ogImageURL = new URL(ogImage, Astro.site);
                         if (data.success) {
                             const desktopParent = desktopBadge ? desktopBadge.closest('.credit-badge') : null;
                             const mobileParent = mobileBadge ? mobileBadge.closest('.credit-badge') : null;
-                            
-                            const innerHTML = data.isPremium ? 
-                                '<i class="fa-solid fa-crown" style="color: #FFD700;"></i> <span style="font-weight: bold; color: #FFD700;">Vô cực</span>' : 
-                                '<i class="fa-regular fa-gem"></i> <span>' + data.balance + ' Lượt</span>';
-                                
-                            if (desktopParent) {
-                                desktopParent.innerHTML = innerHTML;
-                                if(data.isPremium) desktopParent.style.border = '1px solid #FFD700';
+                            if (desktopBadge) {
+                                if (data.isPremium) {
+                                    desktopBadge.innerHTML = 'Vô cực';
+                                    desktopBadge.style.color = '#FFD700';
+                                    if (desktopParent) {
+                                        desktopParent.style.border = '1px solid #FFD700';
+                                        const icon = desktopParent.querySelector('i');
+                                        if (icon) { icon.className = 'fa-solid fa-crown'; icon.style.color = '#FFD700'; }
+                                    }
+                                } else {
+                                    desktopBadge.innerHTML = data.balance + ' Lượt';
+                                    desktopBadge.style.color = '';
+                                    if (desktopParent) {
+                                        desktopParent.style.border = '';
+                                        const icon = desktopParent.querySelector('i');
+                                        if (icon) { icon.className = 'fa-regular fa-gem'; icon.style.color = ''; }
+                                    }
+                                }
                             }
-                            if (mobileParent) {
-                                mobileParent.innerHTML = innerHTML;
-                                if(data.isPremium) mobileParent.style.border = '1px solid #FFD700';
+                            
+                            if (mobileBadge) {
+                                if (data.isPremium) {
+                                    mobileBadge.innerHTML = 'Vô cực';
+                                    mobileBadge.style.color = '#FFD700';
+                                    if (mobileParent) {
+                                        mobileParent.style.border = '1px solid #FFD700';
+                                        const icon = mobileParent.querySelector('i');
+                                        if (icon) { icon.className = 'fa-solid fa-crown'; icon.style.color = '#FFD700'; }
+                                    }
+                                } else {
+                                    mobileBadge.innerHTML = data.balance + ' Lượt';
+                                    mobileBadge.style.color = '';
+                                    if (mobileParent) {
+                                        mobileParent.style.border = '';
+                                        const icon = mobileParent.querySelector('i');
+                                        if (icon) { icon.className = 'fa-regular fa-gem'; icon.style.color = ''; }
+                                    }
+                                }
                             }
                         }
                     }

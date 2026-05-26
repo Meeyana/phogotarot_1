@@ -19,6 +19,8 @@ let profile = {
   recent_events: ''
 };
 
+let wallet: any = { balance: 0, daily_credits: 0, subscription_tier: 'free', subscription_expires_at: null };
+
 if (db) {
   try {
     const data = await db.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(Astro.locals.user.id).first();
@@ -27,6 +29,10 @@ if (db) {
         ...profile,
         ...data
       };
+    }
+    const walletData = await db.prepare('SELECT * FROM credit_wallets WHERE user_id = ?').bind(Astro.locals.user.id).first();
+    if (walletData) {
+        wallet = walletData;
     }
   } catch (error) {
     console.error("Lỗi lấy thông tin profile:", error);
@@ -42,6 +48,39 @@ const pageDesc = "Cập nhật hồ sơ cá nhân để những trải bài Taro
         <div class="profile-card">
             <h1 class="profile-title">Hồ Sơ Của Bạn</h1>
             <p class="profile-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
+
+            <div class="account-info-box">
+                <h3 style="color: #fff; margin-bottom: 15px; font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">Thông tin tài khoản</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Email đăng nhập:</span>
+                        <span class="info-value">{Astro.locals.user.email}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Hạng thành viên:</span>
+                        <span class="info-value">
+                            {wallet.subscription_tier === 'premium' ? 
+                                <span class="premium-badge"><i class="fa-solid fa-crown"></i> Premium</span> : 
+                                <span class="free-badge">Cơ bản</span>}
+                        </span>
+                    </div>
+                    {wallet.subscription_tier === 'premium' && (
+                    <div class="info-item">
+                        <span class="info-label">Thời hạn Premium:</span>
+                        <span class="info-value premium-text">
+                            {wallet.subscription_expires_at ? new Date(wallet.subscription_expires_at).toLocaleString('vi-VN', {hour: '2-digit', minute:'2-digit', day: '2-digit', month: '2-digit', year: 'numeric'}) : 'Vô cực (Trọn đời)'}
+                        </span>
+                    </div>
+                    )}
+                    <div class="info-item">
+                        <span class="info-label">Số lượt mua (Vĩnh viễn):</span>
+                        <span class="info-value"><i class="fa-regular fa-gem" style="color: var(--gold-color, #F2C94C);"></i> <strong style="color: var(--gold-color, #F2C94C);">{wallet.balance}</strong> lượt</span>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; text-align: right;">
+                    <a href="/nap-credit" class="btn-upgrade"><i class="fa-solid fa-wallet"></i> Nâng cấp ngay</a>
+                </div>
+            </div>
 
             <form id="profile-form" class="profile-form">
                 <div class="form-grid">
@@ -162,6 +201,85 @@ const pageDesc = "Cập nhật hồ sơ cá nhân để những trải bài Taro
                 grid-template-columns: 1fr;
                 gap: 0;
             }
+        }
+
+        .account-info-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: #fff;
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .premium-badge {
+            background: rgba(255, 215, 0, 0.15);
+            color: #FFD700;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .free-badge {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .premium-text {
+            color: #FFD700;
+        }
+
+        .btn-upgrade {
+            display: inline-block;
+            background: rgba(242, 201, 76, 0.15);
+            border: 1px solid var(--gold-color, #F2C94C);
+            color: var(--gold-color, #F2C94C);
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-upgrade:hover {
+            background: var(--gold-color, #F2C94C);
+            color: #0b132b;
         }
 
         .form-group {
