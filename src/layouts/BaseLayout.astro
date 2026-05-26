@@ -214,11 +214,11 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     {/* Giao diện Mobile: Hiển thị dạng Dropdown */}
                     <div class="nav-item nav-dropdown mobile-only-profile" style="width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center;">
                         <div class="nav-link" id="mobile-profile-toggle" style="cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%; padding: 0.5rem 1rem; background: rgba(255,255,255,0.03); border-radius: 12px;">
-                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                            <div style="display: flex; flex-direction: row; align-items: center; gap: 8px;">
                                 {Astro.locals.user.avatar ? (
                                     <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
                                 ) : (
-                                    <i class="fa-solid fa-circle-user" style="font-size: 32px; color: var(--gold-color, #F2C94C);"></i>
+                                    <i class="fa-solid fa-circle-user" style="font-size: 28px; color: var(--gold-color, #F2C94C);"></i>
                                 )}
                                 <div style="display: flex; align-items: center; gap: 5px;">
                                     <strong style="color: #fff; font-size: 0.95rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
