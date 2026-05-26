@@ -1029,6 +1029,11 @@ if (db && Astro.locals.user) {
         // === FLOW XỬ LÝ CÂU HỎI & RÚT BÀI ===
 
         async function handleSend() {
+            if (!window.IS_LOGGED_IN) {
+                window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+                return;
+            }
+            
             const question = questionInput.value.trim();
             if (!question || isThinking) return;
 

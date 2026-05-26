@@ -291,7 +291,7 @@
                 text-align: center;
             }
             
-            #tarot-dropdown-toggle {
+            #tarot-dropdown-toggle, #mobile-profile-toggle {
                 justify-content: center; /* Căn giữa link chính */
                 width: 100%;
             }

@@ -6,6 +6,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const pageTitle = "Trải Bài Tarot Yes/No - Câu Trả Lời Nhanh | Phở Gõ Tarot";
 const pageDesc = "Nhận câu trả lời Yes (Có) hoặc No (Không) nhanh chóng cho các câu hỏi của bạn, cùng với luận giải AI chi tiết từ một lá bài Tarot.";
 const pageUrl = new URL('/yes-no-reading', Astro.site).href;
+const isLoggedIn = !!Astro.locals.user;
 
 // CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph cho Yes/No)
 const schema = {
@@ -842,6 +843,10 @@ const schema = {
     </style>   
 
 
+    <script is:inline define:vars={{ isLoggedIn }}>
+        window.YES_NO_IS_LOGGED_IN = isLoggedIn;
+    </script>
+
     <script>
 /* ============================================= */
 /* === TAROT.JS (Logic cho trang 1/3 lá) === */
@@ -1154,6 +1159,11 @@ function preloadAllCardImages() {
 
 /** Xử lý khi nộp câu hỏi đầu tiên */
 async function handleQuestionSubmit() {
+    if (!window.YES_NO_IS_LOGGED_IN) {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+    }
+    
     const questionFromInput = questionInput.value.trim();
     questionErrorDisplay.textContent = ''; 
     questionErrorDisplay.style.color = '#ff8a8a'; 

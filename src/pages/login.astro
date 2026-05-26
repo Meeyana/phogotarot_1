@@ -77,10 +77,15 @@ if (Astro.locals.user) {
         }
 
         const supabase = createClient(supabaseUrl, supabaseKey);
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectParam = urlParams.get('redirect') || '/';
+        const callbackUrl = new URL(`${window.location.origin}/auth/callback`);
+        callbackUrl.searchParams.set('redirect', redirectParam);
+
         await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: `${window.location.origin}/auth/callback`
+            redirectTo: callbackUrl.toString()
           }
         });
       });
@@ -114,7 +119,9 @@ if (Astro.locals.user) {
             submitBtn.innerText = originalText;
             submitBtn.removeAttribute('disabled');
           } else if (result.success) {
-            window.location.href = result.redirect || '/';
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || result.redirect || '/';
+            window.location.href = redirect;
           }
         } catch (error) {
           errorMessage.innerText = 'Lỗi kết nối. Vui lòng thử lại sau.';

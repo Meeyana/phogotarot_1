@@ -1,8 +1,10 @@
 ---
 // src/components/OracleChat.astro
+const user = Astro.locals.user;
+const isLoggedIn = !!user;
 ---
 
-<div id="oracle-chat-widget">
+<div id="oracle-chat-widget" data-logged-in={isLoggedIn.toString()}>
   <!-- NÚT MỞ CHAT -->
   <button id="oracle-toggle-btn" class="oracle-btn" aria-label="Trò chuyện với Joanna">
     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -712,6 +714,12 @@
   }
 
   async function handleSend() {
+    const widget = document.getElementById('oracle-chat-widget');
+    const isUserLoggedIn = widget.getAttribute('data-logged-in') === 'true';
+    if (!isUserLoggedIn) {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+    }
     const text = userInput.value.trim();
     if (!text || isThinking || isTyping) return;
     processMessage(text, text);

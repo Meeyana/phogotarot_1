@@ -36,7 +36,9 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
           const data = await res.json();
           if (res.ok && data.success) {
-            window.location.href = '/'; // Đăng nhập thành công, về trang chủ
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || '/';
+            window.location.href = redirect; // Đăng nhập thành công, về đúng trang
           } else {
             if (errorMessage) {
               errorMessage.style.display = 'block';

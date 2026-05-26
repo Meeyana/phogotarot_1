@@ -737,6 +737,11 @@ const user = Astro.locals.user;
         // Mở modal và tạo mã QR
         planBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                if (!userEmail) {
+                    window.location.href = '/login?redirect=/nap-credit';
+                    return;
+                }
+                
                 const amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
                 

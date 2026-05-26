@@ -30,8 +30,9 @@ const historyCloseBtn = document.getElementById('history-modal-close-btn');
 const historyList = document.getElementById('history-list');
 const clearTarotHistoryBtn = document.getElementById('clear-tarot-history-btn');
 
-// (MỚI) Thêm element cho dropdown tarot
+// (MỚI) Thêm element cho dropdown tarot và profile
 const tarotToggle = document.getElementById('tarot-dropdown-toggle');
+const mobileProfileToggle = document.getElementById('mobile-profile-toggle');
 
 // --- History Functions ---
 
@@ -211,27 +212,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // (MỚI) 3. Gắn logic cho nút dropdown "Bói tarot" (chỉ trên mobile)
-    if (tarotToggle) {
-        tarotToggle.addEventListener('click', (e) => {
-            // Chỉ chạy logic này trên mobile
-            if (window.innerWidth <= 768) {
-                e.preventDefault(); // Ngăn <a> điều hướng
-                // Toggle class 'open' trên thẻ cha (.nav-dropdown)
-                tarotToggle.parentElement.classList.toggle('open');
-            }
-            // Trên desktop (width > 768), sự kiện click mặc định (điều hướng) sẽ diễn ra
-        });
-    }
+    // (MỚI) 3. Gắn logic cho nút dropdown "Bói tarot" và "Profile" (chỉ trên mobile)
+    const toggleDropdown = (toggleEl) => {
+        if (toggleEl) {
+            toggleEl.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    toggleEl.parentElement.classList.toggle('open');
+                }
+            });
+        }
+    };
+    toggleDropdown(tarotToggle);
+    toggleDropdown(mobileProfileToggle);
     
     // (CHỈNH SỬA) 4. Gắn logic cho các link trong Menu (để đóng menu khi click)
     if (navLinks) {
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', (e) => {
                 
-                // (CHỈNH SỬA) Không làm gì nếu click vào nút Lịch sử HOẶC nút dropdown Tarot
+                // (CHỈNH SỬA) Không làm gì nếu click vào nút Lịch sử HOẶC nút dropdown Tarot/Profile
                 // (chúng đã có listener riêng)
-                if (e.currentTarget.id === 'history-nav-link' || e.currentTarget.id === 'tarot-dropdown-toggle') {
+                if (e.currentTarget.id === 'history-nav-link' || e.currentTarget.id === 'tarot-dropdown-toggle' || e.currentTarget.id === 'mobile-profile-toggle') {
                     // Để các listener riêng của chúng xử lý
                 } else if (navLinks.classList.contains('open')) { 
                     // Nếu là link khác (VD: Trang Chủ, Về chúng tôi, HOẶC link trong submenu),
