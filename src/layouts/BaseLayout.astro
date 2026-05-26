@@ -213,32 +213,33 @@ const ogImageURL = new URL(ogImage, Astro.site);
 
                     {/* Giao diện Mobile: Hiển thị dạng Dropdown */}
                     <div class="nav-item nav-dropdown mobile-only-profile" style="width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 0.5rem; display: flex; flex-direction: column; align-items: center;">
-                        <div class="nav-link" id="mobile-profile-toggle" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 0.5rem 0;">
-                             {Astro.locals.user.avatar ? (
-                                <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 56px; height: 56px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C); margin-bottom: 5px; box-shadow: 0 0 10px rgba(242, 201, 76, 0.3);" />
-                            ) : (
-                                <i class="fa-solid fa-circle-user" style="font-size: 56px; color: var(--gold-color, #F2C94C); margin-bottom: 5px;"></i>
-                            )}
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 5px; width: 100%;">
-                                <strong style="color: #fff; font-size: 1.1rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
-                                <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                                    <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                                </svg>
+                        <div class="nav-link" id="mobile-profile-toggle" style="cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: space-between; width: 100%; padding: 0.5rem 1rem; background: rgba(255,255,255,0.03); border-radius: 12px;">
+                            <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 4px;">
+                                {Astro.locals.user.avatar ? (
+                                    <img src={Astro.locals.user.avatar} alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gold-color, #F2C94C);" />
+                                ) : (
+                                    <i class="fa-solid fa-circle-user" style="font-size: 32px; color: var(--gold-color, #F2C94C);"></i>
+                                )}
+                                <div style="display: flex; align-items: center; gap: 5px;">
+                                    <strong style="color: #fff; font-size: 0.95rem;">{Astro.locals.user.name || 'Tài khoản'}</strong>
+                                    <svg class="dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="14" height="14">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="credit-badge" style="background: rgba(242, 201, 76, 0.1); border: 1px solid var(--gold-color, #F2C94C); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--gold-color, #F2C94C); display: inline-flex; align-items: center; gap: 5px;">
+                                <i class="fa-regular fa-gem"></i> <span id="mobile-credit-balance">...</span>
                             </div>
                         </div>
-                        <div class="dropdown-submenu" style="width: 100%; text-align: center; margin-top: 5px; padding: 10px 0;">
-                            <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem;">
-                                <div class="credit-badge" style="background: rgba(242, 201, 76, 0.1); border: 1px solid var(--gold-color, #F2C94C); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; color: var(--gold-color, #F2C94C); display: inline-flex; align-items: center; gap: 5px;">
-                                    <i class="fa-regular fa-gem"></i> <span id="mobile-credit-balance">...</span>
-                                </div>
-                                <span style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 5px;">{Astro.locals.user.email}</span>
-                            </div>
+                        <div class="dropdown-submenu" style="text-align: center; margin-top: 5px;">
                             <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                                <a href="/profile" class="nav-link submenu-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-user"></i> Hồ sơ</a>
-                                <a href="/history" class="nav-link submenu-link" style="background: rgba(255,255,255,0.05); border-radius: 8px;"><i class="fa-solid fa-clock-rotate-left"></i> Lịch sử</a>
-                                <a href="/nap-credit" class="nav-link submenu-link" style="background: rgba(242, 201, 76, 0.1); border-radius: 8px; color: var(--gold-color, #F2C94C); border: 1px solid var(--gold-color, #F2C94C);"><i class="fa-solid fa-wallet"></i> Nạp Credit</a>
+                                <div style="display: flex; flex-direction: row; gap: 0.5rem; width: 100%;">
+                                    <a href="/profile" class="nav-link submenu-link" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 2px; margin-bottom: 0; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.75rem;"><i class="fa-solid fa-user" style="font-size: 1.1rem;"></i> Hồ sơ</a>
+                                    <a href="/history" class="nav-link submenu-link" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 2px; margin-bottom: 0; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.75rem;"><i class="fa-solid fa-clock-rotate-left" style="font-size: 1.1rem;"></i> Lịch sử</a>
+                                    <a href="/nap-credit" class="nav-link submenu-link" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 2px; margin-bottom: 0; background: rgba(242, 201, 76, 0.1); border-radius: 8px; color: var(--gold-color, #F2C94C); border: 1px solid var(--gold-color, #F2C94C); font-size: 0.75rem;"><i class="fa-solid fa-wallet" style="font-size: 1.1rem;"></i> Nạp Credit</a>
+                                </div>
                                 <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; width: 100%;">
-                                    <button type="submit" class="nav-link submenu-link" style="background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); width: 100%; border-radius: 8px; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+                                    <button type="submit" class="nav-link submenu-link" style="background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); width: 100%; border-radius: 8px; cursor: pointer; color: #ff6b6b; padding: 10px 15px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
                                 </form>
                             </div>
                         </div>

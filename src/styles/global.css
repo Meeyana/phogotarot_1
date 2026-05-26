@@ -324,6 +324,24 @@
                 background-color: var(--button-hover-bg);
                 margin-bottom: 0.5rem;
             }
+
+            /* (MỚI) Pop-up cho profile đè lên nav */
+            .mobile-only-profile .dropdown-submenu {
+                position: absolute;
+                top: auto !important; /* Ghi đè top: 100% mặc định */
+                bottom: calc(100% + 15px); /* Bật lên phía trên Avatar */
+                left: 15px;
+                right: 15px;
+                width: auto;
+                transform: none;
+                background: rgba(11, 19, 43, 0.98);
+                border: 1px solid var(--gold-color);
+                border-radius: 16px;
+                padding: 12px;
+                box-shadow: 0 0 30px rgba(0,0,0,0.8);
+                z-index: 1010;
+                margin-top: 0;
+            }
         }
         
         /* --- (MỚI) CSS CHO SPINNER --- */
