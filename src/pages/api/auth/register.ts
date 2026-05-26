@@ -27,7 +27,8 @@ export const POST: APIRoute = async (context) => {
     }
 
     const userId = crypto.randomUUID();
-    const passwordHash = await hashPassword(password);
+    const env = context.locals.runtime?.env || process.env || import.meta.env;
+    const passwordHash = await hashPassword(password, env);
 
     // Tạo user
     await db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')

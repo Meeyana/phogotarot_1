@@ -91,10 +91,16 @@ export async function deleteSession(context: APIContext, db: any) {
 }
 
 // Băm mật khẩu sử dụng Web Crypto API (Nhanh và không bị giới hạn CPU trên Cloudflare Workers)
-export async function hashPassword(password: string): Promise<string> {
+export async function hashPassword(password: string, envObj?: any): Promise<string> {
   const encoder = new TextEncoder();
-  // Thêm một đoạn salt tĩnh (có thể cải thiện bằng salt động sau)
-  const data = encoder.encode(password + 'phogo_tarot_secret_salt_2026');
+  
+  // Ưu tiên đọc biến môi trường truyền vào từ context, nếu không có thì fallback sang process.env / import.meta.env
+  const env = envObj || (typeof process !== 'undefined' ? process.env : null) || import.meta.env || {};
+  
+  // Đọc biến PASSWORD_SALT từ môi trường, nếu chưa set thì dùng mã mặc định cũ để tránh làm lỗi các mật khẩu hiện tại
+  const salt = env.PASSWORD_SALT || 'phogo_tarot_secret_salt_2026';
+  
+  const data = encoder.encode(password + salt);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');

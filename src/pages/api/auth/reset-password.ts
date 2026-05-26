@@ -33,7 +33,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Mã hóa mật khẩu mới
-    const newPasswordHash = await hashPassword(password);
+    const newPasswordHash = await hashPassword(password, env);
 
     // Cập nhật mật khẩu trong bảng users và đánh dấu token đã dùng
     const batch = [

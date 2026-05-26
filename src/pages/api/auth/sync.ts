@@ -70,9 +70,9 @@ export const POST: APIRoute = async (context) => {
 
       try {
         await db.prepare(`
-          INSERT INTO credit_wallets (user_id, balance) 
-          VALUES (?, ?)
-        `).bind(finalUserId, 10).run(); 
+          INSERT INTO credit_wallets (user_id, balance, daily_credits, last_daily_reset) 
+          VALUES (?, 1, 1, CURRENT_DATE)
+        `).bind(finalUserId).run(); 
       } catch (e) {
         // Ignored
       }

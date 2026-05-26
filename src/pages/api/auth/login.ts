@@ -27,7 +27,8 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Kiểm tra mật khẩu
-    const hash = await hashPassword(password);
+    const env = context.locals.runtime?.env || process.env || import.meta.env;
+    const hash = await hashPassword(password, env);
     if (hash !== user.password_hash) {
       return new Response(JSON.stringify({ error: 'Email hoặc mật khẩu không chính xác' }), { status: 400 });
     }
