@@ -107,10 +107,19 @@ export const POST: APIRoute = async (context) => {
 
                 await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, botReply, actualModel, promptTokens, completionTokens, totalTokens).run();
                 
-                // 4. TRỪ CREDIT (Chỉ trừ nếu là chat hợp lệ, KHÔNG trừ nếu câu hỏi bị từ chối)
+                // 4. TRỪ CREDIT / TĂNG CHAT_COUNT (Chỉ tính nếu là chat hợp lệ, KHÔNG tính nếu câu hỏi bị từ chối)
                 if (isValid && !pickCard) {
-                    await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
-                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle')`).bind(crypto.randomUUID(), safeUserId).run();
+                    // Tăng biến đếm chat
+                    await db.prepare('UPDATE credit_wallets SET chat_count = chat_count + 1 WHERE user_id = ?').bind(safeUserId).run();
+                    
+                    // Kiểm tra xem đã đạt 10 tin nhắn chưa
+                    const walletAfter = await db.prepare('SELECT chat_count FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
+                    
+                    if (walletAfter && walletAfter.chat_count >= 10) {
+                        // Đủ 10 tin -> Trừ 1 credit và reset đếm
+                        await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
+                        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                    }
                 }
             }
         }
