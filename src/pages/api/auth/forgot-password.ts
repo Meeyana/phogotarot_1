@@ -58,7 +58,7 @@ export const POST: APIRoute = async (context) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'Phở Gõ Tarot <noreply@phogotarot.com>', // Yêu cầu bạn đã verify domain phogotarot.com trên Resend. Nếu chưa, hãy dùng email mặc định của Resend cung cấp lúc test.
+        from: 'Phở Gõ Tarot <no-reply@phogotarot.com>', // Sử dụng email công ty
         to: email,
         subject: 'Đặt lại mật khẩu - Phở Gõ Tarot',
         html: `
