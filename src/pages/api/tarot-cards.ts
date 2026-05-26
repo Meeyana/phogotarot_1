@@ -8,34 +8,53 @@ export const GET: APIRoute = async (context) => {
         const env: any = context.locals.runtime?.env || process.env || import.meta.env;
         const db = env.DB;
         
-        if (!db) {
-            return new Response(JSON.stringify({ error: 'Database not configured' }), { 
-                status: 500,
-                headers: { 'Content-Type': 'application/json' }
-            });
+        let cards = [];
+        let dbSuccess = false;
+        
+        if (db) {
+            try {
+                // Truy vấn danh sách 78 lá bài từ bảng tarot_database đã có
+                const { results } = await db.prepare('SELECT id, card_name FROM tarot_database ORDER BY id ASC').all();
+
+                if (results && results.length > 0) {
+                    // Kết hợp tên bài từ DB với URL ảnh tương ứng
+                    cards = results.map((row: any) => {
+                        // Tên file ảnh có định dạng "{id}-Tên-Bài.jpg", ví dụ "0-The-Fool.jpg"
+                        const imagePath = Object.keys(cardImages).find(path => {
+                            const filename = path.split('/').pop() || '';
+                            return filename.startsWith(`${row.id}-`);
+                        });
+
+                        return {
+                            id: row.id,
+                            name: row.card_name,
+                            image: imagePath ? cardImages[imagePath] : 'https://placehold.co/200x340'
+                        };
+                    });
+                    dbSuccess = true;
+                }
+            } catch (dbErr) {
+                console.warn("⚠️ Database query failed (e.g. no such table or schema error). Falling back to static assets mapping:", dbErr);
+            }
         }
 
-        // Truy vấn danh sách 78 lá bài từ bảng tarot_database đã có
-        const { results } = await db.prepare('SELECT id, card_name FROM tarot_database ORDER BY id ASC').all();
-
-        if (!results || results.length === 0) {
-            return new Response(JSON.stringify({ error: 'No cards found in database' }), { status: 404 });
-        }
-
-        // Kết hợp tên bài từ DB với URL ảnh tương ứng
-        const cards = results.map((row: any) => {
-            // Tên file ảnh có định dạng "{id}-Tên-Bài.jpg", ví dụ "0-The-Fool.jpg"
-            const imagePath = Object.keys(cardImages).find(path => {
+        // Nếu database không khả dụng hoặc truy vấn thất bại, tự động chuyển sang fallback tĩnh
+        if (!dbSuccess) {
+            cards = Object.keys(cardImages).map(path => {
                 const filename = path.split('/').pop() || '';
-                return filename.startsWith(`${row.id}-`);
+                const nameWithoutExt = filename.replace('.jpg', '');
+                const parts = nameWithoutExt.split('-');
+                const id = parseInt(parts[0]);
+                const cardName = parts.slice(1).join(' ');
+                
+                return {
+                    id: id,
+                    name: cardName,
+                    image: cardImages[path]
+                };
             });
-
-            return {
-                id: row.id,
-                name: row.card_name,
-                image: imagePath ? cardImages[imagePath] : 'https://placehold.co/200x340'
-            };
-        });
+            cards.sort((a, b) => a.id - b.id);
+        }
 
         return new Response(JSON.stringify(cards), {
             status: 200,
@@ -49,3 +68,5 @@ export const GET: APIRoute = async (context) => {
         });
     }
 }
+
+
