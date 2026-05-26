@@ -3,14 +3,17 @@
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "7179b8ca-c774-47a9-9ed4-6bf975344059",
+        "path": "7179b8ca-c774-47a9-9ed4-6bf975344058",
         "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-784, 112],
-      "id": "09747b1e-11b0-44bf-b7bc-aa6a1dffee99",
+      "position": [
+        -1312,
+        -48
+      ],
+      "id": "025635dd-aa30-4b06-87f0-d4c64deaf71c",
       "name": "Check câu hỏi",
       "webhookId": "7179b8ca-c774-47a9-9ed4-6bf975344059"
     },
@@ -20,8 +23,11 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-560, 112],
-      "id": "d4a4ef3e-8712-4d65-a446-ac6d72398eeb",
+      "position": [
+        -1088,
+        -48
+      ],
+      "id": "e6b134ad-714b-43d8-8ab7-f9bb38966fb9",
       "name": "build check question prompt"
     },
     {
@@ -31,8 +37,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
           ]
         },
         "sendBody": true,
@@ -42,8 +54,11 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [-336, 112],
-      "id": "41df9f22-2ae7-4920-b999-35852d7ce73d",
+      "position": [
+        -864,
+        -48
+      ],
+      "id": "62038650-2091-4512-a848-59bdd0342d38",
       "name": "Check câu hỏi AI API"
     },
     {
@@ -52,8 +67,11 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-112, 112],
-      "id": "ef638b25-6d80-431c-ad02-ac9f6633ba93",
+      "position": [
+        -640,
+        -48
+      ],
+      "id": "2496e65e-a675-42d4-a383-bdd8a4712a41",
       "name": "Code in JavaScript"
     },
     {
@@ -83,8 +101,11 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [112, 112],
-      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+      "position": [
+        -416,
+        -48
+      ],
+      "id": "15be6081-819c-42df-88dc-3aac8aa729a1",
       "name": "check pick_card"
     },
     {
@@ -95,18 +116,24 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [336, 16],
-      "id": "31832bf8-daf4-47d3-ae07-b5fa47c08673",
+      "position": [
+        -192,
+        -144
+      ],
+      "id": "7553d791-7063-4dbc-b3c2-d73a845b7a69",
       "name": "Respond to Webhook"
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const question = $('Check câu hỏi').first().json.body.question || '';\n  const history = $('Check câu hỏi').first().json.body.history || [];\n  const cards = $('Check câu hỏi').first().json.body.cards || [];\n  const userProfile = $('Check câu hỏi').first().json.body.userProfile || { name: 'lữ khách', gender: 'bạn' };\n  const userName = userProfile.name;\n  const userGender = userProfile.gender;\n\n  // Xây dựng context 3 lá bài NGẮN GỌN\n  let cardsSection = '';\n  if (cards.length >= 3) {\n    cardsSection = `### Các lá bài đã bốc:\\n- Lá 1(Quá khứ): ${cards[0].name || '?'} (${cards[0].orientation || 'Xuôi'}) - ${cards[0].meaning || '?'}\\n- Lá 2(Hiện tại): ${cards[1].name || '?'} (${cards[1].orientation || 'Xuôi'}) - ${cards[1].meaning || '?'}\\n- Lá 3(Tương lai): ${cards[2].name || '?'} (${cards[2].orientation || 'Xuôi'}) - ${cards[2].meaning || '?'}`;\n  } else if (cards.length > 0) {\n    const cardLines = cards.map((c, i) => `- Lá ${i+1}: ${c.name || '?'} (${c.orientation || 'Xuôi'}) - ${c.meaning || '?'}`).join('\\n');\n    cardsSection = `### Các lá bài đã bốc:\\n${cardLines}`;\n  }\n\n  // Xây dựng lịch sử hội thoại NGẮN GỌN\n  let historyText = 'Lần đầu lữ khách nhắn tin.';\n  if (history.length > 0) {\n    const pastQuestions = history.map(msg => msg.content).filter(c => c !== question);\n    if (pastQuestions.length > 0) {\n      historyText = pastQuestions.map(q => `- ${q}`).join('\\n');\n    }\n  }\n\n  const systemPrompt = `## ROLE: Master Tarot Reader ấm áp, thân thiện, thấu cảm\n## TASK: Lữ khách nhắn tiếp nối sau khi xem trải bài Tarot. Hãy phản hồi tự nhiên, phù hợp câu hỏi và lá bài.\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên như một người bạn tâm giao.\n\n## QUY TẮC:\n1. Phản hồi tự nhiên, đi thẳng vào trọng tâm (2-5 câu).\n2. CHỈ DỰA VÀO ý nghĩa lá bài. Không chệch khỏi gốc.\n3. Giọng văn ấm áp, đồng cảm, không sến súa.\n4. Nếu hỏi thêm về bài, giải thích sâu hơn dựa trên lá đó.\n5. KHÔNG nhắc đến AI, thuật toán.`;\n\n  const userPrompt = `${cardsSection}\\n\\n### Các câu hỏi trước đó:\\n${historyText}\\n\\n### Câu hỏi HIỆN TẠI:\\n\"${question}\"\\n\\nPhản hồi tự nhiên, bám sát lá bài.`;\n\n  item.json.conversationalPayload = {\n    model: 'n8n2',\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userPrompt }\n    ],\n    temperature: 0.8\n  };\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  const question = $('Check câu hỏi').first().json.body.question || '';\n  const history = $('Check câu hỏi').first().json.body.history || [];\n  const cards = $('Check câu hỏi').first().json.body.cards || [];\n  const userProfile = $('Check câu hỏi').first().json.body.userProfile || { name: 'lữ khách', gender: 'bạn' };\n  const userName = userProfile.name;\n  const userGender = userProfile.gender;\n  const readerPrompt = $('Check câu hỏi').first().json.body.reader_prompt || '';\n\n  // Xây dựng context 3 lá bài NGẮN GỌN\n  let cardsSection = '';\n  if (cards.length >= 3) {\n    cardsSection = `### Các lá bài đã bốc:\\n- Lá 1(Quá khứ): ${cards[0].name || '?'} (${cards[0].orientation || 'Xuôi'}) - ${cards[0].meaning || '?'}\\n- Lá 2(Hiện tại): ${cards[1].name || '?'} (${cards[1].orientation || 'Xuôi'}) - ${cards[1].meaning || '?'}\\n- Lá 3(Tương lai): ${cards[2].name || '?'} (${cards[2].orientation || 'Xuôi'}) - ${cards[2].meaning || '?'}`;\n  } else if (cards.length > 0) {\n    const cardLines = cards.map((c, i) => `- Lá ${i+1}: ${c.name || '?'} (${c.orientation || 'Xuôi'}) - ${c.meaning || '?'}`).join('\\n');\n    cardsSection = `### Các lá bài đã bốc:\\n${cardLines}`;\n  }\n\n  // Xây dựng lịch sử hội thoại NGẮN GỌN\n  let historyText = 'Lần đầu lữ khách nhắn tin.';\n  if (history.length > 0) {\n    const pastQuestions = history.map(msg => msg.content).filter(c => c !== question);\n    if (pastQuestions.length > 0) {\n      historyText = pastQuestions.map(q => `- ${q}`).join('\\n');\n    }\n  }\n\n  // Dùng reader_prompt nếu có, fallback về default\n  const defaultSystemPrompt = `## ROLE: Master Tarot Reader ấm áp, thân thiện, thấu cảm\n## TASK: Lữ khách nhắn tiếp nối sau khi xem trải bài Tarot. Hãy phản hồi tự nhiên, phù hợp câu hỏi và lá bài.`;\n  const narrativeBase = readerPrompt || defaultSystemPrompt;\n  const systemPrompt = narrativeBase + `\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên như một người bạn tâm giao.\n\n## QUY TẮC:\n1. Phản hồi tự nhiên, đi thẳng vào trọng tâm (2-5 câu).\n2. CHỈ DỰA VÀO ý nghĩa lá bài. Không chệch khỏi gốc.\n3. Nếu hỏi thêm về bài, giải thích sâu hơn dựa trên lá đó.\n4. KHÔNG nhắc đến AI, thuật toán.`;\n\n  const userPrompt = `${cardsSection}\\n\\n### Các câu hỏi trước đó:\\n${historyText}\\n\\n### Câu hỏi HIỆN TẠI:\\n\"${question}\"\\n\\nPhản hồi tự nhiên, bám sát lá bài.`;\n\n  item.json.conversationalPayload = {\n    model: 'n8n2',\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userPrompt }\n    ],\n    temperature: 0.8\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [336, 208],
-      "id": "conv-prompt-node-001",
+      "position": [
+        -192,
+        48
+      ],
+      "id": "acb683aa-509e-45a7-bea5-194bd9956eca",
       "name": "build conversational prompt"
     },
     {
@@ -116,8 +143,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
           ]
         },
         "sendBody": true,
@@ -127,8 +160,11 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [560, 208],
-      "id": "conv-api-node-002",
+      "position": [
+        32,
+        48
+      ],
+      "id": "b9587236-348a-484f-802b-e99eb2272034",
       "name": "Conversational AI API"
     },
     {
@@ -139,21 +175,27 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [784, 208],
-      "id": "conv-respond-node-003",
+      "position": [
+        256,
+        48
+      ],
+      "id": "2f33e990-5b6a-4303-a18e-fd7ae170330e",
       "name": "Respond conversational"
     },
     {
       "parameters": {
         "httpMethod": "POST",
-        "path": "fc76868a-6ee3-4376-98fe-b5db66b7a3ed",
+        "path": "fc76868a-6ee3-4376-98fe-b5db66b7a3ee",
         "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
-      "position": [-544, 576],
-      "id": "57e9e293-8899-4271-a0c6-8d5873753963",
+      "position": [
+        -1072,
+        416
+      ],
+      "id": "216b6fa1-d6cd-4cc1-9f1c-41ae43955d67",
       "name": "Luận giải tarot",
       "webhookId": "fc76868a-6ee3-4376-98fe-b5db66b7a3ed"
     },
@@ -168,18 +210,24 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
-      "position": [-336, 576],
-      "id": "4d1775cf-f04c-4e63-8e31-7e94c3d24580",
+      "position": [
+        -864,
+        416
+      ],
+      "id": "09d4bb75-c292-4fe1-9e25-8678972df915",
       "name": "Tra cứu Ý Nghĩa Bài"
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = $('Luận giải tarot').first().json.body.cards || [];\n  const userProfile = $('Luận giải tarot').first().json.body.userProfile || { name: 'lữ khách', gender: 'bạn' };\n  const userName = userProfile.name;\n  const userGender = userProfile.gender;\n  \n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có.\";\n  \n  // Lấy mảng history do Astro Webhook truyền sang\n  const history = $('Luận giải tarot').first().json.body.history || [];\n  \n  if (history.length > 0) {\n    isFollowUp = true;\n    \n    // Lọc ra các câu hỏi của user từ mảng history\n    previousQuestions = history.filter(msg => msg.role === 'user').map(msg => msg.content);\n    \n    if (previousQuestions.length > 0) {\n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi trước đó:\\n${questionsStr}`;\n    }\n  }\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Giải đáp câu hỏi dựa trên các lá bài đã bốc.\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên như một người bạn tâm giao.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc.\n2. Lồng ghép cả \"mặt sáng\" và \"bài học cần học\", tuyệt đối không mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm.\n4. KHÔNG nhắc đến AI, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Dùng từ: Hướng thuận, mặt thuận lợi...).\n5. Trình bày đẹp mắt bằng Markdown. Dưới 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC:\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp. Lữ khách vừa bốc thêm 3 lá bài mới. Trực tiếp luận giải 3 lá bài MỚI này.\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào luận giải 3 lá bài mới, KHÔNG lặp lại lời chào sến súa. Nhắc đến tên lá bài để lữ khách biết bạn đang giải bài mới.\n2. Trình bày linh hoạt, tự nhiên như trò chuyện. KHÔNG theo outline rập khuôn.\n3. Ngắt đoạn linh hoạt, dùng bullet points tự do.\n4. Trọng tâm là 3 lá MỚI. Liên kết nhẹ nhàng với bối cảnh trước đó. Tuân thủ ý nghĩa gốc.\n5. Giọng văn trầm ổn. TUYỆT ĐỐI KHÔNG nhắc đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [LÁ BÀI & Ý NGHĨA]\n- Lá 1(Quá khứ): ${cardPast.name || \"?\"} (${cardPast.orientation || \"Xuôi\"}) - ${cardPast.meaning || \"?\"}\n- Lá 2(Hiện tại): ${cardPresent.name || \"?\"} (${cardPresent.orientation || \"Xuôi\"}) - ${cardPresent.meaning || \"?\"}\n- Lá 3(Tương lai): ${cardFuture.name || \"?\"} (${cardFuture.orientation || \"Xuôi\"}) - ${cardFuture.meaning || \"?\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH TRƯỚC ĐÓ]\n${historyText}\n\nGiải đáp thấu cảm.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  const question = $('Luận giải tarot').first().json.body.question || \"\";\n  const cards = $('Luận giải tarot').first().json.body.cards || [];\n  const userProfile = $('Luận giải tarot').first().json.body.userProfile || { name: 'lữ khách', gender: 'bạn' };\n  const userName = userProfile.name;\n  const userGender = userProfile.gender;\n  const readerPrompt = $('Luận giải tarot').first().json.body.reader_prompt || '';\n  \n  let isFollowUp = false;\n  let previousQuestions = [];\n  let historyText = \"Chưa có.\";\n  \n  // Lấy mảng history do Astro Webhook truyền sang\n  const history = $('Luận giải tarot').first().json.body.history || [];\n  \n  if (history.length > 0) {\n    isFollowUp = true;\n    \n    // Lọc ra các câu hỏi của user từ mảng history\n    previousQuestions = history.filter(msg => msg.role === 'user').map(msg => msg.content);\n    \n    if (previousQuestions.length > 0) {\n      const questionsStr = previousQuestions.map((q, i) => `Lần ${i+1}: \"${q}\"`).join('\\n');\n      historyText = `Các câu hỏi trước đó:\\n${questionsStr}`;\n    }\n  }\n\n  // Prompt mặc định (dùng khi không có reader_prompt)\n  const defaultFirstPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp, thấu cảm và chuyên nghiệp sử dụng bộ bài Rider–Waite. Giải đáp câu hỏi dựa trên các lá bài đã bốc.`;\n  const defaultFollowUpPrompt = `## ROLE: Master Tarot Reader\n## TASK: Hóa thân thành một Tarot Reader sâu sắc, ấm áp. Lữ khách vừa bốc thêm 3 lá bài mới. Trực tiếp luận giải 3 lá bài MỚI này.`;\n\n  // Dùng reader_prompt nếu có, fallback về default tương ứng\n  const narrativeBase = readerPrompt || (isFollowUp ? defaultFollowUpPrompt : defaultFirstPrompt);\n\n  let mySystemPrompt = \"\";\n  if (!isFollowUp) {\n    mySystemPrompt = narrativeBase + `\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên như một người bạn tâm giao.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. Kết nối ý nghĩa của 3 lá bài theo tiến trình thời gian (Quá khứ → Hiện tại → Tương lai) để tạo nên một câu chuyện mạch lạc.\n2. Lồng ghép cả \"mặt sáng\" và \"bài học cần học\", tuyệt đối không mê tín dị đoan.\n3. Giọng văn con người trầm ổn, đồng cảm.\n4. KHÔNG nhắc đến AI, thuật toán, máy tính, ngẫu nhiên hoặc \"Xuôi\". (Dùng từ: Hướng thuận, mặt thuận lợi...).\n5. Trình bày đẹp mắt bằng Markdown. Dưới 1000 tokens.\n\n## CẤU TRÚC BẮT BUỘC:\n---\nLời chào mở đầu (1–2 câu)\n### 1. Mở đầu và cảm nhận chung (2-3 câu)\n### 2. Dòng chảy của câu chuyện (Quá khứ → Hiện tại → Tương lai) (3-4 câu)\n### 3. Sự kết nối giữa các lá bài (3-4 câu)\n### 4. Lời khuyên từ trái tim (2-3 câu)\n→ Kết thúc bằng 1–2 câu hỏi tự vấn`;\n  } else {\n    mySystemPrompt = narrativeBase + `\n\n## USER INFO: Tên: ${userName}, Xưng hô: ${userGender}. Hãy gọi tên và xưng hô tự nhiên.\n\n## HƯỚNG DẪN LUẬN GIẢI:\n1. TRỰC TIẾP đi vào luận giải 3 lá bài mới, KHÔNG lặp lại lời chào sến súa. Nhắc đến tên lá bài để lữ khách biết bạn đang giải bài mới.\n2. Trình bày linh hoạt, tự nhiên như trò chuyện. KHÔNG theo outline rập khuôn.\n3. Ngắt đoạn linh hoạt, dùng bullet points tự do.\n4. Trọng tâm là 3 lá MỚI. Liên kết nhẹ nhàng với bối cảnh trước đó. Tuân thủ ý nghĩa gốc.\n5. Giọng văn trầm ổn. TUYỆT ĐỐI KHÔNG nhắc đến AI, thuật toán.`;\n  }\n\n  let cardsSection = \"\";\n  if (cards.length > 0) {\n    const cardPast = cards[0] || {};\n    const cardPresent = cards[1] || {};\n    const cardFuture = cards[2] || {};\n    cardsSection = `### [LÁ BÀI & Ý NGHĨA]\n- Lá 1(Quá khứ): ${cardPast.name || \"?\"} (${cardPast.orientation || \"Xuôi\"}) - ${cardPast.meaning || \"?\"}\n- Lá 2(Hiện tại): ${cardPresent.name || \"?\"} (${cardPresent.orientation || \"Xuôi\"}) - ${cardPresent.meaning || \"?\"}\n- Lá 3(Tương lai): ${cardFuture.name || \"?\"} (${cardFuture.orientation || \"Xuôi\"}) - ${cardFuture.meaning || \"?\"}`;\n  }\n\n  const myUserPrompt = `### [CÂU HỎI MỚI]\n\"${question}\"\n\n${cardsSection}\n\n### [BỐI CẢNH TRƯỚC ĐÓ]\n${historyText}\n\nGiải đáp thấu cảm.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0.7\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-144, 576],
-      "id": "dd09d616-0e44-4639-9dc4-719193e7ef59",
+      "position": [
+        -672,
+        416
+      ],
+      "id": "f3f562db-995c-434e-a702-222e64a92b68",
       "name": "build interpretation prompt"
     },
     {
@@ -189,8 +237,14 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Content-Type", "value": "application/json" },
-            { "name": "Authorization", "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749" }
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
           ]
         },
         "sendBody": true,
@@ -200,8 +254,11 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
-      "position": [64, 576],
-      "id": "8be09b46-b308-48ef-8e21-83a6746727dc",
+      "position": [
+        -464,
+        416
+      ],
+      "id": "bc03c9c6-1b0d-49f9-8963-fc2cdf2f117d",
       "name": "Luận giải AI API"
     },
     {
@@ -212,48 +269,135 @@
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
-      "position": [272, 576],
-      "id": "52ad19b4-4c3c-42ad-8708-ef7dc07de01b",
+      "position": [
+        -256,
+        416
+      ],
+      "id": "1f048956-8593-431f-9bca-833833a559f7",
       "name": "Respond to Webhook1"
     }
   ],
   "connections": {
     "Check câu hỏi": {
-      "main": [[{ "node": "build check question prompt", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "build check question prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "build check question prompt": {
-      "main": [[{ "node": "Check câu hỏi AI API", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Check câu hỏi AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Check câu hỏi AI API": {
-      "main": [[{ "node": "Code in JavaScript", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Code in JavaScript": {
-      "main": [[{ "node": "check pick_card", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "check pick_card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "check pick_card": {
       "main": [
-        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }],
-        [{ "node": "build conversational prompt", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "build conversational prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "build conversational prompt": {
-      "main": [[{ "node": "Conversational AI API", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Conversational AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Conversational AI API": {
-      "main": [[{ "node": "Respond conversational", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Respond conversational",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Luận giải tarot": {
-      "main": [[{ "node": "build interpretation prompt", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "build interpretation prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "build interpretation prompt": {
-      "main": [[{ "node": "Luận giải AI API", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Luận giải AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Luận giải AI API": {
-      "main": [[{ "node": "Respond to Webhook1", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {},
   "meta": {
-    "instanceId": "6f90c3216065e3becef20c965e0ebc68e58fb683b4d316f2caed0db02340b2c1"
+    "instanceId": "07c1c7ec2cda95a2b0ca5f954d25b4243bbf78131f2b02a8a5d44c777d7f6dfd"
   }
 }

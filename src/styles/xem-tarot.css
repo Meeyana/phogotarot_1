@@ -524,3 +524,37 @@ body {
 @keyframes orbit-spin-1 { from { transform: rotateX(65deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateZ(360deg); } }
 @keyframes orbit-spin-2 { from { transform: rotateX(65deg) rotateY(60deg) rotateZ(0deg); } to { transform: rotateX(65deg) rotateY(60deg) rotateZ(360deg); } }
 @keyframes planet-glow { 0%, 100% { filter: drop-shadow(0 0 3px #fff); } 50% { filter: drop-shadow(0 0 8px #fff); } }
+
+/* Reader Selection Dropdown */
+.reader-dropdown { position: relative; width: 100%; z-index: 50; }
+.reader-toggle { 
+    display: flex; align-items: center; width: 100%; padding: 10px 15px; 
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 12px; cursor: pointer; color: white; transition: all 0.2s ease;
+}
+.reader-toggle:hover { background: rgba(255, 255, 255, 0.1); }
+.reader-toggle-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-primary); margin-right: 12px; }
+.reader-toggle-info { flex-grow: 1; text-align: left; display: flex; flex-direction: column; }
+#selected-reader-name { font-weight: bold; font-size: 1rem; color: var(--gold-primary); font-family: var(--font-title); }
+.reader-desc-sm { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+
+.reader-dropdown-menu {
+    position: absolute; bottom: 110%; left: 0; width: 100%;
+    background: rgba(15, 10, 30, 0.95); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+    max-height: 300px; overflow-y: auto; display: none; flex-direction: column;
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5); padding: 5px;
+}
+.reader-dropdown-menu.show { display: flex; animation: slideUp 0.2s ease-out; }
+.reader-option {
+    display: flex; align-items: center; padding: 10px; cursor: pointer;
+    border-radius: 8px; transition: background 0.2s ease; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.reader-option:last-child { border-bottom: none; }
+.reader-option:hover { background: rgba(255, 255, 255, 0.1); }
+.reader-option-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; margin-right: 12px; }
+.reader-option-info { display: flex; flex-direction: column; text-align: left; }
+.reader-option-name { font-weight: bold; color: white; font-family: var(--font-title); }
+.reader-option-desc { font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

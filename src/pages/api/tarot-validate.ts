@@ -5,7 +5,8 @@ export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
-    const webhookUrl = env.N8N_VALIDATE_TAROT;
+    const webhookUrl = env.N8N_VALIDATE_TAROT
+      || 'https://n8n.n8ntuanphangz.xyz/webhook/7179b8ca-c774-47a9-9ed4-6bf975344058'; // fallback localhost
     
     if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
@@ -87,13 +88,35 @@ export const POST: APIRoute = async (context) => {
         }
       }
 
+      // Lấy System Prompt của Reader nếu có
+      if (body.reader_id && env.DB) {
+          try {
+              const reader = await env.DB.prepare('SELECT system_prompt FROM tarot_readers WHERE id = ?').bind(body.reader_id).first();
+              if (reader) {
+                  body.reader_prompt = reader.system_prompt;
+              }
+          } catch (err) {
+              console.error(`Lỗi lấy system_prompt cho reader ${body.reader_id}:`, err);
+          }
+      }
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
 
-    const data = await response.json();
+    const responseText = await response.text();
+    let data: any;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error('n8n validate webhook trả về không phải JSON:', response.status, responseText.substring(0, 300));
+      return new Response(JSON.stringify({ error: `Lỗi xác thực: n8n webhook không phản hồi JSON hợp lệ (HTTP ${response.status})` }), { 
+        status: 502, 
+        headers: { 'Content-Type': 'application/json' } 
+      });
+    }
 
     // === LƯU VÀO D1 DATABASE ===
     if (data && env.DB) {

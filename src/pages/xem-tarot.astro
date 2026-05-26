@@ -87,6 +87,25 @@ if (db && Astro.locals.user) {
             </div>
         </div>
 
+        <!-- Reader Selection -->
+        <div class="reader-selection-container" id="reader-selection-container" style="margin-bottom: 1rem; width: 100%; max-width: 800px; display: flex; justify-content: flex-start;">
+            <div class="reader-dropdown">
+                <button type="button" id="reader-dropdown-toggle" class="reader-toggle">
+                    <img id="selected-reader-avatar" src="/images/witcher-bot.jpg" alt="Avatar" class="reader-toggle-avatar" />
+                    <div class="reader-toggle-info">
+                        <span id="selected-reader-name">Đang tải...</span>
+                        <span id="selected-reader-desc" class="reader-desc-sm">Vui lòng chờ...</span>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div id="reader-options-list" class="reader-dropdown-menu">
+                    <div style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">Đang tải danh sách...</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Input Area -->
         <div class="chat-input-area">
             <textarea id="question-input" placeholder="Nhập câu hỏi của bạn cho Tarot..." rows="1"></textarea>
@@ -136,6 +155,9 @@ if (db && Astro.locals.user) {
         const CHAT_HISTORY_KEY = 'phogo_tarot_chat_page_history';
         const READING_ID_KEY = 'phogo_reading_id';
 
+        let currentReaderId = null;
+        let currentReaderAvatar = '/images/witcher-bot.jpg';
+
         let currentReadingId = localStorage.getItem(READING_ID_KEY);
         if (!currentReadingId) {
             currentReadingId = crypto.randomUUID();
@@ -161,6 +183,13 @@ if (db && Astro.locals.user) {
         const questionInput = document.getElementById('question-input');
         const submitBtn = document.getElementById('submit-question-btn');
         const clearBtn = document.getElementById('clear-chat-history-btn');
+
+        // Reader Selection DOM
+        const readerDropdownToggle = document.getElementById('reader-dropdown-toggle');
+        const readerOptionsList = document.getElementById('reader-options-list');
+        const selectedReaderName = document.getElementById('selected-reader-name');
+        const selectedReaderDesc = document.getElementById('selected-reader-desc');
+        const selectedReaderAvatar = document.getElementById('selected-reader-avatar');
         
         const tarotModal = document.getElementById('tarot-modal');
         const screens = document.querySelectorAll('.screen');
@@ -216,7 +245,66 @@ if (db && Astro.locals.user) {
             }
         }
 
+        async function loadReaders() {
+            try {
+                const res = await fetch('/api/readers');
+                const data = await res.json();
+                if (data.success && data.data.length > 0) {
+                    const readers = data.data;
+                    
+                    if (!currentReaderId) {
+                        const savedReader = localStorage.getItem('phogo_selected_reader');
+                        const defaultReader = readers.find(r => r.id === savedReader) || readers[0];
+                        currentReaderId = defaultReader.id;
+                        currentReaderAvatar = defaultReader.avatar_url || '/images/witcher-bot.jpg';
+                        if (selectedReaderName) selectedReaderName.textContent = defaultReader.name;
+                        if (selectedReaderDesc) selectedReaderDesc.textContent = defaultReader.description;
+                        if (selectedReaderAvatar) selectedReaderAvatar.src = currentReaderAvatar;
+                    }
+
+                    if (readerOptionsList) {
+                        readerOptionsList.innerHTML = '';
+                        readers.forEach(reader => {
+                            const opt = document.createElement('div');
+                            opt.className = 'reader-option';
+                            opt.innerHTML = `
+                                <img src="${reader.avatar_url || '/images/default-avatar.png'}" class="reader-option-avatar" />
+                                <div class="reader-option-info">
+                                    <span class="reader-option-name">${reader.name}</span>
+                                    <span class="reader-option-desc">${reader.description}</span>
+                                </div>
+                            `;
+                            opt.addEventListener('click', () => {
+                                currentReaderId = reader.id;
+                                currentReaderAvatar = reader.avatar_url || '/images/witcher-bot.jpg';
+                                selectedReaderName.textContent = reader.name;
+                                selectedReaderDesc.textContent = reader.description;
+                                selectedReaderAvatar.src = currentReaderAvatar;
+                                readerOptionsList.classList.remove('show');
+                                localStorage.setItem('phogo_selected_reader', reader.id);
+                            });
+                            readerOptionsList.appendChild(opt);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load readers', e);
+            }
+        }
+
+        if (readerDropdownToggle) {
+            readerDropdownToggle.addEventListener('click', () => {
+                readerOptionsList.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!readerDropdownToggle.contains(e.target) && !readerOptionsList.contains(e.target)) {
+                    readerOptionsList.classList.remove('show');
+                }
+            });
+        }
+
         function initChat() {
+            loadReaders();
             const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
             syncHistoryIfLoggedin(history);
             const container = document.querySelector('.chat-page-container');
@@ -318,7 +406,7 @@ if (db && Astro.locals.user) {
             if (sender === 'bot') {
                 const avatarDiv = document.createElement('div');
                 avatarDiv.className = 'bot-avatar';
-                avatarDiv.innerHTML = `<img src="/images/witcher-bot.jpg" alt="Phở Gõ Tarot Avatar" />`;
+                avatarDiv.innerHTML = `<img src="${currentReaderAvatar}" alt="Phở Gõ Tarot Avatar" />`;
                 msgDiv.appendChild(avatarDiv);
             }
 
@@ -472,7 +560,8 @@ if (db && Astro.locals.user) {
                             userId: currentUserId,
                             isFollowUp: true,
                             cards: drawnCards,    // 3 lá bài đã bốc
-                            history: chatHistory  // Lịch sử hội thoại để LLM có context
+                            history: chatHistory,  // Lịch sử hội thoại để LLM có context
+                            reader_id: currentReaderId // Narrative Reader
                         })
                     });
 
@@ -801,6 +890,7 @@ if (db && Astro.locals.user) {
                         cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
                         readingId: currentReadingId,
                         userId: currentUserId,
+                        reader_id: currentReaderId, // Narrative Reader
                         validationUsage: lastValidationUsage,
                         validationModel: lastValidationModel
                     })
