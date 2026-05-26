@@ -1083,6 +1083,13 @@ if (db && Astro.locals.user) {
                         if (result.pick_card === false || result.pick_card === "false") {
                             // pick_card=false: n8n đã gọi LLM conversational, trả về câu trả lời trong reason
                             addMessage(result?.reason || "Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì về trải bài này không?", 'bot', true, null, result.usage, result.model);
+                            
+                            if (result.creditDeducted) {
+                                setTimeout(() => {
+                                    addMessage("💡 Hệ thống: Bạn vừa trò chuyện đủ 10 tin nhắn, 1 Credit đã được sử dụng. Xin mời tiếp tục tâm sự nhé!", 'bot', false);
+                                }, 500);
+                            }
+                            
                             isThinking = false;
                             
                             // Gọi hàm fetchBalance() toàn cục để cập nhật số dư nếu bị trừ
@@ -1136,6 +1143,13 @@ if (db && Astro.locals.user) {
                     if (result.pick_card === false || result.pick_card === "false") {
                         // Trả lời câu chào xã giao trực tiếp từ result.reason
                         addMessage(result?.reason || "Chào bạn, mình luôn ở đây để giúp bạn giải đáp những thắc mắc qua lăng kính Tarot. Bạn có câu hỏi nào không?", 'bot', true, null, result.usage, result.model);
+                        
+                        if (result.creditDeducted) {
+                            setTimeout(() => {
+                                addMessage("💡 Hệ thống: Bạn vừa trò chuyện đủ 10 tin nhắn, 1 Credit đã được sử dụng. Xin mời tiếp tục tâm sự nhé!", 'bot', false);
+                            }, 500);
+                        }
+                        
                         isThinking = false;
                         
                         if (typeof window.fetchBalance === 'function') window.fetchBalance();
@@ -1173,7 +1187,7 @@ if (db && Astro.locals.user) {
             localStorage.setItem('pending_validation_model', JSON.stringify(lastValidationModel));
 
             // Tạo bong bóng chat của Bot có kèm 2 nút tương tác Xác nhận / Từ chối (save = false vì đây là tin nhắn tương tác tạm thời)
-            const msgDiv = addMessage("Để giải đáp câu hỏi này, bạn cần thực hiện một lượt Trải bài Tarot. Bạn có đồng ý bắt đầu lượt trải bài này để bốc bài không?", 'bot', false);
+            const msgDiv = addMessage("Để giải đáp câu hỏi này, hệ thống cần thực hiện một Trải bài Tarot. Mỗi lượt trải bài sẽ tốn **1 Credit**. Bạn có đồng ý bốc bài không?", 'bot', false);
             
             const contentDiv = msgDiv.querySelector('.message-content');
             if (contentDiv) {

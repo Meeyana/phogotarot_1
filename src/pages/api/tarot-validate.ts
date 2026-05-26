@@ -119,6 +119,9 @@ export const POST: APIRoute = async (context) => {
                         // Đủ 10 tin -> Trừ 1 credit và reset đếm
                         await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
                         await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                        
+                        // Gắn cờ vào data trả về để frontend biết
+                        data.creditDeducted = true;
                     }
                 }
             }
