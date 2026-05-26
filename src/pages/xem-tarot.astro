@@ -315,6 +315,13 @@ if (db && Astro.locals.user) {
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${sender}-message`;
             
+            if (sender === 'bot') {
+                const avatarDiv = document.createElement('div');
+                avatarDiv.className = 'bot-avatar';
+                avatarDiv.innerHTML = `<img src="/images/witcher-bot.jpg" alt="Phở Gõ Tarot Avatar" />`;
+                msgDiv.appendChild(avatarDiv);
+            }
+
             const contentDiv = document.createElement('div');
             contentDiv.className = 'message-content';
             
@@ -424,7 +431,6 @@ if (db && Astro.locals.user) {
             const container = document.querySelector('.chat-page-container');
             if (container.classList.contains('initial-state')) {
                 container.classList.remove('initial-state');
-                addMessage("Chào bạn 👋 Mình là Phở Gõ Tarot. Bạn có vấn đề gì đang trăn trở về tình yêu, công việc hay cuộc sống không? Hãy đặt một câu hỏi cụ thể nhé!", 'bot', true);
             }
 
             // 1. Thêm tin nhắn user vào chat
