@@ -2,6 +2,17 @@ import { defineMiddleware } from 'astro:middleware';
 import { validateSession, setSessionCookie, SESSION_COOKIE_NAME, deleteSession } from './lib/auth';
 
 export const onRequest = defineMiddleware(async (context, next) => {
+  const url = new URL(context.request.url);
+
+  // Bỏ qua middleware cho các file tĩnh và image service của Astro để tránh query DB nhiều lần gây lỗi load ảnh khi đăng nhập
+  if (
+    url.pathname.startsWith('/_astro/') || 
+    url.pathname.startsWith('/_image') || 
+    url.pathname.match(/\.(png|jpg|jpeg|gif|svg|ico|webp)$/i)
+  ) {
+    return next();
+  }
+
   const sessionId = context.cookies.get(SESSION_COOKIE_NAME)?.value ?? null;
   const db = context.locals.runtime?.env?.DB;
 
@@ -32,7 +43,6 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = user;
 
   // Bảo vệ route: Nếu user vào trang yêu cầu login mà chưa login
-  const url = new URL(context.request.url);
   const protectedRoutes = ['/xem-tarot', '/yes-no-reading', '/chat', '/profile'];
   
   const isProtected = protectedRoutes.some(route => url.pathname.startsWith(route));
