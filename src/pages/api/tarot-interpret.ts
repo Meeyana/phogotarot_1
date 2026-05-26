@@ -16,7 +16,18 @@ export const POST: APIRoute = async (context) => {
     const user = context.locals.user;
     let profile = { name: 'lữ khách', gender: 'bạn' };
     if (db) {
-        const queryUserId = user?.id || body.userId;
+        let queryUserId = null;
+        if (user) {
+            queryUserId = user.id; // Lấy ID an toàn từ session
+        } else if (body.userId) {
+            // Chặn hacker giả mạo ID người khác
+            const isRealUser = await db.prepare('SELECT id FROM users WHERE id = ?').bind(body.userId).first();
+            if (isRealUser) {
+                return new Response(JSON.stringify({ error: 'Unauthorized: Vui lòng đăng nhập để sử dụng tài khoản này' }), { status: 401 });
+            }
+            queryUserId = body.userId; // Guest hợp lệ
+        }
+
         if (queryUserId) {
             try {
                 // Kiểm tra Credit trước
@@ -143,17 +154,23 @@ export const POST: APIRoute = async (context) => {
 
         await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, data.interpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
         
-        // 5. TRỪ CREDIT
-        const walletAfter = await db.prepare('SELECT balance, daily_credits, subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
+        // 5. TRỪ CREDIT (Chống Race Condition bằng Atomic Update)
+        const walletAfter = await db.prepare('SELECT subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
         if (walletAfter) {
             const isPremium = walletAfter.subscription_tier === 'premium' && (!walletAfter.subscription_expires_at || new Date(walletAfter.subscription_expires_at) > new Date());
             if (!isPremium) {
-                if (walletAfter.daily_credits > 0) {
-                    await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1 WHERE user_id = ?').bind(safeUserId).run();
-                } else {
-                    await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
+                // Thử trừ lượt miễn phí hàng ngày trước
+                let updateResult = await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1 WHERE user_id = ? AND daily_credits > 0').bind(safeUserId).run();
+                
+                // Nếu hết lượt ngày (changes = 0), mới trừ vào balance chính
+                if (updateResult.meta && updateResult.meta.changes === 0) {
+                    updateResult = await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ? AND balance > 0').bind(safeUserId).run();
                 }
-                await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), safeUserId).run();
+
+                // Nếu update thành công (có trừ được tiền), ghi log giao dịch
+                if (updateResult.meta && updateResult.meta.changes > 0) {
+                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), safeUserId).run();
+                }
             }
         }
         

@@ -35,10 +35,11 @@ export const POST: APIRoute = async (context) => {
     // Mã hóa mật khẩu mới
     const newPasswordHash = await hashPassword(password, env);
 
-    // Cập nhật mật khẩu trong bảng users và đánh dấu token đã dùng
+    // Cập nhật mật khẩu trong bảng users, đánh dấu token đã dùng, và XÓA TOÀN BỘ session cũ để bảo mật
     const batch = [
       db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(newPasswordHash, resetRecord.user_id),
-      db.prepare('UPDATE password_resets SET used = 1 WHERE id = ?').bind(resetRecord.id)
+      db.prepare('UPDATE password_resets SET used = 1 WHERE id = ?').bind(resetRecord.id),
+      db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(resetRecord.user_id)
     ];
 
     await db.batch(batch);

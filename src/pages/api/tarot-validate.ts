@@ -13,7 +13,18 @@ export const POST: APIRoute = async (context) => {
     const user = context.locals.user;
     let profile = { name: 'lữ khách', gender: 'bạn' };
     if (env.DB) {
-        const queryUserId = user?.id || body.userId;
+        let queryUserId = null;
+        if (user) {
+            queryUserId = user.id; // Lấy ID an toàn từ session
+        } else if (body.userId) {
+            // Chặn hacker giả mạo ID người khác
+            const isRealUser = await env.DB.prepare('SELECT id FROM users WHERE id = ?').bind(body.userId).first();
+            if (isRealUser) {
+                return new Response(JSON.stringify({ error: 'Unauthorized: Vui lòng đăng nhập để sử dụng tài khoản này' }), { status: 401 });
+            }
+            queryUserId = body.userId; // Guest hợp lệ
+        }
+
         if (queryUserId) {
             try {
                 const row = await env.DB.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
@@ -133,18 +144,24 @@ export const POST: APIRoute = async (context) => {
                         const isPremium = walletAfter.subscription_tier === 'premium' && (!walletAfter.subscription_expires_at || new Date(walletAfter.subscription_expires_at) > new Date());
                         
                         if (!isPremium) {
-                            if (walletAfter.daily_credits > 0) {
-                                await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
-                            } else {
-                                await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
-                            }
-                            await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                            // Thử trừ lượt miễn phí hàng ngày trước, kèm điều kiện chat_count >= 10 (chống Race Condition)
+                            let updateResult = await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1, chat_count = 0 WHERE user_id = ? AND daily_credits > 0 AND chat_count >= 10').bind(safeUserId).run();
                             
-                            // Gắn cờ vào data trả về để frontend biết
-                            data.creditDeducted = true;
+                            // Nếu hết daily_credits, thử trừ vào balance
+                            if (updateResult.meta && updateResult.meta.changes === 0) {
+                                updateResult = await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ? AND balance > 0 AND chat_count >= 10').bind(safeUserId).run();
+                            }
+                            
+                            if (updateResult.meta && updateResult.meta.changes > 0) {
+                                await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                                data.creditDeducted = true;
+                            } else {
+                                // Nếu changes = 0 thì luồng khác đã update mất rồi
+                                data.creditDeducted = false;
+                            }
                         } else {
-                            // Nếu là Premium, chỉ reset biến đếm chứ không trừ tiền
-                            await db.prepare('UPDATE credit_wallets SET chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
+                            // Nếu là Premium, chỉ reset biến đếm (Atomic)
+                            await db.prepare('UPDATE credit_wallets SET chat_count = 0 WHERE user_id = ? AND chat_count >= 10').bind(safeUserId).run();
                             data.creditDeducted = false;
                         }
                     }
