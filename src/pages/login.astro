@@ -25,25 +25,32 @@ if (Astro.locals.user) {
           <p>Mở cánh cửa bước vào thế giới huyền học</p>
         </div>
 
-        <!-- Đăng nhập bằng Google Identity Services -->
-        <div id="g_id_onload"
-             data-client_id={googleClientId}
-             data-context="signin"
-             data-ux_mode="popup"
-             data-callback="handleGoogleSignIn"
-             data-auto_prompt="false">
-        </div>
-        
-        <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 0.5rem;" data-url={supabaseUrl} data-key={supabaseKey} id="supabase-auth-config">
-            <div class="g_id_signin"
-                 data-type="standard"
-                 data-shape="rectangular"
-                 data-theme="filled_black"
-                 data-text="continue_with"
-                 data-size="large"
-                 data-logo_alignment="left"
-                 data-width="400">
-            </div>
+        <!-- Đăng nhập bằng Google Identity Services (UI Custom Overlay) -->
+        <div class="google-btn-wrapper" id="supabase-auth-config" data-url={supabaseUrl} data-key={supabaseKey}>
+          <button class="google-btn" type="button">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
+            Tiếp tục với Google
+          </button>
+          
+          <div id="g_id_onload"
+               data-client_id={googleClientId}
+               data-context="signin"
+               data-ux_mode="popup"
+               data-callback="handleGoogleSignIn"
+               data-auto_prompt="false">
+          </div>
+          
+          <div class="gis-overlay">
+              <div class="g_id_signin"
+                   data-type="standard"
+                   data-shape="rectangular"
+                   data-theme="outline"
+                   data-text="continue_with"
+                   data-size="large"
+                   data-logo_alignment="center"
+                   data-width="400">
+              </div>
+          </div>
         </div>
 
         <div class="divider">
@@ -230,7 +237,27 @@ if (Astro.locals.user) {
       margin: 0;
     }
 
-    /* Google Button */
+    /* Google Button & GIS Overlay */
+    .google-btn-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .gis-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.01; /* Ẩn đi nhưng vẫn click được */
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .google-btn {
       display: flex;
       align-items: center;
@@ -248,7 +275,7 @@ if (Astro.locals.user) {
       gap: 12px;
     }
 
-    .google-btn:hover {
+    .google-btn-wrapper:hover .google-btn {
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-2px);
