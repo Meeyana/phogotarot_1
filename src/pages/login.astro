@@ -5,6 +5,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const runtimeEnv = Astro.locals.runtime?.env || {};
 const supabaseUrl = runtimeEnv.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
 const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
+const googleClientId = runtimeEnv.PUBLIC_GOOGLE_CLIENT_ID || import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '357142710685-hkhoju35vfp5fo6s16e3j5rgebojtstb.apps.googleusercontent.com';
 
 // Nếu đã đăng nhập, chuyển hướng sang trang chủ
 if (Astro.locals.user) {
@@ -13,6 +14,9 @@ if (Astro.locals.user) {
 ---
 
 <BaseLayout title="Đăng Nhập - Phở Gõ Tarot" description="Đăng nhập để xem Tarot và trò chuyện cùng Oracle" showChatbot={false}>
+  <!-- Thêm thư viện Google Identity Services -->
+  <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
+
   <main class="auth-page">
     <div class="auth-container">
       <div class="auth-card">
@@ -21,11 +25,26 @@ if (Astro.locals.user) {
           <p>Mở cánh cửa bước vào thế giới huyền học</p>
         </div>
 
-        <!-- Đăng nhập bằng Google -->
-        <button id="google-login-btn" class="google-btn" type="button" data-url={supabaseUrl} data-key={supabaseKey}>
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
-          Tiếp tục với Google
-        </button>
+        <!-- Đăng nhập bằng Google Identity Services -->
+        <div id="g_id_onload"
+             data-client_id={googleClientId}
+             data-context="signin"
+             data-ux_mode="popup"
+             data-callback="handleGoogleSignIn"
+             data-auto_prompt="false">
+        </div>
+        
+        <div style="display: flex; justify-content: center; width: 100%; margin-bottom: 0.5rem;" data-url={supabaseUrl} data-key={supabaseKey} id="supabase-auth-config">
+            <div class="g_id_signin"
+                 data-type="standard"
+                 data-shape="rectangular"
+                 data-theme="filled_black"
+                 data-text="continue_with"
+                 data-size="large"
+                 data-logo_alignment="left"
+                 data-width="400">
+            </div>
+        </div>
 
         <div class="divider">
           <span>hoặc</span>
@@ -64,32 +83,66 @@ if (Astro.locals.user) {
     const loginForm = document.getElementById('login-form');
     const errorMessage = document.getElementById('error-message');
     const submitBtn = document.getElementById('submit-btn');
-    const googleBtn = document.getElementById('google-login-btn');
-
-    if (googleBtn) {
-      googleBtn.addEventListener('click', async () => {
-        const supabaseUrl = googleBtn.getAttribute('data-url');
-        const supabaseKey = googleBtn.getAttribute('data-key');
-        
-        if (!supabaseUrl || !supabaseKey) {
-          alert('Chưa cấu hình Supabase trên Cloudflare. Vui lòng thêm PUBLIC_SUPABASE_URL và PUBLIC_SUPABASE_ANON_KEY vào Cloudflare Pages Environment Variables.');
-          return;
-        }
-
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirectParam = urlParams.get('redirect') || '/';
-        const callbackUrl = new URL(`${window.location.origin}/auth/callback`);
-        callbackUrl.searchParams.set('redirect', redirectParam);
-
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: callbackUrl.toString()
-          }
-        });
-      });
+    
+    // Supabase config cho Google Auth
+    const sbConfig = document.getElementById('supabase-auth-config');
+    let supUrl = '';
+    let supKey = '';
+    if (sbConfig) {
+       supUrl = sbConfig.getAttribute('data-url') || '';
+       supKey = sbConfig.getAttribute('data-key') || '';
     }
+
+    // CallBack từ thư viện Google
+    (window as any).handleGoogleSignIn = async (response: any) => {
+      if (!supUrl || !supKey) {
+        alert('Thiếu cấu hình Supabase URL hoặc Key.');
+        return;
+      }
+      
+      const supabase = createClient(supUrl, supKey);
+      
+      if (errorMessage) {
+        errorMessage.style.display = 'block';
+        errorMessage.style.backgroundColor = 'rgba(242, 201, 76, 0.1)';
+        errorMessage.style.color = 'var(--gold-color, #F2C94C)';
+        errorMessage.style.borderColor = 'rgba(242, 201, 76, 0.3)';
+        errorMessage.innerText = 'Đang đồng bộ tài khoản Google...';
+      }
+
+      try {
+        const { data, error } = await supabase.auth.signInWithIdToken({
+          provider: 'google',
+          token: response.credential,
+        });
+
+        if (error) throw error;
+
+        if (data.session) {
+          const res = await fetch('/api/auth/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: data.session.access_token })
+          });
+
+          const syncData = await res.json();
+          if (res.ok && syncData.success) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || '/';
+            window.location.href = redirect;
+          } else {
+            throw new Error(syncData.error || 'Lỗi đồng bộ cookie.');
+          }
+        }
+      } catch (err: any) {
+        if (errorMessage) {
+           errorMessage.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+           errorMessage.style.color = '#ff6b6b';
+           errorMessage.style.borderColor = 'rgba(231, 76, 60, 0.3)';
+           errorMessage.innerText = err.message || 'Lỗi kết nối. Vui lòng thử lại sau.';
+        }
+      }
+    };
 
     if (loginForm && errorMessage && submitBtn) {
       loginForm.addEventListener('submit', async (e) => {
