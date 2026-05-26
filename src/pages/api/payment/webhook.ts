@@ -11,10 +11,11 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     const { transaction_code, amount, secret } = body;
 
-    // Optional: Bảo mật webhook bằng secret key từ N8N (Nên cấu hình trong env)
-    // if (secret !== env.WEBHOOK_SECRET) {
-    //    return new Response('Unauthorized', { status: 401 });
-    // }
+    // Bảo mật webhook bằng secret key cấu hình trong env
+    const webhookSecret = env.WEBHOOK_SECRET || import.meta.env.WEBHOOK_SECRET;
+    if (webhookSecret && secret !== webhookSecret) {
+       return new Response('Unauthorized', { status: 401 });
+    }
 
     if (!transaction_code || !amount) {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin' }), { status: 400 });
@@ -30,8 +31,13 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Số tiền chuyển không đủ' }), { status: 400 });
     }
 
-    // 1. Cập nhật trạng thái đơn hàng
-    await db.prepare('UPDATE payment_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?').bind('paid', transaction_code).run();
+    // 1. Cập nhật trạng thái đơn hàng một cách an toàn (Atomic Update chặn Race Condition)
+    const updateResult = await db.prepare('UPDATE payment_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ? AND status = ?').bind('paid', transaction_code, 'pending').run();
+    
+    // Nếu changes = 0 nghĩa là luồng khác đã update mất rồi, ngăn chặn việc cộng tiền 2 lần
+    if (updateResult.meta && updateResult.meta.changes === 0) {
+      return new Response(JSON.stringify({ error: 'Giao dịch đã được xử lý (trùng lặp)' }), { status: 400 });
+    }
 
     const userId = request.user_id;
     const reqAmount = request.amount;
