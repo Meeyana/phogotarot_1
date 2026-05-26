@@ -21,7 +21,9 @@ export const POST: APIRoute = async (context) => {
             try {
                 // Kiểm tra Credit trước
                 const wallet = await db.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(queryUserId).first();
-                if (!wallet || wallet.balance <= 0) {
+                if (!wallet) {
+                    await db.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, 10)').bind(queryUserId).run();
+                } else if (wallet.balance <= 0) {
                     return new Response(JSON.stringify({ 
                         error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
                         code: 'OUT_OF_CREDITS' 
@@ -130,7 +132,7 @@ export const POST: APIRoute = async (context) => {
         
         // 5. TRỪ CREDIT
         await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, user_id, amount, type, reason) VALUES (?, ?, -1, 'deduction', 'Tarot Reading')`).bind(crypto.randomUUID(), safeUserId).run();
+        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), safeUserId).run();
         
       } catch (dbError) {
         console.error("Lỗi lưu D1 (tarot):", dbError);

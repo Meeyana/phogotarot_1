@@ -32,7 +32,11 @@ export const POST: APIRoute = async (context) => {
       if (user && env.DB) {
         try {
           const wallet = await env.DB.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(user.id).first();
-          if (!wallet || wallet.balance <= 0) {
+          if (!wallet) {
+              // Tự động tạo ví cho user cũ (chưa có ví) với 10 lượt free
+              await env.DB.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, 10)').bind(user.id).run();
+              // Không throw 402 vì họ vừa được tạo ví 10 lượt
+          } else if (wallet.balance <= 0) {
              return new Response(JSON.stringify({ 
                 error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
                 code: 'OUT_OF_CREDITS' 
@@ -106,7 +110,7 @@ export const POST: APIRoute = async (context) => {
                 // 4. TRỪ CREDIT (Chỉ trừ nếu là chat hợp lệ, KHÔNG trừ nếu câu hỏi bị từ chối)
                 if (isValid && !pickCard) {
                     await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
-                    await db.prepare(`INSERT INTO credit_transactions (id, user_id, amount, type, reason) VALUES (?, ?, -1, 'deduction', 'Chat with Oracle')`).bind(crypto.randomUUID(), safeUserId).run();
+                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle')`).bind(crypto.randomUUID(), safeUserId).run();
                 }
             }
         }

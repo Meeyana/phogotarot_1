@@ -39,6 +39,11 @@ export const POST: APIRoute = async (context) => {
       .bind(userId, name)
       .run();
 
+    // Tạo ví Credit cho user mới (10 lượt)
+    await db.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, ?)')
+      .bind(userId, 10)
+      .run();
+
     // Tạo session
     const sessionId = await createSession(db, userId);
     
