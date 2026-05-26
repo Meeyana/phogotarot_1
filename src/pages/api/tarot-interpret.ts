@@ -20,12 +20,25 @@ export const POST: APIRoute = async (context) => {
         if (queryUserId) {
             try {
                 // Kiểm tra Credit trước
-                const wallet = await db.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(queryUserId).first();
+                const vnTime = new Date(new Date().getTime() + 7 * 3600 * 1000);
+                const todayStr = vnTime.toISOString().split('T')[0];
+                let wallet = await db.prepare('SELECT balance, daily_credits, last_daily_reset, subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(queryUserId).first();
+                
                 if (!wallet) {
-                    await db.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, 10)').bind(queryUserId).run();
-                } else if (wallet.balance <= 0) {
+                    await db.prepare('INSERT INTO credit_wallets (user_id, balance, daily_credits, last_daily_reset) VALUES (?, 1, 1, ?)').bind(queryUserId, todayStr).run();
+                    wallet = { balance: 1, daily_credits: 1, subscription_tier: 'free' };
+                } else {
+                    if (wallet.last_daily_reset !== todayStr) {
+                        await db.prepare('UPDATE credit_wallets SET daily_credits = 1, last_daily_reset = ? WHERE user_id = ?').bind(todayStr, queryUserId).run();
+                        wallet.daily_credits = 1;
+                    }
+                }
+
+                const isPremium = wallet.subscription_tier === 'premium' && (!wallet.subscription_expires_at || new Date(wallet.subscription_expires_at) > new Date());
+                
+                if (!isPremium && wallet.balance <= 0 && wallet.daily_credits <= 0) {
                     return new Response(JSON.stringify({ 
-                        error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
+                        error: 'Bạn đã hết lượt xem bài. Vui lòng <a href="/nap-credit" style="color: var(--gold-primary); text-decoration: underline;">nạp thêm Credit</a> để tiếp tục.', 
                         code: 'OUT_OF_CREDITS' 
                     }), { status: 402 });
                 }
@@ -131,8 +144,18 @@ export const POST: APIRoute = async (context) => {
         await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, data.interpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
         
         // 5. TRỪ CREDIT
-        await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), safeUserId).run();
+        const walletAfter = await db.prepare('SELECT balance, daily_credits, subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
+        if (walletAfter) {
+            const isPremium = walletAfter.subscription_tier === 'premium' && (!walletAfter.subscription_expires_at || new Date(walletAfter.subscription_expires_at) > new Date());
+            if (!isPremium) {
+                if (walletAfter.daily_credits > 0) {
+                    await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1 WHERE user_id = ?').bind(safeUserId).run();
+                } else {
+                    await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ?').bind(safeUserId).run();
+                }
+                await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), safeUserId).run();
+            }
+        }
         
       } catch (dbError) {
         console.error("Lỗi lưu D1 (tarot):", dbError);

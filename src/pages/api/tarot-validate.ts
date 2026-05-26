@@ -31,14 +31,28 @@ export const POST: APIRoute = async (context) => {
       // Kiểm tra Credit trước khi gọi AI
       if (user && env.DB) {
         try {
-          const wallet = await env.DB.prepare('SELECT balance FROM credit_wallets WHERE user_id = ?').bind(user.id).first();
+          const vnTime = new Date(new Date().getTime() + 7 * 3600 * 1000);
+          const todayStr = vnTime.toISOString().split('T')[0];
+          
+          let wallet = await env.DB.prepare('SELECT balance, daily_credits, last_daily_reset, subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(user.id).first();
+          
           if (!wallet) {
-              // Tự động tạo ví cho user cũ (chưa có ví) với 10 lượt free
-              await env.DB.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, 10)').bind(user.id).run();
-              // Không throw 402 vì họ vừa được tạo ví 10 lượt
-          } else if (wallet.balance <= 0) {
+              // Tự động tạo ví cho user cũ (chưa có ví)
+              await env.DB.prepare('INSERT INTO credit_wallets (user_id, balance, daily_credits, last_daily_reset) VALUES (?, 1, 1, ?)').bind(user.id, todayStr).run();
+              wallet = { balance: 1, daily_credits: 1, subscription_tier: 'free' };
+          } else {
+              // Reset daily credit
+              if (wallet.last_daily_reset !== todayStr) {
+                  await env.DB.prepare('UPDATE credit_wallets SET daily_credits = 1, last_daily_reset = ? WHERE user_id = ?').bind(todayStr, user.id).run();
+                  wallet.daily_credits = 1;
+              }
+          }
+
+          const isPremium = wallet.subscription_tier === 'premium' && (!wallet.subscription_expires_at || new Date(wallet.subscription_expires_at) > new Date());
+          
+          if (!isPremium && wallet.balance <= 0 && wallet.daily_credits <= 0) {
              return new Response(JSON.stringify({ 
-                error: 'Bạn đã hết lượt xem bài. Vui lòng nạp thêm Credit để tiếp tục.', 
+                error: 'Bạn đã hết lượt xem bài. Vui lòng <a href="/nap-credit" style="color: var(--gold-primary); text-decoration: underline;">nạp thêm Credit</a> để tiếp tục.', 
                 code: 'OUT_OF_CREDITS' 
              }), { status: 402 });
           }
@@ -113,15 +127,26 @@ export const POST: APIRoute = async (context) => {
                     await db.prepare('UPDATE credit_wallets SET chat_count = chat_count + 1 WHERE user_id = ?').bind(safeUserId).run();
                     
                     // Kiểm tra xem đã đạt 10 tin nhắn chưa
-                    const walletAfter = await db.prepare('SELECT chat_count FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
+                    const walletAfter = await db.prepare('SELECT chat_count, balance, daily_credits, subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
                     
                     if (walletAfter && walletAfter.chat_count >= 10) {
-                        // Đủ 10 tin -> Trừ 1 credit và reset đếm
-                        await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
-                        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                        const isPremium = walletAfter.subscription_tier === 'premium' && (!walletAfter.subscription_expires_at || new Date(walletAfter.subscription_expires_at) > new Date());
                         
-                        // Gắn cờ vào data trả về để frontend biết
-                        data.creditDeducted = true;
+                        if (!isPremium) {
+                            if (walletAfter.daily_credits > 0) {
+                                await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
+                            } else {
+                                await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
+                            }
+                            await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                            
+                            // Gắn cờ vào data trả về để frontend biết
+                            data.creditDeducted = true;
+                        } else {
+                            // Nếu là Premium, chỉ reset biến đếm chứ không trừ tiền
+                            await db.prepare('UPDATE credit_wallets SET chat_count = 0 WHERE user_id = ?').bind(safeUserId).run();
+                            data.creditDeducted = false;
+                        }
                     }
                 }
             }

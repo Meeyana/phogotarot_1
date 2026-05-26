@@ -39,9 +39,9 @@ export const POST: APIRoute = async (context) => {
       .bind(userId, name)
       .run();
 
-    // Tạo ví Credit cho user mới (10 lượt)
-    await db.prepare('INSERT INTO credit_wallets (user_id, balance) VALUES (?, ?)')
-      .bind(userId, 10)
+    // Tạo ví Credit cho user mới (1 lượt vĩnh viễn, 1 lượt daily = 2 lượt ngày đầu)
+    await db.prepare('INSERT INTO credit_wallets (user_id, balance, daily_credits, last_daily_reset) VALUES (?, 1, 1, CURRENT_DATE)')
+      .bind(userId)
       .run();
 
     // Tạo session

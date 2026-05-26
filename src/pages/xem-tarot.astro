@@ -874,9 +874,20 @@ if (db && Astro.locals.user) {
                     } else {
                         // Rác, dọn dẹp
                         localStorage.removeItem('pending_tarot_cards');
+                        localStorage.removeItem('isDrawingTarot');
                         localStorage.removeItem('pending_validation_usage');
                         localStorage.removeItem('pending_validation_model');
                     }
+                }
+
+                // Phục hồi trạng thái ĐANG BỐC BÀI (đã bấm đồng ý nhưng chưa bốc đủ 3 lá mà lỡ F5)
+                const isDrawingTarot = localStorage.getItem('isDrawingTarot');
+                if (isDrawingTarot) {
+                    userQuestion = isDrawingTarot;
+                    lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
+                    lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
+                    openTarotModal();
+                    return; // Bỏ qua self-healing cơ bản
                 }
 
                 // Tự phục hồi trạng thái (Self-healing UX):
@@ -1213,12 +1224,14 @@ if (db && Astro.locals.user) {
 
                 yesBtn.addEventListener('click', () => {
                     localStorage.removeItem('waitingForTarotConfirm');
+                    localStorage.setItem('isDrawingTarot', question);
                     msgDiv.remove();
                     openTarotModal();
                 });
 
                 noBtn.addEventListener('click', () => {
                     localStorage.removeItem('waitingForTarotConfirm');
+                    localStorage.removeItem('isDrawingTarot');
                     localStorage.removeItem('pending_validation_usage');
                     localStorage.removeItem('pending_validation_model');
                     msgDiv.remove();
@@ -1416,6 +1429,7 @@ if (db && Astro.locals.user) {
                     addMessage(result.interpretation, 'bot', true, selectedCards, result.usage, result.model);
                     // Dọn dẹp pending vì đã thành công
                     localStorage.removeItem('pending_tarot_cards');
+                    localStorage.removeItem('isDrawingTarot');
                     localStorage.removeItem('pending_validation_usage');
                     localStorage.removeItem('pending_validation_model');
                     
@@ -1430,6 +1444,7 @@ if (db && Astro.locals.user) {
                     addMessage(err.message, 'bot', false, selectedCards);
                     // Dọn dẹp state để user có thể nạp tiền và bốc bài mới
                     localStorage.removeItem('pending_tarot_cards');
+                    localStorage.removeItem('isDrawingTarot');
                     return;
                 }
                 

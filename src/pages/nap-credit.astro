@@ -1,0 +1,870 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Biến cấu hình Ngân Hàng
+const BANK_ID = "VIB"; // Ngân hàng quốc tế VIB
+const ACCOUNT_NO = "943524970"; // Số tài khoản
+const ACCOUNT_NAME = "PHAN DINH TUAN"; // Tên chủ tài khoản (bạn có thể đổi lại tên thật)
+
+const title = "Nạp Credit - Phở Gõ Tarot";
+const description = "Nạp Credit để tiếp tục trải nghiệm luận giải Tarot sâu sắc và cá nhân hóa từ Phở Gõ Tarot.";
+
+// Yêu cầu đăng nhập để hiển thị email trong mã QR
+const user = Astro.locals.user;
+if (!user) {
+    return Astro.redirect('/login?redirect=/nap-credit');
+}
+---
+
+<BaseLayout title={title} description={description}>
+    <main class="pricing-page">
+        <div class="pricing-header">
+            <h1 class="pricing-title">Đầu Tư Vào Tương Lai</h1>
+            <p class="pricing-subtitle">Chọn một gói Credit phù hợp để khám phá thông điệp sâu sắc từ vũ trụ</p>
+        </div>
+
+        <div class="pricing-cards">
+            <!-- Gói 1 -->
+            <div class="pricing-card">
+                <div class="card-header">
+                    <h3>Khởi Đầu</h3>
+                    <div class="price">
+                        <span class="currency">₫</span>49.000
+                    </div>
+                    <p class="desc">Dành cho người mới trải nghiệm</p>
+                </div>
+                <div class="card-features">
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> <strong>3 lượt</strong> xem Tarot 3 lá</li>
+                        <li><i class="fa-solid fa-check"></i> Lượt xem <strong>không bao giờ hết hạn</strong></li>
+                        <li><i class="fa-solid fa-check"></i> Xem bài Yes/No miễn phí</li>
+                    </ul>
+                </div>
+                <button class="select-plan-btn" data-amount="49000" data-package="Khởi Đầu (3 lượt)">Chọn Gói Này</button>
+            </div>
+
+            <!-- Gói 2 -->
+            <div class="pricing-card popular">
+                <div class="popular-badge">Phổ Biến Nhất</div>
+                <div class="card-header">
+                    <h3>Đồng Hành</h3>
+                    <div class="price">
+                        <span class="currency">₫</span>129.000
+                    </div>
+                    <p class="desc">Tiết kiệm hơn, nhiều thông điệp hơn</p>
+                </div>
+                <div class="card-features">
+                    <ul>
+                        <li><i class="fa-solid fa-check"></i> <strong>10 lượt</strong> xem Tarot 3 lá</li>
+                        <li><i class="fa-solid fa-check"></i> Lượt xem <strong>không bao giờ hết hạn</strong></li>
+                        <li><i class="fa-solid fa-check"></i> Phân tích lá bài chi tiết</li>
+                        <li><i class="fa-solid fa-check"></i> Ưu tiên phản hồi tốc độ cao</li>
+                    </ul>
+                </div>
+                <button class="select-plan-btn popular-btn" data-amount="129000" data-package="Đồng Hành (10 lượt)">Chọn Gói Này</button>
+            </div>
+
+            <!-- Gói 3 -->
+            <div class="pricing-card premium-tier">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-crown" style="color: #FFD700;"></i> Vương Giả</h3>
+                    <div class="price">
+                        <span class="currency">₫</span>199.000<span class="period">/tháng</span>
+                    </div>
+                    <p class="desc">Trải nghiệm tâm linh trọn vẹn nhất</p>
+                </div>
+                <div class="card-features">
+                    <ul>
+                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> số lần xem</li>
+                        <li><i class="fa-solid fa-star"></i> Mở khóa các trải bài chuyên sâu</li>
+                        <li><i class="fa-solid fa-clock-rotate-left"></i> Lưu trữ lịch sử vĩnh viễn</li>
+                        <li><i class="fa-solid fa-wand-magic-sparkles"></i> AI thấu hiểu phong cách của bạn</li>
+                    </ul>
+                </div>
+                <button class="select-plan-btn premium-btn" data-amount="199000" data-package="Vương Giả (Gói Tháng)">Trở Thành VIP</button>
+                </div>
+
+            <!-- Gói 4 -->
+            <div class="pricing-card premium-tier yearly-tier">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-gem" style="color: #4CAF50;"></i> Chuyên Gia</h3>
+                    <div class="price">
+                        <span class="currency">₫</span>599.000<span class="period">/năm</span>
+                    </div>
+                    <p class="desc">Dành cho người yêu Tarot thực thụ</p>
+                </div>
+                <div class="card-features">
+                    <ul>
+                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> số lần xem suốt 1 năm</li>
+                        <li><i class="fa-solid fa-star"></i> Mở khóa toàn bộ trải bài</li>
+                        <li><i class="fa-solid fa-wand-magic-sparkles"></i> Phân tích chuẩn xác cao cấp</li>
+                    </ul>
+                </div>
+                <button class="select-plan-btn yearly-btn" data-amount="599000" data-package="Chuyên Gia (Gói Năm)">Mua Gói Năm</button>
+            </div>
+
+            <!-- Gói 5 -->
+            <div class="pricing-card premium-tier lifetime-tier">
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-diamond" style="color: #b19cd9;"></i> Khai Sáng</h3>
+                    <div class="price">
+                        <span class="currency">₫</span>799.000<span class="period">/trọn đời</span>
+                    </div>
+                    <p class="desc">Mua 1 lần, dùng mãi mãi</p>
+                </div>
+                <div class="card-features">
+                    <ul>
+                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> số lần xem vĩnh viễn</li>
+                        <li><i class="fa-solid fa-bolt"></i> Ưu tiên nâng cấp tính năng mới</li>
+                        <li><i class="fa-solid fa-user-shield"></i> Danh hiệu VIP trọn đời</li>
+                    </ul>
+                </div>
+                <button class="select-plan-btn lifetime-btn" data-amount="799000" data-package="Khai Sáng (Trọn Đời)">Mua Trọn Đời</button>
+            </div>
+        </div>
+        </div>
+
+        <div class="faq-section">
+            <h2 class="faq-title">Câu Hỏi Thường Gặp</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h4>Lượt Free mỗi ngày là gì?</h4>
+                    <p>Mỗi tài khoản được hệ thống tặng 1 lượt xem bài hoàn toàn miễn phí vào 0:00 hàng ngày. Lượt Free không được cộng dồn sang ngày hôm sau.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Lượt mua lẻ có bị mất đi không?</h4>
+                    <p>Không. Tất cả các gói mua lẻ (Khởi Đầu, Đồng Hành) đều có giá trị vĩnh viễn cho đến khi bạn sử dụng hết.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Payment Modal -->
+    <div id="payment-modal" class="payment-modal-backdrop">
+        <div class="payment-modal-content">
+            <button class="close-modal-btn">&times;</button>
+            <div class="payment-modal-header">
+                <h2>Thanh Toán Chuyển Khoản</h2>
+                <p>Bạn đang chọn: <strong id="selected-package-name" style="color: var(--gold-color);">...</strong></p>
+            </div>
+            
+            <div class="payment-modal-body">
+                <div class="qr-code-wrapper">
+                    <img id="vietqr-image" src="" alt="Mã QR Thanh Toán" />
+                    <div class="qr-loading">Đang tạo mã QR...</div>
+                </div>
+                
+                <div class="transfer-info">
+                    <div class="info-row">
+                        <span>Ngân hàng:</span>
+                        <strong>{BANK_ID}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Số tài khoản:</span>
+                        <strong class="copyable" data-copy="{ACCOUNT_NO}">{ACCOUNT_NO} <i class="fa-regular fa-copy"></i></strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Chủ tài khoản:</span>
+                        <strong>{ACCOUNT_NAME}</strong>
+                    </div>
+                    <div class="info-row">
+                        <span>Số tiền:</span>
+                        <strong class="amount-highlight" id="modal-amount">...</strong>
+                    </div>
+                    <div class="info-row content-row">
+                        <span>Nội dung chuyển khoản:</span>
+                        <div class="transfer-content copyable" id="transfer-content-text" data-copy="">
+                            <span id="transfer-content-display">...</span> <i class="fa-regular fa-copy"></i>
+                        </div>
+                    </div>
+                    <p class="transfer-warning"><i class="fa-solid fa-triangle-exclamation"></i> Bắt buộc nhập ĐÚNG NỘI DUNG chuyển khoản để hệ thống tự động cộng Credit.</p>
+                </div>
+            </div>
+            
+            <div class="payment-modal-footer">
+                <button class="confirm-paid-btn">Tôi đã chuyển khoản</button>
+            </div>
+        </div>
+    </div>
+</BaseLayout>
+
+<style>
+    /* CSS Setup */
+    .pricing-page {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 60px 20px;
+        min-height: 80vh;
+    }
+
+    .pricing-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .pricing-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 3rem;
+        color: var(--gold-color, #F2C94C);
+        margin-bottom: 15px;
+        text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+    }
+
+    .pricing-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.1rem;
+    }
+
+    .pricing-cards {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin-bottom: 80px;
+    }
+
+    .pricing-card {
+        background: rgba(20, 25, 40, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px 30px;
+        width: 100%;
+        max-width: 350px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .pricing-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(242, 201, 76, 0.3);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(242, 201, 76, 0.1);
+    }
+
+    .pricing-card.popular {
+        border-color: var(--gold-color, #F2C94C);
+        background: linear-gradient(180deg, rgba(30, 35, 55, 0.9) 0%, rgba(20, 25, 40, 0.9) 100%);
+        box-shadow: 0 0 30px rgba(242, 201, 76, 0.15);
+        transform: scale(1.05);
+    }
+
+    .pricing-card.popular:hover {
+        transform: scale(1.05) translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(242, 201, 76, 0.3);
+    }
+
+    .pricing-card.premium-tier {
+        background: linear-gradient(135deg, rgba(40, 30, 20, 0.8) 0%, rgba(20, 25, 40, 0.9) 100%);
+        border: 1px solid rgba(255, 215, 0, 0.5);
+    }
+
+    .popular-badge {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(90deg, #F2C94C, #F2994A);
+        color: #000;
+        font-weight: bold;
+        padding: 5px 20px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 10px rgba(242, 201, 76, 0.3);
+    }
+
+    .card-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .card-header h3 {
+        color: #fff;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--gold-color, #F2C94C);
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        line-height: 1;
+    }
+
+    .currency {
+        font-size: 1.2rem;
+        margin-top: 5px;
+        margin-right: 5px;
+    }
+
+    .period {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: auto;
+        margin-left: 5px;
+        margin-bottom: 5px;
+    }
+
+    .desc {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-top: 15px;
+    }
+
+    .card-features {
+        flex-grow: 1;
+        margin-bottom: 30px;
+    }
+
+    .card-features ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .card-features li {
+        color: #ddd;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.95rem;
+    }
+
+    .card-features li i {
+        color: var(--gold-color, #F2C94C);
+        font-size: 0.8rem;
+    }
+
+    .select-plan-btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-weight: bold;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    .select-plan-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .popular-btn {
+        background: var(--gold-color, #F2C94C);
+        color: #000;
+        border: none;
+    }
+
+    .popular-btn:hover {
+        background: #F2994A;
+        box-shadow: 0 5px 15px rgba(242, 201, 76, 0.4);
+    }
+    
+    .premium-btn {
+        background: linear-gradient(90deg, #FFD700, #FFA500);
+        color: #000;
+        border: none;
+    }
+    
+    .premium-btn:hover {
+        background: linear-gradient(90deg, #FFA500, #FFD700);
+        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+    }
+    
+    .yearly-tier {
+        border-color: #4CAF50;
+    }
+    
+    .yearly-btn {
+        background: linear-gradient(90deg, #4CAF50, #45a049);
+        color: #fff;
+        border: none;
+    }
+    
+    .yearly-btn:hover {
+        background: linear-gradient(90deg, #45a049, #4CAF50);
+        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+    }
+    
+    .lifetime-tier {
+        border-color: #b19cd9;
+    }
+    
+    .lifetime-btn {
+        background: linear-gradient(90deg, #b19cd9, #9370db);
+        color: #fff;
+        border: none;
+    }
+    
+    .lifetime-btn:hover {
+        background: linear-gradient(90deg, #9370db, #b19cd9);
+        box-shadow: 0 5px 15px rgba(177, 156, 217, 0.4);
+    }
+
+    /* FAQ Section */
+    .faq-section {
+        background: rgba(20, 25, 40, 0.5);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .faq-title {
+        text-align: center;
+        color: var(--gold-color, #F2C94C);
+        margin-bottom: 30px;
+        font-size: 2rem;
+    }
+
+    .faq-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+    }
+
+    .faq-item h4 {
+        color: #fff;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+
+    .faq-item p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Modal Styles */
+    .payment-modal-backdrop {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(5px);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .payment-modal-backdrop.show {
+        display: flex;
+        opacity: 1;
+    }
+
+    .payment-modal-content {
+        background: #1a1e2d;
+        border-radius: 20px;
+        border: 1px solid rgba(242, 201, 76, 0.3);
+        width: 95%;
+        max-width: 800px; /* Mở rộng tối đa cho layout ngang */
+        padding: 20px 30px;
+        position: relative;
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    /* Tùy chỉnh thanh cuộn cho modal */
+    .payment-modal-content::-webkit-scrollbar {
+        width: 6px;
+    }
+    .payment-modal-content::-webkit-scrollbar-track {
+        background: rgba(0,0,0,0.1);
+        border-radius: 10px;
+    }
+    .payment-modal-content::-webkit-scrollbar-thumb {
+        background: rgba(242, 201, 76, 0.5);
+        border-radius: 10px;
+    }
+    
+    .payment-modal-backdrop.show .payment-modal-content {
+        transform: translateY(0);
+    }
+
+    .close-modal-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    
+    .close-modal-btn:hover {
+        color: #fff;
+    }
+
+    .payment-modal-header {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .payment-modal-header h2 {
+        color: #fff;
+        margin-bottom: 5px;
+        font-size: 1.5rem;
+    }
+    
+    .payment-modal-body {
+        display: flex;
+        gap: 25px;
+        align-items: stretch;
+        margin-bottom: 20px;
+    }
+
+    .qr-code-wrapper {
+        flex: 0 0 40%; /* Chiếm 40% chiều rộng trên desktop */
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #vietqr-image {
+        max-width: 100%;
+        max-height: 300px;
+        height: auto;
+        display: none;
+        border-radius: 8px;
+    }
+
+    .qr-loading {
+        color: #666;
+        font-weight: 500;
+    }
+
+    .transfer-info {
+        flex: 1; /* Chiếm phần còn lại */
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    
+    .info-row.content-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        border-bottom: none;
+    }
+
+    .info-row span {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+    }
+
+    .info-row strong {
+        color: #fff;
+        font-size: 1rem;
+    }
+    
+    .amount-highlight {
+        color: #ff6b6b !important;
+        font-size: 1.2rem !important;
+    }
+    
+    .copyable {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: color 0.2s;
+    }
+    
+    .copyable:hover {
+        color: var(--gold-color, #F2C94C);
+    }
+    
+    .transfer-content {
+        background: rgba(242, 201, 76, 0.1);
+        border: 1px dashed var(--gold-color, #F2C94C);
+        padding: 10px;
+        border-radius: 8px;
+        width: 100%;
+        text-align: center;
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: var(--gold-color, #F2C94C);
+        letter-spacing: 1px;
+    }
+
+    .transfer-warning {
+        color: #ffcc00;
+        font-size: 0.85rem;
+        margin-top: 15px;
+        line-height: 1.5;
+        background: rgba(255, 204, 0, 0.1);
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .payment-modal-footer {
+        text-align: center;
+    }
+
+    .confirm-paid-btn {
+        background: var(--gold-color, #F2C94C);
+        color: #000;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 10px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        width: 100%;
+    }
+
+    .confirm-paid-btn:hover {
+        background: #F2994A;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .pricing-card.popular {
+            transform: scale(1);
+        }
+        .pricing-card.popular:hover {
+            transform: translateY(-10px);
+        }
+        
+        .payment-modal-content {
+            padding: 15px;
+            width: 95%;
+        }
+        
+        .payment-modal-body {
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .qr-code-wrapper {
+            flex: auto;
+            padding: 10px;
+        }
+        
+        .transfer-info {
+            padding: 15px;
+        }
+        
+        .info-row {
+            padding: 8px 0;
+        }
+        
+        .info-row:not(.content-row) {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+        
+        .transfer-content {
+            padding: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .payment-modal-header h2 {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+
+<script is:inline define:vars={{ userEmail: user?.email, bankId: BANK_ID, accountNo: ACCOUNT_NO, accountName: ACCOUNT_NAME }}>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('payment-modal');
+        const closeBtn = document.querySelector('.close-modal-btn');
+        const confirmBtn = document.querySelector('.confirm-paid-btn');
+        const planBtns = document.querySelectorAll('.select-plan-btn');
+        
+        const qrImage = document.getElementById('vietqr-image');
+        const qrLoading = document.querySelector('.qr-loading');
+        
+        const packageNameEl = document.getElementById('selected-package-name');
+        const amountEl = document.getElementById('modal-amount');
+        const contentDisplay = document.getElementById('transfer-content-display');
+        const contentBox = document.getElementById('transfer-content-text');
+        
+        let currentTransactionId = null;
+        let checkInterval = null;
+        
+        // Mở modal và tạo mã QR
+        planBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const amount = btn.getAttribute('data-amount');
+                const pkgName = btn.getAttribute('data-package');
+                
+                packageNameEl.innerText = pkgName;
+                amountEl.innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+                
+                qrLoading.style.display = 'block';
+                qrImage.style.display = 'none';
+                modal.classList.add('show');
+
+                try {
+                    // 1. Gọi API sinh mã đơn hàng
+                    const res = await fetch('/api/payment/create', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ amount, package_id: pkgName })
+                    });
+                    
+                    const data = await res.json();
+                    if (!data.success) {
+                        alert('Lỗi tạo đơn hàng: ' + data.error);
+                        modal.classList.remove('show');
+                        return;
+                    }
+
+                    currentTransactionId = data.transaction_id;
+                    const transferContent = currentTransactionId;
+                    
+                    // Gắn nội dung vào HTML
+                    contentDisplay.innerText = transferContent;
+                    contentBox.setAttribute('data-copy', transferContent);
+                    
+                    // Tạo link VietQR
+                    const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${encodeURIComponent(transferContent)}&accountName=${encodeURIComponent(accountName)}`;
+                    
+                    qrImage.src = qrUrl;
+                    qrImage.onload = () => {
+                        qrLoading.style.display = 'none';
+                        qrImage.style.display = 'block';
+                    };
+                } catch (err) {
+                    alert('Không thể kết nối đến máy chủ.');
+                    modal.classList.remove('show');
+                }
+            });
+        });
+        
+        // Đóng modal
+        const closeModal = () => {
+            modal.classList.remove('show');
+            currentTransactionId = null;
+            if (checkInterval) {
+                clearInterval(checkInterval);
+                checkInterval = null;
+            }
+            confirmBtn.innerHTML = 'Tôi đã chuyển khoản';
+            confirmBtn.style.background = '';
+            confirmBtn.style.color = '';
+            confirmBtn.disabled = false;
+        };
+
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+        
+        // Copy text
+        document.querySelectorAll('.copyable').forEach(el => {
+            el.addEventListener('click', () => {
+                const text = el.getAttribute('data-copy');
+                if(!text) return;
+                navigator.clipboard.writeText(text).then(() => {
+                    const originalHTML = el.innerHTML;
+                    el.innerHTML = '<i class="fa-solid fa-check" style="color: #4CAF50;"></i> Đã copy';
+                    setTimeout(() => {
+                        el.innerHTML = originalHTML;
+                    }, 2000);
+                });
+            });
+        });
+        
+        // Hàm gọi API kiểm tra
+        const checkPaymentStatus = async () => {
+            if (!currentTransactionId) return;
+            try {
+                const res = await fetch('/api/payment/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ transaction_id: currentTransactionId })
+                });
+                const data = await res.json();
+                if (data.success && data.status === 'paid') {
+                    // Thành công
+                    if (checkInterval) clearInterval(checkInterval);
+                    confirmBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Thanh toán thành công!';
+                    confirmBtn.style.background = '#4CAF50';
+                    confirmBtn.style.color = '#fff';
+                    
+                    // Cập nhật ví hiển thị
+                    if (window.fetchBalance) window.fetchBalance();
+                    
+                    setTimeout(() => {
+                        alert('Tuyệt vời! Giao dịch đã hoàn tất và Credit đã được cộng vào tài khoản của bạn.');
+                        closeModal();
+                    }, 1000);
+                }
+            } catch (err) {
+                console.error('Check payment error', err);
+            }
+        };
+
+        // Nút xác nhận
+        confirmBtn.addEventListener('click', () => {
+            if (!currentTransactionId) return;
+
+            confirmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang chờ ngân hàng...';
+            confirmBtn.style.background = '#555';
+            confirmBtn.style.color = '#fff';
+            confirmBtn.disabled = true;
+            
+            // Bắt đầu polling mỗi 3 giây
+            checkPaymentStatus();
+            if (checkInterval) clearInterval(checkInterval);
+            checkInterval = setInterval(checkPaymentStatus, 3000);
+            
+            // Tự động dừng sau 5 phút nếu không có kết quả
+            setTimeout(() => {
+                if (checkInterval) {
+                    clearInterval(checkInterval);
+                    checkInterval = null;
+                    confirmBtn.innerHTML = 'Thử lại lần nữa';
+                    confirmBtn.style.background = '';
+                    confirmBtn.style.color = '';
+                    confirmBtn.disabled = false;
+                    alert('Hệ thống vẫn chưa nhận được thông báo từ ngân hàng. Vui lòng kiểm tra lại nếu bạn đã chuyển tiền thành công, hoặc liên hệ Admin.');
+                }
+            }, 5 * 60 * 1000);
+        });
+    });
+</script>
