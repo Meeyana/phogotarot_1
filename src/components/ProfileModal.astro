@@ -1,0 +1,94 @@
+---
+// src/components/ProfileModal.astro
+export interface Props {
+  profile: {
+    full_name: string;
+    nickname: string;
+    date_of_birth: string;
+    gender: string;
+    location: string;
+    occupation: string;
+    relationship_status: string;
+    recent_events: string;
+  };
+}
+
+const { profile } = Astro.props;
+---
+<!-- MODAL CẬP NHẬT HỒ SƠ -->
+<div id="profile-modal-container" class="tarot-modal hidden" style="align-items: flex-start; padding-top: 5vh;">
+    <div class="tarot-modal-content" style="max-width: 800px; min-height: auto; padding: 0;">
+        <div class="profile-card" style="margin: 0; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+            <button id="close-profile-modal-btn" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+            </button>
+            <h2 class="profile-title" style="font-size: 1.8rem; margin-top: 10px;">Hồ Sơ Của Bạn</h2>
+            <p class="profile-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
+
+            <form id="inline-profile-form" class="profile-form">
+                <div class="form-grid">
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="full_name">Tên hiển thị <span class="text-danger">*</span></label>
+                            <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A">
+                        </div>
+                        <div class="form-group">
+                            <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
+                            <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
+                        </div>
+                        <div class="form-group">
+                            <label for="date_of_birth">Ngày tháng năm sinh</label>
+                            <input type="date" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
+                        </div>
+                        <div class="form-group">
+                            <label for="gender">Cách muốn được xưng hô</label>
+                            <select id="gender" name="gender">
+                                <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
+                                <option value="Bạn" selected={profile.gender === 'Bạn'}>Bạn (Trung tính)</option>
+                                <option value="Anh" selected={profile.gender === 'Anh'}>Anh / Nam</option>
+                                <option value="Chị" selected={profile.gender === 'Chị'}>Chị / Nữ</option>
+                                <option value="Em" selected={profile.gender === 'Em'}>Em</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-column">
+                        <div class="form-group">
+                            <label for="location">Nơi sinh sống hiện tại</label>
+                            <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội...">
+                        </div>
+                        <div class="form-group">
+                            <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
+                            <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
+                        </div>
+                        <div class="form-group">
+                            <label for="relationship_status">Tình trạng quan hệ</label>
+                            <select id="relationship_status" name="relationship_status">
+                                <option value="" disabled selected={!profile.relationship_status}>-- Chọn --</option>
+                                <option value="Độc thân" selected={profile.relationship_status === 'Độc thân'}>Độc thân</option>
+                                <option value="Đang tìm hiểu" selected={profile.relationship_status === 'Đang tìm hiểu'}>Đang tìm hiểu</option>
+                                <option value="Đang yêu" selected={profile.relationship_status === 'Đang yêu'}>Đang yêu / Đã kết hôn</option>
+                                <option value="Phức tạp" selected={profile.relationship_status === 'Phức tạp'}>Phức tạp / Mới chia tay</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="recent_events">Biến cố / Chuyện quan tâm gần đây</label>
+                    <textarea id="recent_events" name="recent_events" rows="3" placeholder="Ví dụ: Vừa chuyển việc, đang phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
+                </div>
+
+                <div id="inline-form-error" class="error-message" style="display: none;"></div>
+                <div id="inline-form-success" class="success-message" style="display: none;">Đã lưu hồ sơ thành công! Sẵn sàng xem Tarot rồi đó.</div>
+
+                <div class="form-actions" style="margin-top: 1.5rem;">
+                    <button type="submit" id="inline-submit-btn" class="btn-primary" style="width: 100%; max-width: 300px;">
+                        <span class="btn-text">Lưu Hồ Sơ</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -841,7 +841,7 @@ const user = Astro.locals.user;
                     confirmBtn.style.color = '#fff';
                     
                     // Cập nhật ví hiển thị
-                    if (window.fetchBalance) window.fetchBalance();
+                    if (window.fetchBalance) window.fetchBalance(true);
                     
                     setTimeout(() => {
                         alert('Tuyệt vời! Giao dịch đã hoàn tất và Credit đã được cộng vào tài khoản của bạn.');

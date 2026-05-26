@@ -1,0 +1,117 @@
+---
+interface Props {
+  pyramid: {
+    base: {
+      m: number;
+      d: number;
+      y: number;
+    };
+    peaks: {
+      p1: number;
+      p2: number;
+      p3: number;
+      p4: number;
+    };
+    challenges: {
+      c1: number;
+      c2: number;
+      c3: number;
+      c4: number;
+    };
+    ages: {
+      p1_text: string;
+      p1_year: string;
+      p2_text: string;
+      p2_year: string;
+      p3_text: string;
+      p3_year: string;
+      p4_text: string;
+      p4_year: string;
+    };
+  };
+  day: number;
+  month: number;
+  year: number;
+}
+
+const { pyramid, day, month, year } = Astro.props;
+---
+
+<div class="chart-section fade-in-up mt-12">
+    <div class="section-header text-center mb-4">
+        <h3 class="section-subtitle">Kim Tự Tháp Thần Số</h3>
+        <p class="section-text text-center text-sm opacity-80">4 Đỉnh cao & 4 Thử thách cuộc đời</p>
+    </div>
+    <div class="diamond-layout-wrapper" id="pyramid-chart-source">
+         <div class="chart-draw-area">
+            <div class="diamond-aspect-ratio">
+                <svg class="diamond-lines" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <marker id="dot-start" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+                            <circle cx="3" cy="3" r="2" fill="rgba(242, 201, 76, 0.6)" />
+                        </marker>
+                    </defs>
+                    <line x1="50" y1="400" x2="550" y2="400" class="line-gold thin opacity-20" />
+                    <line x1="120" y1="400" x2="300" y2="50" class="line-gold" />
+                    <line x1="480" y1="400" x2="300" y2="50" class="line-gold" />
+                    <line x1="120" y1="400" x2="300" y2="750" class="line-gold opacity-50" />
+                    <line x1="480" y1="400" x2="300" y2="750" class="line-gold opacity-50" />
+                    <line x1="300" y1="400" x2="240" y2="300" class="line-gold" />
+                    <line x1="300" y1="400" x2="360" y2="300" class="line-gold" />
+                    <line x1="120" y1="400" x2="240" y2="300" class="line-gold" />
+                    <line x1="480" y1="400" x2="360" y2="300" class="line-gold" />
+                    <line x1="240" y1="300" x2="300" y2="180" class="line-gold thick" />
+                    <line x1="360" y1="300" x2="300" y2="180" class="line-gold thick" />
+                    <line x1="300" y1="180" x2="300" y2="50" class="line-gold thickest" />
+                    <line x1="120" y1="400" x2="240" y2="500" class="line-gold opacity-30" />
+                    <line x1="480" y1="400" x2="360" y2="500" class="line-gold opacity-30" />
+                    <line x1="300" y1="400" x2="240" y2="500" class="line-gold opacity-30" />
+                    <line x1="300" y1="400" x2="360" y2="500" class="line-gold opacity-30" />
+                    <line x1="240" y1="500" x2="300" y2="620" class="line-gold thick opacity-30" />
+                    <line x1="360" y1="500" x2="300" y2="620" class="line-gold thick opacity-30" />
+                    <line x1="300" y1="620" x2="300" y2="750" class="line-gold thickest opacity-30" />
+                    <polyline points="220,300 150,300 140,290" class="callout-line" marker-start="url(#dot-start)" />
+                    <polyline points="380,300 450,300 460,290" class="callout-line" marker-start="url(#dot-start)" />
+                    <polyline points="330,180 450,180 460,170" class="callout-line" marker-start="url(#dot-start)" />
+                    <polyline points="330,50 450,50 460,40" class="callout-line" marker-start="url(#dot-start)" />
+                </svg>
+                <div class="node-wrapper" style="left: 20%; top: 50%;">
+                    <div class="circle bg-dark"><span>{pyramid.base.m}</span></div>
+                    <div class="note-label">Tháng {month}</div>
+                </div>
+                <div class="node-wrapper main-center" style="left: 50%; top: 50%;">
+                    <div class="circle bg-dark main-glow"><span>{pyramid.base.d}</span></div>
+                    <div class="note-label highlight">Ngày {day}</div>
+                </div>
+                <div class="node-wrapper" style="left: 80%; top: 50%;">
+                    <div class="circle bg-dark"><span>{pyramid.base.y}</span></div>
+                    <div class="note-label">Năm {year}</div>
+                </div>
+                <div class="node-wrapper" style="left: 40%; top: 37.5%;"><div class="circle bg-dark"><span>{pyramid.peaks.p1}</span></div></div>
+                <div class="node-wrapper" style="left: 60%; top: 37.5%;"><div class="circle bg-dark"><span>{pyramid.peaks.p2}</span></div></div>
+                <div class="node-wrapper" style="left: 50%; top: 22.5%;"><div class="circle bg-dark"><span>{pyramid.peaks.p3}</span></div></div>
+                <div class="node-wrapper" style="left: 50%; top: 6.25%;"><div class="circle bg-dark"><span>{pyramid.peaks.p4}</span></div></div>
+                 <div class="node-wrapper" style="left: 40%; top: 62.5%;"><div class="circle bg-dark gray-border"><span>{pyramid.challenges.c1}</span></div></div>
+                 <div class="node-wrapper" style="left: 60%; top: 62.5%;"><div class="circle bg-dark gray-border"><span>{pyramid.challenges.c2}</span></div></div>
+                 <div class="node-wrapper" style="left: 50%; top: 77.5%;"><div class="circle bg-dark gray-border"><span>{pyramid.challenges.c3}</span></div></div>
+                 <div class="node-wrapper" style="left: 50%; top: 93.75%;"><div class="circle bg-dark gray-border"><span>{pyramid.challenges.c4}</span></div></div>
+                <div class="annotation-box left-align" style="left: 5%; top: 35%;">
+                    <span class="anno-text"><b>{pyramid.ages.p1_text}</b><br>({pyramid.ages.p1_year})</span>
+                </div>
+                <div class="annotation-box right-align" style="right: 5%; top: 35%;">
+                    <span class="anno-text"><b>{pyramid.ages.p2_text}</b><br>({pyramid.ages.p2_year})</span>
+                </div>
+                <div class="annotation-box right-align" style="right: 5%; top: 20%;">
+                    <span class="anno-text"><b>{pyramid.ages.p3_text}</b><br>({pyramid.ages.p3_year})</span>
+                </div>
+                <div class="annotation-box right-align" style="right: 5%; top: 4%;">
+                    <span class="anno-text"><b>{pyramid.ages.p4_text}</b><br>({pyramid.ages.p4_year})</span>
+                </div>
+            </div>
+         </div>
+    </div>
+
+    <div id="pyramid-interpretations" class="interpretations-container max-w-4xl mx-auto rich-text-content mt-12">
+        <div class="loading-placeholder text-center opacity-50">Đang tải luận giải Kim Tự Tháp...</div>
+    </div>
+</div>

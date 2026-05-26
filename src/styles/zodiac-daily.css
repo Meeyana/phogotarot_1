@@ -1,0 +1,257 @@
+/* --- LAYOUT CHUNG --- */
+#zodiac-page-content {
+    position: relative; z-index: 1;
+    padding-top: 5rem; padding-bottom: 3rem;
+}
+.zodiac-container { max-width: 1000px; margin: 0 auto; padding: 0 1rem; }
+.zodiac-main-content { display: flex; flex-direction: column; gap: 2.5rem; }
+
+/* HEADER */
+.page-header-center { text-align: center; margin-bottom: 3rem; }
+.title {
+    font-family: var(--font-title); color: #ffffff; font-size: clamp(2.2rem, 6vw, 3.5rem);
+    font-weight: 700; margin-bottom: 0.5rem;
+    text-shadow: 0 0 15px rgba(242, 201, 76, 0.6), 0 0 30px rgba(242, 201, 76, 0.3);
+}
+.subtitle { font-size: 1.1rem; color: #ccc; margin: 0; text-shadow: none; }
+
+.zodiac-header { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+.zodiac-title-group { display: flex; align-items: center; gap: 1rem; }
+.zodiac-title {
+    font-family: var(--font-title); color: var(--gold-color, #F2C94C);
+    font-size: 2rem; font-weight: 700; margin: 0;
+    text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+}
+.zodiac-date {
+    font-size: 1.1rem; font-weight: 600; color: #fff; opacity: 0.8; font-family: var(--font-body);
+}
+@media (min-width: 640px) {
+    .zodiac-header { flex-direction: row; justify-content: space-between; align-items: center; }
+}
+
+/* --- GRID CHỌN CUNG --- */
+.zodiac-grid {
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 0.8rem;
+}
+@media (min-width: 500px) { .zodiac-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 900px) { .zodiac-grid { grid-template-columns: repeat(6, 1fr); } }
+
+.zodiac-btn {
+    background-color: rgba(20, 40, 80, 0.7); 
+    border: 1px solid rgba(142, 186, 255, 0.3);
+    color: #e2e8f0;
+    padding: 0.7rem 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-body); 
+    font-weight: 600; 
+    font-size: 0.9rem;
+    display: flex; flex-direction: column; 
+    align-items: center; justify-content: center; 
+    gap: 0.3rem; text-shadow: none; height: 100%;
+}
+
+.zodiac-btn:hover {
+    background-color: rgba(30, 60, 120, 0.9);
+    border-color: var(--gold-color, #F2C94C);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(242, 201, 76, 0.5), inset 0 0 10px rgba(242, 201, 76, 0.2);
+    transform: translateY(-2px);
+}
+
+.zodiac-btn.active {
+    background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+    color: #050A1F; 
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
+    font-weight: 700;
+}
+.zodiac-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.zodiac-icon { font-size: 1.4rem; }
+
+@media (min-width: 640px) {
+     .zodiac-btn { flex-direction: row; gap: 0.5rem; }
+     .zodiac-icon { font-size: 1.1rem; }
+}
+
+/* --- DROPDOWN (MOBILE) --- */
+.zodiac-dropdown-container { display: none; position: relative; margin-bottom: 1.5rem; }
+@media (max-width: 400px) {
+    .zodiac-grid { display: none; }
+    .zodiac-dropdown-container { display: block; }
+}
+.zodiac-dropdown-toggle {
+    width: 100%; background: rgba(20, 40, 80, 0.7); border: 1px solid rgba(142, 186, 255, 0.3);
+    color: #fff; padding: 0.9rem 1.2rem; border-radius: 12px; cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-body); font-weight: 700; font-size: 1.1rem;
+    transition: all 0.3s; text-shadow: none;
+}
+.zodiac-dropdown-toggle:hover { border-color: var(--gold-color, #F2C94C); box-shadow: 0 0 15px rgba(242, 201, 76, 0.3); }
+
+.zodiac-dropdown-menu {
+    display: none; position: absolute; top: 110%; left: 0; width: 100%; z-index: 100;
+    background-color: #0b132b; border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px; padding: 0.5rem 0; max-height: 300px; overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+}
+.zodiac-dropdown-menu.open { display: block; animation: slideDown 0.2s ease-out; }
+.zodiac-dropdown-menu::-webkit-scrollbar { width: 5px; }
+.zodiac-dropdown-menu::-webkit-scrollbar-track { background: transparent; }
+.zodiac-dropdown-menu::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+.zodiac-btn-dropdown {
+    background: transparent; border: none; width: 100%; text-align: left;
+    color: #ccc; padding: 0.8rem 1.2rem; cursor: pointer;
+    font-size: 1rem; font-weight: 600; transition: all 0.2s; display: flex; gap: 0.8rem;
+}
+.zodiac-btn-dropdown:hover, .zodiac-btn-dropdown.active {
+    background: rgba(255,255,255,0.05); color: var(--gold-color, #F2C94C);
+}
+@keyframes slideDown { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:translateY(0)} }
+
+/* --- CARD DISPLAY --- */
+.zodiac-card-display {
+    background: rgba(11, 19, 43, 0.6); border: 1px solid rgba(242, 201, 76, 0.3);
+    border-radius: 16px; padding: 1.5rem; backdrop-filter: blur(10px);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3); min-height: 300px;
+}
+.zodiac-card-layout { display: flex; flex-direction: column; gap: 2rem; }
+.zodiac-card-image-wrapper { flex-shrink: 0; width: 100%; }
+.zodiac-card-image-aspect {
+    position: relative; width: 100%; padding-top: 155%; border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
+.zodiac-card-image { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+.zodiac-card-details { flex-grow: 1; }
+.zodiac-card-header { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1rem; flex-wrap: wrap;}
+.card-prefix { font-family: var(--font-title); font-size: 2rem; font-weight: 700; color: rgba(255,255,255,0.6); margin: 0; line-height: 1; }
+.card-name { font-family: var(--font-title); font-size: 2.5rem; font-weight: 700; color: #fff; margin: 0; line-height: 1; text-shadow: 0 0 10px rgba(242, 201, 76, 0.4); }
+.card-advice-group { margin-bottom: 1.5rem; font-size: 1.1rem; }
+.card-advice-label { font-weight: 600; color: var(--gold-color, #F2C94C); margin-right: 0.5rem; }
+.card-advice { display: inline; font-weight: 700; color: #fff; margin: 0; }
+
+@media (min-width: 768px) {
+    .zodiac-card-layout { flex-direction: row; align-items: flex-start; }
+    .zodiac-card-image-wrapper { width: 35%; max-width: 300px; }
+    .zodiac-card-details { width: 65%; }
+}
+
+/* --- ANALYSIS SECTIONS --- */
+.zodiac-card-analysis {
+    display: grid; grid-template-columns: 1fr;
+    gap: 1.5rem; margin-top: 2rem; padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.analysis-item p { margin: 0; font-size: 0.95rem; line-height: 1.7; color: #ddd; text-shadow: none; }
+.analysis-title {
+    font-family: var(--font-title); font-size: 1.2rem; font-weight: 700;
+    margin: 0 0 0.5rem 0; display: flex; align-items: center; gap: 0.5rem;
+}
+
+/* --- (ĐÃ SỬA) LUCKY DETAILS: XUỐNG DÒNG MỖI MỤC --- */
+.card-lucky-details {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 1.5rem; margin-top: 1.5rem;
+}
+.lucky-title { font-family: var(--font-title); font-size: 1.1rem; color: var(--gold-color, #F2C94C); margin: 0 0 1rem 0; }
+
+.lucky-items-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; /* Xếp dọc */
+    gap: 1rem;
+}
+.lucky-items-list li {
+    font-size: 0.95rem; color: #ccc;
+    display: block; /* Để xuống dòng nếu nội dung dài */
+}
+.lucky-label {
+    font-weight: 700; color: #fff; display: inline-block; margin-right: 0.5rem;
+}
+.lucky-value { color: #e0e0e0; }
+
+/* ADVICE BOX */
+.zodiac-advice-box {
+    margin-top: 2rem; background: linear-gradient(145deg, rgba(242, 201, 76, 0.1) 0%, rgba(11, 19, 43, 0.5) 100%);
+    border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 12px; padding: 1rem;
+}
+.advice-content-simple p { margin: 0; font-size: 1rem; line-height: 1.7; color: #fff; font-style: italic; text-shadow: none; }
+
+/* SHARE BTN */
+.zodiac-share-btn {
+    background: transparent; border: 1px solid var(--gold-color, #F2C94C);
+    color: var(--gold-color, #F2C94C); padding: 0.6rem 1.5rem; border-radius: 50px;
+    font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 0.5rem;
+}
+.zodiac-share-btn:hover { background: rgba(242, 201, 76, 0.1); color: #fff; box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); }
+
+/* CTA BOX */
+.zodiac-detailed-reading-box {
+    background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px; padding: 2rem; text-align: center; margin-top: 3rem;
+}
+.zodiac-action-btn {
+    background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%);
+    color: #050A1F; padding: 1rem 2.5rem; border-radius: 50px; font-weight: 700; text-decoration: none;
+    font-size: 1.1rem; display: inline-flex; align-items: center; gap: 0.8rem;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); transition: all 0.3s;
+}
+.zodiac-action-btn:hover {
+    transform: translateY(-3px); box-shadow: 0 6px 25px rgba(242, 201, 76, 0.6);
+    background: linear-gradient(135deg, #FFF 0%, #FFD700 50%, #F2C94C 100%);
+}
+
+/* --- (ĐÃ THIẾT KẾ LẠI TỐI GIẢN) SUBSCRIBE SECTION --- */
+.zodiac-subscribe-simple {
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+.sub-text {
+    font-size: 1rem; color: #ccc; margin: 0;
+    font-family: var(--font-title);
+    letter-spacing: 0.5px;
+}
+.sub-form-simple {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    padding: 0.25rem;
+    transition: all 0.3s;
+    max-width: 400px;
+    width: 100%;
+}
+.sub-form-simple:focus-within {
+    border-color: var(--gold-color, #F2C94C);
+    background: rgba(255,255,255,0.1);
+    box-shadow: 0 0 10px rgba(242, 201, 76, 0.15);
+}
+.sub-form-simple input {
+    background: transparent; border: none; outline: none;
+    color: #fff; padding: 0.6rem 1rem; flex-grow: 1;
+    font-size: 0.95rem;
+}
+.sub-form-simple button {
+    background: var(--gold-color, #F2C94C);
+    color: #050A1F; border: none;
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.3s;
+}
+.sub-form-simple button:hover {
+    transform: scale(1.1);
+    background: #fff;
+}
+
+@media (max-width: 600px) {
+    .sub-form-simple { width: 100%; }
+}

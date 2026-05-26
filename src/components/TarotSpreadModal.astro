@@ -1,0 +1,44 @@
+---
+// src/components/TarotSpreadModal.astro
+---
+<!-- MODAL RÚT BÀI (Chỉ hiện khi hỏi xong) -->
+<div id="tarot-modal" class="tarot-modal hidden">
+    <div class="tarot-modal-content">
+        <!-- MÀN HÌNH 2: XÁO BÀI -->
+        <div id="shuffling-screen" class="screen">
+            <div id="shuffling-question-display" class="question-display-header"></div>
+            <div class="shuffling-animation-container">
+                <div class="shuffle-card"></div>
+                <div class="shuffle-card"></div>
+                <div class="shuffle-card"></div>
+            </div>
+            <p class="shuffling-instruction">
+                Hít thở sâu...<br>
+                Vũ trụ đang lắng nghe năng lượng của bạn.
+            </p>
+        </div>
+
+        <!-- MÀN HÌNH 3: CHỌN BÀI -->
+        <div id="drawing-screen" class="screen">
+            <div id="drawing-question-display" class="question-display-header"></div>
+            <h2 class="drawing-subheader">Hãy chọn 3 lá bài theo trực giác</h2>
+            
+            <!-- Khu vực hiển thị 3 lá đã chọn -->
+            <div id="chosen-cards-display">
+                <div class="chosen-card-placeholder"><span>1</span></div>
+                <div class="chosen-card-placeholder"><span>2</span></div>
+                <div class="chosen-card-placeholder"><span>3</span></div>
+            </div>
+            
+            <!-- Bộ bài trải ra -->
+            <div id="card-spread-container">
+                <div class="card-row" id="card-row-1"></div>
+                <div class="card-row" id="card-row-2"></div>
+                <div class="card-row mobile-row" id="card-row-3"></div>
+                <div class="card-row mobile-row" id="card-row-4"></div>
+                <div class="card-row mobile-row" id="card-row-5"></div>
+                <div class="card-row mobile-row" id="card-row-6"></div>
+            </div>
+        </div>
+    </div>
+</div>
