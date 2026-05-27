@@ -52,7 +52,15 @@ export const POST: APIRoute = async (context) => {
 
     if (response.ok) {
         const result = await response.json();
-        const newPersona = result.summary || result.user_persona || result.persona;
+        let newPersona = '';
+        if (result.summary || result.user_persona || result.persona) {
+            newPersona = result.summary || result.user_persona || result.persona;
+        } else if (Array.isArray(result) && result[0]?.choices?.[0]?.message?.content) {
+            newPersona = result[0].choices[0].message.content;
+        } else if (result.choices?.[0]?.message?.content) {
+            newPersona = result.choices[0].message.content;
+        }
+
         if (newPersona && typeof newPersona === 'string') {
             // Cập nhật lại vào DB
             await db.prepare('UPDATE user_profiles SET user_persona = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?')
