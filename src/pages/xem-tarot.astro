@@ -399,6 +399,12 @@ if (db && Astro.locals.user) {
 
         function addMessage(text, sender, save = true, cards = null, usage = null, model = null) {
             if (save) saveMessage(text, sender, cards, usage, model);
+            
+            // Ẩn bảng chọn Tarot Reader khi cuộc trò chuyện đã bắt đầu
+            const readerContainer = document.getElementById('reader-selection-container');
+            if (readerContainer) {
+                readerContainer.style.display = 'none';
+            }
 
             const msgDiv = document.createElement('div');
             msgDiv.className = `message ${sender}-message`;
