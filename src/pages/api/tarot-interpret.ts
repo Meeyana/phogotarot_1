@@ -15,7 +15,7 @@ export const POST: APIRoute = async (context) => {
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;
-    let profile = { name: 'lữ khách', gender: 'bạn' };
+    let profile: any = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
     if (db) {
         let queryUserId = null;
         if (user) {
@@ -55,10 +55,11 @@ export const POST: APIRoute = async (context) => {
                     }), { status: 402 });
                 }
 
-                const row = await db.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                const row = await db.prepare('SELECT full_name, nickname, gender, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
                 if (row) {
                     profile.name = row.nickname || row.full_name || 'lữ khách';
                     profile.gender = row.gender || 'bạn';
+                    profile.user_persona = row.user_persona || '';
                 }
             } catch (err) {
                 console.error("Lỗi lấy thông tin user:", err);
@@ -70,7 +71,7 @@ export const POST: APIRoute = async (context) => {
     let history = [];
     if (db && body.readingId) {
       try {
-        const logs = await db.prepare('SELECT role, content FROM message_logs WHERE conversation_id = ? ORDER BY id ASC').bind(body.readingId).all();
+        const logs = await db.prepare('SELECT role, content FROM (SELECT * FROM message_logs WHERE conversation_id = ? ORDER BY id DESC LIMIT 12) ORDER BY id ASC').bind(body.readingId).all();
         if (logs && logs.results) {
           history = logs.results;
         }

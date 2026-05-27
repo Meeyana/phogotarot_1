@@ -1,0 +1,119 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "summarize-tarot-persona",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "b384fe74-7a4b-4220-9975-ce82b553838f",
+      "name": "Webhook Summarize",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -384,
+        -96
+      ],
+      "webhookId": "e3450083-55f0-468e-a388-17263e98ce6b"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const body = item.json.body || {};\n  const history = body.history || [];\n  const currentPersona = body.currentPersona || '';\n\n  let historyText = 'Chưa có lịch sử';\n  if (history.length > 0) {\n    historyText = history.map(h => `- ${h.role === 'assistant' ? 'Tarot Reader' : 'Khách'}: \"${h.content}\"`).join('\\n');\n  }\n\n  const systemPrompt = `Bạn là một AI phân tích tâm lý xuất sắc. Nhiệm vụ của bạn là đọc lịch sử cuộc trò chuyện Tarot và viết MỘT ĐOẠN VĂN DUY NHẤT (khoảng 100 - 150 chữ) tóm tắt lại:\\n1. Tình trạng cảm xúc hiện tại của khách hàng.\\n2. Câu chuyện/biến cố mà họ đang gặp phải.\\n\\nTUYỆT ĐỐI KHÔNG gạch đầu dòng. Viết dưới dạng một đoạn văn liền mạch để lưu làm \"chân dung khách hàng\" cho lần trò chuyện sau.\\n\\nNăng lượng cũ của khách (nếu có):\\n${currentPersona}`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: systemPrompt },\n      { role: \"user\", content: `Lịch sử hội thoại mới nhất:\\n${historyText}` }\n    ],\n    temperature: 0.5\n  };\n}\n\nreturn $input.all();"
+      },
+      "id": "9a2bc354-48c0-4c48-aeff-8126a57bbc56",
+      "name": "build summarize prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.bodyPayload }}",
+        "options": {}
+      },
+      "id": "a6b98ac0-7bb9-491d-9b48-5a2c2d1c58bc",
+      "name": "Summarize AI API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        16,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"summary\": \"{{ $json.choices[0].message.content }}\"\n}",
+        "options": {}
+      },
+      "id": "383e71b8-22ab-4375-81b7-4df8f4aafa07",
+      "name": "Respond summarize",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        224,
+        -96
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook Summarize": {
+      "main": [
+        [
+          {
+            "node": "build summarize prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build summarize prompt": {
+      "main": [
+        [
+          {
+            "node": "Summarize AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize AI API": {
+      "main": [
+        [
+          {
+            "node": "Respond summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "07c1c7ec2cda95a2b0ca5f954d25b4243bbf78131f2b02a8a5d44c777d7f6dfd"
+  }
+}

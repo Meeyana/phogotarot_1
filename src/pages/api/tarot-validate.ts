@@ -12,7 +12,7 @@ export const POST: APIRoute = async (context) => {
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;
-    let profile = { name: 'lữ khách', gender: 'bạn' };
+    let profile: any = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
     if (env.DB) {
         let queryUserId = null;
         if (user) {
@@ -28,10 +28,11 @@ export const POST: APIRoute = async (context) => {
 
         if (queryUserId) {
             try {
-                const row = await env.DB.prepare('SELECT full_name, nickname, gender FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                const row = await env.DB.prepare('SELECT full_name, nickname, gender, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
                 if (row) {
                     profile.name = row.nickname || row.full_name || 'lữ khách';
                     profile.gender = row.gender || 'bạn';
+                    profile.user_persona = row.user_persona || '';
                 }
             } catch (err) {
                 console.error("Lỗi lấy user_profiles:", err);

@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
     occupation TEXT, -- Nghề nghiệp
     relationship_status TEXT, -- Tình trạng quan hệ
     recent_events TEXT, -- Biến cố gần đây
+    user_persona TEXT, -- Chân dung AI tóm tắt
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -444,6 +444,37 @@ if (db && Astro.locals.user) {
             msgDiv.appendChild(contentDiv);
             chatMessages.appendChild(msgDiv);
             scrollToBottom();
+
+            // TÍNH NĂNG CHỐT PHIÊN (PHASE A.3) & TÓM TẮT CHÂN DUNG (PHASE B.2)
+            if (sender === 'bot' && save) {
+                const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+                
+                // Phase B.2: Cứ 5 tin nhắn user, gọi API chạy ngầm tóm tắt
+                const userMsgCount = history.filter(m => m.sender === 'user').length;
+                if (userMsgCount > 0 && userMsgCount % 5 === 0) {
+                    fetch('/api/tarot-summarize', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ readingId: currentReadingId })
+                    }).catch(err => console.error('Lỗi tóm tắt ngầm:', err));
+                }
+                
+                // Phase A.3: Khi đạt 16 tin nhắn (8 cặp), nhắc nhở nhẹ nhàng (không block)
+                if (history.length === 16) {
+                    setTimeout(() => {
+                        const systemMsg = document.createElement('div');
+                        systemMsg.className = 'message bot-message';
+                        systemMsg.innerHTML = `
+                            <div class="message-content" style="background: rgba(255,255,255,0.05); border: 1px dashed rgba(255,215,0,0.5); font-style: italic;">
+                                🌌 Vũ trụ đã gửi khá nhiều thông điệp cho chủ đề này. Để năng lượng được thanh tẩy và câu trả lời được tập trung hơn, bạn có thể cân nhắc nhấn nút <strong>Xóa bộ nhớ (Thùng rác)</strong> ở góc trên bên phải để bắt đầu một phiên trải bài hoàn toàn mới nhé!
+                            </div>
+                        `;
+                        chatMessages.appendChild(systemMsg);
+                        scrollToBottom();
+                    }, 1000);
+                }
+            }
+
             return msgDiv;
         }
 
@@ -535,20 +566,22 @@ if (db && Astro.locals.user) {
             const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
             // Lọc bỏ tin nhắn user vừa gửi ở trên để kiểm tra lịch sử trước đó
             const priorHistory = history.slice(0, -1);
-            const hasDrawnBefore = priorHistory.some(m => m.sender === 'bot' && m.cards && m.cards.length === 3);
+            const hasDrawnBefore = priorHistory.some(m => m.sender === 'bot' && m.cards && m.cards.length > 0);
 
             if (hasDrawnBefore) {
                 try {
-                    // Trích xuất 3 lá bài đã bốc từ localStorage để gửi kèm cho n8n
-                    const drawnMsg = priorHistory.find(m => m.sender === 'bot' && m.cards && m.cards.length === 3);
+                    // Trích xuất 3 lá bài GẦN NHẤT đã bốc từ localStorage để gửi kèm cho n8n
+                    const drawnMsgs = priorHistory.filter(m => m.sender === 'bot' && m.cards && m.cards.length > 0);
+                    const drawnMsg = drawnMsgs.length > 0 ? drawnMsgs[drawnMsgs.length - 1] : null;
                     const drawnCards = drawnMsg
                         ? drawnMsg.cards.map(c => ({ name: c.name, orientation: c.orientation, isReversed: c.isReversed }))
                         : [];
 
-                    // Trích xuất lịch sử hội thoại (chỉ lấy câu hỏi của user để tiết kiệm token)
+                    // Trích xuất lịch sử hội thoại (cả user và bot) - Cắt ngọn 12 tin nhắn gần nhất (Sliding Window)
                     const chatHistory = priorHistory
-                        .filter(m => m.text && m.text.trim() && m.sender === 'user')
-                        .map(m => ({ role: 'user', content: m.text }));
+                        .filter(m => m.text && m.text.trim())
+                        .map(m => ({ role: m.sender === 'bot' ? 'assistant' : 'user', content: m.text }))
+                        .slice(-12);
 
                     // Luôn validate trước - mọi turn đều phải qua bước này
                     const response = await fetch(N8N_VALIDATE_URL, {

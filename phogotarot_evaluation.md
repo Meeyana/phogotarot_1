@@ -1,169 +1,87 @@
-# 🔮 BÁO CÁO PHÂN TÍCH CHUYÊN SÂU & ĐÁNH GIÁ KỸ THUẬT: PHỞ GÕ TAROT
+# 🔮 BÁO CÁO PHÂN TÍCH CHẤT LƯỢNG AI OUTPUT & HỆ THỐNG PROMPT: PHỞ GÕ TAROT
 
-> **Ngày cập nhật**: 26/05/2026  
-> **Phạm vi tập trung**: `/xem-tarot` logic, Auth System, Database D1, Cơ chế Cache, Dung lượng Code (Bloat), Monetization & Workflow `tarot.json`
-
----
-
-## 📊 BẢNG ĐIỂM ĐÁNH GIÁ CHUYÊN SÂU
-
-| # | Hạng mục cốt lõi | Điểm | Đánh giá kỹ thuật |
-|---|------------------|------|-------------------|
-| 1 | 🔮 Logic Trải bài `/xem-tarot` & Workflow n8n | **5.5**/10 | ⚠️ Có cấu trúc tốt nhưng dư thừa tài nguyên và thiếu tối ưu |
-| 2 | 🔒 Hệ thống Đăng nhập & Xác thực (Auth) | **4.0**/10 | 🔴 Bảo mật yếu, nhiều kẽ hở lớn |
-| 3 | 💾 Lưu trữ Database D1 (Persistence) | **5.0**/10 | ⚠️ Triển khai nửa vời, chưa đồng bộ các trang |
-| 4 | ⚡ Cơ chế Cache (Client & Server) | **4.5**/10 | ⚠️ Phụ thuộc quá nhiều vào localStorage và API ngoài |
-| 5 | 📦 Dung lượng Code & Code Bloat | **3.5**/10 | 🔴 Trùng lặp mã nguồn nghiêm trọng, khó bảo trì |
-| 6 | 💰 Hệ thống Monetization (Credit & Webhook) | **3.0**/10 | 🔴 Lỗ hổng thất thoát tài chính nghiêm trọng |
-
-### 🏆 ĐIỂM ĐÁNH GIÁ CHUNG: **4.2 / 10** — *Mức Prototype hoạt động tốt nhưng chưa đủ an toàn và tối ưu để thương mại hóa.*
+> **Ngày cập nhật**: 27/05/2026  
+> **Trọng tâm đánh giá**: Chất lượng lời dịch/luận giải, Tính chân thực của các Reader Persona, Trải nghiệm đàm thoại tiếp nối (Conversational Loop), Kiểm soát An toàn nội dung (Safeguards) & Logic thiết kế Prompt trong [tarot.json](file:///D:/Tuan/phogotarot/tarot.json)
 
 ---
 
-## 1. 🔮 LOGIC TRẢI BÀI `/xem-tarot` & WORKFLOW n8n (`tarot.json`)
+## 📊 BẢNG ĐIỂM ĐÁNH GIÁ CHẤT LƯỢNG SẢN PHẨM (AI OUTPUT & USER EXPERIENCE)
 
-### Luồng vận hành (Workflow) hiện tại:
-1. **Validate**: Client gửi câu hỏi -> `/api/tarot-validate` -> Gọi n8n Webhook "Check câu hỏi" -> AI trả về `isValid` và `pick_card`.
-2. **Draw**: Nếu cần bốc bài, client hiển thị Modal bốc bài -> Người dùng chọn 3 lá -> Client gửi 3 lá bài lên `/api/tarot-interpret` -> Gọi n8n Webhook "Luận giải tarot".
-3. **Interpret**: n8n gọi API ngoài tra cứu ý nghĩa bài -> Gọi LLM -> Trả kết quả luận giải về client hiển thị và lưu DB D1.
-4. **Chat/Conversational**: Nếu là câu hỏi đàm thoại tiếp nối, n8n tự động trả lời thông qua webhook validation mà không cần bốc bài lại.
+| # | Tiêu chí đánh giá chất lượng | Điểm số | Trạng thái & Vấn đề cốt lõi |
+|---|---|---|---|
+| 1 | 🧠 **Trí nhớ đàm thoại (Follow-up Loop)** | **2.0**/10 | 🔴 **Nghiêm trọng**: Mất hoàn toàn bối cảnh lời khuyên trước đó của Bot. |
+| 2 | 🎭 **Cá tính Reader (Narrative Personas)** | **4.0**/10 | ⚠️ **Mờ nhạt**: Các Reader bị "san phẳng" văn phong giống nhau đến 85%. |
+| 3 | 📜 **Tính tự nhiên trong Luận giải (Turn 1)** | **5.0**/10 | ⚠️ **Rập khuôn**: Cấu trúc bài giải bị cơ khí, lặp đi lặp lại một bộ khung. |
+| 4 | 🛡️ **Kiểm soát nội dung nhạy cảm (Safeguards)** | **3.0**/10 | 🔴 **Nguy hiểm**: Không có bộ lọc cảnh báo các chủ đề cực đoan, y tế, pháp luật. |
+| 5 | 🧩 **Độ mượt khi phối hợp ý nghĩa bài** | **5.5**/10 | ⚠️ **Khiên cưỡng**: Ép từ khóa tĩnh trong DB vào ngữ cảnh động của khách hàng. |
+| 6 | ⚖️ **Đạo đức Tarot Reader (Future-telling)** | **5.0**/10 | ⚠️ **Rủi ro**: Dễ rơi vào phán xét tương lai tuyệt đối gây hoang mang cho người dùng. |
 
-```mermaid
-graph TD
-    A[Client: Nhập câu hỏi] --> B[Astro: /api/tarot-validate]
-    B --> C{Kiểm tra Credit}
-    C -- Hết lượt --> D[Trả lỗi 402]
-    C -- Còn lượt --> E[n8n Webhook: Check câu hỏi]
-    E --> F{AI Phân Loại}
-    F -- Hợp lệ & Bốc bài --> G[Client: Hiện Modal bốc 3 lá]
-    F -- Trò chuyện tiếp nối --> H[n8n: Gọi AI đàm thoại]
-    H --> I[Astro: Lưu message_logs & Trừ 0.1 Credit]
-    I --> J[Client: Hiện câu trả lời chat]
-    G --> K[Client: Gửi 3 lá lên /api/tarot-interpret]
-    K --> L[n8n Webhook: Luận giải tarot]
-    L --> M[n8n: Gọi API ngoài lấy ý nghĩa bài]
-    M --> N[n8n: Gọi AI giải bài]
-    N --> O[Astro: Lưu conversations, readings, message_logs]
-    O --> P[Astro: Trừ 1 Credit]
-    P --> Q[Client: Render kết quả 3D]
-```
-
-### 🔴 Điểm yếu & Sự dư thừa Kỹ thuật:
-*   **Dư thừa truy vấn & Gọi API ngoài lãng phí**: 
-    Trong file `tarot-interpret.ts` (dòng 70-83), Astro API đã truy vấn database cục bộ D1 (`tarot_database`) để lấy ý nghĩa lá bài và truyền sang n8n dưới dạng `body.cards[i].meaning`.  
-    Tuy nhiên, trong file workflow `tarot.json` (dòng 160-174), n8n lại thực hiện thêm một HTTP Request nữa đến `https://phogotarot-api.tuanphan1112-working.workers.dev/cards/query` để tra cứu lại ý nghĩa lá bài.
-    > [!IMPORTANT]
-    > Đây là sự dư thừa nghiêm trọng, làm chậm thời gian phản hồi của chatbot thêm 1-2 giây và tạo ra một điểm nghẽn (Single Point of Failure) nếu worker API ngoài bị sập. n8n nên dùng trực tiếp ý nghĩa bài đã được Astro đính kèm trong payload.
-
-*   **Lỗ hổng Race Condition khi trừ Credit**:
-    Cả hai API `/api/tarot-validate` và `/api/tarot-interpret` đều thực hiện việc kiểm tra credit ở đầu hàm (SELECT số dư), sau đó thực hiện gọi webhook n8n (mất khoảng 3-8 giây để AI sinh nội dung), rồi mới thực hiện UPDATE trừ số dư trong DB sau khi nhận kết quả.
-    > [!CAUTION]
-    > Kẻ xấu có thể mở nhiều tab hoặc viết script gửi 5-10 request cùng một thời điểm. Hệ thống sẽ SELECT thấy số dư ban đầu đều hợp lệ (ví dụ: còn 1 lượt), cho phép tất cả các luồng chạy AI và cuối cùng trừ tài khoản của người dùng về giá trị âm, hoặc cho phép họ dùng miễn phí hàng chục lượt mà không bị chặn ở đầu vào.
+### 🏆 ĐIỂM CHẤT LƯỢNG SẢN PHẨM TRUNG BÌNH: **4.1 / 10**  
+> *Đánh giá tổng quan: Chatbot hoạt động trôi chảy về mặt kỹ thuật, nhưng chất lượng nội dung đầu ra còn mang nặng tính robot công nghiệp, thiếu đi sự thấu cảm sâu sắc, tính cá nhân hóa và các chốt chặn an toàn cần thiết của một sản phẩm thương mại cao cấp.*
 
 ---
 
-## 2. 🔒 HỆ THỐNG ĐĂNG NHẬP & XÁC THỰC (AUTH SYSTEM)
+## 🔍 CHI TIẾT 6 ĐIỂM YẾU CHÍ MẠNG VỀ CHẤT LƯỢNG AI OUTPUT
 
-### 🔴 Điểm yếu bảo mật nghiêm trọng:
-*   **Mật mã hóa mật khẩu cực kỳ yếu (`src/lib/auth.ts:94-101`)**:
-    Hệ thống sử dụng thuật toán **SHA-256** với một salt tĩnh ghi cứng ngay trong code (`'phogo_tarot_secret_salt_2026'`) để băm mật khẩu người dùng.
-    > [!CAUTION]
-    > SHA-256 được thiết kế để tính toán cực nhanh, điều này khiến nó rất dễ bị bẻ khóa bằng kỹ thuật brute-force (thử sai hàng loạt) trên GPU thông dụng nếu database bị rò rỉ. Hơn nữa, việc lưu salt tĩnh trong code khiến toàn bộ mật khẩu của hệ thống bị đe dọa trực tiếp nếu lộ mã nguồn.
-    > **Khắc phục**: Chuyển sang sử dụng PBKDF2 với số vòng lặp tối thiểu 100,000 lượt (Web Crypto API hỗ trợ sẵn trên Cloudflare Workers) hoặc bcrypt/scrypt. Salt phải được sinh ngẫu nhiên cho từng tài khoản và lưu trong database.
+### 1. Lỗ hổng Trí nhớ trong Đàm thoại tiếp nối (Follow-up Loop)
+*   **Vấn đề cốt lõi:** Trong node `build conversational prompt` (dòng 128) và `build interpretation prompt` (dòng 221) trong [tarot.json](file:///D:/Tuan/phogotarot/tarot.json), hệ thống xây dựng lịch sử hội thoại bằng cách lọc và truyền **chỉ danh sách các câu hỏi trước đó của User** (`history.filter(msg => msg.role === 'user').map(msg => msg.content)`). Hệ thống hoàn toàn **bỏ qua việc gửi các câu trả lời trước đó của Bot**.
+*   **Ảnh hưởng chất lượng:** Khi khách hàng hỏi tiếp nối những câu mang tính chất tham chiếu như: *"Tại sao bạn lại khuyên tôi nên dừng lại ở lá thứ 2?"* hoặc *"Bạn giải thích rõ hơn ý bạn vừa nói đi"*, AI hoàn toàn bị "mất trí nhớ". Nó không biết lá thứ hai là gì và trước đó nó đã khuyên những gì. AI sẽ bắt buộc phải tự "bịa" ra bối cảnh cũ, gây ra sự bất nhất thông tin và làm khách hàng ngay lập tức mất lòng tin.
 
-*   **OAuth Google thiếu cơ chế bảo mật chống CSRF**:
-    Trong luồng đăng nhập mạng xã hội, token OAuth được truyền trực tiếp từ client lên `/api/auth/sync` mà không có tham số `state` để kiểm tra tính hợp lệ của request khởi tạo ban đầu. Điều này khiến luồng OAuth dễ bị tấn công giả mạo yêu cầu chéo trang (CSRF).
+### 2. Sự "San Phẳng" Cá Tính của các Reader (Narrative Personas)
+*   **Vấn đề cốt lõi (Recency Bias & Hệ thống chỉ thị chồng chéo):** 
+    1. Chuỗi Prompt hệ thống đang được ghép nối thô sơ: `narrativeBase (System prompt của Reader) + Quy tắc chung cứng nhắc`. Các quy tắc chung viết sau có xu hướng đè bẹp (override) cá tính riêng ở phía trước do cơ chế hoạt động của LLM.
+    2. Các quy tắc chung chứa những từ khóa ép buộc văn phong rất mạnh như: *"Giọng văn con người trầm ổn, đồng cảm"*, *"TUYỆT ĐỐI KHÔNG nhắc đến AI"*.
+*   **Ảnh hưởng chất lượng:** Bất kể người dùng chọn Reader nào (một Witcher ma mị lạnh lùng, một Joanna ngọt ngào ấm áp hay một Cô Gia Đình Vĩ Đại bao dung), văn phong phản hồi của AI trả về đều bị điều hướng về cùng một kiểu: "trầm ổn, đồng cảm, trang trọng". Việc cá nhân hóa chọn Reader gần như chỉ có tác dụng thay đổi Avatar trên giao diện chứ chưa thực sự thổi hồn vào chất lượng câu chữ.
 
-*   **Không hủy bỏ session cũ khi đổi mật khẩu (`reset-password.ts`)**:
-    Khi người dùng thực hiện reset mật khẩu hoặc đổi mật khẩu thành công, hệ thống chỉ cập nhật trường mật khẩu trong bảng `users` mà **không hề xóa các session cũ đang hoạt động** của user đó trong bảng `sessions`. Kẻ tấn công nếu đang giữ session token cũ vẫn có thể tiếp tục truy cập trái phép bình thường.
+### 3. Cấu trúc bài luận giải quá rập khuôn và máy móc (Turn 1)
+*   **Vấn đề cốt lõi:** Prompt mặc định áp đặt một outline bắt buộc vô cùng cứng nhắc:
+    > Lời chào mở đầu (1-2 câu) -> 1. Mở đầu & cảm nhận chung (2-3 câu) -> 2. Dòng chảy câu chuyện (Quá khứ -> Hiện tại -> Tương lai) (3-4 câu) -> 3. Sự kết nối giữa các lá bài (3-4 câu) -> 4. Lời khuyên từ trái tim (2-3 câu) -> Kết thúc bằng 1-2 câu tự vấn.
+*   **Ảnh hưởng chất lượng:** Việc khống chế số câu và bắt buộc định dạng tiêu đề `###` máy móc khiến AI không thể viết tự nhiên. Trải nghiệm bốc bài giống như đang đọc một bài báo cáo khoa học hoặc một barem điểm văn học lớp 9 được lập trình sẵn. Người dùng bốc bài lần thứ 2 sẽ phát hiện ra sự rập khuôn này, làm mất đi tính "linh thiêng" và cá nhân hóa của Tarot.
 
----
+### 4. Lỗ hổng lớn về Kiểm soát An toàn & Nội dung nhạy cảm (Safeguards)
+*   **Vấn đề cốt lõi:** Node `Check câu hỏi` hiện tại chỉ lọc các câu hỏi quá ngắn, vô nghĩa hoặc không liên quan đến cuộc sống (giải toán, thời tiết, code). Hệ thống hoàn toàn **thiếu cơ chế phát hiện các chủ đề cực đoan hoặc nhạy cảm cao**.
+*   **Ảnh hưởng chất lượng:** Tarot thường chạm đến những lúc con người khủng hoảng nhất. Khách hàng có thể đặt những câu hỏi như: *"Tôi có nên tự tử không?"*, *"Tôi bị bệnh ung thư có chữa được không?"*, *"Tôi có nên khởi kiện và ly hôn ngay lập tức không?"*. 
+    Hiện tại, AI vẫn sẽ hồn nhiên bốc bài và đưa ra những lời phán xét hoặc khuyên bảo về Y tế, Pháp luật, hay Tâm lý cực đoan. Điều này vi phạm nghiêm trọng đạo đức phát triển AI và mở ra rủi ro pháp lý/tác động tiêu cực khôn lường tới người dùng.
 
-## 3. 💾 LƯU TRỮ DATABASE D1 (PERSISTENCE)
+### 5. Sự khiên cưỡng khi lồng ghép "Ý nghĩa tĩnh" từ Database
+*   **Vấn đề cốt lõi:** Hệ thống đang nạp ý nghĩa cố định của thẻ bài từ Database (`card.meaning`) vào Prompt. Các ý nghĩa này thường là những đoạn văn tĩnh mô tả khái niệm chung chung của lá bài.
+*   **Ảnh hưởng chất lượng:** Khi khách hàng đặt một câu hỏi mang ngữ cảnh rất cụ thể (ví dụ: khía cạnh học tập, tình cảm gia đình), nhưng ý nghĩa tĩnh trong DB lại viết chủ yếu về "tài chính, tiền bạc", LLM sẽ bị bối rối. Nó sẽ cố gắng gượng ép nhét các từ khóa tài chính vào bài giải để tuân thủ chỉ thị "bám sát ý nghĩa gốc", khiến câu trả lời trở nên lệch tông, thiếu mạch lạc.
 
-### 🔴 Điểm yếu & Sự thiếu đồng bộ:
-*   **Triển khai lưu trữ nửa vời**:
-    Database D1 đã được thiết kế rất bài bản với đầy đủ các bảng lịch sử: `conversations` (lưu phiên chat), `tarot_readings` (lưu thông tin trải bài, vị trí 3 lá), và `message_logs` (lưu chi tiết lịch sử tin nhắn của user và AI).  
-    Tuy nhiên, **chỉ có trang `/xem-tarot` mới thực hiện lưu lịch sử vào DB**. Hai trang trải bài còn lại là `tarot.astro` (Trải bài 3 lá truyền thống) và `yes-no-reading.astro` (Yes/No) hoàn toàn bỏ qua DB, chỉ hoạt động tạm thời trên client và sẽ mất toàn bộ lịch sử khi F5 hoặc tắt trình duyệt.
-
-*   **Sử dụng Drizzle ORM không nhất quán**:
-    Mã nguồn có file `src/db/schema.ts` định nghĩa toàn bộ schema dạng Drizzle ORM cực kỳ chuyên nghiệp và chuẩn chỉ. Nhưng trong tất cả các API routes (`tarot-interpret.ts`, `tarot-validate.ts`, `auth/sync.ts`...), hệ thống lại viết **câu lệnh SQL thuần dạng chuỗi (`db.prepare().bind()`)**.
-    > [!WARNING]
-    > Việc này làm mất đi hoàn toàn lợi ích của Type-safety từ Drizzle ORM, làm code trở nên lộn xộn, khó debug lỗi cú pháp SQL tại thời điểm biên dịch (compile-time) và tạo ra sự dư thừa mã nguồn (Drizzle schema trở thành dead-code không dùng đến).
-
-*   **Lỗ hổng phân quyền Guest User**:
-    Trong `tarot-validate.ts` và `tarot-interpret.ts`, khi không có user đăng nhập, hệ thống sử dụng ID guest từ client gửi lên (`body.userId`). Nếu client gửi lên một ID của một user thật đã đăng nhập, Guest có thể đọc được thông tin profile cá nhân hóa của user đó hoặc thao túng số dư ví của họ.
+### 6. Nguy cơ Ảo giác và Tuyên bố Tương lai Tuyệt đối (Future-telling)
+*   **Vấn đề cốt lõi:** Prompt chưa có các điều khoản cấm đoán từ ngữ mang tính định đoạt tương lai.
+*   **Ảnh hưởng chất lượng:** Tarot thực chất là sự gợi mở năng lượng và đưa ra lời khuyên để khách hàng tự quyết định cuộc đời. Nếu không được kiểm soát ngôn từ, AI có thể đưa ra các tuyên bố mang tính khẳng định tuyệt đối như: *"Người ấy chắc chắn đang cắm sừng bạn"*, *"Bạn sẽ gặp tai nạn vào tháng sau"*, *"Học kỳ này bạn chắc chắn trượt"*. Những câu phán xét vô căn cứ này sẽ gây hoang mang, hoảng sợ cực độ cho những người dùng có tâm lý yếu.
 
 ---
 
-## 4. ⚡ CƠ CHẾ CACHE (CLIENT & SERVER)
+## 🛠️ LỘ TRÌNH NÂNG CẤP CHẤT LƯỢNG SẢN PHẨM (PROMPT ACTION PLAN)
 
-### 🔴 Điểm yếu trong cơ chế lưu trữ tạm thời:
-*   **Lưu lịch sử chat bằng `localStorage` không an toàn**:
-    Trang `/xem-tarot` lưu toàn bộ lịch sử đàm thoại trực tiếp dưới dạng JSON trong `localStorage` với key `phogo_tarot_chat_page_history` để render nhanh.
-    > [!WARNING]
-    > 1. Trình duyệt giới hạn dung lượng `localStorage` ở mức 5MB. Nếu lịch sử quá dài hoặc chứa nhiều tin nhắn AI dài, nó sẽ gây lỗi tràn bộ nhớ client.
-    > 2. Việc đọc JSON từ `localStorage` rồi gán thẳng vào DOM qua `innerHTML` trong file `xem-tarot.astro` mà không qua bước làm sạch dữ liệu (Sanitization) mở ra lỗ hổng **XSS**, cho phép kẻ xấu tiêm mã độc vào localStorage để chiếm đoạt tài khoản.
+Để nâng cấp toàn diện chất lượng AI Output của Phở Gõ Tarot, chúng ta cần triển khai kế hoạch hành động chia thành 3 giai đoạn:
 
-*   **Thiếu cơ chế Cache Server-side cho API bên ngoài**:
-    Trang `zodiac-daily.astro` (Tử vi hàng ngày) tải dữ liệu tử vi từ Google Sheets thông qua JSONP mỗi khi có người dùng truy cập. Dữ liệu này chỉ thay đổi 1 lần mỗi ngày, nhưng hệ thống bắt mọi client phải tải trực tiếp từ Google Sheets, gây ra độ trễ cao và phụ thuộc hoàn toàn vào tính ổn định của Google API.
-    > **Giải pháp**: Nên cache kết quả tử vi hàng ngày trên server (sử dụng Cloudflare KV hoặc D1) trong vòng 24 giờ.
+### Giai đoạn 1: Nâng cấp Trí nhớ Đàm thoại & Sửa đổi Payload (Ưu tiên số 1)
+*   **Hành động:** 
+    1. Cập nhật API backend `/api/tarot-interpret` và `/api/tarot-validate` để gửi **toàn bộ lịch sử hội thoại dạng cặp đôi** (User - Assistant) sang n8n thay vì chỉ lọc mỗi câu hỏi của User.
+    2. Định dạng lại cấu trúc truyền lịch sử trong Prompt:
+       ```
+       ### [LỊCH SỬ CUỘC HỘI THOẠI]
+       - Khách hàng: "Tình yêu sắp tới của tôi ra sao?"
+       - Reader: "Tôi thấy lá The Lovers chỉ ra..." (Bốc các lá: The Lovers, Death, Star)
+       - Khách hàng: "Giải thích thêm cho tôi lá Death được không?"
+       ```
+    3. LLM trong conversational loop sẽ nhận biết rõ ràng bối cảnh để giải thích tiếp nối hoàn hảo.
 
----
+### Giai đoạn 2: Thiết kế lại Persona Reader & Mềm hóa cấu trúc (Ưu tiên số 2)
+*   **Hành động:**
+    1. Tạo một cấu trúc Prompt chuyên biệt cho từng Reader Persona trong Database, bao gồm các biến: `xưng_hô`, `văn_phong` (ví dụ: thần bí, hóm hỉnh, sâu sắc), `cách_dẫn_dắt` và `giới_hạn_emoji`.
+    2. Tái thiết kế System Prompt trong `tarot.json`: Đưa Reader Prompt xuống làm trung tâm, thay đổi vị trí của các chỉ thị chung lên đầu và biến chúng thành các nguyên tắc kỹ thuật không màu sắc văn phong.
+    3. Loại bỏ outline 4 phần cứng nhắc và giới hạn số câu. Thay vào đó, định hướng AI giải bài theo cấu trúc mở:
+       * *Phần 1: Cảm nhận trực giác & Lời chào thân tình.*
+       * *Phần 2: Luận giải sự liên kết của 3 lá bài chảy theo câu chuyện của khách hàng.*
+       * *Phần 3: Thông điệp cốt lõi & Gợi ý tự vấn.*
 
-## 5. 📦 DUNG LƯỢNG CODE & CƠ CHẾ BLOAT MÃ NGUỒN
-
-### 🔴 Khủng hoảng dung lượng file do nhúng inline:
-```
-xem-tarot.astro      → 83KB (Chứa ~900 dòng JS và ~500 dòng CSS inline)
-yes-no-reading.astro → 74KB (Bị nhân bản từ xem-tarot.astro)
-tarot.astro          → 61KB (Bị nhân bản từ xem-tarot.astro)
-----------------------------------------------------------------------
-TỔNG CỘNG            → ~218KB code, trong đó hơn 65% là trùng lặp hoàn toàn!
-```
-
-> [!IMPORTANT]
-> Đây là vấn đề nghiêm trọng nhất về mặt kiến trúc frontend. 
-> Toàn bộ logic điều khiển DOM, hiệu ứng xáo bài (shuffle), bay bài (flight animation), lật bài 3D, giao diện bong bóng chat, xử lý gọi API... đều được **sao chép nguyên văn bằng cách copy-paste** ở cả 3 file trang trên.
->
-> **Hậu quả**:
-> 1. Khiến trang tải cực kỳ chậm trên thiết bị di động do trình duyệt phải parse hàng ngàn dòng Javascript inline không thể phân tách hay nén (code-splitting).
-> 2. Không thể bảo trì: Nếu bạn muốn thay đổi giao diện bong bóng chat hoặc sửa một lỗi logic bốc bài, bạn sẽ phải thực hiện sửa thủ công ở cả 3 file trang khác nhau. Điều này chắc chắn sẽ dẫn đến việc sai lệch phiên bản và phát sinh lỗi mới.
-
----
-
-## 6. 💰 HỆ THỐNG MONETIZATION & CỔNG THANH TOÁN (VIETQR WEBHOOK)
-
-### 🔴 Lỗ hổng bảo mật P0 gây thất thoát tài chính trực tiếp:
-*   **Webhook nhận tiền không hề có xác thực (`payment/webhook.ts`)**:
-    Để cập nhật số dư credit hoặc trạng thái gói Premium khi người dùng chuyển khoản ngân hàng thành công, hệ thống cung cấp một API webhook `/api/payment/webhook`.
-    > [!CAUTION]
-    > **Đoạn code xác thực chữ ký bảo mật hoặc webhook secret trong file này hiện đang bị COMMENT LẠI hoàn toàn.**
-    > Điều này có nghĩa là bất kỳ ai cũng có thể giả mạo một request POST chứa mã giao dịch ngẫu nhiên và số tiền lớn gửi trực tiếp tới endpoint này để hệ thống tự động cộng hàng ngàn credit hoặc kích hoạt Premium trọn đời mà không cần chuyển khoản 1 đồng nào.
-
-*   **Thiếu cơ chế chống trùng lặp giao dịch (Idempotency)**:
-    API xử lý webhook thanh toán không lưu lại lịch sử các mã giao dịch ngân hàng đã xử lý thành công vào một bảng duy nhất có thiết lập khóa chính (Unique Key). Một request webhook bị gửi lặp lại (do lỗi mạng hoặc cố ý tấn công) sẽ khiến hệ thống cộng credit nhiều lần cho cùng một giao dịch chuyển tiền duy nhất.
-
----
-
-## 🛠️ LỘ TRÌNH KHẮC PHỤC KỸ THUẬT (ACTION PLAN)
-
-### 1. Vá lỗ hổng Webhook thanh toán (Ưu tiên số 1 - Khẩn cấp)
-*   Mở lại đoạn code kiểm tra `WEBHOOK_SECRET` trong file `src/pages/api/payment/webhook.ts`. Sử dụng biến môi trường bảo mật của Cloudflare để lưu trữ mã này.
-*   Thiết lập Unique Constraint cho trường `transaction_code` (hoặc mã tham chiếu ngân hàng) trong database để ngăn chặn việc gọi webhook trùng lặp cộng tiền 2 lần.
-
-### 2. Tái cấu trúc (Refactor) code Bloat & Trùng lặp (Ưu tiên số 2)
-*   Trích xuất toàn bộ giao diện bong bóng chat, hiệu ứng gõ chữ, tự động cuộn vào component **`OracleChat.astro`** đã có sẵn.
-*   Tạo mới một component dùng chung **`TarotSpreadModal.astro`** chứa toàn bộ hiệu ứng xáo bài, trải bài, bay bài 3D và sự kiện chọn bài.
-*   Khi đó, 3 file trang `xem-tarot.astro`, `tarot.astro`, và `yes-no-reading.astro` sẽ được rút gọn chỉ còn dưới **5-10KB** mỗi file, đóng vai trò là các trang wrapper truyền prop cấu hình (ví dụ: `readingType="yes-no"` hoặc `readingType="standard"`).
-
-### 3. Sửa lỗi bảo mật hệ thống Auth & Credit (Ưu tiên số 3)
-*   **Password Hash**: Sử dụng Web Crypto API kết hợp với thuật toán **PBKDF2-HMAC-SHA256** với 100,000 lượt băm và sinh salt ngẫu nhiên cho mỗi user.
-*   **Race Condition**: Trong file `tarot-interpret.ts`, hãy chuyển lệnh trừ credit thành một câu lệnh duy nhất kiểm tra điều kiện ngay khi update: 
-    ```sql
-    UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ? AND balance > 0;
-    ```
-    Nếu số dòng ảnh hưởng (affected rows) trả về là 0, lập tức từ chối và trả lỗi 402, tránh việc kiểm tra riêng lẻ dễ bị bypass bằng request đồng thời.
-
-### 4. Đồng bộ Drizzle ORM
-*   Chuyển toàn bộ các câu lệnh SQL viết bằng chuỗi thô trong các API sang dạng truy vấn Drizzle ORM chuẩn chỉnh (ví dụ: `db.select().from(users)...`). Điều này giúp mã nguồn đồng nhất, sạch sẽ và an toàn tuyệt đối trước các nguy cơ lỗi cú pháp.
+### Giai đoạn 3: Vá lỗ hổng An toàn (Safeguards) & Chuẩn hóa Đạo đức (Ưu tiên số 3)
+*   **Hành động:**
+    1. Thêm chỉ thị nghiêm ngặt vào node `Check câu hỏi` (Validate) để phát hiện các chủ đề nhạy cảm:
+       * **Y tế / Sức khỏe**: Nếu hỏi bệnh tật, sống chết -> Từ chối lịch sự và khuyên họ đi gặp bác sĩ.
+       * **Pháp luật**: Nếu hỏi kiện tụng, tranh chấp pháp lý -> Khuyên gặp luật sư.
+       * **Tâm lý cực đoan**: Nếu hỏi tự tử, bạo lực -> Trả về thông điệp hỗ trợ khẩn cấp kèm hotline hỗ trợ tâm lý.
+    2. Cập nhật nguyên tắc luồng luận giải: **Tuyệt đối không phán xét tương lai dạng khẳng định 100%**. Yêu cầu AI luôn sử dụng các từ ngữ mang tính gợi mở năng lượng, định hướng hành động (Ví dụ: *"Năng lượng hiện tại đang chỉ ra...", "Đây là cơ hội để bạn nhìn nhận lại...", "Lời khuyên dành cho bạn..."*).
