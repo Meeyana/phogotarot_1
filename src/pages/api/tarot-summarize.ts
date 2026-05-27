@@ -9,7 +9,10 @@ export const POST: APIRoute = async (context) => {
     const webhookUrl = env.N8N_WEBHOOK_SUMMARIZE || '';
     
     // Nếu người dùng chưa cấu hình webhook tóm tắt, ta bỏ qua mượt mà
-    if (!webhookUrl) return new Response(JSON.stringify({ message: 'Summarize webhook not configured, skipping.' }), { status: 200 });
+    if (!webhookUrl) {
+        console.log('Skipping summarize: N8N_WEBHOOK_SUMMARIZE is missing or empty in env');
+        return new Response(JSON.stringify({ message: 'Summarize webhook not configured, skipping.' }), { status: 200 });
+    }
     
     const db = env.DB;
     if (!db) return new Response(JSON.stringify({ error: 'DB not found' }), { status: 500 });
