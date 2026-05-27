@@ -55,15 +55,20 @@ export const POST: APIRoute = async (context) => {
 
             // Lưu text vào message_logs
             if (msg.text) {
+                let dbText = msg.text;
+                if (role === 'assistant' && msg.cards && Array.isArray(msg.cards) && msg.cards.length > 0) {
+                    dbText = `<!-- CARDS_PAYLOAD: ${JSON.stringify(msg.cards)} -->\n` + dbText;
+                }
+                
                 if (role === 'assistant') {
                     const actualModel = msg.model || 'n8n_agent';
                     const promptTokens = msg.usage?.prompt_tokens || 0;
                     const completionTokens = msg.usage?.completion_tokens || 0;
                     const totalTokens = msg.usage?.total_tokens || 0;
                     
-                    await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, ?, ?, ?, ?, ?, ?)`).bind(readingId, role, msg.text, actualModel, promptTokens, completionTokens, totalTokens).run();
+                    await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, ?, ?, ?, ?, ?, ?)`).bind(readingId, role, dbText, actualModel, promptTokens, completionTokens, totalTokens).run();
                 } else {
-                    await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, ?, ?)`).bind(readingId, role, msg.text).run();
+                    await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, ?, ?)`).bind(readingId, role, dbText).run();
                 }
             }
         }

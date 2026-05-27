@@ -92,7 +92,12 @@ export const POST: APIRoute = async (context) => {
       try {
         const logs = await db.prepare('SELECT role, content FROM (SELECT * FROM message_logs WHERE conversation_id = ? ORDER BY id DESC LIMIT 12) ORDER BY id ASC').bind(body.readingId).all();
         if (logs && logs.results) {
-          history = logs.results;
+          history = logs.results.map((msg: any) => {
+              if (msg.content) {
+                  msg.content = msg.content.replace(/<!-- CARDS_PAYLOAD: .*? -->\n*/g, '');
+              }
+              return msg;
+          });
         }
       } catch (err) {
         console.error("Lỗi lấy lịch sử:", err);
@@ -195,7 +200,12 @@ export const POST: APIRoute = async (context) => {
         };
         data.model = actualModel;
 
-        await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, data.interpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
+        let dbInterpretation = data.interpretation;
+        if (cards && cards.length > 0) {
+            dbInterpretation = `<!-- CARDS_PAYLOAD: ${JSON.stringify(cards)} -->\n` + dbInterpretation;
+        }
+
+        await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
         
         // 5. TRỪ CREDIT (Chống Race Condition bằng Atomic Update)
         const walletAfter = await db.prepare('SELECT subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();

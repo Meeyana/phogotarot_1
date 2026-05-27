@@ -12,6 +12,7 @@ const db = Astro.locals.runtime?.env?.DB;
 let conversation: any = null;
 let reading: any = null;
 let messages: any[] = [];
+const allCards = await getCollection('cards');
 
 if (db && id) {
   try {
@@ -20,7 +21,7 @@ if (db && id) {
     
     if (convData) {
       conversation = convData;
-      
+
       // 2. Lấy thông tin trải bài (tarot_readings)
       const readingData = await db.prepare('SELECT * FROM tarot_readings WHERE conversation_id = ?').bind(id).first();
       if (readingData) {
@@ -29,15 +30,11 @@ if (db && id) {
             try {
                 reading.cards = JSON.parse(reading.cards_payload);
                 
-                // Fetch images from content collection
-                const allCards = await getCollection('cards');
                 reading.cards = reading.cards.map((card: any) => {
-                    // Cố gắng tìm lá bài trong collection
                     const contentCard = allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase()));
                     if (contentCard && contentCard.data.image) {
                         card.image = contentCard.data.image.src || contentCard.data.image;
                     } else {
-                        // Fallback URL tạm thời nếu không tìm thấy
                         card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
                     }
                     return card;
@@ -95,7 +92,37 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
         <div class="chat-history">
             <div class="messages-container">
                 {messages.map((msg, index) => {
+                    let cards = [];
+                    let cleanContent = msg.content;
+                    const match = cleanContent.match(/<!-- CARDS_PAYLOAD: (.*?) -->/);
+                    if (match) {
+                        try {
+                            cards = JSON.parse(match[1]);
+                            cleanContent = cleanContent.replace(match[0], '').trim();
+                        } catch(e) {}
+                    }
+                    
+                    // Fallback cho dữ liệu cũ: Nếu là câu trả lời bot đầu tiên và có reading.cards
                     const isFirstBotMessage = msg.role === 'assistant' && messages.findIndex(m => m.role === 'assistant') === index;
+                    if (cards.length === 0 && isFirstBotMessage && reading && reading.cards) {
+                        cards = reading.cards;
+                    }
+
+                    // Gắn URL ảnh cho lá bài
+                    if (cards.length > 0) {
+                        cards = cards.map((card: any) => {
+                            if (!card.image) {
+                                // Tìm trong bộ sưu tập thẻ bài
+                                const contentCard = allCards ? allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase())) : null;
+                                if (contentCard && contentCard.data.image) {
+                                    card.image = contentCard.data.image.src || contentCard.data.image;
+                                } else {
+                                    card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
+                                }
+                            }
+                            return card;
+                        });
+                    }
                     
                     return (
                         <div class={`message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`}>
@@ -105,18 +132,18 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
                                 </div>
                             )}
                             <div class="message-content">
-                                {isFirstBotMessage && reading && reading.cards && reading.cards.length > 0 && (
+                                {cards.length > 0 && (
                                     <div class="chat-drawn-cards">
-                                        {reading.cards.map((card: any) => (
+                                        {cards.map((card: any) => (
                                             <div class="chat-card-item">
-                                                <img src={card.image} alt={card.name} class={card.orientation === 'reversed' ? 'reversed' : ''} onerror="this.src='/card-back.jpg'" />
+                                                <img src={card.image} alt={card.name} class={card.orientation === 'reversed' || card.isReversed ? 'reversed' : ''} onerror="this.src='/card-back.jpg'" />
                                                 <div class="chat-card-name">{card.name}</div>
-                                                <div class="chat-card-orientation">({card.orientation === 'reversed' ? 'Ngược' : 'Xuôi'})</div>
+                                                <div class="chat-card-orientation">({card.orientation === 'reversed' || card.isReversed ? 'Ngược' : 'Xuôi'})</div>
                                             </div>
                                         ))}
                                     </div>
                                 )}
-                                <div class="markdown-body" set:html={msg.content}></div>
+                                <div class="markdown-body" set:html={cleanContent}></div>
                             </div>
                         </div>
                     );
@@ -159,14 +186,25 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
                         rawMessages.forEach(msg => {
                             const sender = msg.role === 'assistant' ? 'bot' : 'user';
                             let cards = null;
+                            let cleanContent = msg.content;
+                            
+                            const match = cleanContent.match(/<!-- CARDS_PAYLOAD: (.*?) -->/);
+                            if (match) {
+                                try {
+                                    cards = JSON.parse(match[1]);
+                                    cleanContent = cleanContent.replace(match[0], '').trim();
+                                } catch(e) {}
+                            }
+
                             if (sender === 'bot' && !firstBotMessageFound) {
                                 firstBotMessageFound = true;
-                                if (rawReading && rawReading.cards) {
+                                if (!cards && rawReading && rawReading.cards) {
                                     cards = rawReading.cards;
                                 }
                             }
+                            
                             historyArray.push({
-                                text: msg.content,
+                                text: cleanContent,
                                 sender: sender,
                                 cards: cards,
                                 timestamp: msg.timestamp || new Date().toISOString()
