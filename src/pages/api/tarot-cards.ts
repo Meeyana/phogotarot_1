@@ -22,7 +22,8 @@ export const GET: APIRoute = async (context) => {
                         // Tên file ảnh có định dạng "{id}-Tên-Bài.jpg", ví dụ "0-The-Fool.jpg"
                         const imagePath = Object.keys(cardImages).find(path => {
                             const filename = path.split('/').pop() || '';
-                            return filename.startsWith(`${row.id}-`);
+                            // Database đánh số từ 1 (id), nhưng tên file bắt đầu từ 0
+                            return filename.startsWith(`${row.id - 1}-`);
                         });
 
                         return {
