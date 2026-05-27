@@ -28,11 +28,20 @@ export const POST: APIRoute = async (context) => {
 
         if (queryUserId) {
             try {
-                const row = await env.DB.prepare('SELECT full_name, nickname, gender, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                const row = await env.DB.prepare('SELECT full_name, nickname, gender, recent_events, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
                 if (row) {
                     profile.name = row.nickname || row.full_name || 'lữ khách';
                     profile.gender = row.gender || 'bạn';
-                    profile.user_persona = row.user_persona || '';
+                    
+                    let combinedPersona = [];
+                    if (row.recent_events && row.recent_events.trim() !== '') {
+                        combinedPersona.push(`- Thông tin khách tự chia sẻ: ${row.recent_events}`);
+                    }
+                    if (row.user_persona && row.user_persona.trim() !== '') {
+                        combinedPersona.push(`- Đánh giá năng lượng từ phiên trước: ${row.user_persona}`);
+                    }
+                    
+                    profile.user_persona = combinedPersona.join('\n');
                 }
             } catch (err) {
                 console.error("Lỗi lấy user_profiles:", err);
