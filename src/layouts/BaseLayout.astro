@@ -204,7 +204,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                             <a href="/profile" class="nav-link submenu-link"><i class="fa-solid fa-user" style="width: 20px;"></i> Hồ sơ</a>
                             <a href="/history" class="nav-link submenu-link"><i class="fa-solid fa-clock-rotate-left" style="width: 20px;"></i> Lịch sử</a>
                             <a href="/nap-credit" class="nav-link submenu-link" style="color: var(--gold-color, #F2C94C);"><i class="fa-solid fa-wallet" style="width: 20px;"></i> Nạp Credit</a>
-                            <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px;">
+                            <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 5px;" onsubmit="localStorage.removeItem('phogo_tarot_chat_page_history'); localStorage.removeItem('pending_tarot_cards'); Object.keys(localStorage).forEach(k => { if (k.startsWith('drawn_indices_') || k.startsWith('is_synced_')) localStorage.removeItem(k); });">
                                 <button type="submit" class="nav-link submenu-link" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; color: #ff6b6b; padding: 10px 15px;"><i class="fa-solid fa-right-from-bracket" style="width: 20px;"></i> Đăng xuất</button>
                             </form>
                         </div>
@@ -237,7 +237,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                                     <a href="/history" class="nav-link submenu-link" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 2px; margin-bottom: 0; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.75rem;"><i class="fa-solid fa-clock-rotate-left" style="font-size: 1.1rem;"></i> Lịch sử</a>
                                     <a href="/nap-credit" class="nav-link submenu-link" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 2px; margin-bottom: 0; background: rgba(242, 201, 76, 0.1); border-radius: 8px; color: var(--gold-color, #F2C94C); border: 1px solid var(--gold-color, #F2C94C); font-size: 0.75rem;"><i class="fa-solid fa-wallet" style="font-size: 1.1rem;"></i> Nạp Credit</a>
                                 </div>
-                                <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; width: 100%;">
+                                <form action="/api/auth/logout" method="POST" style="margin:0; padding:0; width: 100%;" onsubmit="localStorage.removeItem('phogo_tarot_chat_page_history'); localStorage.removeItem('pending_tarot_cards'); Object.keys(localStorage).forEach(k => { if (k.startsWith('drawn_indices_') || k.startsWith('is_synced_')) localStorage.removeItem(k); });">
                                     <button type="submit" class="nav-link submenu-link" style="background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); width: 100%; border-radius: 8px; cursor: pointer; color: #ff6b6b; padding: 10px 15px; display: flex; align-items: center; justify-content: center; gap: 8px;"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
                                 </form>
                             </div>

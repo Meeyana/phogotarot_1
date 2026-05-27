@@ -25,13 +25,31 @@ export const POST: APIRoute = async (context) => {
     const queryUserId = user.id;
 
     // Lấy `user_persona` (Chân dung cũ) và thông tin cơ bản
-    let currentPersona = '';
-    let userProfile = { name: 'lữ khách', gender: 'Khác' };
-    const userRow = await db.prepare('SELECT full_name, nickname, gender, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
-    if (userRow) {
-        currentPersona = userRow.user_persona || '';
-        userProfile.name = userRow.nickname || userRow.full_name || 'lữ khách';
-        userProfile.gender = userRow.gender || 'Khác';
+    let profile = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
+    const row = await env.DB.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+    if (row) {
+        profile.name = row.nickname || row.full_name || 'lữ khách';
+        profile.gender = row.gender || 'bạn';
+        
+        let combinedPersona = [];
+        let basicInfo = [];
+        if (row.date_of_birth) basicInfo.push(`Sinh ngày: ${row.date_of_birth}`);
+        if (row.location) basicInfo.push(`Nơi ở: ${row.location}`);
+        if (row.occupation) basicInfo.push(`Nghề nghiệp: ${row.occupation}`);
+        if (row.relationship_status) basicInfo.push(`Tình trạng quan hệ: ${row.relationship_status}`);
+        
+        if (basicInfo.length > 0) {
+            combinedPersona.push(`- Thông tin cơ bản: ${basicInfo.join(', ')}`);
+        }
+        
+        if (row.recent_events && row.recent_events.trim() !== '') {
+            combinedPersona.push(`- Biến cố gần đây / Cần tư vấn: ${row.recent_events}`);
+        }
+        if (row.user_persona && row.user_persona.trim() !== '') {
+            combinedPersona.push(`- Đánh giá năng lượng từ AI (Lịch sử): ${row.user_persona}`);
+        }
+        
+        profile.user_persona = combinedPersona.join('\n');
     }
 
     // Lấy 10 tin nhắn gần nhất của phiên này để tóm tắt
@@ -48,8 +66,8 @@ export const POST: APIRoute = async (context) => {
         body: JSON.stringify({
             userId: queryUserId,
             readingId: readingId,
-            currentPersona: currentPersona,
-            userProfile: userProfile,
+            currentPersona: profile.user_persona,
+            userProfile: profile,
             history: logs.results
         })
     });

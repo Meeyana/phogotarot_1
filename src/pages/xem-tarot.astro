@@ -5,6 +5,10 @@ import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
 import '../styles/xem-tarot.css';
 
+if (!Astro.locals.user) {
+    return Astro.redirect('/login?redirect=/xem-tarot');
+}
+
 const pageTitle = "Trò Chuyện & Trải Bài Tarot Cùng Joanna | Phở Gõ Tarot";
 const pageDesc = "Trải nghiệm xem Tarot qua giao diện trò chuyện tương tác. Hỏi bất cứ điều gì, chọn bài và nhận thông điệp trực tiếp từ vũ trụ.";
 const pageUrl = new URL('/xem-tarot', Astro.site).href;
@@ -214,6 +218,7 @@ if (db && Astro.locals.user) {
         let userQuestion = '';
         let lastValidationUsage = null;
         let lastValidationModel = null;
+        let currentCycleDrawnCardIds = []; // Mảng chứa ID các lá bài đã rút trong phiên (tối đa 21 lá)
 
         const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`;
         const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
@@ -445,7 +450,45 @@ if (db && Astro.locals.user) {
             }
 
             const textDiv = document.createElement('div');
-            textDiv.innerHTML = renderMarkdown(text);
+            const finalHtml = renderMarkdown(text);
+            
+            // Hiệu ứng "Livestream" gõ từng chữ cho Bot (chỉ áp dụng cho tin nhắn mới thực sự, save=true)
+            if (sender === 'bot' && save) {
+                let i = 0;
+                let currentHTML = "";
+                textDiv.innerHTML = "";
+                
+                function typeHTML() {
+                    // Chạy mỗi lần 3 ký tự cho nhanh, giống tốc độ livestream
+                    let charsToType = 3; 
+                    while (charsToType > 0 && i < finalHtml.length) {
+                        if (finalHtml[i] === '<') {
+                            let tag = "";
+                            while (finalHtml[i] !== '>' && i < finalHtml.length) {
+                                tag += finalHtml[i];
+                                i++;
+                            }
+                            tag += '>';
+                            currentHTML += tag;
+                            i++;
+                        } else {
+                            currentHTML += finalHtml[i];
+                            i++;
+                            charsToType--;
+                        }
+                    }
+                    textDiv.innerHTML = currentHTML;
+                    scrollToBottom();
+                    
+                    if (i < finalHtml.length) {
+                        setTimeout(typeHTML, 10);
+                    }
+                }
+                setTimeout(typeHTML, 100); // Bắt đầu sau một chút delay
+            } else {
+                textDiv.innerHTML = finalHtml;
+            }
+            
             contentDiv.appendChild(textDiv);
             msgDiv.appendChild(contentDiv);
             chatMessages.appendChild(msgDiv);
@@ -498,7 +541,7 @@ if (db && Astro.locals.user) {
                     <div class="loader-orbit orbit-1"></div>
                     <div class="loader-orbit orbit-2"></div>
                 </div>
-                Vũ trụ đang truyền thông điệp...
+                Đang soạn tin nhắn...
             `;
             chatMessages.appendChild(typingDiv);
             scrollToBottom();
@@ -590,6 +633,7 @@ if (db && Astro.locals.user) {
                         .slice(-12);
 
                     // Luôn validate trước - mọi turn đều phải qua bước này
+                    addTypingIndicator();
                     const response = await fetch(N8N_VALIDATE_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -649,6 +693,7 @@ if (db && Astro.locals.user) {
                         showConfirmationBox(question);
                     }
                 } finally {
+                    removeTypingIndicator();
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = sendIcon;
                 }
@@ -657,6 +702,8 @@ if (db && Astro.locals.user) {
 
             // --- NẾU CHƯA TỪNG BỐC BÀI: TIẾP TỤC CHẠY LUỒNG VALIDATE ---
             try {
+                addTypingIndicator();
+                
                 // 2. Validate câu hỏi
                 const response = await fetch(N8N_VALIDATE_URL, {
                     method: 'POST',
@@ -707,6 +754,7 @@ if (db && Astro.locals.user) {
                     showConfirmationBox(question);
                 }
             } finally {
+                removeTypingIndicator();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = sendIcon;
             }
@@ -807,12 +855,64 @@ if (db && Astro.locals.user) {
             updateChosenCards();
             showScreen('drawing-screen');
 
+            // Tính toán số lá bài đã rút trong phiên (lịch sử)
+            const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+            let allDrawnCardIds = [];
+            for (const msg of history) {
+                if (msg.sender === 'bot' && msg.cards && msg.cards.length > 0) {
+                    msg.cards.forEach(c => {
+                        if (c.id !== undefined) {
+                            allDrawnCardIds.push(c.id);
+                        } else if (c.name) {
+                            // Cố gắng map lại từ name nếu history cũ không có id
+                            const matchedCard = cardData.find(cd => cd.name === c.name);
+                            if (matchedCard) allDrawnCardIds.push(matchedCard.id);
+                        }
+                    });
+                }
+            }
+            
+            // Xóa duplicate just in case
+            allDrawnCardIds = [...new Set(allDrawnCardIds)];
+            
+            // Nếu bốc đủ 21 lá, reset vòng lặp (lấy phần dư để biết cycle hiện tại)
+            const drawnCount = allDrawnCardIds.length;
+            const cycleCount = Math.floor(drawnCount / 21);
+            currentCycleDrawnCardIds = allDrawnCardIds.slice(cycleCount * 21);
+
+            let drawnIndices = JSON.parse(localStorage.getItem(`drawn_indices_${currentReadingId}`) || '[]');
+            let cycleIndices = drawnIndices.slice(cycleCount * 21);
+            
+            // Fallback: Nếu lịch sử cũ chưa có lưu vị trí rút, ta tự random vị trí đục lỗ để khớp số lượng bài đã rút
+            let missingIndicesCount = currentCycleDrawnCardIds.length - cycleIndices.length;
+            if (missingIndicesCount > 0) {
+                for (let k = 0; k < missingIndicesCount; k++) {
+                    let randIdx;
+                    do {
+                        randIdx = Math.floor(Math.random() * 78);
+                    } while (cycleIndices.includes(randIdx));
+                    cycleIndices.push(randIdx);
+                    drawnIndices.push(randIdx);
+                }
+                localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(drawnIndices));
+            }
+
             for (let i = 0; i < 78; i++) {
                 const cDesktop = document.createElement('div');
                 cDesktop.className = 'facedown-card'; cDesktop.dataset.idx = i;
-                cDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
                 
                 const cMobile = cDesktop.cloneNode(true);
+
+                if (cycleIndices.includes(i)) {
+                    // Lá bài này đã được bốc -> Tạo thành lỗ hổng tàng hình
+                    cDesktop.style.visibility = 'hidden';
+                    cDesktop.style.pointerEvents = 'none';
+                    cMobile.style.visibility = 'hidden';
+                    cMobile.style.pointerEvents = 'none';
+                } else {
+                    cDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
+                    cMobile.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
+                }
                 
                 const clickHandler = (e) => handleCardSelect(e.currentTarget);
                 cDesktop.addEventListener('click', clickHandler);
@@ -834,9 +934,21 @@ if (db && Astro.locals.user) {
 
             isAnimating = true;
             cards.forEach(c => c.classList.add('is-chosen'));
+            
+            // Lưu lại vị trí lá bài đã bốc vào LocalStorage để lần sau đục lỗ chính xác
+            let drawnIndices = JSON.parse(localStorage.getItem(`drawn_indices_${currentReadingId}`) || '[]');
+            drawnIndices.push(parseInt(idx));
+            localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(drawnIndices));
 
-            const avail = cardData.filter(c => !selectedCards.some(sc => sc.id === c.id));
-            const randomCard = avail[Math.floor(Math.random() * avail.length)];
+            const avail = cardData.filter(c => 
+                !selectedCards.some(sc => sc.id === c.id) &&
+                !currentCycleDrawnCardIds.includes(c.id)
+            );
+            
+            // Nếu lỡ hết bài (fallback an toàn), reset bài
+            const safeAvail = avail.length > 0 ? avail : cardData;
+            
+            const randomCard = safeAvail[Math.floor(Math.random() * safeAvail.length)];
             const isReversed = Math.random() < 0.5;
             const chosen = { ...randomCard, isReversed, orientation: isReversed ? 'Ngược' : 'Xuôi' };
 

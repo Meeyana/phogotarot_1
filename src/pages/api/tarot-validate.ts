@@ -28,17 +28,27 @@ export const POST: APIRoute = async (context) => {
 
         if (queryUserId) {
             try {
-                const row = await env.DB.prepare('SELECT full_name, nickname, gender, recent_events, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+                const row = await env.DB.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
                 if (row) {
                     profile.name = row.nickname || row.full_name || 'lữ khách';
                     profile.gender = row.gender || 'bạn';
                     
                     let combinedPersona = [];
+                    let basicInfo = [];
+                    if (row.date_of_birth) basicInfo.push(`Sinh ngày: ${row.date_of_birth}`);
+                    if (row.location) basicInfo.push(`Nơi ở: ${row.location}`);
+                    if (row.occupation) basicInfo.push(`Nghề nghiệp: ${row.occupation}`);
+                    if (row.relationship_status) basicInfo.push(`Tình trạng quan hệ: ${row.relationship_status}`);
+                    
+                    if (basicInfo.length > 0) {
+                        combinedPersona.push(`- Thông tin cơ bản: ${basicInfo.join(', ')}`);
+                    }
+                    
                     if (row.recent_events && row.recent_events.trim() !== '') {
-                        combinedPersona.push(`- Thông tin khách tự chia sẻ: ${row.recent_events}`);
+                        combinedPersona.push(`- Biến cố gần đây / Cần tư vấn: ${row.recent_events}`);
                     }
                     if (row.user_persona && row.user_persona.trim() !== '') {
-                        combinedPersona.push(`- Đánh giá năng lượng từ phiên trước: ${row.user_persona}`);
+                        combinedPersona.push(`- Đánh giá năng lượng từ AI (Lịch sử): ${row.user_persona}`);
                     }
                     
                     profile.user_persona = combinedPersona.join('\n');
