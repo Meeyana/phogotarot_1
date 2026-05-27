@@ -24,11 +24,14 @@ export const POST: APIRoute = async (context) => {
     if (!user) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     const queryUserId = user.id;
 
-    // Lấy `user_persona` (Chân dung cũ)
+    // Lấy `user_persona` (Chân dung cũ) và thông tin cơ bản
     let currentPersona = '';
-    const userRow = await db.prepare('SELECT user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
-    if (userRow && userRow.user_persona) {
-        currentPersona = userRow.user_persona;
+    let userProfile = { name: 'lữ khách', gender: 'Khác' };
+    const userRow = await db.prepare('SELECT full_name, nickname, gender, user_persona FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+    if (userRow) {
+        currentPersona = userRow.user_persona || '';
+        userProfile.name = userRow.nickname || userRow.full_name || 'lữ khách';
+        userProfile.gender = userRow.gender || 'Khác';
     }
 
     // Lấy 10 tin nhắn gần nhất của phiên này để tóm tắt
@@ -46,6 +49,7 @@ export const POST: APIRoute = async (context) => {
             userId: queryUserId,
             readingId: readingId,
             currentPersona: currentPersona,
+            userProfile: userProfile,
             history: logs.results
         })
     });

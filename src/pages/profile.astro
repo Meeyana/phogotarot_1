@@ -99,13 +99,12 @@ const pageDesc = "Cập nhật hồ sơ cá nhân để những trải bài Taro
                             <input type="date" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
                         </div>
                         <div class="form-group">
-                            <label for="gender">Cách muốn được xưng hô</label>
+                            <label for="gender">Giới tính</label>
                             <select id="gender" name="gender">
                                 <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
-                                <option value="Bạn" selected={profile.gender === 'Bạn'}>Bạn (Trung tính)</option>
-                                <option value="Anh" selected={profile.gender === 'Anh'}>Anh / Nam</option>
-                                <option value="Chị" selected={profile.gender === 'Chị'}>Chị / Nữ</option>
-                                <option value="Em" selected={profile.gender === 'Em'}>Em</option>
+                                <option value="Nam" selected={profile.gender === 'Nam'}>Nam</option>
+                                <option value="Nữ" selected={profile.gender === 'Nữ'}>Nữ</option>
+                                <option value="Khác" selected={profile.gender === 'Khác'}>Khác</option>
                             </select>
                         </div>
                     </div>
