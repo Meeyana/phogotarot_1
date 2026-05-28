@@ -110,7 +110,15 @@ export const POST: APIRoute = async (context) => {
     // === Kiểm tra số tiền ===
     if (parseInt(transferAmount) < request.amount) {
       console.warn('[SePay Webhook] Amount insufficient:', transferAmount, '<', request.amount);
-      return new Response(JSON.stringify({ success: false, error: 'Số tiền chuyển không đủ' }), { status: 400 });
+      
+      // Đánh dấu đơn hàng là nạp thiếu tiền để báo cho frontend
+      await db
+        .prepare('UPDATE payment_requests SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?')
+        .bind('insufficient', transactionCode)
+        .run();
+
+      // Trả về 200 để SePay không gửi lại webhook (vì lỗi này do user chuyển sai, không phải lỗi server)
+      return new Response(JSON.stringify({ success: true, message: 'Insufficient amount' }), { status: 200 });
     }
 
     // === Atomic update trạng thái đơn hàng (chặn race condition) ===
