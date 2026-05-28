@@ -46,29 +46,40 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     console.log('[SePay Webhook] Received:', JSON.stringify(body));
 
-    const { transferType, transferAmount, content, id: sePayTxId } = body;
+    const { transferType, transferAmount, content, code: sepayCode, id: sePayTxId } = body;
 
     // Chỉ xử lý giao dịch tiền vào
     if (transferType !== 'in') {
+      console.log('[SePay Webhook] Skipped: transferType =', transferType);
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     }
 
-    if (!transferAmount || !content) {
+    if (!transferAmount) {
       return new Response(JSON.stringify({ success: false, error: 'Thiếu thông tin giao dịch' }), { status: 400 });
     }
 
-    // === Tìm transaction_id (PGTxxxxxx) trong nội dung chuyển khoản ===
-    // Nội dung có thể là: "PGTRWKI6Z chuyen tien" hoặc chỉ "PGTRWKI6Z"
-    const contentStr = String(content).toUpperCase();
-    const match = contentStr.match(/PGT[A-Z0-9]{6,}/);
+    // === Tìm transaction_id (PGTxxxxxx) ===
+    // Ưu tiên 1: field `code` do SePay tự parse (nếu cấu hình đúng Cấu trúc mã thanh toán)
+    // Ưu tiên 2: regex tìm trong `content`
+    let transactionCode: string | null = null;
 
-    if (!match) {
-      // Không tìm thấy mã giao dịch trong nội dung - bỏ qua
-      console.warn('[SePay Webhook] No transaction code found in content:', content);
-      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    if (sepayCode && String(sepayCode).toUpperCase().startsWith('PGT')) {
+      transactionCode = String(sepayCode).toUpperCase();
+      console.log('[SePay Webhook] Got code from sepayCode field:', transactionCode);
+    } else {
+      const contentStr = String(content || '').toUpperCase();
+      const match = contentStr.match(/PGT[A-Z0-9]{6,}/);
+      if (match) {
+        transactionCode = match[0];
+        console.log('[SePay Webhook] Got code from content regex:', transactionCode);
+      }
     }
 
-    const transactionCode = match[0];
+    if (!transactionCode) {
+      // Không tìm thấy mã giao dịch - bỏ qua (giao dịch không liên quan)
+      console.warn('[SePay Webhook] No PGT code found | content:', content, '| code:', sepayCode);
+      return new Response(JSON.stringify({ success: true }), { status: 200 });
+    }
     console.log('[SePay Webhook] Found transaction code:', transactionCode, '| Amount:', transferAmount);
 
     // === Tìm đơn hàng trong DB ===
