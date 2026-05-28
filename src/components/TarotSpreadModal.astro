@@ -21,7 +21,7 @@
         <!-- MÀN HÌNH 3: CHỌN BÀI -->
         <div id="drawing-screen" class="screen">
             <div id="drawing-question-display" class="question-display-header"></div>
-            <h2 class="drawing-subheader">Hãy chọn 3 lá bài theo trực giác</h2>
+            <h2 id="drawing-subheader" class="drawing-subheader">Hãy chọn bài theo trực giác</h2>
             
             <!-- Khu vực hiển thị 3 lá đã chọn -->
             <div id="chosen-cards-display">
@@ -30,14 +30,8 @@
                 <div class="chosen-card-placeholder"><span>3</span></div>
             </div>
             
-            <!-- Bộ bài trải ra -->
-            <div id="card-spread-container">
-                <div class="card-row" id="card-row-1"></div>
-                <div class="card-row" id="card-row-2"></div>
-                <div class="card-row mobile-row" id="card-row-3"></div>
-                <div class="card-row mobile-row" id="card-row-4"></div>
-                <div class="card-row mobile-row" id="card-row-5"></div>
-                <div class="card-row mobile-row" id="card-row-6"></div>
+            <!-- Bộ bài trải ra: Bắt buộc 2 hàng, căn giữa -->
+            <div id="card-spread-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 900px; padding-left: 0; margin: 0 auto; gap: 15px 0;">
             </div>
         </div>
     </div>

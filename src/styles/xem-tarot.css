@@ -169,9 +169,10 @@ body {
 /* --- DRAWN CARDS IN CHAT --- */
 .chat-drawn-cards {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
     margin-bottom: 15px;
-    overflow-x: auto;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
@@ -403,11 +404,13 @@ body {
     backdrop-filter: blur(10px);
     z-index: 9999;
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Sửa lỗi mất viền trên cùng */
     justify-content: center;
     opacity: 1;
     transition: opacity 0.4s ease;
     overflow-y: auto;
+    padding-top: 5vh; /* Cách viền trên một chút */
+    padding-bottom: 5vh;
 }
 .tarot-modal.hidden {
     opacity: 0;
@@ -422,10 +425,12 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 2rem 1rem;
+    margin: auto 0;
 }
 
 /* Copy Styles from tarot.astro cho màn hình rút bài */
 .screen { display: none; flex-direction: column; align-items: center; width: 100%; }
+.screen > * { flex-shrink: 0; }
 .screen.active { display: flex; animation: fadeIn 0.5s ease; }
 
 .question-display-header {
@@ -458,19 +463,27 @@ body {
 
 .drawing-subheader { font-family: var(--font-body); color: #fff; font-size: 1.2rem; margin-bottom: 2rem; text-align: center; }
 
-#chosen-cards-display { display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 3rem; min-height: 180px; }
+#chosen-cards-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 3rem; min-height: 180px; }
 .chosen-card-placeholder {
     width: 110px; height: 170px; border: 2px dashed rgba(242, 201, 76, 0.3);
     border-radius: 8px; display: flex; align-items: center; justify-content: center;
     color: rgba(242, 201, 76, 0.3); font-size: 1.5rem; font-weight: 700; background: rgba(255,255,255,0.02);
 }
-.chosen-card-item { width: 110px; text-align: center; }
-.chosen-card-item img { width: 100%; border-radius: 8px; box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); }
+.chosen-card-item { width: 110px; text-align: center; position: relative; }
+.chosen-card-item img { width: 100%; display: block; border-radius: 8px; box-shadow: 0 0 15px rgba(242, 201, 76, 0.2); }
 .chosen-card-item img.reversed { transform: rotate(180deg); }
-.chosen-card-item .card-name { margin-top: 0.5rem; font-weight: 700; color: #fff; font-size: 0.9rem; text-shadow: none; }
+.chosen-card-item .card-name { 
+    position: absolute; bottom: 0; left: 0; width: 100%; 
+    padding: 15px 5px 8px 5px; margin: 0;
+    font-weight: 700; color: #fff; font-size: 0.85rem; line-height: 1.2;
+    text-shadow: 0 1px 2px #000, 0 0 4px #000; 
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 100%);
+    border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;
+    box-sizing: border-box;
+}
 
-#card-spread-container { display: flex; flex-direction: column; gap: 10px; width: 100%; align-items: center; }
-.card-row { display: flex; justify-content: center; width: 100%; }
+#card-spread-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px 0; width: 100%; max-width: 900px; padding-left: 0; margin: 0 auto; }
+.card-row { display: flex; justify-content: center; width: 100%; padding-left: 40px; }
 .facedown-card {
     width: 60px; height: 90px; background-image: url('/card-back.jpg'); background-size: cover;
     border-radius: 4px; margin-left: -40px; cursor: pointer; transition: transform 0.3s;
@@ -479,11 +492,18 @@ body {
 .facedown-card:hover { transform: translateY(-15px) scale(1.1); z-index: 10; }
 .facedown-card.is-chosen { opacity: 0; pointer-events: none; }
 
-.mobile-row { display: none; }
 @media (max-width: 768px) {
-    #card-row-1, #card-row-2 { display: none; }
-    .mobile-row { display: flex; }
+    .card-row { padding-left: 45px; }
     .facedown-card { margin-left: -45px; }
+
+    /* Thu nhỏ card khi hiển thị trên mobile để bốc 5 lá không bị lấn màn hình */
+    .chosen-card-placeholder, .chosen-card-item {
+        width: 85px;
+    }
+    .chosen-card-placeholder {
+        height: 130px;
+        font-size: 1.2rem;
+    }
 }
 
 .flying-card-animator {

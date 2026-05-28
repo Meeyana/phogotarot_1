@@ -201,12 +201,7 @@ if (db && Astro.locals.user) {
         const drawingQuestionDisplay = document.getElementById('drawing-question-display');
         
         // Tarot Elements
-        const cardRow1 = document.getElementById('card-row-1');
-        const cardRow2 = document.getElementById('card-row-2');
-        const cardRow3 = document.getElementById('card-row-3'); 
-        const cardRow4 = document.getElementById('card-row-4');
-        const cardRow5 = document.getElementById('card-row-5');
-        const cardRow6 = document.getElementById('card-row-6');
+        const spreadContainer = document.getElementById('card-spread-container');
         const chosenCardsDisplay = document.getElementById('chosen-cards-display');
 
         // State
@@ -219,6 +214,7 @@ if (db && Astro.locals.user) {
         let lastValidationUsage = null;
         let lastValidationModel = null;
         let currentCycleDrawnCardIds = []; // Mảng chứa ID các lá bài đã rút trong phiên (tối đa 21 lá)
+        let targetSpreadCount = 3; // Số lá bài cần bốc (1, 3, 5)
 
         const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`;
         const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
@@ -321,13 +317,13 @@ if (db && Astro.locals.user) {
                     addMessage(msg.text, msg.sender, false, msg.cards);
                 });
 
-                // Phục hồi trạng thái chờ xác nhận bốc bài
                 const pendingConfirm = localStorage.getItem('waitingForTarotConfirm');
                 if (pendingConfirm) {
                     userQuestion = pendingConfirm;
                     lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
                     lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
-                    showConfirmationBox(pendingConfirm);
+                    targetSpreadCount = parseInt(localStorage.getItem('targetSpreadCount')) || 3;
+                    showConfirmationBox(pendingConfirm, targetSpreadCount);
                     return; // Không chạy logic self-healing bên dưới nữa
                 }
 
@@ -357,12 +353,12 @@ if (db && Astro.locals.user) {
                     }
                 }
 
-                // Phục hồi trạng thái ĐANG BỐC BÀI (đã bấm đồng ý nhưng chưa bốc đủ 3 lá mà lỡ F5)
                 const isDrawingTarot = localStorage.getItem('isDrawingTarot');
                 if (isDrawingTarot) {
                     userQuestion = isDrawingTarot;
                     lastValidationUsage = JSON.parse(localStorage.getItem('pending_validation_usage') || 'null');
                     lastValidationModel = JSON.parse(localStorage.getItem('pending_validation_model') || 'null');
+                    targetSpreadCount = parseInt(localStorage.getItem('targetSpreadCount')) || 3;
                     openTarotModal();
                     return; // Bỏ qua self-healing cơ bản
                 }
@@ -677,7 +673,8 @@ if (db && Astro.locals.user) {
                             // isThinking giữ nguyên = true cho đến khi user click Đồng ý / Từ chối
                             lastValidationUsage = result.usage || null;
                             lastValidationModel = result.model || null;
-                            showConfirmationBox(question);
+                            targetSpreadCount = parseInt(result.numbercard) || 3;
+                            showConfirmationBox(question, targetSpreadCount);
                         }
                     } else {
                         // Không hợp lệ -> Từ chối lịch sự
@@ -738,7 +735,8 @@ if (db && Astro.locals.user) {
                         // Câu hỏi hợp lệ (pick_card = true hoặc undefined) -> Hiện box xác nhận trải bài
                         lastValidationUsage = result.usage || null;
                         lastValidationModel = result.model || null;
-                        showConfirmationBox(question);
+                        targetSpreadCount = parseInt(result.numbercard) || 3;
+                        showConfirmationBox(question, targetSpreadCount);
                     }
                 } else {
                     // Không hợp lệ -> Trả lời từ chối lịch sự trong chat
@@ -751,7 +749,7 @@ if (db && Astro.locals.user) {
                     isThinking = false;
                 } else {
                     // Fallback khi lỗi validate: Cho hiện box xác nhận bốc bài luôn để tránh nghẽn flow test
-                    showConfirmationBox(question);
+                    showConfirmationBox(question, targetSpreadCount);
                 }
             } finally {
                 removeTypingIndicator();
@@ -762,14 +760,15 @@ if (db && Astro.locals.user) {
 
         // --- INTERACTIVE CONFIRMATION & FOLLOW-UP INTERPRETATION ---
 
-        function showConfirmationBox(question) {
+        function showConfirmationBox(question, count = 3) {
             // Ghi nhớ trạng thái đang chờ xác nhận
             localStorage.setItem('waitingForTarotConfirm', question);
+            localStorage.setItem('targetSpreadCount', count.toString());
             localStorage.setItem('pending_validation_usage', JSON.stringify(lastValidationUsage));
             localStorage.setItem('pending_validation_model', JSON.stringify(lastValidationModel));
 
             // Tạo bong bóng chat của Bot có kèm 2 nút tương tác Xác nhận / Từ chối (save = false vì đây là tin nhắn tương tác tạm thời)
-            const msgDiv = addMessage("Để giải đáp câu hỏi này, hệ thống cần thực hiện một Trải bài Tarot. Mỗi lượt trải bài sẽ tốn **1 Credit**. Bạn có đồng ý bốc bài không?", 'bot', false);
+            const msgDiv = addMessage(`Để giải đáp câu hỏi này, hệ thống cần thực hiện một Trải bài Tarot gồm **${count} lá bài**. Mỗi lượt trải bài sẽ tốn **1 Credit**. Bạn có đồng ý bốc bài không?`, 'bot', false);
             
             const contentDiv = msgDiv.querySelector('.message-content');
             if (contentDiv) {
@@ -802,6 +801,7 @@ if (db && Astro.locals.user) {
 
                 noBtn.addEventListener('click', () => {
                     localStorage.removeItem('waitingForTarotConfirm');
+                    localStorage.removeItem('targetSpreadCount');
                     localStorage.removeItem('isDrawingTarot');
                     localStorage.removeItem('pending_validation_usage');
                     localStorage.removeItem('pending_validation_model');
@@ -848,10 +848,17 @@ if (db && Astro.locals.user) {
             tarotModal.classList.add('hidden');
         }
 
+        let tempDrawnIndices = []; // Định nghĩa biến toàn cục
         function startDrawing() {
-            cardRow1.innerHTML = ''; cardRow2.innerHTML = ''; cardRow3.innerHTML = '';
-            cardRow4.innerHTML = ''; cardRow5.innerHTML = ''; cardRow6.innerHTML = '';
+            spreadContainer.innerHTML = '';
             selectedCards = [];
+            tempDrawnIndices = []; // Reset mảng tạm mỗi khi bắt đầu phiên mới
+            
+            const subheader = document.getElementById('drawing-subheader');
+            if (subheader) {
+                subheader.innerText = `Hãy chọn ${targetSpreadCount} lá bài theo trực giác`;
+            }
+            
             updateChosenCards();
             showScreen('drawing-screen');
 
@@ -897,48 +904,58 @@ if (db && Astro.locals.user) {
                 localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(drawnIndices));
             }
 
-            for (let i = 0; i < 78; i++) {
-                const cDesktop = document.createElement('div');
-                cDesktop.className = 'facedown-card'; cDesktop.dataset.idx = i;
-                
-                const cMobile = cDesktop.cloneNode(true);
+            // BẮT BUỘC: Nếu đã bốc đủ 21 lá (tức còn lại <= 57 lá), reset lại toàn bộ 78 lá
+            if (cycleIndices.length >= 21) {
+                console.log(`[Tarot Spread] Đã bốc ${cycleIndices.length} lá (còn lại ${78 - cycleIndices.length} lá). Kích hoạt cơ chế RESET về 78 lá!`);
+                drawnIndices = drawnIndices.slice(0, cycleCount * 21);
+                cycleIndices = [];
+                currentCycleDrawnCardIds = [];
+                localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(drawnIndices));
+            }
 
-                if (cycleIndices.includes(i)) {
-                    // Lá bài này đã được bốc -> Tạo thành lỗ hổng tàng hình
-                    cDesktop.style.visibility = 'hidden';
-                    cDesktop.style.pointerEvents = 'none';
-                    cMobile.style.visibility = 'hidden';
-                    cMobile.style.pointerEvents = 'none';
-                } else {
-                    cDesktop.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
-                    cMobile.style.animation = `dealCardIn 0.3s ease-out forwards ${i * 20}ms`;
+            const remainingCardsCount = 78 - cycleIndices.length;
+            console.log(`[Tarot Spread] Số lá bài còn lại trên bàn hiện tại: ${remainingCardsCount}`);
+
+            // Gom các thẻ chưa bị bốc lại
+            const visibleCards = [];
+            for (let i = 0; i < 78; i++) {
+                if (!cycleIndices.includes(i)) {
+                    visibleCards.push(i);
                 }
-                
-                const clickHandler = (e) => handleCardSelect(e.currentTarget);
-                cDesktop.addEventListener('click', clickHandler);
-                cMobile.addEventListener('click', clickHandler);
-                
-                if (i < 39) cardRow1.appendChild(cDesktop); else cardRow2.appendChild(cDesktop);
-                if (i < 20) cardRow3.appendChild(cMobile);
-                else if (i < 40) cardRow4.appendChild(cMobile);
-                else if (i < 60) cardRow5.appendChild(cMobile);
-                else cardRow6.appendChild(cMobile);
+            }
+
+            // Responsive: Chia thành nhiều hàng. Mobile: 20 lá/hàng, Desktop: 39 lá/hàng.
+            const isMobile = window.innerWidth <= 768;
+            const cardsPerRow = isMobile ? 20 : 39;
+
+            for (let i = 0; i < visibleCards.length; i += cardsPerRow) {
+                const chunk = visibleCards.slice(i, i + cardsPerRow);
+                const row = document.createElement('div');
+                row.className = 'card-row';
+
+                chunk.forEach((idx, j) => {
+                    const card = document.createElement('div');
+                    card.className = 'facedown-card'; 
+                    card.dataset.idx = idx;
+                    card.style.animation = `dealCardIn 0.3s ease-out forwards ${(i + j) * 20}ms`;
+                    card.addEventListener('click', (e) => handleCardSelect(e.currentTarget));
+                    row.appendChild(card);
+                });
+
+                spreadContainer.appendChild(row);
             }
         }
 
         function handleCardSelect(el) {
-            if (selectedCards.length >= 3 || isAnimating) return;
+            if (selectedCards.length >= targetSpreadCount || isAnimating) return;
             const idx = el.dataset.idx;
             const cards = document.querySelectorAll(`.facedown-card[data-idx="${idx}"]`);
-            if (cards[0].classList.contains('is-chosen')) return;
+            if (cards[0].style.display === 'none') return;
 
             isAnimating = true;
-            cards.forEach(c => c.classList.add('is-chosen'));
             
-            // Lưu lại vị trí lá bài đã bốc vào LocalStorage để lần sau đục lỗ chính xác
-            let drawnIndices = JSON.parse(localStorage.getItem(`drawn_indices_${currentReadingId}`) || '[]');
-            drawnIndices.push(parseInt(idx));
-            localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(drawnIndices));
+            // Chỉ lưu tạm vị trí lá bài, chưa lưu vào LocalStorage (tránh lỗi reload mất bài)
+            tempDrawnIndices.push(parseInt(idx));
 
             const avail = cardData.filter(c => 
                 !selectedCards.some(sc => sc.id === c.id) &&
@@ -963,59 +980,87 @@ if (db && Astro.locals.user) {
             img.onload = () => {
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
+                
+                // Ẩn lá bài ngay lập tức khỏi flow để các lá bài khác trượt vào lấp đầy khoảng trống
+                startEl.style.display = 'none';
+                
                 const flying = document.createElement('div');
                 flying.className = 'flying-card-animator';
                 flying.innerHTML = `<div class="flying-card-inner"><div class="flying-card-back"></div><div class="flying-card-front"><img src="${cardInfo.image}" class="${cardInfo.isReversed ? 'reversed' : ''}"></div></div>`;
                 
-                flying.style.top = `${sRect.top}px`;
-                flying.style.left = `${sRect.left}px`;
+                const modal = document.getElementById('tarot-modal');
+                const scrollTop = modal.scrollTop || 0;
+                const scrollLeft = modal.scrollLeft || 0;
+
+                flying.style.top = `${sRect.top + scrollTop}px`;
+                flying.style.left = `${sRect.left + scrollLeft}px`;
                 flying.style.width = `${sRect.width}px`;
                 flying.style.height = `${sRect.height}px`;
                 
-                document.getElementById('tarot-modal').appendChild(flying);
+                modal.appendChild(flying);
                 
                 requestAnimationFrame(() => {
-                    flying.style.top = `${eRect.top}px`;
-                    flying.style.left = `${eRect.left}px`;
+                    flying.style.top = `${eRect.top + scrollTop}px`;
+                    flying.style.left = `${eRect.left + scrollLeft}px`;
                     flying.style.width = `${eRect.width}px`;
                     flying.style.height = `${eRect.height}px`;
                     flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
                 });
 
-                flying.addEventListener('transitionend', function handler(e) {
-                    if(e.target !== flying) return;
-                    flying.removeEventListener('transitionend', handler);
-                    flying.remove();
-                    
+                let isDone = false;
+                const finishAnimation = () => {
+                    if (isDone) return;
+                    isDone = true;
+                    if (flying.parentNode) flying.remove();
                     selectedCards.push(cardInfo);
                     updateChosenCards();
                     isAnimating = false;
 
-                    if (selectedCards.length === 3) {
-                        // Lưu bài đã bốc vào LocalStorage để phòng ngừa rớt mạng/F5
+                    if (selectedCards.length === targetSpreadCount) {
+                        // Phiên bốc bài hoàn tất, giờ mới lưu các vị trí đã bốc vào LocalStorage
+                        let finalDrawnIndices = JSON.parse(localStorage.getItem(`drawn_indices_${currentReadingId}`) || '[]');
+                        finalDrawnIndices.push(...tempDrawnIndices);
+                        localStorage.setItem(`drawn_indices_${currentReadingId}`, JSON.stringify(finalDrawnIndices));
+
                         localStorage.setItem('pending_tarot_cards', JSON.stringify(selectedCards));
-                        
                         setTimeout(() => {
                             closeTarotModal();
                             requestInterpretation();
-                        }, 1500); // Đợi 1.5s cho user nhìn rõ 3 lá bài
+                        }, 1500);
                     }
+                };
+
+                flying.addEventListener('transitionend', function handler(e) {
+                    if (e.target !== flying) return;
+                    flying.removeEventListener('transitionend', handler);
+                    finishAnimation();
                 });
+
+                // Fallback nếu transitionend không chạy trên Mobile Safari
+                setTimeout(finishAnimation, 900);
             };
             img.src = cardInfo.image;
         }
 
         function updateChosenCards() {
-            chosenCardsDisplay.innerHTML = '';
-            selectedCards.forEach(c => {
-                chosenCardsDisplay.innerHTML += `
-                    <div class="chosen-card-item">
-                        <img src="${c.image}" class="${c.isReversed ? 'reversed' : ''}">
-                        <div class="card-name">${c.name} ${c.isReversed ? '(Ngược)' : ''}</div>
-                    </div>`;
-            });
-            for (let i = 0; i < 3 - selectedCards.length; i++) {
-                chosenCardsDisplay.innerHTML += `<div class="chosen-card-placeholder"><span>${selectedCards.length + i + 1}</span></div>`;
+            if (selectedCards.length === 0) {
+                chosenCardsDisplay.innerHTML = '';
+                for (let i = 0; i < targetSpreadCount; i++) {
+                    chosenCardsDisplay.innerHTML += `<div class="chosen-card-placeholder"><span>${i + 1}</span></div>`;
+                }
+                return;
+            }
+
+            const placeholders = chosenCardsDisplay.querySelectorAll('.chosen-card-placeholder');
+            if (placeholders.length > 0) {
+                const c = selectedCards[selectedCards.length - 1];
+                const newItem = document.createElement('div');
+                newItem.className = 'chosen-card-item';
+                newItem.innerHTML = `
+                    <img src="${c.image}" class="${c.isReversed ? 'reversed' : ''}">
+                    <div class="card-name">${c.name} ${c.isReversed ? '(Ngược)' : ''}</div>
+                `;
+                placeholders[0].replaceWith(newItem);
             }
         }
 
@@ -1038,7 +1083,11 @@ if (db && Astro.locals.user) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         question: userQuestion,
-                        cards: selectedCards.map(c => ({ name: c.name, orientation: c.orientation })),
+                        cards: selectedCards.map(c => ({ 
+                            name: c.name, 
+                            orientation: c.orientation,
+                            meaning: c.isReversed ? c.meaning_rev : c.meaning_up
+                        })),
                         readingId: currentReadingId,
                         userId: currentUserId,
                         reader_id: currentReaderId, // Narrative Reader
@@ -1066,6 +1115,7 @@ if (db && Astro.locals.user) {
                     // Dọn dẹp pending vì đã thành công
                     localStorage.removeItem('pending_tarot_cards');
                     localStorage.removeItem('isDrawingTarot');
+                    localStorage.removeItem('targetSpreadCount');
                     localStorage.removeItem('pending_validation_usage');
                     localStorage.removeItem('pending_validation_model');
                     
