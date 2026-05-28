@@ -14,80 +14,353 @@ export interface Props {
 }
 
 const { profile } = Astro.props;
+
+// Parse date_of_birth (format: YYYY-MM-DD) into parts
+const dobParts = profile.date_of_birth ? profile.date_of_birth.split('-') : ['', '', ''];
+const dobYear  = dobParts[0] || '';
+const dobMonth = dobParts[1] || '';
+const dobDay   = dobParts[2] || '';
+
+const currentYear = new Date().getFullYear();
+const years  = Array.from({ length: 100 }, (_, i) => currentYear - i);
+const months = Array.from({ length: 12 }, (_, i) => i + 1);
+const days   = Array.from({ length: 31 }, (_, i) => i + 1);
 ---
+
 <!-- MODAL CẬP NHẬT HỒ SƠ -->
-<div id="profile-modal-container" class="tarot-modal hidden" style="align-items: flex-start; padding-top: 5vh;">
-    <div class="tarot-modal-content" style="max-width: 800px; min-height: auto; padding: 0;">
-        <div class="profile-card" style="margin: 0; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
-            <button id="close-profile-modal-btn" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+<div id="profile-modal-container" class="tarot-modal hidden">
+    <div class="pm-wrapper">
+        <div class="pm-card">
+            <button id="close-profile-modal-btn" class="pm-close-btn" aria-label="Đóng">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
             </button>
-            <h2 class="profile-title" style="font-size: 1.8rem; margin-top: 10px;">Hồ Sơ Của Bạn</h2>
-            <p class="profile-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
 
-            <form id="inline-profile-form" class="profile-form">
-                <div class="form-grid">
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="full_name">Tên hiển thị <span class="text-danger">*</span></label>
-                            <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A">
-                        </div>
-                        <div class="form-group">
-                            <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
-                            <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
-                        </div>
-                        <div class="form-group">
-                            <label for="date_of_birth">Ngày tháng năm sinh</label>
-                            <input type="date" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
-                        </div>
-                        <div class="form-group">
-                            <label for="gender">Giới tính</label>
-                            <select id="gender" name="gender">
-                                <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
-                                <option value="Nam" selected={profile.gender === 'Nam'}>Nam</option>
-                                <option value="Nữ" selected={profile.gender === 'Nữ'}>Nữ</option>
-                                <option value="Khác" selected={profile.gender === 'Khác'}>Khác</option>
-                            </select>
-                        </div>
+            <h2 class="pm-title">Hồ Sơ Của Bạn</h2>
+            <p class="pm-subtitle">Vũ trụ cần biết thêm một chút về lữ khách để đưa ra những thông điệp chính xác nhất.</p>
+
+            <form id="inline-profile-form">
+                <!-- Row 1: Tên + Nơi sống -->
+                <div class="pm-row">
+                    <div class="pm-field">
+                        <label for="full_name">Tên hiển thị <span class="pm-required">*</span></label>
+                        <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A" autocomplete="name">
                     </div>
-
-                    <div class="form-column">
-                        <div class="form-group">
-                            <label for="location">Nơi sinh sống hiện tại</label>
-                            <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội...">
-                        </div>
-                        <div class="form-group">
-                            <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
-                            <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
-                        </div>
-                        <div class="form-group">
-                            <label for="relationship_status">Tình trạng quan hệ</label>
-                            <select id="relationship_status" name="relationship_status">
-                                <option value="" disabled selected={!profile.relationship_status}>-- Chọn --</option>
-                                <option value="Độc thân" selected={profile.relationship_status === 'Độc thân'}>Độc thân</option>
-                                <option value="Đang tìm hiểu" selected={profile.relationship_status === 'Đang tìm hiểu'}>Đang tìm hiểu</option>
-                                <option value="Đang yêu" selected={profile.relationship_status === 'Đang yêu'}>Đang yêu / Đã kết hôn</option>
-                                <option value="Phức tạp" selected={profile.relationship_status === 'Phức tạp'}>Phức tạp / Mới chia tay</option>
-                            </select>
-                        </div>
+                    <div class="pm-field">
+                        <label for="location">Nơi sinh sống hiện tại</label>
+                        <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội..." autocomplete="address-level2">
                     </div>
                 </div>
 
-                <div class="form-group full-width">
+                <!-- Row 2: Biệt danh + Nghề nghiệp -->
+                <div class="pm-row">
+                    <div class="pm-field">
+                        <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
+                        <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
+                    </div>
+                    <div class="pm-field">
+                        <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
+                        <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
+                    </div>
+                </div>
+
+                <!-- Row 3: Ngày sinh (3 selects) + Tình trạng quan hệ -->
+                <div class="pm-row">
+                    <div class="pm-field">
+                        <label>Ngày tháng năm sinh</label>
+                        <div class="pm-date-group">
+                            <select id="dob_day" name="dob_day" class="pm-date-select">
+                                <option value="">Ngày</option>
+                                {days.map(d => (
+                                    <option value={String(d).padStart(2,'0')} selected={dobDay === String(d).padStart(2,'0')}>
+                                        {d}
+                                    </option>
+                                ))}
+                            </select>
+                            <select id="dob_month" name="dob_month" class="pm-date-select">
+                                <option value="">Tháng</option>
+                                {months.map(m => (
+                                    <option value={String(m).padStart(2,'0')} selected={dobMonth === String(m).padStart(2,'0')}>
+                                        Tháng {m}
+                                    </option>
+                                ))}
+                            </select>
+                            <select id="dob_year" name="dob_year" class="pm-date-select pm-date-year">
+                                <option value="">Năm</option>
+                                {years.map(y => (
+                                    <option value={String(y)} selected={dobYear === String(y)}>
+                                        {y}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <!-- Hidden field to hold combined value -->
+                        <input type="hidden" id="date_of_birth" name="date_of_birth" value={profile.date_of_birth}>
+                    </div>
+                    <div class="pm-field">
+                        <label for="relationship_status">Tình trạng quan hệ</label>
+                        <select id="relationship_status" name="relationship_status">
+                            <option value="" disabled selected={!profile.relationship_status}>-- Chọn --</option>
+                            <option value="Độc thân"      selected={profile.relationship_status === 'Độc thân'}>Độc thân</option>
+                            <option value="Đang tìm hiểu" selected={profile.relationship_status === 'Đang tìm hiểu'}>Đang tìm hiểu</option>
+                            <option value="Đang yêu"      selected={profile.relationship_status === 'Đang yêu'}>Đang yêu / Đã kết hôn</option>
+                            <option value="Phức tạp"      selected={profile.relationship_status === 'Phức tạp'}>Phức tạp / Mới chia tay</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row 4: Giới tính (full width on mobile, half on desktop) -->
+                <div class="pm-row pm-row-half">
+                    <div class="pm-field">
+                        <label for="gender">Giới tính</label>
+                        <select id="gender" name="gender">
+                            <option value="" disabled selected={!profile.gender}>-- Chọn --</option>
+                            <option value="Nam"  selected={profile.gender === 'Nam'}>Nam</option>
+                            <option value="Nữ"   selected={profile.gender === 'Nữ'}>Nữ</option>
+                            <option value="Khác" selected={profile.gender === 'Khác'}>Khác</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Biến cố (full width) -->
+                <div class="pm-field pm-field-full">
                     <label for="recent_events">Biến cố / Chuyện quan tâm gần đây</label>
                     <textarea id="recent_events" name="recent_events" rows="3" placeholder="Ví dụ: Vừa chuyển việc, đang phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
                 </div>
 
-                <div id="inline-form-error" class="error-message" style="display: none;"></div>
-                <div id="inline-form-success" class="success-message" style="display: none;">Đã lưu hồ sơ thành công! Sẵn sàng xem Tarot rồi đó.</div>
+                <div id="inline-form-error"   class="pm-msg pm-msg-error"   style="display:none;"></div>
+                <div id="inline-form-success" class="pm-msg pm-msg-success" style="display:none;">Đã lưu hồ sơ thành công! Sẵn sàng xem Tarot rồi đó. ✨</div>
 
-                <div class="form-actions" style="margin-top: 1.5rem;">
-                    <button type="submit" id="inline-submit-btn" class="btn-primary" style="width: 100%; max-width: 300px;">
+                <div class="pm-actions">
+                    <button type="submit" id="inline-submit-btn" class="pm-submit-btn">
                         <span class="btn-text">Lưu Hồ Sơ</span>
-                        <div class="spinner" style="display: none;"></div>
+                        <div class="spinner" style="display:none;"></div>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+/* ===== MODAL WRAPPER ===== */
+#profile-modal-container {
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 5vh 16px 5vh;
+}
+
+.pm-wrapper {
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+/* ===== CARD ===== */
+.pm-card {
+    position: relative;
+    background: rgba(11, 19, 43, 0.97);
+    border: 1px solid rgba(242, 201, 76, 0.2);
+    border-radius: 20px;
+    padding: 2.5rem 2rem 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== CLOSE BUTTON ===== */
+.pm-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+.pm-close-btn:hover { background: rgba(255, 255, 255, 0.18); }
+
+/* ===== HEADER ===== */
+.pm-title {
+    font-family: var(--font-title);
+    color: var(--gold-primary, #F2C94C);
+    text-align: center;
+    font-size: 1.75rem;
+    margin: 0 0 0.5rem;
+    text-shadow: 0 0 15px rgba(242, 201, 76, 0.3);
+}
+.pm-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.5;
+}
+.pm-required { color: #ff6b6b; }
+
+/* ===== FORM ROWS ===== */
+.pm-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1rem;
+}
+/* Half-width row: 1 field on the left, empty on right */
+.pm-row-half {
+    grid-template-columns: 1fr 1fr;
+}
+
+/* ===== FIELDS ===== */
+.pm-field { display: flex; flex-direction: column; }
+.pm-field-full { margin-bottom: 1rem; }
+
+.pm-field label, .pm-field-full label {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    font-size: 0.88rem;
+    letter-spacing: 0.2px;
+}
+
+/* ===== INPUTS & SELECTS (Cross-platform normalized) ===== */
+.pm-card input[type="text"],
+.pm-card select,
+.pm-card textarea {
+    width: 100%;
+    padding: 11px 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    box-sizing: border-box;
+
+    /* iOS Safari resets */
+    -webkit-appearance: none;
+    appearance: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pm-card select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffffff80' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+
+.pm-card select option {
+    background: #0b132b;
+    color: #fff;
+}
+
+.pm-card textarea {
+    resize: vertical;
+    min-height: 90px;
+    line-height: 1.6;
+}
+
+.pm-card input:focus,
+.pm-card select:focus,
+.pm-card textarea:focus {
+    outline: none;
+    border-color: var(--gold-primary, #F2C94C);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(242, 201, 76, 0.12);
+}
+
+/* ===== DATE GROUP (3 selects) ===== */
+.pm-date-group {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1.5fr;
+    gap: 8px;
+}
+.pm-date-select {
+    min-width: 0;
+    padding-left: 10px !important;
+    padding-right: 30px !important;
+    font-size: 0.92rem !important;
+}
+
+/* ===== MESSAGES ===== */
+.pm-msg {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+}
+.pm-msg-error   { background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); color: #ff6b6b; }
+.pm-msg-success { background: rgba(46,213,115,0.1);  border: 1px solid rgba(46,213,115,0.3);  color: #2ed573; }
+
+/* ===== SUBMIT ===== */
+.pm-actions { margin-top: 1.5rem; display: flex; justify-content: center; }
+.pm-submit-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--gold-primary, #F2C94C);
+    color: #0b132b;
+    border: none;
+    padding: 13px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    min-width: 200px;
+    -webkit-tap-highlight-color: transparent;
+}
+.pm-submit-btn:hover  { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(242,201,76,0.45); }
+.pm-submit-btn:active { transform: scale(0.98); }
+
+.spinner {
+    width: 20px; height: 20px;
+    border: 2px solid rgba(11,19,43,0.3);
+    border-top-color: #0b132b;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+    .pm-card { padding: 2rem 1.25rem 1.5rem; border-radius: 16px; }
+    .pm-title { font-size: 1.45rem; }
+    .pm-row { grid-template-columns: 1fr; gap: 0; }
+    .pm-row-half { grid-template-columns: 1fr; }
+    .pm-date-group { grid-template-columns: 1fr 1.4fr 1.2fr; gap: 6px; }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Combine 3 date selects into hidden date_of_birth field
+    const dayEl   = document.getElementById('dob_day');
+    const monthEl = document.getElementById('dob_month');
+    const yearEl  = document.getElementById('dob_year');
+    const dobHidden = document.getElementById('date_of_birth');
+
+    function updateDOB() {
+        const d = dayEl?.value, m = monthEl?.value, y = yearEl?.value;
+        if (d && m && y) {
+            dobHidden.value = `${y}-${m}-${d}`;
+        } else {
+            dobHidden.value = '';
+        }
+    }
+    dayEl?.addEventListener('change', updateDOB);
+    monthEl?.addEventListener('change', updateDOB);
+    yearEl?.addEventListener('change', updateDOB);
+});
+</script>

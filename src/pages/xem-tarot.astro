@@ -80,41 +80,15 @@ if (db && Astro.locals.user) {
         </div>
 
         <div id="initial-greeting" class="initial-greeting">
-            <h1 class="title" style="font-family: var(--font-title); font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(242, 201, 76, 0.6);">Vấn đề bạn đang trăn trở là gì?</h1>
-            <p class="subtitle" style="font-size: 1.1rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem;">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể.</p>
-            
-            <div style="background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); padding: 15px 20px; border-radius: 8px; margin-bottom: 2rem; display: inline-block; text-align: left; max-width: 600px;">
-                <p style="margin: 0 0 10px 0; font-size: 0.95rem;">💡 <strong>Để nhận được thông điệp chính xác nhất:</strong> Vũ trụ cần kết nối với năng lượng và bối cảnh hiện tại của bạn.</p>
-                <button type="button" id="open-profile-modal-btn" style="background: none; border: none; padding: 0; font: inherit; cursor: pointer; color: var(--gold-primary); font-weight: bold; display: inline-flex; align-items: center; gap: 5px;">
-                    Cập nhật hồ sơ của bạn ngay <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <!-- Reader Selection -->
-        <div class="reader-selection-container" id="reader-selection-container" style="margin-bottom: 1rem; width: 100%; max-width: 800px; display: flex; justify-content: flex-start;">
-            <div class="reader-dropdown">
-                <button type="button" id="reader-dropdown-toggle" class="reader-toggle">
-                    <img id="selected-reader-avatar" src="/images/witcher-bot.jpg" alt="Avatar" class="reader-toggle-avatar" />
-                    <div class="reader-toggle-info">
-                        <span id="selected-reader-name">Đang tải...</span>
-                        <span id="selected-reader-desc" class="reader-desc-sm">Vui lòng chờ...</span>
-                    </div>
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" width="16" height="16">
-                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                <div id="reader-options-list" class="reader-dropdown-menu">
-                    <div style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">Đang tải danh sách...</div>
-                </div>
-            </div>
+            <h1 class="title-glow">Vấn đề bạn đang trăn trở là gì?</h1>
+            <p class="subtitle-muted">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể.</p>
         </div>
 
         <!-- Input Area -->
         <div class="chat-input-area">
-            <textarea id="question-input" placeholder="Nhập câu hỏi của bạn cho Tarot..." rows="1"></textarea>
+            <textarea id="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" rows="1"></textarea>
             <button id="submit-question-btn" title="Gửi câu hỏi">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M3.4 22a.8.8 0 0 1-.5-.1.75.75 0 0 1-.4-.8l2-9.5 12-1.6-12-1.6-2-9.5a.75.75 0 0 1 .9-.9l20 10a.75.75 0 0 1 0 1.3L3.9 21.9a.8.8 0 0 1-.5-.1Z"/></svg>
             </button>
         </div>
         
@@ -129,6 +103,68 @@ if (db && Astro.locals.user) {
                 <p style="padding: 1rem; opacity: 0.7; text-align: center;">Đang tải gợi ý...</p>
             </div>
         </div>
+
+        <!-- Giọng văn vũ trụ: căn giữa nằm ở dưới gợi ý câu hỏi -->
+        <div class="narrative-pill-container" id="reader-selection-container">
+            <div class="reader-dropdown centered-reader-dropdown">
+                <button type="button" id="reader-dropdown-toggle" class="narrative-pill-btn">
+                    <img id="selected-reader-avatar" src="/images/witcher-bot.jpg" alt="Avatar" class="pill-avatar" />
+                    <span class="pill-label">Giọng văn:</span>
+                    <span id="selected-reader-name" class="pill-name">Đang tải...</span>
+                    <svg class="pill-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <span id="selected-reader-desc" style="display: none;">Vui lòng chờ...</span>
+                <div id="reader-options-list" class="reader-dropdown-menu">
+                    <div style="padding: 1rem; text-align: center; color: rgba(255,255,255,0.7);">Đang tải danh sách...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dòng chữ cập nhật hồ sơ hyperlink nằm ngay dưới nút narrative -->
+        <div class="profile-helper-text">
+            (<a href="#" id="open-profile-modal-btn">Cập nhật hồ sơ</a> để nhận thông điệp chính xác nhất)
+        </div>
+
+        <!-- --- PHẦN MỚI: BÀI VIẾT SEO / GEO --- -->
+        <div class="seo-divider"></div>
+        
+        <article class="seo-guide-container">
+            <h2 class="seo-title">Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng</h2>
+            <p class="seo-intro">
+                Kết quả của một trải bài Tarot phụ thuộc 50% vào năng lượng của Reader và 50% vào <strong>cách bạn đặt câu hỏi</strong>. Một câu hỏi đúng trọng tâm, cởi mở sẽ giúp "Vũ trụ" gửi đến bạn những thông điệp rõ ràng nhất.
+            </p>
+
+            <div class="seo-tips-grid">
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">❌ Tránh Câu Hỏi Yes/No Đóng</h3>
+                    <p class="tip-content">Tarot kể chuyện, không chỉ tung đồng xu. Thay vì hỏi <em>"Tôi có giàu không?"</em>, hãy hỏi <em>"Cơ hội tài chính nào đang đến với tôi?"</em>.</p>
+                </div>
+                
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">👤 Tập Trung Vào Chính Bạn</h3>
+                    <p class="tip-content">Bạn không thể thay đổi người khác, chỉ có thể thay đổi chính mình. Hãy hỏi <em>"Tôi cần làm gì..."</em> thay vì <em>"Tại sao anh ấy lại làm thế?"</em>.</p>
+                </div>
+
+                <div class="seo-tip-card">
+                    <h3 class="tip-title">⏳ Giới Hạn Thời Gian Cụ Thể</h3>
+                    <p class="tip-content">Năng lượng luôn biến đổi. Hãy gắn thêm mốc thời gian như <em>"trong 3 tháng tới"</em> hoặc <em>"trong năm nay"</em> để có câu trả lời sát thực tế nhất.</p>
+                </div>
+            </div>
+
+            <div class="seo-examples">
+                <h3 class="example-title">💡 Công Thức Câu Hỏi "Quyền Năng":</h3>
+                <ul class="example-list">
+                    <li><strong>Tình cảm:</strong> "Điều gì đang cản trở tôi tìm thấy tình yêu đích thực?"</li>
+                    <li><strong>Công việc:</strong> "Tiềm năng phát triển của tôi tại công ty hiện tại trong 6 tháng tới là gì?"</li>
+                    <li><strong>Phát triển:</strong> "Thông điệp vũ trụ muốn gửi đến tôi ngay lúc này là gì?"</li>
+                </ul>
+            </div>
+        </article>
+        <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->
+
+
     </div>
 
     <TarotSpreadModal />
@@ -216,7 +252,7 @@ if (db && Astro.locals.user) {
         let currentCycleDrawnCardIds = []; // Mảng chứa ID các lá bài đã rút trong phiên (tối đa 21 lá)
         let targetSpreadCount = 3; // Số lá bài cần bốc (1, 3, 5)
 
-        const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`;
+        const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M3.4 22a.8.8 0 0 1-.5-.1.75.75 0 0 1-.4-.8l2-9.5 12-1.6-12-1.6-2-9.5a.75.75 0 0 1 .9-.9l20 10a.75.75 0 0 1 0 1.3L3.9 21.9a.8.8 0 0 1-.5-.1Z"/></svg>`;
         const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
 
         const styleSheet = document.createElement("style");
@@ -1212,24 +1248,49 @@ if (db && Astro.locals.user) {
                 }
             });
             
-            // LOGIC GỢI Ý CÂU HỎI
+            // LOGIC GỢI Ý CÂU HỎI (Google Sheets gviz)
             const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
             const suggestedQuestionsList = document.getElementById('suggested-questions-list');
             
+            async function loadSuggestedQuestions() {
+                if (!suggestedQuestionsList) return;
+                try {
+                    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const text = await response.text();
+                    const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
+                    const table = JSON.parse(jsonText).table;
+
+                    const rawData = table.rows.map(row => ({
+                        category: row.c[0]?.v,
+                        question: row.c[1]?.v
+                    }));
+
+                    const grouped = {};
+                    rawData.forEach(item => {
+                        if (!item.category || !item.question) return;
+                        if (!grouped[item.category]) grouped[item.category] = [];
+                        grouped[item.category].push(item.question);
+                    });
+
+                    let html = '';
+                    for (const category in grouped) {
+                        html += `<h4 class="category-title">${category}</h4>`;
+                        grouped[category].forEach(question => {
+                            const safe = question.replace(/"/g, '&quot;');
+                            html += `<button class="suggestion-item" data-question="${safe}">${question}</button>`;
+                        });
+                    }
+                    suggestedQuestionsList.innerHTML = html;
+                } catch (error) {
+                    console.error('Lỗi tải câu hỏi gợi ý:', error);
+                    suggestedQuestionsList.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Không thể tải gợi ý.</p>';
+                }
+            }
+
             if (suggestedQuestionsToggle && suggestedQuestionsList) {
-                const suggestions = [
-                    "Khi nào tôi sẽ gặp được tình yêu mới?",
-                    "Làm sao để tôi cải thiện tài chính trong 3 tháng tới?",
-                    "Thông điệp vũ trụ muốn gửi đến tôi ngay lúc này là gì?",
-                    "Tôi cần học bài học gì từ mối quan hệ hiện tại?",
-                    "Định hướng công việc nào phù hợp với tôi nhất?"
-                ];
-                
-                let html = '';
-                suggestions.forEach(q => {
-                    html += `<a href="#" class="suggested-q-item" style="display: block; padding: 12px 15px; color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.1); transition: background 0.2s;">${q}</a>`;
-                });
-                suggestedQuestionsList.innerHTML = html;
+                loadSuggestedQuestions();
 
                 suggestedQuestionsToggle.addEventListener('click', () => {
                     suggestedQuestionsList.classList.toggle('open');
@@ -1237,9 +1298,9 @@ if (db && Astro.locals.user) {
                 });
 
                 suggestedQuestionsList.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (e.target.classList.contains('suggested-q-item')) {
-                        questionInput.value = e.target.textContent;
+                    const btn = e.target.closest('.suggestion-item');
+                    if (btn) {
+                        questionInput.value = btn.dataset.question || btn.textContent;
                         suggestedQuestionsList.classList.remove('open');
                         suggestedQuestionsToggle.classList.remove('open');
                         autoGrow(questionInput);
@@ -1293,6 +1354,10 @@ if (db && Astro.locals.user) {
 
                     const formData = new FormData(inlineProfileForm);
                     const data = Object.fromEntries(formData.entries());
+                    // Remove partial date selects — only date_of_birth (combined) is needed
+                    delete data.dob_day;
+                    delete data.dob_month;
+                    delete data.dob_year;
 
                     try {
                         const response = await fetch('/api/profile/update', {
