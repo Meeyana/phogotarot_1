@@ -25,28 +25,41 @@ export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
-    const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const env: any = context.locals.runtime?.env ?? {};
+    console.log('[SePay Webhook] ENV keys:', Object.keys(env));
+
     const db = env.DB;
     if (!db) {
+      console.error('[SePay Webhook] DB not found in env');
       return new Response(JSON.stringify({ success: false, error: 'Database not configured' }), { status: 500 });
     }
 
-    // === Xác thực API Key từ SePay (nếu có cấu hình) ===
+    // === Xác thực API Key từ SePay ===
     // SePay gửi header: Authorization: Apikey YOUR_API_KEY
-    const sepayApiKey = env.SEPAY_API_KEY || import.meta.env.SEPAY_API_KEY;
+    const sepayApiKey = env.SEPAY_API_KEY;
     if (sepayApiKey) {
       const authHeader = context.request.headers.get('Authorization') || '';
-      const incomingKey = authHeader.replace('Apikey ', '').trim();
+      // SePay có thể gửi "Apikey xxx" hoặc "apikey xxx" → normalize
+      const incomingKey = authHeader.replace(/^apikey\s+/i, '').trim();
       if (incomingKey !== sepayApiKey) {
-        console.warn('[SePay Webhook] Unauthorized: invalid API key');
-        return new Response(JSON.stringify({ success: false }), { status: 401 });
+        console.warn('[SePay Webhook] Unauthorized | authHeader:', authHeader);
+        return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), { status: 401 });
       }
+    } else {
+      console.warn('[SePay Webhook] SEPAY_API_KEY not set - running without auth check!');
     }
 
-    const body = await context.request.json();
+    let body: any;
+    try {
+      body = await context.request.json();
+    } catch (parseErr) {
+      console.error('[SePay Webhook] Failed to parse JSON body:', parseErr);
+      return new Response(JSON.stringify({ success: false, error: 'Invalid JSON body' }), { status: 400 });
+    }
+
     console.log('[SePay Webhook] Received:', JSON.stringify(body));
 
-    const { transferType, transferAmount, content, code: sepayCode, id: sePayTxId } = body;
+    const { transferType, transferAmount, content, code: sepayCode } = body;
 
     // Chỉ xử lý giao dịch tiền vào
     if (transferType !== 'in') {
@@ -159,8 +172,7 @@ export const POST: APIRoute = async (context) => {
     });
 
   } catch (error: any) {
-    console.error('[SePay Webhook] Error:', error);
-    // Trả về 500 để SePay retry
+    console.error('[SePay Webhook] UNHANDLED ERROR:', error?.message, error?.stack);
     return new Response(JSON.stringify({ success: false, error: 'System error' }), { status: 500 });
   }
 };
