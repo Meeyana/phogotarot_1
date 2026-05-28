@@ -1,0 +1,276 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7179b8ca-c774-47a9-9ed4-6bf975344058",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1232,
+        4240
+      ],
+      "id": "29fb46e7-fb0f-4aa2-87aa-fd1f02cc5978",
+      "name": "Check câu hỏi",
+      "webhookId": "7179b8ca-c774-47a9-9ed4-6bf975344059"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi RÕ RÀNG, CÓ BỐI CẢNH hoặc CHI TIẾT CỤ THỂ và cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi và người yêu cũ ra sao?\", \"Tôi đang phân vân có nên đổi việc sang công ty A không?\").\n- BẮT BUỘC quyết định số lượng lá bài (numbercard) phù hợp (chỉ được chọn 1, 3 hoặc 5):\n  + 1 lá: câu hỏi ngắn, check nhanh (yes/no), cần thông tin tức thì, tình trạng cảm xúc hiện tại.\n  + 3 lá: câu hỏi phổ biến (60-70%), cần cái nhìn tổng quan, dự đoán hướng đi, quá khứ-hiện-tại-tương lai.\n  + 5 lá: chuyên sâu, chia tay, phản bội, bước ngoặt sự nghiệp lớn, khủng hoảng tinh thần.\n- reason có thể là \"ok\".\n\n2. isValid = true, pick_card = false:\n- (a) Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- (b) [QUAN TRỌNG] Người dùng đặt câu hỏi QUÁ CHUNG CHUNG, thiếu bối cảnh (ví dụ: \"Xem tình duyên\", \"Hôm nay sao\", \"Công việc sắp tới?\"). Hệ thống sẽ chuyển sang chế độ trò chuyện để hỏi thăm thêm chi tiết trước khi quyết định bốc bài.\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề, hỏi thời tiết).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"numbercard\": 3, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1008,
+        4240
+      ],
+      "id": "a987ca15-b62c-475e-9d35-36178807b957",
+      "name": "build check question prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.bodyPayload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -784,
+        4240
+      ],
+      "id": "7f490c27-ab6f-499d-a808-f794ca5bdff7",
+      "name": "Check câu hỏi AI API"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const data = item.json;\n  let isValid = false;\n  let pick_card = false;\n  let numbercard = 3;\n  let reason = \"Câu hỏi chưa rõ ràng hoặc không liên quan đến Tarot.\";\n\n  // 1. Trích xuất kết quả từ API\n  let rawText = \"\";\n  if (data.choices && data.choices[0] && data.choices[0].message) {\n    rawText = data.choices[0].message.content || \"\";\n  } else {\n    rawText = data.output || data.text || \"\";\n  }\n\n  if (typeof rawText === 'object') {\n    rawText = JSON.stringify(rawText);\n  }\n  rawText = rawText.trim();\n\n  // Loại bỏ markdown code block nếu có\n  if (rawText.includes('```')) {\n    rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  }\n\n  try {\n    const parsed = JSON.parse(rawText);\n    isValid = parsed.isValid;\n    pick_card = parsed.pick_card;\n    if (parsed.numbercard !== undefined) {\n      numbercard = parseInt(parsed.numbercard) || 3;\n    }\n    reason = parsed.reason || \"ok\";\n  } catch (e) {\n    // Fallback bằng Regex\n    const lowerText = rawText.toLowerCase();\n    if (lowerText.includes('\"isvalid\": true') || lowerText.includes('isvalid: true')) {\n      isValid = true;\n      if (lowerText.includes('\"pick_card\": true') || lowerText.includes('pick_card: true')) {\n        pick_card = true;\n      }\n      const matchNum = rawText.match(/\"numbercard\"\\s*:\\s*(\\d+)/i) || rawText.match(/numbercard\\s*:\\s*(\\d+)/i);\n      if (matchNum && matchNum[1]) {\n        numbercard = parseInt(matchNum[1]) || 3;\n      }\n      reason = \"ok\";\n    } else {\n      isValid = false;\n      const match = rawText.match(/\"reason\"\\s*:\\s*\"([^\"]+)\"/i);\n      if (match && match[1]) {\n        reason = match[1];\n      }\n    }\n  }\n\n  // 2. Ép kiểu chuẩn\n  if (typeof isValid === 'string') {\n    isValid = (isValid.toLowerCase() === 'true');\n  } else {\n    isValid = Boolean(isValid);\n  }\n\n  if (typeof pick_card === 'string') {\n    pick_card = (pick_card.toLowerCase() === 'true');\n  } else {\n    pick_card = Boolean(pick_card);\n  }\n\n  // 3. Chuẩn hóa giá trị\n  if (isValid && pick_card) {\n    reason = \"ok\";\n  } else if (!isValid && (!reason || reason === \"ok\" || reason === \"undefined\")) {\n    reason = \"Câu hỏi không phù hợp. Vui lòng đặt câu hỏi liên quan đến chủ đề Tarot.\";\n  }\n\n  results.push({\n    json: {\n      output: {\n        isValid: isValid,\n        pick_card: pick_card,\n        numbercard: numbercard,\n        reason: reason,\n        usage: data.usage || null,\n        model: data.model || null\n      }\n    }\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -560,
+        4240
+      ],
+      "id": "785f5d58-cb2c-43e0-a451-ea8935129ceb",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "pick-card-check-condition",
+              "leftValue": "={{ $json.output.pick_card }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -336,
+        4240
+      ],
+      "id": "cafd86dd-ed16-495e-add3-08de8057949e",
+      "name": "check pick_card"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -112,
+        4144
+      ],
+      "id": "28ecab66-9bf1-45bc-944a-34ffe59a8539",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const userMsg = $('Check câu hỏi').first().json.body.question || $('Check câu hỏi').first().json.body.message || \"\";\n  const userProfile = $('Check câu hỏi').first().json.body.userProfile || { name: 'lữ khách', gender: 'bạn', user_persona: '' };\n  const userName = userProfile.name;\n  const userGender = userProfile.gender;\n  const recentEvents = userProfile.user_persona;\n  const readerPrompt = $('Check câu hỏi').first().json.body.reader_prompt || '';\n  \n  // Xây dựng lịch sử hội thoại dạng cặp đôi, ĐÁNH DẤU TURN\n  const history = $('Check câu hỏi').first().json.body.history || [];\n  let historyText = 'Chưa có lịch sử. Đây là tin nhắn đầu tiên.';\n  if (history.length > 0) {\n    let turnCount = 1;\n    let historyLines = [];\n    \n    for (let i = 0; i < history.length; i++) {\n        const msg = history[i];\n        if (msg.role === 'user') {\n            historyLines.push(`[Turn ${turnCount}] - Khách hàng: \"${msg.content}\"`);\n        } else {\n            historyLines.push(`[Turn ${turnCount}] - Tarot Reader: \"${msg.content}\"`);\n            turnCount++; \n        }\n    }\n    historyText = historyLines.join('\\n');\n  }\n\n  // Chèn Chân dung năng lượng\n  let personaSection = '';\n  if (recentEvents && recentEvents.trim() !== '') {\n    personaSection = `\\n\\n### [HỒ SƠ VÀ BỐI CẢNH KHÁCH HÀNG]\\n${recentEvents}`;\n  }\n\n  const defaultSystemPrompt = `## ROLE: Master Tarot Reader thấu cảm và sâu sắc\\n## TASK: Khách hàng đang trò chuyện hoặc hỏi thêm. Hãy trả lời sâu sắc, giữ đúng vai Tarot Reader.`;\n  const narrativeBase = readerPrompt || defaultSystemPrompt;\n  const systemPrompt = narrativeBase + `\\n\\n## USER INFO: Tên: ${userName}, Giới tính: ${userGender}. Hãy gọi tên và chủ động xưng hô một cách linh hoạt, tự nhiên như một người bạn tâm giao (không bị phụ thuộc máy móc vào giới tính, tùy theo phong cách của bạn).` + personaSection + `\\n\\n## QUY TẮC:\\n1. Lời khuyên cần thực tế, hướng thiện và tích cực.\\n2. Nếu có lịch sử, hãy tham chiếu để hiểu bối cảnh, nhưng TẬP TRUNG vào tin nhắn mới nhất.\\n3. KHÔNG nhắc đến AI hay thuật toán.\\n4. CHỦ ĐỘNG ĐÀO SÂU: Nếu khách hàng hỏi một câu về Tarot nhưng quá chung chung, ngắn gọn (ví dụ: \"xem tình duyên\", \"công việc thế nào\"), TUYỆT ĐỐI KHÔNG tự ý bịa ra trải bài. Hãy chủ động đặt 1-2 câu hỏi gợi mở, tinh tế để họ chia sẻ thêm bối cảnh hiện tại của họ trước khi tiến hành trải bài.`;\n\n  const userPrompt = `### 🗣️ TIN NHẮN MỚI NHẤT CỦA KHÁCH HÀNG:\\n\"${userMsg}\"\\n\\n---\\n\\n### 📜 LỊCH SỬ HỘI THOẠI TRƯỚC ĐÓ (Sắp xếp từ cũ đến mới):\\n${historyText}\\n\\n---\\n\\n-> Dựa vào bối cảnh trên, hãy trả lời tin nhắn mới nhất của khách hàng.`;\n\n  item.json.conversationalPayload = {\n    model: 'n8n2',\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userPrompt }\n    ],\n    temperature: 0.8\n  };\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        4336
+      ],
+      "id": "32dd27b0-d8bc-4ae4-9b45-ed01abfca331",
+      "name": "build conversational prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.conversationalPayload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        112,
+        4336
+      ],
+      "id": "4492aee1-24ed-44cc-84cc-4c24faa730bb",
+      "name": "Conversational AI API"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\t\"isValid\": true,\n\t\"pick_card\": false,\n\t\"reason\": {{ JSON.stringify($('Conversational AI API').item.json.choices[0].message.content || 'Mình luôn sẵn sàng lắng nghe! Bạn còn thắc mắc gì không?') }},\n\t\"usage\": {\n\t\t\"prompt_tokens\": {{ ($('Check câu hỏi AI API').item.json.usage?.prompt_tokens || 0) + ($('Conversational AI API').item.json.usage?.prompt_tokens || 0) }},\n\t\t\"completion_tokens\": {{ ($('Check câu hỏi AI API').item.json.usage?.completion_tokens || 0) + ($('Conversational AI API').item.json.usage?.completion_tokens || 0) }},\n\t\t\"total_tokens\": {{ ($('Check câu hỏi AI API').item.json.usage?.total_tokens || 0) + ($('Conversational AI API').item.json.usage?.total_tokens || 0) }}\n\t},\n\t\"model\": {{ JSON.stringify($('Conversational AI API').item.json.model || null) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        336,
+        4336
+      ],
+      "id": "7661cb84-3efd-4813-a6dc-ad8ee66de9ef",
+      "name": "Respond conversational"
+    }
+  ],
+  "connections": {
+    "Check câu hỏi": {
+      "main": [
+        [
+          {
+            "node": "build check question prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build check question prompt": {
+      "main": [
+        [
+          {
+            "node": "Check câu hỏi AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check câu hỏi AI API": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "check pick_card",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check pick_card": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "build conversational prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "build conversational prompt": {
+      "main": [
+        [
+          {
+            "node": "Conversational AI API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversational AI API": {
+      "main": [
+        [
+          {
+            "node": "Respond conversational",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "07c1c7ec2cda95a2b0ca5f954d25b4243bbf78131f2b02a8a5d44c777d7f6dfd"
+  }
+}
