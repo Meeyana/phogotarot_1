@@ -203,6 +203,14 @@ document.addEventListener('DOMContentLoaded', () => {
     loadHistory();
 
     // 2. Gắn logic cho nút bật/tắt Menu Mobile
+    window.closeMobileNav = () => {
+        if (navLinks && navLinks.classList.contains('open')) {
+            navLinks.classList.remove('open');
+            if (navToggle) navToggle.classList.remove('open');
+            document.body.classList.remove('nav-open');
+        }
+    };
+
     if (navToggle) {
         navToggle.addEventListener('click', () => {
             navLinks.classList.toggle('open');

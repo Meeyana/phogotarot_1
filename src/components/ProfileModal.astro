@@ -43,11 +43,11 @@ const days   = Array.from({ length: 31 }, (_, i) => i + 1);
                 <div class="pm-row">
                     <div class="pm-field">
                         <label for="full_name">Tên hiển thị <span class="pm-required">*</span></label>
-                        <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Vd: Nguyễn Văn A" autocomplete="name">
+                        <input type="text" id="full_name" name="full_name" value={profile.full_name} required placeholder="Nguyễn Văn A" autocomplete="name">
                     </div>
                     <div class="pm-field">
                         <label for="location">Nơi sinh sống hiện tại</label>
-                        <input type="text" id="location" name="location" value={profile.location} placeholder="Vd: TP.HCM, Hà Nội..." autocomplete="address-level2">
+                        <input type="text" id="location" name="location" value={profile.location} placeholder="TP.HCM, Hà Nội..." autocomplete="address-level2">
                     </div>
                 </div>
 
@@ -55,11 +55,11 @@ const days   = Array.from({ length: 31 }, (_, i) => i + 1);
                 <div class="pm-row">
                     <div class="pm-field">
                         <label for="nickname">Biệt danh / Tên gọi yêu thích</label>
-                        <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="Vd: bé Dâu, anh Bo...">
+                        <input type="text" id="nickname" name="nickname" value={profile.nickname} placeholder="bé Dâu, anh Bo...">
                     </div>
                     <div class="pm-field">
                         <label for="occupation">Nghề nghiệp / Lĩnh vực</label>
-                        <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Vd: Sinh viên, IT, Kinh doanh...">
+                        <input type="text" id="occupation" name="occupation" value={profile.occupation} placeholder="Sinh viên, IT, Marketing...">
                     </div>
                 </div>
 
@@ -124,7 +124,7 @@ const days   = Array.from({ length: 31 }, (_, i) => i + 1);
                 <!-- Biến cố (full width) -->
                 <div class="pm-field pm-field-full">
                     <label for="recent_events">Biến cố / Chuyện quan tâm gần đây</label>
-                    <textarea id="recent_events" name="recent_events" rows="3" placeholder="Ví dụ: Vừa chuyển việc, đang phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
+                    <textarea id="recent_events" name="recent_events" rows="3" placeholder="Vừa chuyển việc, phân vân chuyện tình cảm...">{profile.recent_events}</textarea>
                 </div>
 
                 <div id="inline-form-error"   class="pm-msg pm-msg-error"   style="display:none;"></div>

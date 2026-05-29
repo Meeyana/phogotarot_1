@@ -19,7 +19,7 @@
     },
     {
       "parameters": {
-        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HỎI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi RÕ RÀNG, CÓ BỐI CẢNH hoặc CHI TIẾT CỤ THỂ và cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi và người yêu cũ ra sao?\", \"Tôi đang phân vân có nên đổi việc sang công ty A không?\").\n- BẮT BUỘC quyết định số lượng lá bài (numbercard) phù hợp (chỉ được chọn 1, 3 hoặc 5):\n  + 1 lá: câu hỏi ngắn, check nhanh (yes/no), cần thông tin tức thì, tình trạng cảm xúc hiện tại.\n  + 3 lá: câu hỏi phổ biến (60-70%), cần cái nhìn tổng quan, dự đoán hướng đi, quá khứ-hiện-tại-tương lai.\n  + 5 lá: chuyên sâu, chia tay, phản bội, bước ngoặt sự nghiệp lớn, khủng hoảng tinh thần.\n- reason có thể là \"ok\".\n\n2. isValid = true, pick_card = false:\n- (a) Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- (b) [QUAN TRỌNG] Người dùng đặt câu hỏi QUÁ CHUNG CHUNG, thiếu bối cảnh (ví dụ: \"Xem tình duyên\", \"Hôm nay sao\", \"Công việc sắp tới?\"). Hệ thống sẽ chuyển sang chế độ trò chuyện để hỏi thăm thêm chi tiết trước khi quyết định bốc bài.\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa (ví dụ: \"hi\", \"asdasd\").\n- Chủ đề ngoài đời sống, vi phạm (ví dụ: giải toán, code, chửi thề, hỏi thời tiết).\n- reason phải là một câu giải thích lịch sự lý do từ chối.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"numbercard\": 3, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
+        "jsCode": "for (const item of $input.all()) {\n  const mySystemPrompt = `## ROLE: Tarot Question Linter & Moderator\n## TASK: Đánh giá [CÂU HẢI] của người dùng có phù hợp để trải bài Tarot hay không và phân loại xem đó là câu hỏi bốc bài hay giao tiếp thông thường.\n\n## QUY TẮC ĐÁNH GIÁ:\n1. isValid = true, pick_card = true:\n- Người dùng đặt câu hỏi RÕ RÀNG, CÓ BỐI CẢNH hoặc CHI TIẾT CỤ THỂ và cần bốc bài Tarot (ví dụ: \"Tình cảm sắp tới của tôi và người yêu cũ ra sao?\", \"Tôi đang phân vân có nên đổi việc sang công ty A không?\").\n- BẮT BUỘC quyết định số lượng lá bài (numbercard) phù hợp (chỉ được chọn 1, 3 hoặc 5):\n  + 1 lá: câu hỏi ngắn, check nhanh (yes/no), cần thông tin tức thì, tình trạng cảm xúc hiện tại.\n  + 3 lá: câu hỏi phổ biến (60-70%), cần cái nhìn tổng quan, dự đoán hướng đi, quá khứ-hiện-tại-tương lai.\n  + 5 lá: chuyên sâu, chia tay, phản bội, bước ngoặt sự nghiệp lớn, khủng hoảng tinh thần.\n- reason có thể là \"ok\".\n\n2. isValid = true, pick_card = false:\n- (a) Người dùng chỉ đang chào hỏi, cảm ơn, hoặc hỏi thêm về trải bài hiện tại (ví dụ: \"Chào bạn\", \"Cảm ơn\", \"Giải thích thêm lá 2 đi\", \"Ý nghĩa lá này là gì?\").\n- (b) [QUAN TRỌNG] Người dùng đặt câu hỏi QUÁ CHUNG CHUNG, thiếu bối cảnh (ví dụ: \"Xem tình duyên\", \"Hôm nay sao\", \"Công việc sắp tới?\"). Hệ thống sẽ chuyển sang chế độ trò chuyện để hỏi thăm thêm chi tiết trước khi quyết định bốc bài.\n- reason phải là \"conversational\" (hệ thống sẽ tự gọi LLM riêng để trả lời).\n\n3. isValid = false, pick_card = false:\n- Câu hỏi quá ngắn, vô nghĩa, linh tinh (ví dụ: \"hi\", \"asdasd\", \"oke\").\n- [QUAN TRỌNG] Câu hỏi HOÀN TOÀN NGOÀI PHẠM VI Tarot và đời sống tinh thần: kiến thức bách khoa, lịch sử, địa lý, khoa học, toán học, kỹ thuật, lập trình, thông tin thực tế khách quan (ví dụ: \"nước biển có màu gì?\", \"Hồ Chí Minh là ai?\", \"thủ đô Nhật Bản là gì?\", \"Python là gì?\", \"thời tiết hôm nay\", \"1+1 bằng mấy?\").\n- Nội dung vi phạm, chửi thề, tục tĩu.\n- [QUAN TRỌNG NHẤT] reason BẮT BUỘC phải là một thông báo gồm 2 phần:\n  Phần 1: Giải thích nhẹ nhàng vì sao câu hỏi nằm ngoài phạm vi hỗ trợ của Tarot.\n  Phần 2: NGAY SAU ĐÓ, chủ động mời khách đặt một câu hỏi khác về Tình cảm, Sự nghiệp, hoặc Hành trình nội tâm (VD: \"Bạn có muốn thử đặt một câu hỏi khác về tình cảm hay sự nghiệp không?\"). KHÔNG ĐƯỢC THIẾU PHẦN NÀY.\n\n## OUTPUT FORMAT (JSON ONLY - KHÔNG bọc block code):\n{\"isValid\": true, \"pick_card\": true, \"numbercard\": 3, \"reason\": \"ok\"}`;\n\n  const question = $('Check câu hỏi').first().json.body.question || \"\";\n\n  const myUserPrompt = `### [CÂU HỎI ĐẦU VÀO CỦA KHÁCH HÀNG]\\n\"${question}\"\\n\\nHãy phân tích và trả về đối tượng JSON đúng định dạng.`;\n\n  item.json.bodyPayload = {\n    model: \"n8n2\",\n    messages: [\n      { role: \"system\", content: mySystemPrompt },\n      { role: \"user\", content: myUserPrompt }\n    ],\n    temperature: 0\n  };\n}\n\nreturn $input.all();"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -181,11 +181,151 @@
       ],
       "id": "7661cb84-3efd-4813-a6dc-ad8ee66de9ef",
       "name": "Respond conversational"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "isvalid-check-condition",
+              "leftValue": "={{ $json.output.isValid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        4480
+      ],
+      "id": "c3d4e5f6-a7b8-9012-cdef-012345678902",
+      "name": "check isValid"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\t\"isValid\": false,\n\t\"pick_card\": false,\n\t\"reason\": \"Câu hỏi chứa nội dung không phù hợp với không gian của Tarot. Bạn có muốn thử đặt một câu hỏi khác về tình cảm, sự nghiệp hoặc hành trình nội tâm không? Mình luôn sẵn sàng lắng nghe bạn 🌟\",\n\t\"usage\": null,\n\t\"model\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        112,
+        4480
+      ],
+      "id": "d4e5f6a7-b8c9-0123-def0-123456789013",
+      "name": "Respond out-of-scope"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const question = ($('Check câu hỏi').first().json.body.question || '').trim();\n  const q = question.toLowerCase();\n\n  // ==============================================\n  // Từ khóa tự tử / tự làm hại bản thân (phản hồi đặc biệt, nhân văn)\n  // ==============================================\n  const selfHarmKeywords = [\n    'tự tử', 'tự sát', 'muốn chết', 'muốn tự tử', 'chán sống',\n    'không muốn sống', 'mệt sống', 'cắt tay', 'nhảy cầu', 'treo cổ',\n    'uống thuốc ngủ', 'uống thuốc chết', 'kết thúc cuộc đời',\n    'toi mun chet', 'minh mun chet', 'tu tu', 'tu sat'\n  ];\n\n  // ==============================================\n  // Từ khóa chửi thề, bạo lực, nội dung không phù hợp\n  // ==============================================\n  const blockedKeywords = [\n    // Chửi thề tiếng Việt\n    'địt', 'đụ', 'lồn', 'cặc', 'buồi', 'đmm', 'đkm', 'đm ',\n    'vãi lồn', 'vãi cặc', 'con cặc', 'đồ chó', 'chó chết', 'thằng chó',\n    'đéo mày', 'đết mày', 'đồ đần', 'thằng ngốc', 'con điếm',\n    'chửi bữa', 'vãi đái', 'đéo hiểu', 'đéo biết', 'đéo cần',\n    // Chửi thề không dấu (teen style)\n    'dit', 'cac', 'lon', 'buoi', 'dcm', 'dmm', 'dkm', 'vl ',\n    // Bạo lực\n    'tao giết', 'tôi giết', 'mày chết đi', 'tao chém', 'chém chết',\n    'đánh chết', 'giết người', 'đánh bom', 'tấn công',\n    // Nội dung người lớn\n    'khiêu dâm', 'phim sex', 'làm tình', 'quan hệ tình dục', 'xxx'\n  ];\n\n  let isBlocked = false;\n  let blockedReason = '';\n\n  // Kiểm tra tự tử trước (ưu tiên phản hồi nhân văn)\n  for (const kw of selfHarmKeywords) {\n    if (q.includes(kw)) {\n      isBlocked = true;\n      blockedReason = 'Mình nhận ra bạn đang trải qua giai đoạn rất khó khăn 💙 Tarot không thể hỗ trợ vấn đề này, nhưng bạn không cô đơn. Hãy gọi **đường dây hỗ trợ tâm lý miễn phí: 1800 599 920** (24/7) để được lắng nghe nhé. Khi bạn cảm thấy sẵn sàng hơn, mình luôn ở đây đồng hành cùng bạn.';\n      break;\n    }\n  }\n\n  // Kiểm tra chửi thề / bạo lực\n  if (!isBlocked) {\n    for (const kw of blockedKeywords) {\n      if (q.includes(kw)) {\n        isBlocked = true;\n        blockedReason = 'Nội dung này không phù hợp với không gian Tarot. Bạn có muốn thử đặt câu hỏi khác về Tình cảm, Sự nghiệp, Tiền bạc hoặc Hành trình nội tâm không? Mình luôn sẵn sàng lắng nghe bạn 🌟';\n        break;\n      }\n    }\n  }\n\n  item.json.isBlocked = isBlocked;\n  item.json.blockedReason = blockedReason;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1232,
+        4060
+      ],
+      "id": "f6a7b8c9-d0e1-2345-f012-345678901235",
+      "name": "Keyword Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "keyword-blocked-condition",
+              "leftValue": "={{ $json.isBlocked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1008,
+        4060
+      ],
+      "id": "a7b8c9d0-e1f2-3456-0123-456789012346",
+      "name": "check keyword blocked"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n\t\"isValid\": false,\n\t\"pick_card\": false,\n\t\"reason\": {{ JSON.stringify($('Keyword Filter').item.json.blockedReason) }},\n\t\"usage\": null,\n\t\"model\": null\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -784,
+        4060
+      ],
+      "id": "b8c9d0e1-f2a3-4567-1234-567890123457",
+      "name": "Respond blocked"
     }
   ],
   "connections": {
     "Check câu hỏi": {
       "main": [
+        [
+          {
+            "node": "Keyword Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keyword Filter": {
+      "main": [
+        [
+          {
+            "node": "check keyword blocked",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check keyword blocked": {
+      "main": [
+        [
+          {
+            "node": "Respond blocked",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "build check question prompt",
@@ -239,7 +379,7 @@
         ],
         [
           {
-            "node": "build conversational prompt",
+            "node": "check isValid",
             "type": "main",
             "index": 0
           }
@@ -262,6 +402,24 @@
         [
           {
             "node": "Respond conversational",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "check isValid": {
+      "main": [
+        [
+          {
+            "node": "build conversational prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond out-of-scope",
             "type": "main",
             "index": 0
           }

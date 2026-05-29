@@ -86,7 +86,7 @@ if (db && Astro.locals.user) {
 
         <!-- Input Area -->
         <div class="chat-input-area">
-            <textarea id="question-input" placeholder="Khi nào tôi sẽ gặp được tình yêu mới?" rows="1"></textarea>
+            <textarea id="question-input" placeholder="Nhập câu hỏi của bạn..." rows="1"></textarea>
             <button id="submit-question-btn" title="Gửi câu hỏi">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M3.4 22a.8.8 0 0 1-.5-.1.75.75 0 0 1-.4-.8l2-9.5 12-1.6-12-1.6-2-9.5a.75.75 0 0 1 .9-.9l20 10a.75.75 0 0 1 0 1.3L3.9 21.9a.8.8 0 0 1-.5-.1Z"/></svg>
             </button>
@@ -482,6 +482,7 @@ if (db && Astro.locals.user) {
             }
 
             const textDiv = document.createElement('div');
+            textDiv.className = 'message-text-content';
             const finalHtml = renderMarkdown(text);
             
             // Hiệu ứng "Livestream" gõ từng chữ cho Bot (chỉ áp dụng cho tin nhắn mới thực sự, save=true)
@@ -491,8 +492,8 @@ if (db && Astro.locals.user) {
                 textDiv.innerHTML = "";
                 
                 function typeHTML() {
-                    // Chạy mỗi lần 3 ký tự cho nhanh, giống tốc độ livestream
-                    let charsToType = 3; 
+                    // Chạy mỗi lần 8 ký tự cho nhanh, giống tốc độ livestream cực nhanh
+                    let charsToType = 8; 
                     while (charsToType > 0 && i < finalHtml.length) {
                         if (finalHtml[i] === '<') {
                             let tag = "";
@@ -516,7 +517,7 @@ if (db && Astro.locals.user) {
                         setTimeout(typeHTML, 10);
                     }
                 }
-                setTimeout(typeHTML, 100); // Bắt đầu sau một chút delay
+                setTimeout(typeHTML, 10); // Bắt đầu sau một chút delay rất nhỏ (10ms) để cho cảm giác tức thì
             } else {
                 textDiv.innerHTML = finalHtml;
             }
@@ -560,6 +561,7 @@ if (db && Astro.locals.user) {
         }
 
         function scrollToBottom() {
+            if (window.closeMobileNav) window.closeMobileNav();
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
@@ -823,7 +825,28 @@ if (db && Astro.locals.user) {
                             Từ chối / Hỏi câu khác 💬
                         </button>
                     </div>
+                    <div class="confirm-credit-balance">Số credit: <span class="credit-num">đang tải...</span></div>
                 `;
+
+                // Fetch số dư credit thực tế của người dùng để cập nhật hiển thị
+                fetch('/api/user/balance')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success) {
+                            const balanceText = data.balance !== undefined ? data.balance : 0;
+                            const creditSpan = confirmBox.querySelector('.confirm-credit-balance .credit-num');
+                            if (creditSpan) {
+                                creditSpan.textContent = balanceText;
+                            }
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Lỗi lấy số dư credit:', err);
+                        const creditSpan = confirmBox.querySelector('.confirm-credit-balance .credit-num');
+                        if (creditSpan) {
+                            creditSpan.textContent = '0';
+                        }
+                    });
 
                 const yesBtn = confirmBox.querySelector('.yes-btn');
                 const noBtn = confirmBox.querySelector('.no-btn');

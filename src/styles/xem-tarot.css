@@ -410,6 +410,17 @@ body {
     transform: translateY(-1px);
 }
 
+.confirm-credit-balance {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 4px;
+    padding-left: 2px;
+}
+.confirm-credit-balance .credit-num {
+    color: var(--gold-color, #F2C94C);
+    font-weight: 600;
+}
+
 /* --- INPUT AREA --- */
 .chat-input-area {
     width: calc(100% - 40px);

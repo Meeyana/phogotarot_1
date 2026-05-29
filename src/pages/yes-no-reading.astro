@@ -62,10 +62,23 @@ const schema = {
   title={pageTitle}
   description={pageDesc}
 >
+    <!-- CONFIRM MODAL OVERLAY (Toàn cục) -->
+    <div id="credit-confirm-modal" class="confirm-modal hidden">
+        <div class="confirm-modal-content">
+            <h3>Xác nhận trải bài</h3>
+            <p>Câu hỏi này sẽ tiêu tốn <strong>1 Credit</strong>. Bạn có đồng ý bốc bài không?</p>
+            <p style="font-size: 0.9em; opacity: 0.8; margin-bottom: 1.5rem;">Số credit hiện tại: <strong id="credit-num" style="color: var(--gold-color);">đang tải...</strong></p>
+            <div class="confirm-buttons">
+                <button id="confirm-yes-btn" class="btn-yes">Đồng ý</button>
+                <button id="confirm-no-btn" class="btn-no">Hủy</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MÀN HÌNH 1: ĐẶT CÂU HỎI -->
     <div id="question-screen" class="screen active">
         <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
-        <p class="subtitle">Bạn có thể chọn rút 1 lá để xem nhanh hoặc 3 lá để xem chi tiết.</p>
+        <p class="subtitle">Trải bài này sẽ tự động rút 1 lá bài Yes/No cho bạn.</p>
         
         <div id="question-input-area" class="question-input-area">
             <textarea id="question-input" class="question-input" placeholder="Viết câu hỏi Yes/No của bạn ở đây..." style="min-height: 56px;"></textarea>
@@ -76,12 +89,9 @@ const schema = {
             </button>
         </div>
         
-        <div id="reading-options-container">
+        <div id="reading-options-container" style="display: none;">
             <button class="reading-option-btn active" data-value="1">
                 Chọn 1 lá
-            </button>
-            <button class="reading-option-btn" data-value="3">
-                Chọn 3 lá
             </button>
         </div>
 
@@ -98,6 +108,7 @@ const schema = {
         </div>
         
         <p id="question-error-display" class="error-message"></p>
+
 
         <!-- --- PHẦN MỚI: BÀI VIẾT SEO / GEO (YES/NO SPECIFIC) --- -->
         <div class="seo-divider"></div>
@@ -613,6 +624,30 @@ const schema = {
             font-weight: 700;
         }
 
+        /* === CONFIRM MODAL === */
+        .confirm-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999;
+            opacity: 1; transition: opacity 0.3s;
+        }
+        .confirm-modal.hidden { display: none; opacity: 0; }
+        .confirm-modal-content {
+            background: rgba(11, 19, 43, 0.95); border: 1px solid var(--gold-color, #F2C94C);
+            padding: 2rem; border-radius: 16px; text-align: center; max-width: 400px; width: 90%;
+            box-shadow: 0 10px 30px rgba(242, 201, 76, 0.2);
+        }
+        .confirm-modal-content h3 { color: var(--gold-color, #F2C94C); margin-top: 0; font-family: var(--font-title); }
+        .confirm-modal-content p { color: #fff; margin-bottom: 1.5rem; line-height: 1.5; }
+        .confirm-buttons { display: flex; gap: 1rem; justify-content: center; }
+        .confirm-buttons button {
+            padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .btn-yes { background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 50%, #FFD700 100%); color: #000; }
+        .btn-yes:hover { transform: scale(1.05); }
+        .btn-no { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .btn-no:hover { background: rgba(255, 255, 255, 0.2); }
+
         /* === CSS CHO KHU VỰC TRA CỨU BÀI === */
         .card-lookup-container {
             width: 100%;
@@ -847,8 +882,8 @@ const schema = {
 /* === TAROT.JS (Logic cho trang 1/3 lá) === */
 /* ============================================= */
 
-const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/29fa6319-ca20-42a6-9d31-5a599e1a030d';
-const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2b074c1e-6465-4114-872d-c0dcd9278b62'; 
+const N8N_WEBHOOK_URL = '/api/yesno-interpret';
+const N8N_VALIDATE_URL = '/api/yesno-validate';
 const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
 
 // DOM Elements
@@ -1180,9 +1215,46 @@ async function handleQuestionSubmit() {
 
         const n8nResponse = await response.json();
         const validationResult = n8nResponse;
-        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
+        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true || validationResult.isValid === undefined || validationResult.isValid === false)) {
+            if (validationResult.isValid === false) {
+                 questionErrorDisplay.textContent = validationResult.reason || 'Câu hỏi không hợp lệ.';
+                 questionErrorDisplay.style.color = '#ff8a8a'; 
+                 submitQuestionBtn.disabled = false;
+                 submitQuestionBtn.innerHTML = sendIcon;
+                 return;
+            }
             userQuestion = questionFromInput;
-            startNewReadingFlow();
+            
+            // Cập nhật số dư trong modal
+            const creditNum = document.getElementById('credit-num');
+            if (creditNum) {
+                 creditNum.textContent = 'đang tải...';
+                 fetch('/api/user/balance').then(res => res.json()).then(data => {
+                     if (data && data.success) creditNum.textContent = data.isPremium ? 'Vô cực' : data.balance;
+                 }).catch(() => creditNum.textContent = '?');
+            }
+            
+            // Hiện Modal xác nhận Credit
+            const confirmModal = document.getElementById('credit-confirm-modal');
+            confirmModal.classList.remove('hidden');
+            
+            // Xóa sự kiện cũ nếu có để tránh lặp
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            const noBtn = document.getElementById('confirm-no-btn');
+            const newYesBtn = yesBtn.cloneNode(true);
+            const newNoBtn = noBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+            
+            newYesBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+                startNewReadingFlow();
+            });
+            
+            newNoBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+            });
+            
             submitQuestionBtn.disabled = false;
             submitQuestionBtn.innerHTML = sendIcon;
         } else {
@@ -1238,10 +1310,48 @@ async function handleFollowUpSubmit() {
 
         const n8nResponse = await response.json();
         const validationResult = n8nResponse;
-        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true)) {
+        if (validationResult && (validationResult.isValid === "true" || validationResult.isValid === true || validationResult.isValid === undefined || validationResult.isValid === false)) {
+            if (validationResult.isValid === false) {
+                 // Đã bị chặn bởi API (hết credit)
+                 followUpErrorDisplay.textContent = validationResult.reason || 'Câu hỏi không hợp lệ.';
+                 followUpErrorDisplay.style.color = '#ff8a8a'; 
+                 followUpSubmitBtn.disabled = false;
+                 followUpSubmitBtn.innerHTML = sendIcon;
+                 return;
+            }
+
             userQuestion = questionFromInput;
             followUpInput.value = '';
-            startNewReadingFlow();
+
+            // Cập nhật số dư trong modal
+            const creditNum = document.getElementById('credit-num');
+            if (creditNum) {
+                 creditNum.textContent = 'đang tải...';
+                 fetch('/api/user/balance').then(res => res.json()).then(data => {
+                     if (data && data.success) creditNum.textContent = data.isPremium ? 'Vô cực' : data.balance;
+                 }).catch(() => creditNum.textContent = '?');
+            }
+
+            // Hiện Modal xác nhận Credit
+            const confirmModal = document.getElementById('credit-confirm-modal');
+            confirmModal.classList.remove('hidden');
+            
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            const noBtn = document.getElementById('confirm-no-btn');
+            const newYesBtn = yesBtn.cloneNode(true);
+            const newNoBtn = noBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            noBtn.parentNode.replaceChild(newNoBtn, noBtn);
+            
+            newYesBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+                startNewReadingFlow();
+            });
+            
+            newNoBtn.addEventListener('click', () => {
+                confirmModal.classList.add('hidden');
+            });
+
             followUpSubmitBtn.disabled = false;
             followUpSubmitBtn.innerHTML = sendIcon;
         } else {
@@ -1277,6 +1387,7 @@ function startNewReadingFlow() {
     shufflingQuestionDisplay.textContent = userQuestion;
     drawingQuestionDisplay.textContent = userQuestion;
     showScreen('shuffling-screen');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     const shuffleTime = 2500; 
     const startTime = Date.now();
@@ -1520,7 +1631,7 @@ async function handleGetInterpretation() {
             <p class="loader-text">Đang luận giải, vũ trụ đang trả lời...</p>
             <div class="loader-note">
                 <p style="margin-bottom: 5px;">✨ Vì tín hiệu vũ trụ gửi về quá nhiều nên có thể hơi "lag" xíu, mong bạn thông cảm nha.</p>
-                <p>Nếu chờ quá lâu, hãy <strong>Inbox 3 lá bài bạn chọn</strong> (Tên lá + Chiều Xuôi/Ngược) cho chúng mình. Phở Gõ Tarot sẽ giải mã <strong>Free</strong> phản hồi riêng cho bạn!</p>
+                <p>Nếu chờ quá lâu, hãy <strong>Inbox lá bài bạn chọn</strong> (Tên lá + Chiều Xuôi/Ngược) cho chúng mình. Phở Gõ Tarot sẽ giải mã <strong>Free</strong> phản hồi riêng cho bạn!</p>
             </div>
         </div>
     `;
@@ -1539,9 +1650,19 @@ async function handleGetInterpretation() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-        if (!response.ok) throw new Error(`Lỗi từ server: ${response.statusText}`);
+        
+        let result;
+        try {
+            result = await response.json();
+        } catch(e) {}
+        
+        if (!response.ok) {
+            if (response.status === 402 && result && result.error) {
+                throw new Error(result.error);
+            }
+            throw new Error(`Lỗi từ server: ${response.statusText}`);
+        }
 
-        const result = await response.json();
         if (result && result.interpretation) {
             const converter = new showdown.Converter();
             const markdownContent = result.interpretation; 
@@ -1567,14 +1688,20 @@ async function handleGetInterpretation() {
                 console.error("Lỗi: Không tìm thấy hàm saveHistory().");
             }
 
+            // Cập nhật lại UI số dư credit trên Header
+            if (window.fetchBalance) {
+                window.fetchBalance(true);
+            }
+
         } else {
             throw new Error("Dữ liệu trả về không đúng định dạng.");
         }
     } catch (error) {
         console.error("Lỗi khi gọi Webhook:", error);
-        mainResultsDisplay.innerHTML = `<p>Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
+        mainResultsDisplay.innerHTML = `<p style="color: #ff8a8a; padding: 1rem; border: 1px solid #ff8a8a; border-radius: 8px; background: rgba(255,0,0,0.1);">Đã xảy ra lỗi: ${error.message}. Vui lòng thử lại sau.</p>`;
     }
     
+    if (window.closeMobileNav) window.closeMobileNav();
     mainResultsDisplay.scrollIntoView({ behavior: 'smooth', block: 'start' });
     followUpContainer.style.display = 'block';
     // Hiển thị bảng tra cứu cùng lúc với kết quả và câu hỏi tiếp
