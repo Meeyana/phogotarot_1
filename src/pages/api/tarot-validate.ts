@@ -98,7 +98,8 @@ export const POST: APIRoute = async (context) => {
         for (let i = 0; i < body.cards.length; i++) {
             const card = body.cards[i];
             try {
-                const cardInfo = await env.DB.prepare(`SELECT 
+                const isRev = card.isReversed !== undefined ? card.isReversed : (card.orientation === 'Ngược' || card.orientation === 'ngược');
+              const cardInfo = await env.DB.prepare(`SELECT 
                     upright_meaning, reversed_meaning, image_description,
                     upright_keyword, reversed_keyword,
                     upright_love_keyword, reversed_love_keyword,
@@ -106,15 +107,16 @@ export const POST: APIRoute = async (context) => {
                     upright_finances_keyword, reversed_finances_keyword
                     FROM tarot_database WHERE card_name = ?`).bind(card.name).first();
                 if (cardInfo) {
-                    card.meaning = card.isReversed ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
+                    card.isReversed = isRev;
+                  card.meaning = isRev ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
                     if (cardInfo.image_description) {
                         card.description = cardInfo.image_description;
                     }
                     card.keyword = {
-                        general: card.isReversed ? cardInfo.reversed_keyword : cardInfo.upright_keyword,
-                        love: card.isReversed ? cardInfo.reversed_love_keyword : cardInfo.upright_love_keyword,
-                        career: card.isReversed ? cardInfo.reversed_career_keyword : cardInfo.upright_career_keyword,
-                        finances: card.isReversed ? cardInfo.reversed_finances_keyword : cardInfo.upright_finances_keyword
+                        general: isRev ? cardInfo.reversed_keyword : cardInfo.upright_keyword,
+                        love: isRev ? cardInfo.reversed_love_keyword : cardInfo.upright_love_keyword,
+                        career: isRev ? cardInfo.reversed_career_keyword : cardInfo.upright_career_keyword,
+                        finances: isRev ? cardInfo.reversed_finances_keyword : cardInfo.upright_finances_keyword
                     };
                 }
             } catch (err) {
