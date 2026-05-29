@@ -248,7 +248,7 @@ body {
 }
 .chat-page-container.initial-state .chat-input-area {
     margin-bottom: 0;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
     width: calc(100% - 40px);
     max-width: 860px;
 }
@@ -256,7 +256,7 @@ body {
 .chat-messages::-webkit-scrollbar-thumb { background-color: rgba(242, 201, 76, 0.5); border-radius: 10px; }
 
 .message {
-    max-width: 85%;
+    max-width: 90%;
     display: flex;
     flex-direction: column;
     animation: fadeIn 0.4s ease;
@@ -286,8 +286,8 @@ body {
 .bot-message .message-content { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-bottom-left-radius: 4px; color: #eee; }
 
 .bot-avatar {
-    width: 36px;
-    height: 36px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
@@ -325,14 +325,16 @@ body {
 .chat-drawn-cards {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
+    justify-content: center; /* Căn giữa đều hoàn hảo cho tất cả các hàng bài (kể cả hàng thứ 2 chỉ có 2 lá) */
+    gap: 8px 12px; /* Gap khít và gọn gàng hơn */
     margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .chat-card-item {
-    width: 80px;
+    width: calc((100% - 24px) / 3); /* Chiếm đúng 1/3 chiều rộng để hiển thị 3 lá nằm ngang */
+    max-width: 80px; /* Chiều rộng tối đa trên màn hình rộng */
+    min-width: 60px; /* Kích thước tối thiểu trên điện thoại cực nhỏ */
     text-align: center;
     flex-shrink: 0;
 }
@@ -433,7 +435,7 @@ body {
     display: flex;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(242, 201, 76, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15), inset 0 0 8px rgba(242, 201, 76, 0.02);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     transition: all 0.3s ease;
@@ -441,7 +443,7 @@ body {
 }
 .chat-input-area:focus-within {
     border-color: var(--gold-primary);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), 0 0 15px rgba(242, 201, 76, 0.25);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(242, 201, 76, 0.12);
     background: rgba(15, 23, 42, 0.7);
 }
 #question-input {
@@ -456,6 +458,9 @@ body {
     max-height: 120px;
     line-height: 1.5;
     text-shadow: none;
+}
+#question-input:focus {
+    outline: none;
 }
 #question-input::placeholder {
     color: rgba(255, 255, 255, 0.35);
@@ -474,18 +479,15 @@ body {
     justify-content: center;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(242, 201, 76, 0.3);
 }
 #submit-question-btn:hover:not(:disabled) {
     transform: scale(1.08);
     background: #ffd54f;
-    box-shadow: 0 0 20px rgba(242, 201, 76, 0.6);
 }
 #submit-question-btn:disabled {
     filter: grayscale(1);
     cursor: not-allowed;
     opacity: 0.4;
-    box-shadow: none;
 }
 
 /* --- DROPDOWN GỢI Ý --- */
@@ -664,8 +666,8 @@ body {
     opacity: 1;
     transition: opacity 0.4s ease;
     overflow-y: auto;
-    padding-top: 5vh; /* Cách viền trên một chút */
-    padding-bottom: 5vh;
+    padding-top: 2vh; /* Giảm padding top của modal để dịch chuyển nội dung lên trên */
+    padding-bottom: 2vh;
 }
 .tarot-modal.hidden {
     opacity: 0;
@@ -679,7 +681,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 1rem;
+    padding: 1.25rem 1rem; /* Giảm padding dọc của modal content */
     margin: auto 0;
 }
 
@@ -688,13 +690,17 @@ body {
 .screen > * { flex-shrink: 0; }
 .screen.active { display: flex; animation: fadeIn 0.5s ease; }
 
+#shuffling-screen { padding-top: 1.5rem !important; }
+#drawing-screen { padding-top: 0.5rem !important; }
+
 .question-display-header {
-    font-family: var(--font-title); color: var(--gold-primary); font-size: 1.5rem;
-    margin-bottom: 1.5rem; text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
-    border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; width: 100%;
+    font-family: var(--font-title); color: var(--gold-primary);
+    font-size: clamp(1.15rem, 2.5vw, 1.35rem); /* Dùng clamp để chữ tự động co giãn và nhỏ lại khi hiển thị trên màn hình nhỏ/chữ dài */
+    margin-bottom: 1rem; text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+    border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; width: 100%;
     
     /* Cho phép cuộn thay vì cắt chữ để xem được toàn bộ nội dung mà ko vỡ layout */
-    max-height: 90px;
+    max-height: 110px; /* Thu nhỏ chiều cao tối đa của vùng câu hỏi để tiết kiệm diện tích */
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(242, 201, 76, 0.5) transparent;
@@ -718,7 +724,8 @@ body {
 
 .drawing-subheader { font-family: var(--font-body); color: #fff; font-size: 1.2rem; margin-bottom: 2rem; text-align: center; }
 
-#chosen-cards-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 3rem; min-height: 180px; }
+#chosen-cards-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; height: auto; min-height: 170px; transition: margin-bottom 0.3s ease; }
+#chosen-cards-display.spread-5 { margin-bottom: 3rem; }
 .chosen-card-placeholder {
     width: 110px; height: 170px; border: 2px dashed rgba(242, 201, 76, 0.3);
     border-radius: 8px; display: flex; align-items: center; justify-content: center;
@@ -751,13 +758,19 @@ body {
     .card-row { padding-left: 45px; }
     .facedown-card { margin-left: -45px; }
 
-    /* Thu nhỏ card khi hiển thị trên mobile để bốc 5 lá không bị lấn màn hình */
+    #chosen-cards-display { gap: 0.5rem; min-height: 130px; }
+
+    /* Giữ nguyên kích thước bài trên mobile như cũ */
     .chosen-card-placeholder, .chosen-card-item {
         width: 85px;
     }
     .chosen-card-placeholder {
         height: 130px;
         font-size: 1.2rem;
+    }
+    .question-display-header {
+        font-size: 1.05rem; /* Cỡ chữ gọn gàng hơn trên điện thoại để đọc trọn vẹn câu hỏi dài */
+        max-height: 95px; /* Giới hạn chiều cao tối đa trên mobile */
     }
 }
 

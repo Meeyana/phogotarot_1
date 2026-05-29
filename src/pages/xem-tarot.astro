@@ -888,6 +888,12 @@ if (db && Astro.locals.user) {
             shufflingQuestionDisplay.textContent = userQuestion;
             drawingQuestionDisplay.textContent = userQuestion;
             
+            if (targetSpreadCount === 5) {
+                chosenCardsDisplay.classList.add('spread-5');
+            } else {
+                chosenCardsDisplay.classList.remove('spread-5');
+            }
+            
             showScreen('shuffling-screen');
             const shuffleTime = 2500;
             const startTime = Date.now();

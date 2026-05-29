@@ -90,7 +90,7 @@ export const POST: APIRoute = async (context) => {
     let history = [];
     if (db && body.readingId) {
       try {
-        const logs = await db.prepare('SELECT role, content FROM (SELECT * FROM message_logs WHERE conversation_id = ? ORDER BY id DESC LIMIT 12) ORDER BY id ASC').bind(body.readingId).all();
+        const logs = await db.prepare("SELECT role, content FROM (SELECT * FROM message_logs WHERE conversation_id = ? AND role != 'system' ORDER BY id DESC LIMIT 12) ORDER BY id ASC").bind(body.readingId).all();
         if (logs && logs.results) {
           history = logs.results.map((msg: any) => {
               if (msg.content) {
@@ -177,20 +177,13 @@ export const POST: APIRoute = async (context) => {
         const cardsPayload = JSON.stringify(cards || []);
         await db.prepare(`INSERT OR IGNORE INTO tarot_readings (id, conversation_id, question, cards_payload, spread_type) VALUES (?, ?, ?, ?, ?)`).bind(crypto.randomUUID(), safeReadingId, question || '', cardsPayload, 'tarot').run();
         
-        // 4. Lưu Message Logs (User & Assistant)
-        if (question) {
-           const questionAlreadySaved = history.some((msg: any) => msg.role === 'user' && msg.content === question);
-           if (!questionAlreadySaved) {
-               await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
-           }
-        }
-        const actualModel = data.model || body.validationModel || 'n8n_agent';
-        const valUsage = body.validationUsage || {};
+        // 4. Lưu Message Logs (Chỉ Assistant, vì User đã được lưu ở tarot-validate)
+        const actualModel = data.model || 'n8n_agent';
         const dataUsage = data.usage || {};
         
-        const promptTokens = (valUsage.prompt_tokens || 0) + (dataUsage.prompt_tokens || 0);
-        const completionTokens = (valUsage.completion_tokens || 0) + (dataUsage.completion_tokens || 0);
-        const totalTokens = (valUsage.total_tokens || 0) + (dataUsage.total_tokens || 0);
+        const promptTokens = dataUsage.prompt_tokens || 0;
+        const completionTokens = dataUsage.completion_tokens || 0;
+        const totalTokens = dataUsage.total_tokens || 0;
 
         // Trả về usage tổng hợp cho frontend để lưu vào localStorage
         data.usage = {

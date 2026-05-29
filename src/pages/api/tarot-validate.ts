@@ -152,11 +152,6 @@ export const POST: APIRoute = async (context) => {
             const isValid = data.isValid === "true" || data.isValid === true;
             const pickCard = data.pick_card === "true" || data.pick_card === true;
             
-            // CHỈ LƯU VÀO DB NẾU:
-            // 1. Câu hỏi không hợp lệ (isValid = false) -> Bị từ chối
-            // 2. Câu hỏi trò chuyện thông thường (isValid = true, pick_card = false) -> LLM trả lời trực tiếp
-            // NẾU CÂU HỎI LÀ BỐC BÀI (isValid = true, pick_card = true) -> KHÔNG LƯU Ở ĐÂY!
-            // Sẽ được lưu ở tarot-interpret.ts khi user ấn "Đồng ý" bốc bài.
             if (!isValid || !pickCard) {
                 // 1. Đảm bảo Conversation tồn tại
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
@@ -209,6 +204,17 @@ export const POST: APIRoute = async (context) => {
                         }
                     }
                 }
+            } else {
+                // LƯU CÂU HỎI VÀ TOKEN VALIDATE VỚI ROLE = SYSTEM (Nhánh pick_card = true)
+                const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
+                await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, "Trải bài: " + title).run();
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
+                
+                const actualModel = data.model || 'n8n_validate_agent';
+                const promptTokens = data.usage?.prompt_tokens || 0;
+                const completionTokens = data.usage?.completion_tokens || 0;
+                const totalTokens = data.usage?.total_tokens || 0;
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'system', ?, ?, ?, ?, ?)`).bind(safeReadingId, '[Hệ thống] Xác thực câu hỏi bốc bài', actualModel, promptTokens, completionTokens, totalTokens).run();
             }
         }
       } catch (dbError) {
