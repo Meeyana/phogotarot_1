@@ -990,7 +990,9 @@ if (db && Astro.locals.user) {
             }
 
             // Responsive: Chia thành nhiều hàng. Mobile: 20 lá/hàng, Desktop: 39 lá/hàng.
-            const isMobile = window.innerWidth <= 768;
+            const isMobile = window.innerWidth <= 768 || 
+                             window.matchMedia("(max-width: 768px)").matches || 
+                             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             const cardsPerRow = isMobile ? 20 : 39;
 
             for (let i = 0; i < visibleCards.length; i += cardsPerRow) {
