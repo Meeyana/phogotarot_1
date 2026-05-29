@@ -711,7 +711,8 @@ if (db && Astro.locals.user) {
                             // isThinking giữ nguyên = true cho đến khi user click Đồng ý / Từ chối
                             lastValidationUsage = result.usage || null;
                             lastValidationModel = result.model || null;
-                            targetSpreadCount = parseInt(result.numbercard) || 3;
+                        localStorage.setItem('pending_topic', result.topic || 'general');
+                        targetSpreadCount = parseInt(result.numbercard) || 3;
                             showConfirmationBox(question, targetSpreadCount);
                         }
                     } else {
@@ -773,6 +774,7 @@ if (db && Astro.locals.user) {
                         // Câu hỏi hợp lệ (pick_card = true hoặc undefined) -> Hiện box xác nhận trải bài
                         lastValidationUsage = result.usage || null;
                         lastValidationModel = result.model || null;
+                        localStorage.setItem('pending_topic', result.topic || 'general');
                         targetSpreadCount = parseInt(result.numbercard) || 3;
                         showConfirmationBox(question, targetSpreadCount);
                     }
@@ -1145,6 +1147,7 @@ if (db && Astro.locals.user) {
             }
             
             try {
+                const topic = localStorage.getItem('pending_topic') || 'general';
                 const response = await fetch(N8N_WEBHOOK_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
