@@ -1162,7 +1162,8 @@ if (db && Astro.locals.user) {
                         userId: currentUserId,
                         reader_id: currentReaderId, // Narrative Reader
                         validationUsage: lastValidationUsage,
-                        validationModel: lastValidationModel
+                        validationModel: lastValidationModel,
+                        topic: localStorage.getItem('pending_topic') || 'general'
                     })
                 });
 
