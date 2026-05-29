@@ -46,8 +46,31 @@ body {
 .header-text { display: flex; flex-direction: column; }
 .oracle-name { color: var(--gold-primary); font-family: var(--font-title); font-weight: 700; font-size: 1.5rem; margin: 0; line-height: 1.2; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3); }
 .oracle-status { font-size: 0.9rem; color: #ccc; }
-.icon-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 8px; transition: color 0.3s; }
-.icon-btn:hover { color: #ff6b6b; }
+.new-chat-btn {
+    background: rgba(242, 201, 76, 0.08);
+    border: 1px solid rgba(242, 201, 76, 0.35);
+    color: var(--gold-primary, #F2C94C);
+    border-radius: 50%; /* Nút hình tròn cực xịn */
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+.new-chat-btn:hover {
+    background: var(--gold-primary, #F2C94C);
+    border-color: var(--gold-primary, #F2C94C);
+    color: #0b132b;
+    transform: scale(1.06); /* Phóng nhẹ khi hover rất nhạy */
+    box-shadow: 0 4px 12px rgba(242, 201, 76, 0.25);
+}
+.new-chat-btn svg {
+    stroke: currentColor;
+    flex-shrink: 0;
+}
 
 /* --- MESSAGES AREA --- */
 .chat-messages {

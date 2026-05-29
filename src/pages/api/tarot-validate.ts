@@ -151,24 +151,22 @@ export const POST: APIRoute = async (context) => {
             const safeReadingId = readingId || crypto.randomUUID();
             const isValid = data.isValid === "true" || data.isValid === true;
             const pickCard = data.pick_card === "true" || data.pick_card === true;
-            
+            const actualModel = data.model || 'n8n_validate_agent';
+            const promptTokens = data.usage?.prompt_tokens || 0;
+            const completionTokens = data.usage?.completion_tokens || 0;
+            const totalTokens = data.usage?.total_tokens || 0;
+
             if (!isValid || !pickCard) {
                 // 1. Đảm bảo Conversation tồn tại
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
                 await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, "Trò chuyện: " + title).run();
                 
-                // 2. Lưu tin nhắn User
-                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
+                // 2. Lưu tin nhắn User kèm Token validate trực tiếp
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'user', ?, ?, ?, ?, ?)`).bind(safeReadingId, question, actualModel, promptTokens, completionTokens, totalTokens).run();
                 
-                // 3. Lưu tin nhắn Bot
+                // 3. Lưu tin nhắn Bot (Phần này không kèm token nữa để tránh double-count)
                 let botReply = data.reason || "Vui lòng đặt câu hỏi cụ thể hơn.";
-                
-                const actualModel = data.model || 'n8n_validate_agent';
-                const promptTokens = data.usage?.prompt_tokens || 0;
-                const completionTokens = data.usage?.completion_tokens || 0;
-                const totalTokens = data.usage?.total_tokens || 0;
-
-                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, botReply, actualModel, promptTokens, completionTokens, totalTokens).run();
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'assistant', ?)`).bind(safeReadingId, botReply).run();
                 
                 // 4. TRỪ CREDIT / TĂNG CHAT_COUNT (Chỉ tính nếu là chat hợp lệ, KHÔNG tính nếu câu hỏi bị từ chối)
                 if (isValid && !pickCard) {
@@ -205,16 +203,11 @@ export const POST: APIRoute = async (context) => {
                     }
                 }
             } else {
-                // LƯU CÂU HỎI VÀ TOKEN VALIDATE VỚI ROLE = SYSTEM (Nhánh pick_card = true)
+                // LƯU CÂU HỎI VÀ LƯU TOKEN VALIDATE TRỰC TIẾP LÊN DÒNG TIN NHẮN CỦA USER (Nhánh pick_card = true)
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
                 await db.prepare(`INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)`).bind(safeReadingId, safeUserId, "Trải bài: " + title).run();
-                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content) VALUES (?, 'user', ?)`).bind(safeReadingId, question).run();
                 
-                const actualModel = data.model || 'n8n_validate_agent';
-                const promptTokens = data.usage?.prompt_tokens || 0;
-                const completionTokens = data.usage?.completion_tokens || 0;
-                const totalTokens = data.usage?.total_tokens || 0;
-                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'system', ?, ?, ?, ?, ?)`).bind(safeReadingId, '[Hệ thống] Xác thực câu hỏi bốc bài', actualModel, promptTokens, completionTokens, totalTokens).run();
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'user', ?, ?, ?, ?, ?)`).bind(safeReadingId, question, actualModel, promptTokens, completionTokens, totalTokens).run();
             }
         }
       } catch (dbError) {
