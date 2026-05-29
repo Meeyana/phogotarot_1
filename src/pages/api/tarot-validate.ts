@@ -98,9 +98,12 @@ export const POST: APIRoute = async (context) => {
         for (let i = 0; i < body.cards.length; i++) {
             const card = body.cards[i];
             try {
-                const cardInfo = await env.DB.prepare('SELECT upright_meaning, reversed_meaning FROM tarot_database WHERE card_name = ?').bind(card.name).first();
+                const cardInfo = await env.DB.prepare('SELECT upright_meaning, reversed_meaning, image_description FROM tarot_database WHERE card_name = ?').bind(card.name).first();
                 if (cardInfo) {
                     card.meaning = card.isReversed ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
+                    if (cardInfo.image_description) {
+                        card.description = cardInfo.image_description;
+                    }
                 }
             } catch (err) {
                 console.error(`Lỗi lấy ý nghĩa lá ${card.name}:`, err);
