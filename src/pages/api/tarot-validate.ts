@@ -104,11 +104,20 @@ export const POST: APIRoute = async (context) => {
                     upright_keyword, reversed_keyword,
                     upright_love_keyword, reversed_love_keyword,
                     upright_career_keyword, reversed_career_keyword,
-                    upright_finances_keyword, reversed_finances_keyword
+                    upright_finances_keyword, reversed_finances_keyword,
+                      upright_love_meaning, reversed_love_meaning,
+                      upright_career_meaning, reversed_career_meaning,
+                      upright_finances_meaning, reversed_finances_meaning
                     FROM tarot_database WHERE card_name = ?`).bind(card.name).first();
                 if (cardInfo) {
                     card.isReversed = isRev;
                   card.meaning = isRev ? cardInfo.reversed_meaning : cardInfo.upright_meaning;
+                    card.meanings = {
+                        general: isRev ? cardInfo.reversed_meaning : cardInfo.upright_meaning,
+                        love: isRev ? cardInfo.reversed_love_meaning : cardInfo.upright_love_meaning,
+                        career: isRev ? cardInfo.reversed_career_meaning : cardInfo.upright_career_meaning,
+                        finances: isRev ? cardInfo.reversed_finances_meaning : cardInfo.upright_finances_meaning
+                    };
                     if (cardInfo.image_description) {
                         card.description = cardInfo.image_description;
                     }
