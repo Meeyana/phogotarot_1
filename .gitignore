@@ -37,3 +37,8 @@ wrangler.toml
 
 # Local Netlify folder
 .netlify
+
+# Cloudflare Workers CMS
+worker.js
+cms-worker/
+database/schema/20_seed_numerology.sql

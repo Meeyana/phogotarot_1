@@ -11,7 +11,7 @@ const { blocks, content, className = '' } = Astro.props;
 const cleanHTML = (html: string) => html ? html.replace(/<p>|<\/p>/g, '') : '';
 ---
 
-<div class={`interpretation-content-body ${className}`}>
+<div class={`content-block-wrapper ${className}`}>
   {blocks && blocks.length > 0 ? (
     blocks.map((block: any) => (
       <div class="content-block">
