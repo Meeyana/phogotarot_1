@@ -1,6 +1,5 @@
 export const prerender = false;
-import fs from "fs";
-import path from "path";
+
 import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request }) => {
@@ -53,10 +52,8 @@ date: ${new Date().toISOString()}
 ${content}
 `;
 
-    // Ghi file local
-    const blogDir = path.join(process.cwd(), "src/content/blog");
-    if (!fs.existsSync(blogDir)) fs.mkdirSync(blogDir, { recursive: true });
-    fs.writeFileSync(path.join(blogDir, `${slug}.md`), markdown, "utf8");
+// Đã bỏ phần ghi file local bằng fs vì Cloudflare Workers không hỗ trợ File System
+    // Bài viết sẽ được push thẳng lên GitHub thông qua API ở bước dưới
 
     // Push GitHub
     const repo = process.env.GITHUB_REPO;
