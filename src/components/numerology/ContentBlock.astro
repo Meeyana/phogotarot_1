@@ -25,13 +25,13 @@ const cleanHTML = (html: string) => html ? html.replace(/<p>|<\/p>/g, '') : '';
           <div class="list-block">
             <ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90 space-y-2">
               {block.items.map((item: string) => (
-                <li>{item}</li>
+                <li set:html={cleanHTML(item)}></li>
               ))}
             </ul>
           </div>
         ) : block.type === 'quote' ? (
           <div class="quote-block border-l-2 border-gold pl-4 italic opacity-80 my-2 bg-white/5 p-2 rounded-r text-gray-300">
-            <blockquote>{block.content}</blockquote>
+            <blockquote set:html={cleanHTML(block.content)}></blockquote>
           </div>
         ) : block.type === 'text' || block.content ? (
           <div class="text-block mb-2 text-justify text-sm opacity-90">
