@@ -8,6 +8,7 @@ if (!Astro.locals.user) {
 
 const db = Astro.locals.runtime?.env?.DB;
 let historyList: any[] = [];
+let yesnoList: any[] = [];
 
 if (db) {
   try {

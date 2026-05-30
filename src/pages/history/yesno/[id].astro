@@ -1,0 +1,493 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+if (!Astro.locals.user) {
+  return Astro.redirect('/login');
+}
+
+const { id } = Astro.params;
+const db = Astro.locals.runtime?.env?.DB;
+
+let conversation: any = null;
+let reading: any = null;
+let messages: any[] = [];
+const allCards = await getCollection('cards');
+
+if (db && id) {
+  try {
+    // 1. Kiểm tra conversation có tồn tại và thuộc về user không
+    const convData = await db.prepare('SELECT * FROM conversations WHERE id = ? AND user_id = ?').bind(id, Astro.locals.user.id).first();
+    
+    if (convData) {
+      conversation = convData;
+
+      // 2. Lấy thông tin trải bài (tarot_readings)
+      const readingData = await db.prepare('SELECT * FROM tarot_readings WHERE conversation_id = ?').bind(id).first();
+      if (readingData) {
+        reading = readingData;
+        if (reading.cards_payload) {
+            try {
+                reading.cards = JSON.parse(reading.cards_payload);
+                
+                reading.cards = reading.cards.map((card: any) => {
+                    const contentCard = allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase()));
+                    if (contentCard && contentCard.data.image) {
+                        card.image = contentCard.data.image.src || contentCard.data.image;
+                    } else {
+                        card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
+                    }
+                    return card;
+                });
+            } catch(e) {
+                reading.cards = [];
+            }
+        }
+      }
+
+      // 3. Lấy tin nhắn (message_logs)
+      const msgsData = await db.prepare('SELECT * FROM message_logs WHERE conversation_id = ? ORDER BY id ASC').bind(id).all();
+      if (msgsData && msgsData.results) {
+        messages = msgsData.results;
+      }
+    }
+  } catch (error) {
+    console.error("Lỗi lấy chi tiết lịch sử:", error);
+  }
+}
+
+if (!conversation) {
+  return Astro.redirect('/history');
+}
+
+const pageTitle = `${conversation.title} | Lịch Sử Tarot`;
+const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện của bạn.";
+---
+
+<BaseLayout title={pageTitle} description={pageDesc} showChatbot={false}>
+    <main class="history-detail-container">
+        <div class="header-actions">
+            <a href="/history" class="back-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                Quay lại danh sách
+            </a>
+            
+            <div class="action-buttons">
+                <button id="continue-chat-btn" class="continue-btn" data-id={id} data-messages={JSON.stringify(messages)} data-reading={JSON.stringify(reading)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Tiếp tục trò chuyện
+                </button>
+                <button id="delete-conversation-btn" class="delete-btn" data-id={id}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                    Xóa
+                </button>
+            </div>
+        </div>
+
+        <div class="reading-header">
+            <h1 class="title">{conversation.title}</h1>
+            <p class="date">{new Date(conversation.created_at.replace(' ', 'T') + 'Z').toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh' })}</p>
+        </div>
+
+        <div class="chat-history">
+            <div class="messages-container">
+                {messages.map((msg, index) => {
+                    let cards = [];
+                    let cleanContent = msg.content;
+                    const match = cleanContent.match(/<!-- CARDS_PAYLOAD: (.*?) -->/);
+                    if (match) {
+                        try {
+                            cards = JSON.parse(match[1]);
+                            cleanContent = cleanContent.replace(match[0], '').trim();
+                        } catch(e) {}
+                    }
+                    
+                    // Fallback cho dữ liệu cũ: Nếu là câu trả lời bot đầu tiên và có reading.cards
+                    const isFirstBotMessage = msg.role === 'assistant' && messages.findIndex(m => m.role === 'assistant') === index;
+                    if (cards.length === 0 && isFirstBotMessage && reading && reading.cards) {
+                        cards = reading.cards;
+                    }
+
+                    // Gắn URL ảnh cho lá bài
+                    if (cards.length > 0) {
+                        cards = cards.map((card: any) => {
+                            if (!card.image) {
+                                // Tìm trong bộ sưu tập thẻ bài
+                                const contentCard = allCards ? allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase())) : null;
+                                if (contentCard && contentCard.data.image) {
+                                    card.image = contentCard.data.image.src || contentCard.data.image;
+                                } else {
+                                    card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
+                                }
+                            }
+                            return card;
+                        });
+                    }
+                    
+                    return (
+                        <div class={`message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`}>
+                            {msg.role !== 'user' && (
+                                <div class="avatar">
+                                    <img src="/images/witcher-bot.jpg" alt="Pho Go Avatar" />
+                                </div>
+                            )}
+                            <div class="message-content">
+                                {cards.length > 0 && (
+                                    <div class="chat-drawn-cards">
+                                        {cards.map((card: any) => (
+                                            <div class="chat-card-item">
+                                                <img src={card.image} alt={card.name} class={card.orientation === 'reversed' || card.isReversed ? 'reversed' : ''} onerror="this.src='/card-back.jpg'" />
+                                                <div class="chat-card-name">{card.name}</div>
+                                                <div class="chat-card-orientation">({card.orientation === 'reversed' || card.isReversed ? 'Ngược' : 'Xuôi'})</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                <div class="markdown-body" set:html={cleanContent}></div>
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    </main>
+
+    <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script>
+        // Convert markdown on client side just in case
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof showdown !== 'undefined') {
+                const converter = new showdown.Converter();
+                document.querySelectorAll('.markdown-body').forEach(el => {
+                    const rawContent = el.innerHTML;
+                    if (rawContent.includes('**') || rawContent.includes('##')) {
+                        const decoded = rawContent
+                            .replace(/&lt;/g, '<')
+                            .replace(/&gt;/g, '>')
+                            .replace(/&amp;/g, '&');
+                        el.innerHTML = converter.makeHtml(decoded);
+                    }
+                });
+            }
+
+            // Tiếp tục trò chuyện
+            const continueBtn = document.getElementById('continue-chat-btn');
+            if (continueBtn) {
+                continueBtn.addEventListener('click', () => {
+                    try {
+                        const id = continueBtn.getAttribute('data-id');
+                        const rawMessages = JSON.parse(continueBtn.getAttribute('data-messages') || '[]');
+                        const rawReading = JSON.parse(continueBtn.getAttribute('data-reading') || '{}');
+                        
+                        // Reconstruct phogo_tarot_chat_page_history
+                        const historyArray = [];
+                        let firstBotMessageFound = false;
+
+                        rawMessages.forEach(msg => {
+                            const sender = msg.role === 'assistant' ? 'bot' : 'user';
+                            let cards = null;
+                            let cleanContent = msg.content;
+                            
+                            const match = cleanContent.match(/<!-- CARDS_PAYLOAD: (.*?) -->/);
+                            if (match) {
+                                try {
+                                    cards = JSON.parse(match[1]);
+                                    cleanContent = cleanContent.replace(match[0], '').trim();
+                                } catch(e) {}
+                            }
+
+                            if (sender === 'bot' && !firstBotMessageFound) {
+                                firstBotMessageFound = true;
+                                if (!cards && rawReading && rawReading.cards) {
+                                    cards = rawReading.cards;
+                                }
+                            }
+                            
+                            historyArray.push({
+                                text: cleanContent,
+                                sender: sender,
+                                cards: cards,
+                                timestamp: msg.timestamp || new Date().toISOString()
+                            });
+                        });
+
+                        localStorage.setItem('phogo_reading_id', id);
+                        localStorage.setItem('phogo_tarot_chat_page_history', JSON.stringify(historyArray));
+                        
+                        window.location.href = '/xem-tarot';
+                    } catch (e) {
+                        console.error("Lỗi parse dữ liệu lịch sử:", e);
+                        alert("Có lỗi xảy ra, không thể tiếp tục trò chuyện.");
+                    }
+                });
+            }
+
+            // Xóa cuộc hội thoại
+            const deleteBtn = document.getElementById('delete-conversation-btn');
+            if (deleteBtn) {
+                deleteBtn.addEventListener('click', async () => {
+                    if (confirm('Bạn có chắc chắn muốn xóa cuộc hội thoại này? Hành động này không thể hoàn tác.')) {
+                        const id = deleteBtn.getAttribute('data-id');
+                        const originalHtml = deleteBtn.innerHTML;
+                        deleteBtn.innerHTML = 'Đang xóa...';
+                        deleteBtn.disabled = true;
+
+                        try {
+                            const response = await fetch(`/api/history/delete`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id })
+                            });
+                            
+                            if (response.ok) {
+                                alert('Đã xóa thành công!');
+                                window.location.href = '/history';
+                            } else {
+                                const result = await response.json();
+                                alert(result.error || 'Lỗi khi xóa.');
+                                deleteBtn.innerHTML = originalHtml;
+                                deleteBtn.disabled = false;
+                            }
+                        } catch (e) {
+                            alert('Mất kết nối mạng.');
+                            deleteBtn.innerHTML = originalHtml;
+                            deleteBtn.disabled = false;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    <style>
+        .history-detail-container {
+            min-height: calc(100vh - 80px);
+            padding: 2rem 1rem 5rem 1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .back-btn:hover {
+            color: var(--gold-primary);
+        }
+
+        .continue-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(242, 201, 76, 0.1);
+            color: var(--gold-primary);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .continue-btn:hover {
+            background: rgba(242, 201, 76, 0.2);
+            border-color: var(--gold-primary);
+        }
+
+        .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .reading-header {
+            margin-bottom: 3rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1.5rem;
+        }
+
+        .title {
+            font-family: var(--font-title);
+            color: var(--gold-primary);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .date {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+        }
+
+        .section-title {
+            color: #fff;
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 4px;
+            height: 20px;
+            background: var(--gold-primary);
+            border-radius: 2px;
+        }
+
+        .chat-drawn-cards {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chat-card-item {
+            width: 80px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .chat-card-item img {
+            width: 100%;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin: 0 !important;
+        }
+
+        .chat-card-item img.reversed {
+            transform: rotate(180deg);
+        }
+
+        .chat-card-name {
+            margin-top: 0.5rem;
+            color: #fff;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .chat-card-orientation {
+            font-size: 0.75rem;
+            color: #aaa;
+        }
+
+        .chat-history {
+            background: rgba(11, 19, 43, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .messages-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            max-width: 85%;
+        }
+
+        .user-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            align-items: flex-end;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid var(--gold-primary, #F2C94C);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .user-message .message-content {
+            background: rgba(242, 201, 76, 0.15);
+            border: 1px solid rgba(242, 201, 76, 0.3);
+            color: #fff;
+            border-top-right-radius: 4px;
+        }
+
+        .bot-message .message-content {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ddd;
+            border-bottom-left-radius: 4px;
+            border-top-left-radius: 16px;
+        }
+
+        .markdown-body {
+            font-family: inherit;
+        }
+
+        .markdown-body p { margin-top: 0; margin-bottom: 0.8rem; }
+        .markdown-body p:last-child { margin-bottom: 0; }
+        .markdown-body strong { color: var(--gold-primary); }
+        .markdown-body ul, .markdown-body ol { margin-top: 0.5rem; margin-bottom: 0.8rem; padding-left: 1.5rem; }
+        .markdown-body li { margin-bottom: 0.3rem; }
+
+        @media (max-width: 600px) {
+            .message { max-width: 95%; }
+            .history-detail-container { padding: 1rem; }
+        }
+    </style>
+</BaseLayout>
