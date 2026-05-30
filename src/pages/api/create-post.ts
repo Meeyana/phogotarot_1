@@ -65,7 +65,8 @@ ${content}
     }
 
     const apiUrl = `https://api.github.com/repos/${repo}/contents/src/content/blog/${slug}.md`;
-    const base64 = Buffer.from(markdown).toString("base64");
+    // Use Web API btoa instead of Node's Buffer
+    const base64 = btoa(unescape(encodeURIComponent(markdown)));
 
     const res = await fetch(apiUrl, {
       method: "PUT",
