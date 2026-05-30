@@ -19,8 +19,8 @@ const sortedPosts = allPosts.sort(
 const recentPosts = sortedPosts.slice(0, 3);
 
 // 2. (SỬA LẠI) TẠO CÁC BIẾN VÀ SCHEMA
-const pageTitle = "Phở Gõ Tarot - Trải Bài Tarot Miễn Phí & Luận Giải Sâu Sắc";
-const pageDesc = "Khám phá ý nghĩa các lá bài tarot, nhận trải bài 3 lá, Yes/No miễn phí. Phở Gõ Tarot soi sáng con đường của bạn bằng luận giải sâu sắc.";
+const pageTitle = "Phở Gõ Tarot - Trải Bài Tarot Mỗi Ngày & Luận Giải Sâu Sắc";
+const pageDesc = "Trải bài Tarot 3 lá, Yes/No chi tiết. Nhận ngay 1 lượt (credit) miễn phí mỗi ngày để khám phá thông điệp sâu sắc từ Vũ Trụ cùng Phở Gõ Tarot.";
 
 const schema = {
   "@context": "https://schema.org",
@@ -49,9 +49,10 @@ const schema = {
             <div class="container">
                 <div class="grid-2">
                     <div class="text-center" style="md:text-align: left;">
+                        <div class="promo-badge">🌟 Tặng 1 Credit miễn phí mỗi ngày</div>
                         <h2 class="hero-title">Phở Gõ Tarot</h2>
                         <p class="section-text" style="font-size: 1.25rem; margin-bottom: 2rem;">
-                            Chào mừng bạn đến với Phở Gõ Tarot3, không gian dành riêng cho những ai tìm kiếm sự khai sáng qua lăng kính Tarot huyền bí. Chúng tôi mang đến trải nghiệm Tarot online miễn phí mộc mạc, như một tô phở gõ vỗ về tâm hồn, giúp bạn giải đáp những khúc mắc trong tình cảm, công việc và cuộc sống. Hãy khám phá xem vũ trụ đang "gõ cửa" muốn nhắn nhủ điều gì với bạn và để Phở Gõ Tarot giải mã những thông điệp ấy.
+                            Chào mừng bạn đến với Phở Gõ Tarot, không gian dành riêng cho những ai tìm kiếm sự khai sáng qua lăng kính Tarot huyền bí. Với mong muốn mang lại sự thấu cảm mộc mạc như một tô phở gõ vỗ về tâm hồn, mỗi ngày bạn sẽ được tặng 1 Credit trải bài hoàn toàn miễn phí để giải đáp các khúc mắc về tình cảm, công việc và cuộc sống. Hãy tập trung năng lượng, nhận thông điệp hôm nay từ vũ trụ và để Phở Gõ Tarot đồng hành cùng bạn.
                         </p>
                         <a href="/xem-tarot" class="btn-primary">Xem Tarot Ngay</a>
                     </div>
@@ -98,12 +99,12 @@ const schema = {
                                 <path d="M12 8v8"></path> <path d="M8 12h8"></path>
                             </svg>
                         </div>
-                        <h3 class="magic-title">Trải Bài 3 Lá</h3>
-                        <p class="magic-desc">Giải mã Quá khứ, Hiện tại & Tương lai qua lăng kính huyền học.</p>
-                        <span class="magic-link">Khám phá &rarr;</span>
+                        <h3 class="magic-title">Trò Chuyện & Trải Bài</h3>
+                        <p class="magic-desc">Trò chuyện tương tác để nhận trải bài sâu sắc (1, 3, hoặc 5 lá) giải mã mọi thắc mắc của bạn.</p>
+                        <span class="magic-link">Trò chuyện ngay &rarr;</span>
                     </a>
                     
-                    <a href="/xem-tarot" class="magic-card">
+                    <a href="/yes-no-reading" class="magic-card">
                         <div class="icon-glow">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                                 <circle cx="12" cy="12" r="10"></circle>
@@ -125,6 +126,77 @@ const schema = {
                         <h3 class="magic-title">Zodiac Tarot</h3>
                         <p class="magic-desc">Thông điệp vũ trụ dành riêng cho cung hoàng đạo của bạn hôm nay.</p>
                         <span class="magic-link">Xem thông điệp &rarr;</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="zodiac-selector" class="homepage-section bg-alt">
+            <div class="container text-center">
+                <h2 class="section-title">Thông Điệp Vũ Trụ Hôm Nay</h2>
+                <p class="section-text" style="max-width: 800px; margin: -1.5rem auto 3rem auto; font-size: 1.15rem; opacity: 0.85;">
+                    Mỗi ngày, các chòm sao lại mang một tần số năng lượng khác nhau gửi đến bạn. Hãy chọn Cung hoàng đạo của mình dưới đây để đón nhận nhanh thông điệp chỉ dẫn từ Vũ trụ.
+                </p>
+                <div class="zodiac-grid-standalone">
+                    <a href="/zodiac-daily?sign=aries" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♈</span>
+                        <h4 class="zodiac-name">Bạch Dương</h4>
+                        <span class="zodiac-slug">Aries</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=taurus" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♉</span>
+                        <h4 class="zodiac-name">Kim Ngưu</h4>
+                        <span class="zodiac-slug">Taurus</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=gemini" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♊</span>
+                        <h4 class="zodiac-name">Song Tử</h4>
+                        <span class="zodiac-slug">Gemini</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=cancer" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♋</span>
+                        <h4 class="zodiac-name">Cự Giải</h4>
+                        <span class="zodiac-slug">Cancer</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=leo" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♌</span>
+                        <h4 class="zodiac-name">Sư Tử</h4>
+                        <span class="zodiac-slug">Leo</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=virgo" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♍</span>
+                        <h4 class="zodiac-name">Xử Nữ</h4>
+                        <span class="zodiac-slug">Virgo</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=libra" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♎</span>
+                        <h4 class="zodiac-name">Thiên Bình</h4>
+                        <span class="zodiac-slug">Libra</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=scorpio" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♏</span>
+                        <h4 class="zodiac-name">Bọ Cạp</h4>
+                        <span class="zodiac-slug">Scorpio</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=sagittarius" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♐</span>
+                        <h4 class="zodiac-name">Nhân Mã</h4>
+                        <span class="zodiac-slug">Sagittarius</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=capricorn" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♑</span>
+                        <h4 class="zodiac-name">Ma Kết</h4>
+                        <span class="zodiac-slug">Capricorn</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=aquarius" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♒</span>
+                        <h4 class="zodiac-name">Bảo Bình</h4>
+                        <span class="zodiac-slug">Aquarius</span>
+                    </a>
+                    <a href="/zodiac-daily?sign=pisces" class="zodiac-item-standalone">
+                        <span class="zodiac-icon">♓</span>
+                        <h4 class="zodiac-name">Song Ngư</h4>
+                        <span class="zodiac-slug">Pisces</span>
                     </a>
                 </div>
             </div>
@@ -181,11 +253,68 @@ const schema = {
 
         </section>
 
+        <section id="testimonials" class="homepage-section bg-alt">
+            <div class="container">
+                <h2 class="section-title">Lời Cảm Ơn Từ Lữ Khách</h2>
+                <div class="grid-3">
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"Trải bài Tarot trên Phở Gõ thực sự rất kỳ diệu. AI luận giải vô cùng sâu sắc và chạm đúng vấn đề khúc mắc của mình trong công việc. 1 credit free mỗi ngày quá đủ để mình định hướng năng lượng."</p>
+                        <div class="testimonial-user">
+                            <img src="https://ui-avatars.com/api/?name=Minh+Anh&background=F2C94C&color=0b132b" alt="Lữ khách Minh Anh" class="user-avatar" />
+                            <div class="user-info">
+                                <h4 class="user-name">Minh Anh</h4>
+                                <span class="user-role">Lữ khách Cự Giải</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"Giao diện trò chuyện tương tác với Oracle cực kỳ cuốn luôn. Câu trả lời của Reader AI có độ thấu cảm cao, giống như một người bạn thực sự đang lắng nghe mình. Đã nạp gói Khởi Đầu để tiếp tục bốc bài."</p>
+                        <div class="testimonial-user">
+                            <img src="https://ui-avatars.com/api/?name=Quoc+Bao&background=F2C94C&color=0b132b" alt="Lữ khách Quốc Bảo" class="user-avatar" />
+                            <div class="user-info">
+                                <h4 class="user-name">Quốc Bảo</h4>
+                                <span class="user-role">Lữ khách Sư Tử</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="testimonial-card">
+                        <div class="testimonial-rating">⭐⭐⭐⭐⭐</div>
+                        <p class="testimonial-text">"Mình băn khoăn chuyện tình cảm và đã dùng tính năng Yes/No. Câu trả lời dứt khoát kèm lời khuyên chân thành giúp mình gỡ rối hoàn toàn. Hệ thống bảo mật cực tốt, có cả nút xóa lịch sử vĩnh viễn rất an tâm."</p>
+                        <div class="testimonial-user">
+                            <img src="https://ui-avatars.com/api/?name=Thu+Thao&background=F2C94C&color=0b132b" alt="Lữ khách Thu Thảo" class="user-avatar" />
+                            <div class="user-info">
+                                <h4 class="user-name">Thu Thảo</h4>
+                                <span class="user-role">Lữ khách Song Ngư</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="faq" class="homepage-section">
             <div class="container">
                 <h2 class="section-title">Câu Hỏi Thường Gặp</h2>
                 
                 <div class="faq-container">
+                    <details class="faq-item">
+                        <summary class="faq-question">Xem Tarot tại Phở Gõ có tốn phí không?</summary>
+                        <div class="faq-answer">
+                            <p>Không hề bắt buộc nhé! Mỗi tài khoản tại Phở Gõ Tarot đều được tặng sẵn <strong>1 Credit miễn phí vào lúc 0:00 hàng ngày</strong> để bạn thoải mái rút bài định hướng năng lượng cho ngày mới. Lượt miễn phí này không cộng dồn. Nếu bạn muốn xem thêm các câu hỏi khác trong ngày, bạn có thể <a href="/nap-credit" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">nạp thêm Credit</a> với chi phí vô cùng "hạt dẻ".</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item">
+                        <summary class="faq-question">Credit là gì và hoạt động như thế nào?</summary>
+                        <div class="faq-answer">
+                            <p>Credit là lượt dùng để thực hiện các trải bài Tarot hoặc đặt câu hỏi chuyên sâu cho Oracle tại Phở Gõ. Mỗi lượt bốc bài (1 lá Yes/No hoặc trải bài nhiều lá) sẽ tiêu tốn 1 Credit. Bạn có thể tích lũy Credit từ gói nạp của mình và sử dụng bất cứ lúc nào bạn cần.</p>
+                        </div>
+                    </details>
+
                     <details class="faq-item">
                         <summary class="faq-question">Xem Tarot online có chính xác không?</summary>
                         <div class="faq-answer">
@@ -196,14 +325,15 @@ const schema = {
                     <details class="faq-item">
                         <summary class="faq-question">Nếu mình cần xem chi tiết hơn thì thế nào?</summary>
                         <div class="faq-answer">
-                            <p>Chúng mình sẵn sàng lắng nghe bạn qua Đặt lịch tư vấn. Hãy gửi mình lá bài bạn nhận được và câu hỏi của bạn để chúng mình giải đáp kỹ hơn nhé.</p>
+                            <p>Chúng mình sẵn sàng lắng nghe bạn qua <a href="/contact" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Đặt lịch tư vấn</a>. Hãy gửi mình lá bài bạn nhận được và câu hỏi của bạn để chúng mình giải đáp kỹ hơn nhé.</p>
                         </div>
                     </details>
 
                     <details class="faq-item">
                         <summary class="faq-question">Thông tin câu chuyện của mình có được bảo mật không?</summary>
                         <div class="faq-answer">
-                            <p>Tuyệt đối bảo mật. Mọi chia sẻ của bạn với Phở Gõ Tarot đều được giữ kín như "công thức gia truyền". Chúng mình tôn trọng sự riêng tư tuyệt đối của mọi khách hàng.</p>
+                            <p><strong>Tuyệt đối bảo mật và riêng tư!</strong> Mọi câu hỏi, chia sẻ và thông điệp trải bài của bạn tại Phở Gõ Tarot đều được giữ kín hoàn toàn. Hệ thống mã hóa thông tin và không chia sẻ cho bên thứ ba dưới bất kỳ hình thức nào.</p>
+                            <p style="margin-top: 8px;">Đặc biệt, để bảo vệ quyền riêng tư cá nhân một cách tối đa, <strong>bạn có toàn quyền chủ động quản lý và xóa vĩnh viễn lịch sử trải bài của mình</strong>. Bạn chỉ cần truy cập vào trang <a href="/history" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Lịch sử trải bài (/history)</a> trong tài khoản cá nhân của mình để tự tay xóa sạch các phiên trò chuyện hoặc trải bài cũ bất kỳ lúc nào. Hãy an tâm chia sẻ cùng Phở Gõ nhé!</p>
                         </div>
                     </details>
 
@@ -268,6 +398,32 @@ const schema = {
         .text-left { text-align: left; }
         
         /* === 2. TYPOGRAPHY === */
+        .promo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(242, 201, 76, 0.1);
+            border: 1px solid rgba(242, 201, 76, 0.4);
+            color: #F2C94C;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 5px rgba(242, 201, 76, 0.3);
+            animation: pulse-glow 2s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(242, 201, 76, 0.1);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(242, 201, 76, 0.2);
+                transform: scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
+                transform: scale(1.03);
+            }
+        }
         .hero-title {
             font-family: var(--font-title);
             color: var(--title-color);
@@ -485,6 +641,141 @@ const schema = {
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 0.9; transform: translateY(0); }
+        }
+
+        /* === 10. ZODIAC SELECTOR STANDALONE === */
+        .zodiac-grid-standalone {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        @media (min-width: 576px) {
+            .zodiac-grid-standalone { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (min-width: 768px) {
+            .zodiac-grid-standalone { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (min-width: 992px) {
+            .zodiac-grid-standalone { grid-template-columns: repeat(6, 1fr); }
+        }
+        .zodiac-item-standalone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1.8rem 1rem;
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .zodiac-icon {
+            font-size: 2.2rem;
+            color: #F2C94C;
+            text-shadow: 0 0 10px rgba(242, 201, 76, 0.4);
+            transition: transform 0.4s ease;
+        }
+        .zodiac-name {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin: 0.8rem 0 0.2rem 0;
+        }
+        .zodiac-slug {
+            font-size: 0.75rem;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+        .zodiac-item-standalone:hover {
+            background: rgba(242, 201, 76, 0.08);
+            border-color: rgba(242, 201, 76, 0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(242, 201, 76, 0.15);
+        }
+        .zodiac-item-standalone:hover .zodiac-icon {
+            transform: scale(1.25) rotate(10deg);
+            color: #fff;
+            text-shadow: 0 0 15px #F2C94C;
+        }
+        .zodiac-item-standalone:hover .zodiac-slug {
+            opacity: 0.9;
+            color: #F2C94C;
+        }
+
+        /* === 9. TESTIMONIAL CARDS === */
+        .testimonial-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            height: 100%;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(242, 201, 76, 0.4);
+            box-shadow: 0 10px 30px rgba(242, 201, 76, 0.1);
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .testimonial-rating {
+            color: #F2C94C;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+        .testimonial-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #e0e0e0;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .testimonial-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(242, 201, 76, 0.5);
+        }
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+        .user-name {
+            font-family: var(--font-body);
+            font-weight: 700;
+            color: #fff;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+        .user-role {
+            font-size: 0.75rem;
+            color: #F2C94C;
+            opacity: 0.8;
+            margin-top: 0.1rem;
         }
 
         /* === SCROLL REVEAL === */

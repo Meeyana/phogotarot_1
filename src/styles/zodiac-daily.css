@@ -176,9 +176,18 @@
 /* ADVICE BOX */
 .zodiac-advice-box {
     margin-top: 2rem; background: linear-gradient(145deg, rgba(242, 201, 76, 0.1) 0%, rgba(11, 19, 43, 0.5) 100%);
-    border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 12px; padding: 1rem;
+    border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 16px; padding: 1.5rem;
 }
-.advice-content-simple p { margin: 0; font-size: 1rem; line-height: 1.7; color: #fff; font-style: italic; text-shadow: none; }
+.advice-content-simple,
+.advice-content-simple p {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.85; /* Nới rộng khoảng cách dòng để dễ đọc hơn */
+    color: #ffffff;
+    font-style: italic;
+    text-shadow: none;
+    letter-spacing: 0.3px;
+}
 
 /* SHARE BTN */
 .zodiac-share-btn {
@@ -254,4 +263,335 @@
 
 @media (max-width: 600px) {
     .sub-form-simple { width: 100%; }
+}
+
+/* --- SECTION NỘI DUNG TĨNH TỐI ƯU SEO --- */
+.zodiac-seo-guide {
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding-bottom: 2rem;
+}
+
+.seo-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(242, 201, 76, 0.4) 50%, transparent 100%);
+    margin: 1rem 0;
+}
+
+.seo-main-title {
+    font-family: var(--font-title);
+    color: #ffffff;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    text-align: center;
+    margin: 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
+}
+
+.seo-main-title i {
+    color: var(--gold-color, #F2C94C);
+}
+
+.seo-lead-text {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #ccd6f6;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    text-shadow: none;
+}
+
+.seo-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.seo-card {
+    background: rgba(20, 40, 80, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.8rem;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.seo-card:hover {
+    border-color: rgba(242, 201, 76, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.seo-card-title {
+    font-family: var(--font-title);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gold-color, #F2C94C);
+    margin: 0 0 1.2rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    text-shadow: 0 0 8px rgba(242, 201, 76, 0.2);
+}
+
+.seo-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #a0aec0;
+    margin-top: 0;
+    margin-bottom: 1.2rem;
+}
+
+.seo-zodiac-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+.seo-zodiac-list::-webkit-scrollbar {
+    width: 4px;
+}
+.seo-zodiac-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.seo-zodiac-list::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.seo-zodiac-list li {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: #cbd5e0;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.seo-zodiac-list li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    color: var(--gold-color, #F2C94C);
+    font-size: 0.8rem;
+}
+
+.seo-zodiac-list li strong {
+    color: #fff;
+}
+
+/* Element Grid */
+.element-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 550px) {
+    .element-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.element-box {
+    border-radius: 12px;
+    padding: 1.2rem;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.element-box h4 {
+    font-family: var(--font-title);
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.element-box.fire h4 { color: #ff8a8a; }
+.element-box.earth h4 { color: #a5d6a7; }
+.element-box.air h4 { color: #82aaff; }
+.element-box.water h4 { color: #c792ea; }
+
+.element-box.fire {
+    background: linear-gradient(135deg, rgba(255, 138, 138, 0.05) 0%, transparent 100%);
+    border-color: rgba(255, 138, 138, 0.15);
+}
+.element-box.earth {
+    background: linear-gradient(135deg, rgba(165, 214, 167, 0.05) 0%, transparent 100%);
+    border-color: rgba(165, 214, 167, 0.15);
+}
+.element-box.air {
+    background: linear-gradient(135deg, rgba(130, 175, 255, 0.05) 0%, transparent 100%);
+    border-color: rgba(130, 175, 255, 0.15);
+}
+.element-box.water {
+    background: linear-gradient(135deg, rgba(199, 146, 234, 0.05) 0%, transparent 100%);
+    border-color: rgba(199, 146, 234, 0.15);
+}
+
+.element-signs {
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin: 0;
+}
+
+.element-suit {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #e2e8f0;
+    margin: 0;
+}
+
+.element-suit strong {
+    color: var(--gold-color, #F2C94C);
+}
+
+/* Tips Card */
+.tips-card {
+    background: rgba(20, 40, 80, 0.2);
+}
+
+.seo-steps-list {
+    padding-left: 1.2rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.seo-steps-list li {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: #cbd5e0;
+}
+
+.seo-steps-list li strong {
+    color: #fff;
+}
+
+/* CTA Banner */
+.seo-cta-banner {
+    background: linear-gradient(135deg, rgba(20, 40, 80, 0.8) 0%, rgba(5, 10, 31, 0.9) 100%);
+    border: 1px solid rgba(242, 201, 76, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(242, 201, 76, 0.05);
+}
+
+@media (min-width: 768px) {
+    .seo-cta-banner {
+        flex-direction: row;
+        text-align: left;
+        justify-content: space-between;
+        gap: 2rem;
+    }
+}
+
+.seo-cta-text {
+    flex-grow: 1;
+}
+
+.seo-cta-text h4 {
+    font-family: var(--font-title);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 0.6rem 0;
+    text-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+}
+
+.seo-cta-text p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #a0aec0;
+    margin: 0;
+}
+
+.seo-cta-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    flex-shrink: 0;
+    width: 100%;
+}
+
+@media (min-width: 480px) {
+    .seo-cta-links {
+        flex-direction: row;
+        width: auto;
+    }
+}
+
+.cta-link-btn {
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 0.8rem 1.6rem;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.cta-link-btn.primary {
+    background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+    color: #050A1F;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.cta-link-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(242, 201, 76, 0.4);
+    background: linear-gradient(135deg, #FFF 0%, #F2C94C 100%);
+}
+
+.cta-link-btn.secondary {
+    background: transparent;
+    color: var(--gold-color, #F2C94C);
+    border: 1px solid var(--gold-color, #F2C94C);
+}
+
+.cta-link-btn.secondary:hover {
+    transform: translateY(-2px);
+    background: rgba(242, 201, 76, 0.08);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(242, 201, 76, 0.15);
+}
+
+/* DESKTOP LAYOUT OVERRIDES - 2-COLUMN GRID FOR ZODIAC SIGNS LIST ON LARGER SCREENS */
+@media (min-width: 768px) {
+    .seo-zodiac-list {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.8rem 2.5rem !important;
+        max-height: none !important;
+        overflow-y: visible !important;
+        padding-right: 0 !important;
+    }
 }

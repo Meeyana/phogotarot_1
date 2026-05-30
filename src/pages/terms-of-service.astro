@@ -1,0 +1,218 @@
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Điều Khoản Sử Dụng Dịch Vụ | Phở Gõ Tarot";
+const pageDesc = "Quy định điều khoản sử dụng dịch vụ bói bài Tarot, giải mã Thần số học và bảo vệ sở hữu trí tuệ tại Phở Gõ Tarot.";
+const pageUrl = new URL('/terms-of-service', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <main id="terms-of-service-content">
+        <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+            <div class="container text-content-container">
+                
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                    Điều Khoản Sử Dụng Dịch Vụ
+                </h2>
+                
+                <p class="section-text"><em>Cập nhật lần cuối: 30/05/2026</em></p>
+
+                <!-- MỤC LỤC -->
+                <div class="toc-box">
+                    <h3 class="toc-title">Mục lục</h3>
+                    <ul class="toc-list">
+                        <li><a href="#muc-1">1. Chấp thuận điều khoản</a></li>
+                        <li><a href="#muc-2">2. Đăng ký & Bảo mật tài khoản</a></li>
+                        <li><a href="#muc-3">3. Sở hữu trí tuệ & Quyền tác giả</a></li>
+                        <li><a href="#muc-4">4. Quy tắc sử dụng dịch vụ & Chống cào dữ liệu</a></li>
+                        <li><a href="#muc-5">5. Cơ chế AI Chat & Tiêu chuẩn nội dung</a></li>
+                        <li><a href="#muc-6">6. Quản lý Credit & Xử lý lỗi hệ thống</a></li>
+                        <li><a href="#muc-7">7. Chấm dứt quyền sử dụng dịch vụ</a></li>
+                        <li><a href="#muc-8">8. Luật áp dụng & Giải quyết tranh chấp</a></li>
+                    </ul>
+                </div>
+
+                <!-- NỘI DUNG CHÍNH SÁCH -->
+                
+                <h3 class="section-subtitle" id="muc-1">1. Chấp thuận điều khoản</h3>
+                <p class="section-text">Chào mừng bạn đến với Phở Gõ Tarot. Bằng việc truy cập website, đăng ký thành viên, nạp tiền mua credit hoặc sử dụng bất kỳ tính năng trải bài Tarot và Thần số học trực tuyến nào của chúng tôi, bạn chính thức xác nhận đã đọc, hiểu rõ và đồng ý bị ràng buộc bởi các Điều khoản Sử dụng Dịch vụ (Terms of Service) này. 
+                <br><br>Nếu bạn không đồng ý hoặc không tuân thủ bất kỳ quy định nào tại văn bản này, vui lòng ngừng sử dụng mọi dịch vụ của Phở Gõ Tarot ngay lập tức.</p>
+
+                <h3 class="section-subtitle" id="muc-2">2. Đăng ký & Bảo mật tài khoản</h3>
+                <ul class="section-list">
+                    <li>Để sử dụng một số tính năng nâng cao (như lưu lại lịch sử trải bài, nạp credit hoặc nâng cấp gói dịch vụ), bạn bắt buộc phải tạo tài khoản thành viên thông qua quy trình đăng ký tiêu chuẩn hoặc đăng nhập nhanh bằng tài khoản Google liên kết.</li>
+                    <li>Bạn cam kết cung cấp thông tin đăng ký chính xác, trung thực. Bạn hoàn toàn chịu trách nhiệm cá nhân đối với mọi hoạt động diễn ra dưới tài khoản của mình.</li>
+                    <li>Bạn có trách nhiệm bảo mật tuyệt đối thông tin đăng nhập tài khoản của mình. Không được chia sẻ tài khoản cho người khác sử dụng, không được mua bán, cho thuê hoặc chuyển nhượng tài khoản thành viên dưới bất kỳ hình thức nào.</li>
+                    <li>Nếu phát hiện bất kỳ dấu hiệu truy cập trái phép hoặc lỗ hổng bảo mật nào liên quan đến tài khoản của mình, bạn cần nhanh chóng thông báo cho chúng tôi để có biện pháp can thiệp kịp thời. Chúng tôi từ chối mọi trách nhiệm đối với tổn thất phát sinh từ việc bạn sơ suất trong công tác bảo mật tài khoản.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-3">3. Sở Hữu Trí Tuệ & Quyền Tác Giả</h3>
+                <p class="section-text">Toàn bộ tài nguyên có trên website Phở Gõ Tarot đều là tài sản trí tuệ thuộc quyền sở hữu độc quyền của chúng tôi hoặc đã được cấp phép hợp pháp từ các đối tác thứ ba:</p>
+                <ul class="section-list">
+                    <li><strong>Bản quyền thiết kế & Nội dung:</strong> Bao gồm toàn bộ giao diện người dùng, mã nguồn hệ thống, cấu trúc prompt điều phối AI (AI Prompts), thiết kế mỹ thuật và hình ảnh các lá bài Tarot, cơ sở dữ liệu diễn giải lá bài, các thuật toán lập bản đồ Thần số học và tất cả các bài viết Blog chuyên sâu.</li>
+                    <li><strong>Giới hạn quyền sử dụng:</strong> Chúng tôi chỉ cấp cho bạn một quyền truy cập cá nhân, có giới hạn, không độc quyền, không thể chuyển nhượng để trải nghiệm trực tuyến các dịch vụ phần mềm trên hệ thống của chúng tôi.</li>
+                    <li><strong>Nghiêm cấm sao chép:</strong> Bạn tuyệt đối không được phép sao chép, tái bản, phân phối, trích xuất dữ liệu, dịch chuyển ngược mã nguồn (reverse engineering), hiển thị công khai hoặc thương mại hóa bất kỳ phần nội dung nào trên Phở Gõ Tarot cho các mục đích thương mại riêng hoặc để xây dựng các nền tảng bói toán, chiêm tinh cạnh tranh khác mà không có văn bản đồng ý chính thức từ ban quản trị.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-4">4. Quy tắc sử dụng dịch vụ & Chống cào dữ liệu (Anti-Scraping)</h3>
+                <p class="section-text">Nhằm mục đích bảo vệ tài nguyên máy chủ và tính toàn vẹn của dịch vụ, mọi người dùng sử dụng hệ thống đều phải tuân thủ nghiêm ngặt các quy định cấm đoán sau đây:</p>
+                <ul class="section-list">
+                    <li><strong>Nghiêm cấm cào dữ liệu:</strong> Tuyệt đối không sử dụng bất kỳ loại robot, spider, crawler, scraper, công cụ khai thác dữ liệu (data mining) hoặc các chương trình phần mềm tự động nào để truy cập, cào, hoặc lưu trữ dữ liệu từ các trang nội dung, ý nghĩa lá bài và blog của Phở Gõ Tarot.</li>
+                    <li><strong>Nghiêm cấm phá hoại hệ thống:</strong> Không thực hiện các cuộc tấn công từ chối dịch vụ (DDoS), chèn mã độc, phát tán virus, spam tài nguyên máy chủ, hoặc tìm cách khai thác lỗ hổng bảo mật của hệ thống website.</li>
+                    <li><strong>Nghiêm cấm gian lận Credit:</strong> Không sử dụng bất kỳ công cụ can thiệp phần mềm bên ngoài (cheat tools), proxy ảo, thay đổi IP hàng loạt hoặc lợi dụng lỗi luồng xử lý phần mềm để bẻ khóa tăng số dư Credit ảo trái phép.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-5">5. Cơ chế AI Chat & Tiêu chuẩn nội dung</h3>
+                <p class="section-text">Tại các phòng tương tác trò chuyện như AI Reader, bạn có cơ hội nhập văn bản câu hỏi tùy ý. Bạn đồng ý tuân thủ tuyệt đối tiêu chuẩn nội dung đầu vào:</p>
+                <ul class="section-list">
+                    <li><strong>Ngôn từ văn minh:</strong> Cấm gửi các câu hỏi, nội dung chat chứa ngôn ngữ kích động thù hận, bôi nhọ, tục tĩu, quấy rối, phân biệt chủng tộc, tôn giáo, giới tính hoặc xâm phạm quyền riêng tư của cá nhân khác.</li>
+                    <li><strong>Tuân thủ Pháp luật:</strong> Không sử dụng chat đầu vào để bàn luận, tuyên truyền các thông tin vi phạm an ninh quốc gia, cổ súy các hoạt động bất hợp pháp, bạo lực hoặc các tệ nạn xã hội theo pháp luật hiện hành của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam.</li>
+                    <li><strong>Quyền lọc và chặn nội dung:</strong> Ban quản trị có quyền tự động hoặc thủ công lọc bỏ các câu hỏi vi phạm tiêu chuẩn, từ chối phản hồi AI, đồng thời ghi nhận bằng chứng để đình chỉ tài khoản người dùng vi phạm vĩnh viễn.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-6">6. Quản lý Credit & Xử lý lỗi hệ thống</h3>
+                <ul class="section-list">
+                    <li>Tất cả các vấn đề liên quan đến nạp Credit, giá trị các gói dịch vụ và nguyên tắc từ chối hoàn tiền được thực hiện theo quy định tại <strong><a href="/payment-policy" style="color: var(--gold-color, #F2C94C); text-decoration: underline;">Chính sách Thanh toán & Hoàn tiền</a></strong>.</li>
+                    <li><strong>Xử lý lỗi hệ thống khách quan:</strong> Trong trường hợp phát sinh sự cố kỹ thuật hoặc lỗi cơ sở dữ liệu làm sai lệch số dư Credit của bạn (Ví dụ: hệ thống cộng thừa hoặc trừ sai số lượt), ban quản trị Phở Gõ Tarot bảo lưu quyền thực hiện các điều chỉnh kỹ thuật cần thiết để thu hồi, khôi phục hoặc điều chỉnh lại đúng số lượng Credit thực tế của tài khoản mà không cần bồi thường tài chính.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-7">7. Chấm dứt quyền sử dụng dịch vụ</h3>
+                <ul class="section-list">
+                    <li>Chúng tôi bảo lưu toàn quyền, theo quyết định đơn phương của mình, đình chỉ tạm thời hoặc chấm dứt vĩnh viễn quyền truy cập tài khoản và quyền sử dụng dịch vụ của bạn ngay lập tức mà không cần báo trước, không cần chịu trách nhiệm pháp lý hay hoàn trả bất kỳ khoản phí nạp dịch vụ nào nếu bạn vi phạm bất kỳ điều khoản nào quy định tại văn bản này.</li>
+                    <li>Bạn cũng có quyền chấm dứt việc sử dụng dịch vụ bất kỳ lúc nào bằng cách ngừng truy cập website và tự thực hiện yêu cầu xóa vĩnh viễn dữ liệu hội thoại chat trong mục Lịch sử trải bài.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-8">8. Luật áp dụng & Giải quyết tranh chấp</h3>
+                <ul class="section-list">
+                    <li>Các Điều khoản Sử dụng này được điều chỉnh và giải thích theo các quy định của luật pháp nước Cộng hòa Xã hội Chủ nghĩa Việt Nam.</li>
+                    <li>Mọi tranh chấp, khiếu nại phát sinh trực tiếp hoặc gián tiếp từ việc sử dụng dịch vụ của bạn trước hết sẽ được giải quyết thông qua thương lượng hòa giải thiện chí giữa hai bên.</li>
+                    <li>Trong trường hợp không thể đạt được thỏa thuận giải quyết chung thông qua thương lượng trong vòng ba mươi (30) ngày kể từ ngày phát sinh tranh chấp, một trong các bên có quyền đưa vụ việc ra giải quyết tại Tòa án nhân dân có thẩm quyền tại Thành phố Hồ Chí Minh, Việt Nam để phán quyết cuối cùng. Phán quyết của Tòa án sẽ là phán quyết bắt buộc thi hành đối với cả hai bên.</li>
+                </ul>
+
+            </div>
+        </section>
+    </main>
+    
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <style>
+        .homepage-section { 
+            padding: 4rem 1rem; 
+            position: relative;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0;
+        }
+        
+        .section-title { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 3rem; 
+            margin-bottom: 3rem; 
+            text-align: center;
+        }
+
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            scroll-margin-top: 5rem;
+        }
+        
+        .section-text { 
+            font-size: 1rem;
+            opacity: 0.9; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            line-height: 1.8;
+        }
+
+        .text-content-container {
+            max-width: 900px;
+            padding: 0 1rem;
+            text-align: left;
+        }
+
+        .section-list {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .section-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-box {
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+        .toc-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-back-border);
+            padding-bottom: 1rem;
+        }
+        .toc-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+            columns: 2;
+        }
+        .toc-list li {
+            margin-bottom: 1rem;
+        }
+        .toc-list a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .toc-list a:hover {
+            color: var(--title-color);
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .toc-list {
+                columns: 1;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</BaseLayout>

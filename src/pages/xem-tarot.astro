@@ -86,7 +86,7 @@ if (db && Astro.locals.user) {
 
         <div id="initial-greeting" class="initial-greeting">
             <h1 class="title-glow">Vấn đề bạn đang trăn trở là gì?</h1>
-            <p class="subtitle-muted">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể.</p>
+            <p class="subtitle-muted">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
         </div>
 
         <!-- Input Area -->
@@ -109,12 +109,12 @@ if (db && Astro.locals.user) {
             </div>
         </div>
 
-        <!-- Giọng văn vũ trụ: căn giữa nằm ở dưới gợi ý câu hỏi -->
+        <!-- Chọn Reader: căn giữa nằm ở dưới gợi ý câu hỏi -->
         <div class="narrative-pill-container" id="reader-selection-container">
             <div class="reader-dropdown centered-reader-dropdown">
                 <button type="button" id="reader-dropdown-toggle" class="narrative-pill-btn">
                     <img id="selected-reader-avatar" src="/images/witcher-bot.jpg" alt="Avatar" class="pill-avatar" />
-                    <span class="pill-label">Giọng văn:</span>
+                    <span class="pill-label">Reader:</span>
                     <span id="selected-reader-name" class="pill-name">Đang tải...</span>
                     <svg class="pill-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.25 4.25a.75.75 0 01-1.06 0L5.23 8.29a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
@@ -136,35 +136,38 @@ if (db && Astro.locals.user) {
         <div class="seo-divider"></div>
         
         <article class="seo-guide-container">
-            <h2 class="seo-title">Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng</h2>
+            <h2 class="seo-title">Cách Đặt Câu Hỏi Để Kết Nối Trực Trí Với Reader AI</h2>
             <p class="seo-intro">
-                Kết quả của một trải bài Tarot phụ thuộc 50% vào năng lượng của Reader và 50% vào <strong>cách bạn đặt câu hỏi</strong>. Một câu hỏi đúng trọng tâm, cởi mở sẽ giúp "Vũ trụ" gửi đến bạn những thông điệp rõ ràng nhất.
+                Kết quả của một trải bài Tarot hội thoại phụ thuộc rất nhiều vào <strong>cách bạn đặt câu hỏi và chia sẻ hoàn cảnh</strong>. Việc đặt một câu hỏi mở, đúng trọng tâm và cung cấp đủ thông tin sẽ giúp Reader AI của Phở Gõ Tarot thấu cảm sâu sắc nhất năng lượng của bạn và đưa ra những lời khuyên chỉ dẫn rõ ràng từ Vũ trụ.
             </p>
 
             <div class="seo-tips-grid">
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">❌ Tránh Câu Hỏi Yes/No Đóng</h3>
-                    <p class="tip-content">Tarot kể chuyện, không chỉ tung đồng xu. Thay vì hỏi <em>"Tôi có giàu không?"</em>, hãy hỏi <em>"Cơ hội tài chính nào đang đến với tôi?"</em>.</p>
+                    <h3 class="tip-title">🧭 Hỏi Câu Hỏi Mở Cởi Mở</h3>
+                    <p class="tip-content">Tránh những câu hỏi đóng. Thay vì hỏi <em>"Tôi có đạt được mục tiêu không?"</em>, hãy hỏi <em>"Tôi cần tập trung phát triển khía cạnh nào để sớm đạt được mục tiêu của mình?"</em>.</p>
                 </div>
                 
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">👤 Tập Trung Vào Chính Bạn</h3>
-                    <p class="tip-content">Bạn không thể thay đổi người khác, chỉ có thể thay đổi chính mình. Hãy hỏi <em>"Tôi cần làm gì..."</em> thay vì <em>"Tại sao anh ấy lại làm thế?"</em>.</p>
+                    <h3 class="tip-title">👤 Tập Trung Vào Bản Thân Bạn</h3>
+                    <p class="tip-content">Tarot phản chiếu năng lượng của chính bạn. Hãy hỏi về những quyết định, hành động của bạn như <em>"Tôi nên làm gì..."</em> thay vì cố gắng đọc suy nghĩ hay thay đổi người khác.</p>
                 </div>
 
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">⏳ Giới Hạn Thời Gian Cụ Thể</h3>
-                    <p class="tip-content">Năng lượng luôn biến đổi. Hãy gắn thêm mốc thời gian như <em>"trong 3 tháng tới"</em> hoặc <em>"trong năm nay"</em> để có câu trả lời sát thực tế nhất.</p>
+                    <h3 class="tip-title">🔗 Cung Cấp Thêm Bối Cảnh</h3>
+                    <p class="tip-content">Vì đây là cuộc trò chuyện tương tác trực tiếp, bạn đừng ngần ngại chia sẻ ngắn gọn về tình huống hiện tại của mình để nhận được lời luận giải mang tính cá nhân hóa cao nhất.</p>
                 </div>
             </div>
 
             <div class="seo-examples">
-                <h3 class="example-title">💡 Công Thức Câu Hỏi "Quyền Năng":</h3>
+                <h3 class="example-title">💡 Gợi Ý Câu Hỏi Mở Dành Riêng Cho Bạn:</h3>
                 <ul class="example-list">
-                    <li><strong>Tình cảm:</strong> "Điều gì đang cản trở tôi tìm thấy tình yêu đích thực?"</li>
-                    <li><strong>Công việc:</strong> "Tiềm năng phát triển của tôi tại công ty hiện tại trong 6 tháng tới là gì?"</li>
-                    <li><strong>Phát triển:</strong> "Thông điệp vũ trụ muốn gửi đến tôi ngay lúc này là gì?"</li>
+                    <li><strong>Tình yêu & Mối quan hệ:</strong> "Năng lượng tình cảm của tôi trong 3 tháng tới có điểm gì cần lưu ý để thu hút mối quan hệ lành mạnh?"</li>
+                    <li><strong>Sự nghiệp & Tài chính:</strong> "Những cơ hội hay thách thức lớn nào đang chờ đón tôi trong công việc sắp tới?"</li>
+                    <li><strong>Định hướng cá nhân:</strong> "Thông điệp vũ trụ muốn nhắn nhủ và khuyên bảo tôi điều gì tại thời điểm hiện tại?"</li>
                 </ul>
+                <p style="margin-top: 1.5rem; font-size: 0.95rem; opacity: 0.85; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1rem;">
+                    * Lưu ý: Nếu bạn có những thắc mắc nhanh cần câu trả lời Có hoặc Không dứt khoát, hãy chuyển sang trang trải bài chuyên biệt <a href="/yes-no-reading" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Hỏi Đáp Yes/No</a> để được hỗ trợ tốt nhất!
+                </p>
             </div>
         </article>
         <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->

@@ -21,107 +21,79 @@ const user = Astro.locals.user;
         </div>
 
         <div class="pricing-cards">
-            <!-- Gói 1 -->
+            <!-- Gói 1: Khởi Đầu -->
             <div class="pricing-card">
                 <div class="card-header">
                     <h3>Khởi Đầu</h3>
                     <div class="price">
                         <span class="currency">₫</span>49.000
                     </div>
-                    <p class="desc">Dành cho người mới trải nghiệm</p>
+                    <p class="desc">Dành cho lữ khách mới bắt đầu hành trình tự khám phá</p>
                 </div>
                 <div class="card-features">
                     <ul>
-                        <li><i class="fa-solid fa-check"></i> <strong>3 lượt</strong> xem Tarot 3 lá</li>
-                        <li><i class="fa-solid fa-check"></i> <strong>Sử dụng vĩnh viễn</strong></li>
-                        <li><i class="fa-solid fa-check"></i> Xem bài Yes/No miễn phí</li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>3 Credit</strong> dùng cho Tarot, Yes/No hoặc Thần số học</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>Mở khóa 1 bản đồ Thần số học</strong> chuyên sâu</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>Sử dụng vĩnh viễn</strong>, không giới hạn thời gian</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Luận giải chi tiết với Reader AI</span></li>
                     </ul>
                 </div>
                 <button class="select-plan-btn" data-amount="49000" data-package="Khởi Đầu (3 lượt)">Chọn Gói Này</button>
             </div>
 
-            <!-- Gói 2 -->
-            <div class="pricing-card popular">
-                <div class="popular-badge">Phổ Biến Nhất</div>
+            <!-- Gói 2: Đồng Hành -->
+            <div class="pricing-card">
                 <div class="card-header">
                     <h3>Đồng Hành</h3>
                     <div class="price">
                         <span class="currency">₫</span>129.000
                     </div>
-                    <p class="desc">Tiết kiệm hơn, nhiều thông điệp hơn</p>
+                    <p class="desc">Giải pháp tiết kiệm và nhận được nhiều thông điệp hơn</p>
                 </div>
                 <div class="card-features">
                     <ul>
-                        <li><i class="fa-solid fa-check"></i> <strong>10 lượt</strong> xem Tarot 3 lá</li>
-                        <li><i class="fa-solid fa-check"></i> <strong>Sử dụng vĩnh viễn</strong></li>
-                        <li><i class="fa-solid fa-check"></i> Phân tích lá bài chi tiết</li>
-                        <li><i class="fa-solid fa-check"></i> Ưu tiên phản hồi tốc độ cao</li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>10 Credit</strong> dùng cho Tarot, Yes/No hoặc Thần số học</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>Mở khóa 3 bản đồ Thần số học</strong> chuyên sâu</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span><strong>Sử dụng vĩnh viễn</strong>, không bao giờ hết hạn</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Tiết kiệm hơn <strong>20%</strong> so với mua lẻ từng credit</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Áp dụng cho mọi tính năng của hệ thống</span></li>
                     </ul>
                 </div>
-                <button class="select-plan-btn popular-btn" data-amount="129000" data-package="Đồng Hành (10 lượt)">Chọn Gói Này</button>
+                <button class="select-plan-btn" data-amount="129000" data-package="Đồng Hành (10 lượt)">Chọn Gói Này</button>
             </div>
 
-            <!-- Gói 3 -->
+            <!-- Gói 3: VIP Vương Giả (Premium với Billing Toggle) -->
             <div class="pricing-card premium-tier">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-crown" style="color: #FFD700;"></i> Vương Giả</h3>
-                    <div class="price">
-                        <span class="currency">₫</span>199.000<span class="period">/tháng</span>
-                    </div>
-                    <p class="desc">Trải nghiệm tâm linh trọn vẹn nhất</p>
-                </div>
-                <div class="card-features">
-                    <ul>
-                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> (1 tháng)</li>
-                        <li><i class="fa-solid fa-star"></i> Mở khóa các trải bài chuyên sâu</li>
-                        <li><i class="fa-solid fa-clock-rotate-left"></i> Lưu trữ lịch sử vĩnh viễn</li>
-                        <li><i class="fa-solid fa-wand-magic-sparkles"></i> AI thấu hiểu phong cách của bạn</li>
-                        <li><i class="fa-solid fa-infinity"></i> Xem thần số học không giới hạn</li>
-                    </ul>
-                </div>
-                <button class="select-plan-btn premium-btn" data-amount="199000" data-package="Vương Giả (Gói Tháng)">Trở Thành VIP</button>
-                </div>
+                    <h3><i class="fa-solid fa-crown"></i> Vương Giả</h3>
 
-            <!-- Gói 4 -->
-            <div class="pricing-card premium-tier yearly-tier">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-gem" style="color: #4CAF50;"></i> Chuyên Gia</h3>
-                    <div class="price">
-                        <span class="currency">₫</span>599.000<span class="period">/năm</span>
+                    <!-- Price hiển thị trước (align với các card khác) -->
+                    <div class="price" id="premium-price-display">
+                        <span class="currency">₫</span><span id="premium-amount-display">199.000</span><span class="period" id="premium-period-display">/tháng</span>
                     </div>
-                    <p class="desc">Dành cho người yêu Tarot thực thụ</p>
-                </div>
-                <div class="card-features">
-                    <ul>
-                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> (1 năm)</li>
-                        <li><i class="fa-solid fa-star"></i> Mở khóa toàn bộ trải bài</li>
-                        <li><i class="fa-solid fa-wand-magic-sparkles"></i> Phân tích chuẩn xác cao cấp</li>
-                        <li><i class="fa-solid fa-infinity"></i> Xem thần số học không giới hạn</li>
-                    </ul>
-                </div>
-                <button class="select-plan-btn yearly-btn" data-amount="599000" data-package="Chuyên Gia (Gói Năm)">Mua Gói Năm</button>
-            </div>
 
-            <!-- Gói 5 (Đang tạm ẩn) -->
-            <!--
-            <div class="pricing-card premium-tier lifetime-tier">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-diamond" style="color: #b19cd9;"></i> Khai Sáng</h3>
-                    <div class="price">
-                        <span class="currency">₫</span>799.000<span class="period">/trọn đời</span>
+                    <p class="desc">Trải nghiệm tâm linh tối thượng và không giới hạn</p>
+
+                    <!-- Billing Toggle Switch — nằm dưới price + desc -->
+                    <div class="billing-toggle-container">
+                        <button class="billing-toggle-btn active" data-billing="monthly">Hàng Tháng</button>
+                        <button class="billing-toggle-btn" data-billing="yearly">Hàng Năm</button>
                     </div>
-                    <p class="desc">Mua 1 lần, dùng mãi mãi</p>
+
+                    <!-- Subtext tiết kiệm (chỉ hiện khi chọn năm) -->
+                    <p class="premium-desc-sub" id="premium-price-subtext" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
-                        <li><i class="fa-solid fa-infinity"></i> <strong>Không giới hạn</strong> (Trọn đời)</li>
-                        <li><i class="fa-solid fa-bolt"></i> Ưu tiên nâng cấp tính năng mới</li>
-                        <li><i class="fa-solid fa-user-shield"></i> Danh hiệu VIP trọn đời</li>
+                        <li><i class="fa-solid fa-infinity"></i> <span><strong>Vô hạn</strong> bốc bài Tarot và Hỏi đáp Yes/No</span></li>
+                        <li><i class="fa-solid fa-infinity"></i> <span><strong>Vô hạn</strong> giải mã Thần số học chuyên sâu</span></li>
+                        <li><i class="fa-solid fa-star"></i> <span>Mở khóa toàn bộ trải bài nâng cao & độc quyền</span></li>
+                        <li><i class="fa-solid fa-clock-rotate-left"></i> <span>Lưu trữ lịch sử trải bài vĩnh viễn trong tài khoản</span></li>
+                        <li><i class="fa-solid fa-bolt"></i> <span>Ưu tiên băng thông VIP phản hồi tốc độ cao</span></li>
                     </ul>
                 </div>
-                <button class="select-plan-btn lifetime-btn" data-amount="799000" data-package="Khai Sáng (Trọn Đời)">Mua Trọn Đời</button>
+                <button class="select-plan-btn premium-btn" id="premium-buy-btn" data-amount="199000" data-package="Vương Giả (Gói Tháng)">Trở Thành VIP</button>
             </div>
-            -->
         </div>
         </div>
 
@@ -135,6 +107,10 @@ const user = Astro.locals.user;
                 <div class="faq-item">
                     <h4>Lượt mua lẻ có bị mất đi không?</h4>
                     <p>Không. Tất cả các gói mua lẻ (Khởi Đầu, Đồng Hành) đều có giá trị vĩnh viễn cho đến khi bạn sử dụng hết.</p>
+                </div>
+                <div class="faq-item">
+                    <h4>Credit dùng được cho những tính năng nào?</h4>
+                    <p>Bạn có thể sử dụng Credit cho mọi hoạt động trải bài trên Phở Gõ Tarot, bao gồm Trò Chuyện & Trải Bài (1, 3, hoặc 5 lá bốc bài kèm luận giải chi tiết) và Hỏi Đáp Yes/No tức thì.</p>
                 </div>
             </div>
         </div>
@@ -233,198 +209,358 @@ const user = Astro.locals.user;
 
     .pricing-cards {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 35px;
         margin-bottom: 80px;
+        align-items: stretch;
     }
 
     .pricing-card {
-        background: rgba(20, 25, 40, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 40px 20px;
+        background: linear-gradient(135deg, rgba(20, 25, 45, 0.75) 0%, rgba(10, 15, 30, 0.9) 100%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 45px 30px;
         width: 100%;
-        backdrop-filter: blur(10px);
-        transition: all 0.3s ease;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         position: relative;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .pricing-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%);
+        opacity: 0.8;
+        pointer-events: none;
+        transition: opacity 0.3s;
     }
 
     .pricing-card:hover {
-        transform: translateY(-10px);
-        border-color: rgba(242, 201, 76, 0.3);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(242, 201, 76, 0.1);
+        transform: translateY(-8px) scale(1.01);
+        border-color: rgba(242, 201, 76, 0.35);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(242, 201, 76, 0.12);
     }
 
-    .pricing-card.popular {
-        border-color: var(--gold-color, #F2C94C);
-        background: linear-gradient(180deg, rgba(30, 35, 55, 0.9) 0%, rgba(20, 25, 40, 0.9) 100%);
-        box-shadow: 0 0 30px rgba(242, 201, 76, 0.15);
-        transform: scale(1.05);
-    }
-
-    .pricing-card.popular:hover {
-        transform: scale(1.05) translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(242, 201, 76, 0.3);
+    .pricing-card:hover::before {
+        opacity: 1;
     }
 
     .pricing-card.premium-tier {
-        background: linear-gradient(135deg, rgba(40, 30, 20, 0.8) 0%, rgba(20, 25, 40, 0.9) 100%);
-        border: 1px solid rgba(255, 215, 0, 0.5);
+        background: linear-gradient(135deg, rgba(32, 25, 48, 0.85) 0%, rgba(15, 12, 28, 0.95) 100%);
+        border: 1px solid rgba(255, 215, 0, 0.45);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.65), 0 0 35px rgba(255, 215, 0, 0.08);
     }
 
-    .popular-badge {
+    .pricing-card.premium-tier::before {
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.08) 0%, rgba(255, 215, 0, 0) 100%);
+    }
+
+    .pricing-card.premium-tier::after {
+        content: '';
         position: absolute;
-        top: -15px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: linear-gradient(90deg, #F2C94C, #F2994A);
-        color: #000;
-        font-weight: bold;
-        padding: 5px 20px;
-        border-radius: 20px;
+        top: -20%;
+        left: -20%;
+        width: 140%;
+        height: 140%;
+        background: radial-gradient(circle, rgba(255, 215, 0, 0.06) 0%, transparent 60%);
+        z-index: -1;
+        pointer-events: none;
+        border-radius: 40px;
+    }
+
+    .pricing-card.premium-tier:hover {
+        border-color: rgba(255, 215, 0, 0.85);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 45px rgba(255, 215, 0, 0.25);
+    }
+
+    /* Billing Toggle Switch CSS */
+    .billing-toggle-container {
+        display: inline-flex;
+        background: rgba(0, 0, 0, 0.55);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 30px;
+        padding: 4px;
+        margin: 20px 0;
+        position: relative;
+        box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .billing-toggle-btn {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.55);
+        padding: 8px 18px;
         font-size: 0.85rem;
-        box-shadow: 0 4px 10px rgba(242, 201, 76, 0.3);
+        font-weight: 700;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    .billing-toggle-btn:hover:not(.active) {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .billing-toggle-btn.active {
+        background: linear-gradient(135deg, #FFE066 0%, #F2C94C 100%);
+        color: #000;
+        box-shadow: 0 4px 15px rgba(242, 201, 76, 0.45);
+        font-weight: 800;
+    }
+
+    .discount-badge {
+        background: linear-gradient(135deg, #FF4B4B 0%, #FF2E2E 100%);
+        color: #fff;
+        font-size: 0.65rem;
+        padding: 2px 7px;
+        border-radius: 20px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(255, 46, 46, 0.4);
+        display: inline-block;
+    }
+
+    .price-container {
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+    }
+
+    .premium-desc-sub {
+        color: #2ec4b6;
+        font-size: 0.82rem;
+        margin-top: 12px;
+        margin-bottom: 0;
+        background: rgba(46, 196, 182, 0.08);
+        border: 1px solid rgba(46, 196, 182, 0.25);
+        padding: 8px 14px;
+        border-radius: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-weight: 600;
+        line-height: 1.5;
+        text-align: center;
+        animation: pulseGlowSub 2.5s infinite ease-in-out;
+        box-shadow: 0 2px 10px rgba(46, 196, 182, 0.05);
+    }
+
+    @keyframes pulseGlowSub {
+        0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(46, 196, 182, 0.15); 
+            transform: scale(1);
+        }
+        50% { 
+            box-shadow: 0 0 12px 3px rgba(46, 196, 182, 0.25); 
+            transform: scale(1.02);
+        }
     }
 
     .card-header {
         text-align: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 10px;
+        padding-bottom: 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        position: relative;
+    }
+
+    .premium-tier .card-header {
+        border-bottom-color: rgba(255, 215, 0, 0.15);
     }
 
     .card-header h3 {
+        font-family: 'Quicksand', sans-serif;
         color: #fff;
         font-size: 1.5rem;
-        margin-bottom: 15px;
+        font-weight: 700;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .card-header h3 i {
+        color: #FFD700;
+        margin-right: 6px;
+        filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+    }
+
+    .premium-tier .card-header h3 {
+        color: #FFD700;
+        text-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
     }
 
     .price {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: var(--gold-color, #F2C94C);
+        font-family: 'Quicksand', sans-serif;
+        font-size: 3rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #F2C94C;
+        text-shadow: 0 0 20px rgba(242, 201, 76, 0.3);
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        line-height: 1;
+        line-height: 1.1;
+        margin: 10px 0;
+    }
+
+    .premium-tier .price {
+        color: #FFD700;
+        text-shadow: 0 0 25px rgba(255, 215, 0, 0.4);
     }
 
     .currency {
-        font-size: 1.2rem;
-        margin-top: 5px;
-        margin-right: 5px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-top: 7px;
+        margin-right: 3px;
+        color: inherit;
+        opacity: 0.85;
     }
 
     .period {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
         color: rgba(255, 255, 255, 0.5);
         margin-top: auto;
-        margin-left: 5px;
-        margin-bottom: 5px;
+        margin-left: 4px;
+        margin-bottom: 8px;
+        letter-spacing: 0.3px;
     }
 
     .desc {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.88rem;
         margin-top: 15px;
+        line-height: 1.5;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .card-features {
         flex-grow: 1;
-        margin-bottom: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin: 30px 0;
     }
 
     .card-features ul {
         list-style: none;
         padding: 0;
         margin: 0;
+        width: 100%;
     }
 
     .card-features li {
-        color: #ddd;
-        margin-bottom: 15px;
+        color: rgba(255, 255, 255, 0.85);
+        margin-bottom: 18px;
         display: flex;
-        align-items: center;
-        gap: 10px;
+        align-items: flex-start;
+        gap: 12px;
         font-size: 0.95rem;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    .card-features li:last-child {
+        margin-bottom: 0;
     }
 
     .card-features li i {
-        color: var(--gold-color, #F2C94C);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
+        margin-top: 3px;
+        flex-shrink: 0;
+    }
+
+    /* Custom glowing colors for special icons on Vương Giả */
+    .card-features li i.fa-check {
+        color: #F2C94C;
+        filter: drop-shadow(0 0 5px rgba(242, 201, 76, 0.5));
+    }
+
+    .card-features li i.fa-infinity {
+        color: #2ec4b6;
+        filter: drop-shadow(0 0 6px rgba(46, 196, 182, 0.6));
+    }
+
+    .card-features li i.fa-star {
+        color: #FFE066;
+        filter: drop-shadow(0 0 6px rgba(255, 224, 102, 0.6));
+    }
+
+    .card-features li i.fa-clock-rotate-left {
+        color: #ff9f43;
+        filter: drop-shadow(0 0 6px rgba(255, 159, 67, 0.6));
+    }
+
+    .card-features li i.fa-bolt {
+        color: #ff5252;
+        filter: drop-shadow(0 0 6px rgba(255, 82, 82, 0.6));
     }
 
     .select-plan-btn {
         width: 100%;
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(255, 255, 255, 0.05);
-        color: #fff;
-        font-weight: bold;
+        padding: 16px 20px;
+        border-radius: 14px;
+        border: 1px solid rgba(242, 201, 76, 0.25);
+        background: rgba(242, 201, 76, 0.03);
+        color: #F2C94C;
+        font-weight: 700;
         font-size: 1rem;
         cursor: pointer;
-        transition: all 0.3s ease;
+        transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
         font-family: 'Quicksand', sans-serif;
+        text-shadow: 0 0 8px rgba(242, 201, 76, 0.25);
+        box-shadow: inset 0 0 10px rgba(242, 201, 76, 0.02);
     }
 
     .select-plan-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.4);
-    }
-
-    .popular-btn {
-        background: var(--gold-color, #F2C94C);
+        background: linear-gradient(135deg, #F2C94C 0%, #F2994A 100%);
         color: #000;
-        border: none;
-    }
-
-    .popular-btn:hover {
-        background: #F2994A;
-        box-shadow: 0 5px 15px rgba(242, 201, 76, 0.4);
+        text-shadow: none;
+        box-shadow: 0 8px 25px rgba(242, 201, 76, 0.35);
+        border-color: transparent;
+        transform: translateY(-4px);
     }
     
     .premium-btn {
-        background: linear-gradient(90deg, #FFD700, #FFA500);
+        background: linear-gradient(135deg, #FFE066 0%, #F2C94C 50%, #F2994A 100%);
         color: #000;
         border: none;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 0 20px rgba(242, 201, 76, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        text-shadow: none;
     }
     
     .premium-btn:hover {
-        background: linear-gradient(90deg, #FFA500, #FFD700);
-        box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-    }
-    
-    .yearly-tier {
-        border-color: #4CAF50;
-    }
-    
-    .yearly-btn {
-        background: linear-gradient(90deg, #4CAF50, #45a049);
-        color: #fff;
-        border: none;
-    }
-    
-    .yearly-btn:hover {
-        background: linear-gradient(90deg, #45a049, #4CAF50);
-        box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
-    }
-    
-    .lifetime-tier {
-        border-color: #b19cd9;
-    }
-    
-    .lifetime-btn {
-        background: linear-gradient(90deg, #b19cd9, #9370db);
-        color: #fff;
-        border: none;
-    }
-    
-    .lifetime-btn:hover {
-        background: linear-gradient(90deg, #9370db, #b19cd9);
-        box-shadow: 0 5px 15px rgba(177, 156, 217, 0.4);
+        background: linear-gradient(135deg, #FFF099 0%, #F2C94C 35%, #F27A1A 100%);
+        box-shadow: 0 12px 30px rgba(242, 201, 76, 0.5);
+        transform: translateY(-5px) scale(1.015);
     }
 
     /* FAQ Section */
@@ -684,14 +820,24 @@ const user = Astro.locals.user;
         transform: translateY(-2px);
     }
 
+    /* === Responsive Breakpoints === */
+    /* Desktop: 3 cột (ặc định từ CSS chính) */
+
+    /* Tablet: 768px – 1024px = 2 cột */
     @media (max-width: 1024px) {
         .pricing-cards {
             grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
+            gap: 25px;
         }
     }
 
+    /* Mobile: < 768px = 1 cột */
     @media (max-width: 768px) {
+        .pricing-cards {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
         .pricing-card.popular {
             transform: scale(1);
         }
@@ -764,11 +910,7 @@ const user = Astro.locals.user;
             margin-top: 10px;
         }
     }
-    @media (max-width: 600px) {
-        .pricing-cards {
-            grid-template-columns: 1fr;
-        }
-    }
+
 
     /* ===== Snackbar (error/info) ===== */
     #toast-container {
@@ -969,7 +1111,6 @@ const user = Astro.locals.user;
         const modal = document.getElementById('payment-modal');
         const closeBtn = document.querySelector('.close-modal-btn');
         const confirmBtn = document.querySelector('.confirm-paid-btn');
-        const planBtns = document.querySelectorAll('.select-plan-btn');
         
         const qrImage = document.getElementById('vietqr-image');
         const qrLoading = document.querySelector('.qr-loading');
@@ -981,6 +1122,53 @@ const user = Astro.locals.user;
         
         let currentTransactionId = null;
         let checkInterval = null;
+
+        // ===== Billing Toggle logic for VIP Premium =====
+        const toggleBtns = document.querySelectorAll('.billing-toggle-btn');
+        const premiumPriceDisplay = document.getElementById('premium-price-display');
+        const premiumPriceSubtext = document.getElementById('premium-price-subtext');
+        const premiumBuyBtn = document.getElementById('premium-buy-btn');
+
+        if (toggleBtns.length > 0 && premiumBuyBtn) {
+            // Get individual elements to update (NOT replace innerHTML)
+            const amountDisplay = document.getElementById('premium-amount-display');
+            const periodDisplay = document.getElementById('premium-period-display');
+
+            toggleBtns.forEach(tBtn => {
+                tBtn.addEventListener('click', () => {
+                    toggleBtns.forEach(b => b.classList.remove('active'));
+                    tBtn.classList.add('active');
+
+                    const mode = tBtn.getAttribute('data-billing');
+                    if (mode === 'yearly') {
+                        // Update only text nodes — no innerHTML replacement
+                        if (amountDisplay) amountDisplay.textContent = '599.000';
+                        if (periodDisplay) periodDisplay.textContent = '/năm';
+                        if (premiumPriceSubtext) {
+                            premiumPriceSubtext.style.display = 'flex';
+                            premiumPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #ff6b6b; margin-right: 5px;"></i> Tương đương chỉ <strong>49.000₫/tháng</strong> — Tiết kiệm ngay <strong>75%</strong>!';
+                        }
+                        premiumBuyBtn.setAttribute('data-amount', '599000');
+                        premiumBuyBtn.setAttribute('data-package', 'Chuyên Gia (Gói Năm)');
+                        premiumBuyBtn.innerText = 'Trở Thành VIP (Gói Năm)';
+                    } else {
+                        // Monthly values
+                        if (amountDisplay) amountDisplay.textContent = '199.000';
+                        if (periodDisplay) periodDisplay.textContent = '/tháng';
+                        if (premiumPriceSubtext) {
+                            premiumPriceSubtext.style.display = 'none';
+                            premiumPriceSubtext.innerText = '';
+                        }
+                        premiumBuyBtn.setAttribute('data-amount', '199000');
+                        premiumBuyBtn.setAttribute('data-package', 'Vương Giả (Gói Tháng)');
+                        premiumBuyBtn.innerText = 'Trở Thành VIP';
+                    }
+                });
+            });
+        }
+
+        // Đọc lại danh sách nút mua hàng (vì Premium có thể thay đổi thuộc tính)
+        const planBtns = document.querySelectorAll('.select-plan-btn');
 
         // Success popup close
         const successPopupCloseBtn = document.getElementById('success-popup-close');

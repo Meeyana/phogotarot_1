@@ -1,0 +1,219 @@
+---
+// 1. IMPORT
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// 2. TẠO METADATA VÀ SCHEMA
+const pageTitle = "Chính Sách Thanh Toán & Hoàn Tiền | Phở Gõ Tarot";
+const pageDesc = "Thông tin chi tiết về chính sách thanh toán, nạp credit, kích hoạt dịch vụ và quy định hoàn tiền tại Phở Gõ Tarot.";
+const pageUrl = new URL('/payment-policy', Astro.site).href;
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": pageTitle,
+  "description": pageDesc,
+  "url": pageUrl,
+  "isPartOf": {
+    "@type": "WebSite",
+    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
+  }
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={pageDesc}
+>
+    <main id="payment-policy-content">
+        <section class="homepage-section" style="padding-top: 3rem; min-height: 80vh;">
+            <div class="container text-content-container">
+                
+                <h2 class="section-title" style="text-align: left; margin-bottom: 2rem;">
+                    Chính Sách Thanh Toán & Hoàn Tiền
+                </h2>
+                
+                <p class="section-text"><em>Cập nhật lần cuối: 30/05/2026</em></p>
+
+                <!-- MỤC LỤC -->
+                <div class="toc-box">
+                    <h3 class="toc-title">Mục lục</h3>
+                    <ul class="toc-list">
+                        <li><a href="#muc-1">1. Giới thiệu chung</a></li>
+                        <li><a href="#muc-2">2. Định nghĩa và Giá trị Credit</a></li>
+                        <li><a href="#muc-3">3. Phương thức thanh toán</a></li>
+                        <li><a href="#muc-4">4. Quy trình xử lý và Kích hoạt dịch vụ</a></li>
+                        <li><a href="#muc-5">5. Chính sách Không Hoàn Tiền nghiêm ngặt</a></li>
+                        <li><a href="#muc-6">6. Các trường hợp ngoại lệ đặc biệt</a></li>
+                        <li><a href="#muc-7">7. Giải quyết tranh chấp và Thời hạn khiếu nại</a></li>
+                        <li><a href="#muc-8">8. Thay đổi chính sách</a></li>
+                    </ul>
+                </div>
+
+                <!-- NỘI DUNG CHÍNH SÁCH -->
+                
+                <h3 class="section-subtitle" id="muc-1">1. Giới thiệu chung</h3>
+                <p class="section-text">Chào mừng bạn đến với Phở Gõ Tarot. Để mang lại trải nghiệm xem Tarot và Thần số học trực tuyến liền mạch, chúng tôi áp dụng mô hình kết hợp (Freemium): tặng lượt sử dụng (Credit) miễn phí hàng ngày và cung cấp các gói nạp Credit trả phí hoặc nâng cấp Premium không giới hạn.
+                <br><br>Chính sách Thanh toán & Hoàn tiền này quy định các điều khoản, quyền lợi và nghĩa vụ pháp lý của bạn khi thực hiện bất kỳ giao dịch tài chính nào trên hệ thống của chúng tôi. Bằng việc thực hiện hành vi nạp tiền, bạn xác nhận đã đọc kỹ, hiểu rõ và hoàn toàn đồng ý vô điều kiện với tất cả các nội dung quy định tại trang này.</p>
+
+                <h3 class="section-subtitle" id="muc-2">2. Định nghĩa và Giá trị Credit</h3>
+                <p class="section-text">Bạn hiểu và đồng ý với các nguyên tắc hoạt động của đơn vị Credit như sau:</p>
+                <ul class="section-list">
+                    <li><strong>Tính chất phi tiền tệ:</strong> Credit là một đơn vị tính toán ảo nội bộ đại diện cho quyền sử dụng các tính năng phần mềm nâng cao trên Phở Gõ Tarot (như luận giải sâu của AI Reader hoặc giải mã Thần số học chi tiết). Credit hoàn toàn không phải là tiền tệ, không có giá trị lưu hành thực tế bên ngoài hệ thống và không được bảo lãnh bởi bất kỳ cơ quan tài chính nào.</li>
+                    <li><strong>Không chuyển nhượng:</strong> Credit gắn liền với tài khoản cá nhân đã đăng ký của bạn. Bạn không được chuyển nhượng, mua bán hoặc trao đổi Credit giữa các tài khoản khác nhau dưới bất kỳ hình thức nào.</li>
+                    <li><strong>Điều chỉnh định giá dịch vụ:</strong> Ban quản trị Phở Gõ Tarot bảo lưu quyền thay đổi biểu giá các gói nạp, cơ cấu chương trình khuyến mãi, hoặc số lượng tiêu hao Credit cho từng tính năng tại từng thời điểm mà không cần thông báo trước cho từng cá nhân.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-3">3. Phương thức thanh toán</h3>
+                <p class="section-text">Chúng tôi hỗ trợ người dùng thực hiện giao dịch thông qua các kênh thanh toán bảo mật sau:</p>
+                <ul class="section-list">
+                    <li><strong>Chuyển khoản Ngân hàng tự động (VietQR):</strong> Bạn có thể quét mã QR được tạo động tại trang nạp tiền để thực hiện chuyển khoản nhanh 24/7. Nội dung chuyển khoản cần được giữ nguyên vẹn chính xác để hệ thống tự động nhận diện và cộng Credit.</li>
+                    <li><strong>Cổng thanh toán trung gian:</strong> Các phương thức liên kết thẻ ATM nội địa, ví điện tử hoặc thẻ quốc tế (nếu được tích hợp) thông qua các đối tác cung cấp dịch vụ trung gian thanh toán uy tín và hợp pháp.</li>
+                    <li><strong>Bảo mật thông tin giao dịch:</strong> Quá trình xử lý thanh toán và thông tin tài khoản ngân hàng của bạn hoàn toàn do các tổ chức tài chính hoặc đối tác cổng thanh toán xử lý trực tiếp trên hệ thống mã hóa bảo mật của họ. Phở Gõ Tarot tuyệt đối không trực tiếp thu thập hay lưu giữ các thông tin nhạy cảm như số thẻ tín dụng, mã PIN hay mật khẩu ngân hàng của bạn.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-4">4. Quy trình xử lý và Kích hoạt dịch vụ</h3>
+                <ul class="section-list">
+                    <li>Sau khi hệ thống ngân hàng hoặc cổng thanh toán ghi nhận giao dịch chuyển tiền thành công với thông tin khớp hoàn toàn, hệ thống sẽ tự động kích hoạt cộng Credit hoặc kích hoạt gói Premium tương ứng vào tài khoản của bạn ngay lập tức (thường từ 1 đến 5 phút).</li>
+                    <li>Trong trường hợp quá 15 phút kể từ khi tài khoản ngân hàng của bạn bị trừ tiền mà hệ thống Phở Gõ Tarot vẫn chưa cập nhật số dư Credit, vui lòng liên hệ ngay với bộ phận hỗ trợ khách hàng của chúng tôi qua Email: <strong>contact@phogotarot.com</strong> hoặc qua các kênh Zalo/Hotline hỗ trợ trực tuyến hiển thị trên web.</li>
+                    <li>Khi liên hệ hỗ trợ giao dịch chậm, bạn vui lòng cung cấp: <strong>Địa chỉ email đăng ký tài khoản</strong>, <strong>Ảnh chụp màn hình biên lai chuyển tiền thành công</strong> hiển thị rõ mã giao dịch, số tiền và nội dung chuyển khoản để chúng tôi kiểm tra và xử lý cộng bù thủ công.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-5">5. Chính sách Không Hoàn Tiền nghiêm ngặt</h3>
+                <p class="section-text">Do Credit và gói Premium nâng cấp là các sản phẩm nội dung số và dịch vụ phần mềm ảo được kích hoạt và sẵn sàng sử dụng ngay sau khi giao dịch hoàn tất, Phở Gõ Tarot áp dụng <strong>Chính sách Tuyệt đối Không Hoàn tiền</strong>. 
+                <br><br><strong>Mọi giao dịch nạp tiền mua Credit hoặc Premium thành công trên hệ thống là giao dịch cuối cùng, không thể hủy bỏ, không thể quy đổi ngược thành tiền mặt và sẽ không được hoàn lại tiền dưới bất kỳ lý do hoặc hình thức nào.</strong>
+                <br><br>Chúng tôi sẽ thẳng thừng bác bỏ mọi yêu cầu hoàn trả tiền đối với các trường hợp cụ thể sau:</p>
+                <ul class="section-list">
+                    <li>Người dùng không ưng ý, không đồng tình hoặc cảm thấy kết quả diễn giải của lá bài Tarot hay các chỉ số Thần số học do trí tuệ nhân tạo (AI) đưa ra không chính xác, không phù hợp với mong muốn cá nhân.</li>
+                    <li>Người dùng thao tác bấm nhầm gói nạp, mua nhầm gói dịch vụ hoặc thay đổi quyết định cá nhân không còn nhu cầu sử dụng.</li>
+                    <li>Sự cố kết nối mạng từ phía thiết bị của người dùng làm gián đoạn quá trình trải bài khi đang thực hiện.</li>
+                    <li>Tài khoản người dùng bị hệ thống khóa hoặc đình chỉ hoạt động vĩnh viễn do vi phạm nghiêm trọng Điều khoản dịch vụ (như cố tình dùng tool hack credit, spam máy chủ, hoặc có hành vi gian lận thanh toán).</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-6">6. Các trường hợp ngoại lệ đặc biệt</h3>
+                <p class="section-text">Trường hợp ngoại lệ duy nhất được xem xét xử lý hoàn tiền là khi xảy ra lỗi hệ thống kỹ thuật từ phía Phở Gõ Tarot dẫn đến giao dịch bị trừ tiền hai lần (Double Charge) cho cùng một yêu cầu mua gói dịch vụ.</p>
+                <ul class="section-list">
+                    <li>Sau khi ban quản trị xác minh và đối chiếu dữ liệu ngân hàng chứng minh lỗi kỹ thuật xuất phát từ chúng tôi, bạn sẽ được lựa chọn:
+                        <br>- Quy đổi số tiền nạp thừa thành lượng Credit tương đương cộng trực tiếp vào tài khoản.
+                        <br>- Nhận lại số tiền thừa chuyển khoản trực tiếp về tài khoản ngân hàng của bạn. Số tiền nhận lại thực tế sẽ bằng số tiền nạp thừa sau khi trừ đi các khoản phí giao dịch phát sinh từ phía ngân hàng hoặc cổng thanh toán trung gian (nếu có).
+                    </li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-7">7. Giải quyết tranh chấp và Thời hạn khiếu nại</h3>
+                <ul class="section-list">
+                    <li>Mọi thắc mắc, khiếu nại liên quan đến số dư tài khoản, giao dịch nạp tiền hoặc lỗi trừ credit sai quy định phải được gửi đến Phở Gõ Tarot trong vòng <strong>bảy (07) ngày</strong> kể từ ngày giao dịch phát sinh. Chúng tôi có quyền từ chối hỗ trợ giải quyết đối với tất cả khiếu nại gửi sau thời hạn nêu trên.</li>
+                    <li>Chúng tôi cam kết tiếp nhận thông tin, tiến hành đối soát dòng tiền với phía ngân hàng đối tác và phản hồi hướng xử lý cuối cùng cho bạn trong vòng <strong>24h đến 48h làm việc</strong> kể từ khi nhận đủ thông tin bằng chứng giao dịch hợp lệ.</li>
+                </ul>
+
+                <h3 class="section-subtitle" id="muc-8">8. Thay đổi chính sách</h3>
+                <p class="section-text">Chúng tôi bảo lưu toàn quyền sửa đổi, cập nhật hoặc điều chỉnh nội dung của Chính sách Thanh toán & Hoàn tiền này vào bất kỳ lúc nào để đảm bảo tính an toàn pháp lý và tối ưu hóa hệ thống. Phiên bản thay đổi sẽ có hiệu lực ngay khi được đăng tải công khai trên trang web này. Việc bạn tiếp tục thực hiện các giao dịch thanh toán hoặc sử dụng dịch vụ sau khi chính sách mới được cập nhật cấu thành sự đồng ý và cam kết tuân thủ vô điều kiện của bạn đối với nội dung cập nhật đó.</p>
+
+            </div>
+        </section>
+    </main>
+    
+    <script 
+      type="application/ld+json" 
+      slot="head"
+      set:html={JSON.stringify(schema)}
+    />
+
+    <style>
+        .homepage-section { 
+            padding: 4rem 1rem; 
+            position: relative;
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: auto; 
+            padding: 0;
+        }
+        
+        .section-title { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 3rem; 
+            margin-bottom: 3rem; 
+            text-align: center;
+        }
+
+        .section-subtitle { 
+            font-family: var(--font-title); 
+            color: var(--title-color); 
+            font-size: 1.75rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            scroll-margin-top: 5rem;
+        }
+        
+        .section-text { 
+            font-size: 1rem;
+            opacity: 0.9; 
+            margin-bottom: 1.5rem; 
+            text-shadow: none; 
+            line-height: 1.8;
+        }
+
+        .text-content-container {
+            max-width: 900px;
+            padding: 0 1rem;
+            text-align: left;
+        }
+
+        .section-list {
+            font-size: 1rem;
+            opacity: 0.9;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+        }
+        .section-list li {
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-box {
+            background-color: var(--button-bg);
+            border: 1px solid var(--card-back-border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+        .toc-title {
+            font-family: var(--font-title);
+            color: var(--title-color);
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-back-border);
+            padding-bottom: 1rem;
+        }
+        .toc-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+            columns: 2;
+        }
+        .toc-list li {
+            margin-bottom: 1rem;
+        }
+        .toc-list a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        .toc-list a:hover {
+            color: var(--title-color);
+            opacity: 1;
+        }
+
+        @media (max-width: 600px) {
+            .toc-list {
+                columns: 1;
+            }
+            .section-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</BaseLayout>
