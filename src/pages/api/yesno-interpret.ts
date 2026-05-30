@@ -121,31 +121,30 @@ export const POST: APIRoute = async (context) => {
         const actualModel = data.model || body.validationModel || 'n8n_agent';
         
         // Đếm tổng token nếu có trả về từ N8N (usage)
-        let tokensUsed = 0;
-        if (data.usage && data.usage.total_tokens) {
-            tokensUsed = data.usage.total_tokens;
-        }
-
-        // Tự động phân loại Yes/No/Maybe từ phần luận giải (tạm thời)
-        let yesNoResult = 'Unknown';
-        const interLower = (data.interpretation || '').toLowerCase();
-        if (interLower.includes('có') || interLower.includes('thành công') || interLower.includes('thuận lợi')) {
-            yesNoResult = 'Có khả năng cao';
+        let promptTokens = 0;
+        let completionTokens = 0;
+        let totalTokens = 0;
+        
+        if (data.usage) {
+            promptTokens = data.usage.prompt_tokens || 0;
+            completionTokens = data.usage.completion_tokens || 0;
+            totalTokens = data.usage.total_tokens || 0;
         }
 
         await db.prepare(`
-            INSERT INTO yes_no_readings (id, user_id, session_id, question, cards_payload, yes_no_result, interpretation, model, tokens_used) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO yes_no_readings (id, user_id, session_id, question, cards_payload, interpretation, model, prompt_tokens, completion_tokens, total_tokens) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).bind(
             crypto.randomUUID(), 
             safeUserId, 
             safeReadingId,
             question || '', 
             cardsPayload,
-            yesNoResult,
             data.interpretation || '',
             actualModel,
-            tokensUsed
+            promptTokens,
+            completionTokens,
+            totalTokens
         ).run();
         
         // 5. TRỪ CREDIT

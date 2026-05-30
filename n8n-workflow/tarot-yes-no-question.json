@@ -233,7 +233,7 @@
     {
       "parameters": {
         "respondWith": "text",
-        "responseBody": "={\n    \"interpretation\": {{ JSON.stringify($('Luận giải AI API').item.json.choices[0].message.content) }}\n}",
+        "responseBody": "={\n  \"interpretation\": {{ JSON.stringify($('Luận giải AI API').item.json.choices[0].message.content) }},\n  \"usage\": {{ JSON.stringify($('Luận giải AI API').item.json.usage) }},\n  \"model\": {{ JSON.stringify($('Luận giải AI API').item.json.model) }}\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.respondToWebhook",

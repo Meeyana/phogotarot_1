@@ -4,10 +4,11 @@ CREATE TABLE yes_no_readings (
     session_id TEXT,
     question TEXT,
     cards_payload TEXT,
-    yes_no_result TEXT,
     interpretation TEXT,
     model TEXT,
-    tokens_used INTEGER,
+    prompt_tokens INTEGER,
+    completion_tokens INTEGER,
+    total_tokens INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
