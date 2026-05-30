@@ -21,66 +21,63 @@ const user = Astro.locals.user;
         </div>
 
         <div class="pricing-cards">
-            <!-- Gói 1: Khởi Đầu -->
+            <!-- Gói 1: Cơ Bản (với Credit Toggle) -->
             <div class="pricing-card">
                 <div class="card-header">
-                    <h3>Khởi Đầu</h3>
-                    <div class="price">
-                        <span class="currency">₫</span>49.000
+                    <h3>Cơ Bản</h3>
+                    
+                    <!-- Dynamic Price hiển thị trước -->
+                    <div class="price-wrapper">
+                        <div class="original-price" id="basic-original-display">₫69.000</div>
+                        <div class="price" id="basic-price-display">
+                            <span class="currency">₫</span><span id="basic-amount-display">49.000</span>
+                        </div>
                     </div>
-                    <p class="desc">Dành cho lữ khách mới bắt đầu hành trình tự khám phá</p>
+
+                    <p class="desc">Dành cho lữ khách bắt đầu hành trình tự khám phá bản thân</p>
+
+                    <!-- Credit Toggle Switch -->
+                    <div class="billing-toggle-container">
+                        <button class="basic-toggle-btn active" data-credits="3">3 Credit</button>
+                        <button class="basic-toggle-btn" data-credits="10">10 Credit</button>
+                    </div>
+
+                    <!-- Subtext tiết kiệm cho gói cơ bản -->
+                    <p class="basic-desc-sub" id="basic-price-subtext" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
-                        <li><i class="fa-solid fa-check"></i> <span><strong>3 Credit</strong> dùng cho Tarot, Yes/No hoặc Thần số học</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span><strong>Mở khóa 1 bản đồ Thần số học</strong> chuyên sâu</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Dùng cho trải bài Tarot, Hỏi đáp Yes/No hoặc Thần số học</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Mở khóa bản đồ Thần số học chuyên sâu chi tiết</span></li>
                         <li><i class="fa-solid fa-check"></i> <span><strong>Sử dụng vĩnh viễn</strong>, không giới hạn thời gian</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span>Luận giải chi tiết với Reader AI</span></li>
+                        <li><i class="fa-solid fa-check"></i> <span>Luận giải chi tiết chuẩn xác cùng Reader AI</span></li>
                     </ul>
                 </div>
-                <button class="select-plan-btn" data-amount="49000" data-package="Khởi Đầu (3 lượt)">Chọn Gói Này</button>
+                <button class="select-plan-btn premium-btn" id="basic-buy-btn" data-amount="49000" data-package="Khởi Đầu (3 lượt)">Chọn Gói Này</button>
             </div>
 
-            <!-- Gói 2: Đồng Hành -->
-            <div class="pricing-card">
-                <div class="card-header">
-                    <h3>Đồng Hành</h3>
-                    <div class="price">
-                        <span class="currency">₫</span>129.000
-                    </div>
-                    <p class="desc">Giải pháp tiết kiệm và nhận được nhiều thông điệp hơn</p>
-                </div>
-                <div class="card-features">
-                    <ul>
-                        <li><i class="fa-solid fa-check"></i> <span><strong>10 Credit</strong> dùng cho Tarot, Yes/No hoặc Thần số học</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span><strong>Mở khóa 3 bản đồ Thần số học</strong> chuyên sâu</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span><strong>Sử dụng vĩnh viễn</strong>, không bao giờ hết hạn</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span>Tiết kiệm hơn <strong>20%</strong> so với mua lẻ từng credit</span></li>
-                        <li><i class="fa-solid fa-check"></i> <span>Áp dụng cho mọi tính năng của hệ thống</span></li>
-                    </ul>
-                </div>
-                <button class="select-plan-btn" data-amount="129000" data-package="Đồng Hành (10 lượt)">Chọn Gói Này</button>
-            </div>
-
-            <!-- Gói 3: VIP Vương Giả (Premium với Billing Toggle) -->
+            <!-- Gói 2: Nâng Cao (Premium với Billing Toggle) -->
             <div class="pricing-card premium-tier">
                 <div class="card-header">
-                    <h3><i class="fa-solid fa-crown"></i> Vương Giả</h3>
+                    <h3><i class="fa-solid fa-crown"></i> Nâng Cao</h3>
 
-                    <!-- Price hiển thị trước (align với các card khác) -->
-                    <div class="price" id="premium-price-display">
-                        <span class="currency">₫</span><span id="premium-amount-display">199.000</span><span class="period" id="premium-period-display">/tháng</span>
+                    <!-- Price hiển thị trước -->
+                    <div class="price-wrapper">
+                        <div class="original-price" id="premium-original-display">₫399.000/tháng</div>
+                        <div class="price" id="premium-price-display">
+                            <span class="currency">₫</span><span id="premium-amount-display">199.000</span><span class="period" id="premium-period-display">/tháng</span>
+                        </div>
                     </div>
 
-                    <p class="desc">Trải nghiệm tâm linh tối thượng và không giới hạn</p>
+                    <p class="desc">Trải nghiệm tâm linh tối thượng không giới hạn tính năng</p>
 
-                    <!-- Billing Toggle Switch — nằm dưới price + desc -->
+                    <!-- Billing Toggle Switch — Hàng Tháng / Hàng Năm -->
                     <div class="billing-toggle-container">
                         <button class="billing-toggle-btn active" data-billing="monthly">Hàng Tháng</button>
                         <button class="billing-toggle-btn" data-billing="yearly">Hàng Năm</button>
                     </div>
 
-                    <!-- Subtext tiết kiệm (chỉ hiện khi chọn năm) -->
+                    <!-- Subtext tiết kiệm -->
                     <p class="premium-desc-sub" id="premium-price-subtext" style="display: none;"></p>
                 </div>
                 <div class="card-features">
@@ -89,29 +86,34 @@ const user = Astro.locals.user;
                         <li><i class="fa-solid fa-infinity"></i> <span><strong>Vô hạn</strong> giải mã Thần số học chuyên sâu</span></li>
                         <li><i class="fa-solid fa-star"></i> <span>Mở khóa toàn bộ trải bài nâng cao & độc quyền</span></li>
                         <li><i class="fa-solid fa-clock-rotate-left"></i> <span>Lưu trữ lịch sử trải bài vĩnh viễn trong tài khoản</span></li>
-                        <li><i class="fa-solid fa-bolt"></i> <span>Ưu tiên băng thông VIP phản hồi tốc độ cao</span></li>
+                        <li><i class="fa-solid fa-wand-magic-sparkles"></i> <span><strong>Ưu tiên trải nghiệm</strong> các tính năng mới sớm nhất</span></li>
                     </ul>
                 </div>
                 <button class="select-plan-btn premium-btn" id="premium-buy-btn" data-amount="199000" data-package="Vương Giả (Gói Tháng)">Trở Thành VIP</button>
             </div>
         </div>
-        </div>
 
         <div class="faq-section">
             <h2 class="faq-title">Câu Hỏi Thường Gặp</h2>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h4>Lượt Free mỗi ngày là gì?</h4>
-                    <p>Mỗi tài khoản được hệ thống tặng 1 lượt xem bài hoàn toàn miễn phí vào 0:00 hàng ngày. Lượt Free không được cộng dồn sang ngày hôm sau.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>Lượt mua lẻ có bị mất đi không?</h4>
-                    <p>Không. Tất cả các gói mua lẻ (Khởi Đầu, Đồng Hành) đều có giá trị vĩnh viễn cho đến khi bạn sử dụng hết.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>Credit dùng được cho những tính năng nào?</h4>
-                    <p>Bạn có thể sử dụng Credit cho mọi hoạt động trải bài trên Phở Gõ Tarot, bao gồm Trò Chuyện & Trải Bài (1, 3, hoặc 5 lá bốc bài kèm luận giải chi tiết) và Hỏi Đáp Yes/No tức thì.</p>
-                </div>
+            <div class="faq-container">
+                <details class="faq-item">
+                    <summary class="faq-question">Lượt Free mỗi ngày là gì?</summary>
+                    <div class="faq-answer">
+                        <p>Mỗi tài khoản được hệ thống tặng 1 lượt xem bài hoàn toàn miễn phí vào 0:00 hàng ngày. Lượt Free không được cộng dồn sang ngày hôm sau.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-question">Lượt mua lẻ có bị mất đi không?</summary>
+                    <div class="faq-answer">
+                        <p>Không. Tất cả các gói mua lẻ (Cơ Bản) đều có giá trị vĩnh viễn cho đến khi bạn sử dụng hết.</p>
+                    </div>
+                </details>
+                <details class="faq-item">
+                    <summary class="faq-question">Credit dùng được cho những tính năng nào?</summary>
+                    <div class="faq-answer">
+                        <p>Bạn có thể sử dụng Credit cho mọi hoạt động trải bài trên Phở Gõ Tarot, bao gồm Trò Chuyện & Trải Bài (1, 3, hoặc 5 lá bốc bài kèm luận giải chi tiết) và Hỏi Đáp Yes/No tức thì.</p>
+                    </div>
+                </details>
             </div>
         </div>
     </main>
@@ -209,10 +211,13 @@ const user = Astro.locals.user;
 
     .pricing-cards {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 35px;
         margin-bottom: 80px;
         align-items: stretch;
+        max-width: 860px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .pricing-card {
@@ -290,7 +295,7 @@ const user = Astro.locals.user;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 30px;
         padding: 4px;
-        margin: 20px 0;
+        margin: 20px auto;
         position: relative;
         box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
     }
@@ -311,7 +316,28 @@ const user = Astro.locals.user;
         font-family: 'Quicksand', sans-serif;
     }
 
+    .basic-toggle-btn {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.55);
+        padding: 8px 18px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: 'Quicksand', sans-serif;
+    }
+
     .billing-toggle-btn:hover:not(.active) {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+    }
+
+    .basic-toggle-btn:hover:not(.active) {
         color: #fff;
         text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
     }
@@ -323,8 +349,15 @@ const user = Astro.locals.user;
         font-weight: 800;
     }
 
-    .discount-badge {
-        background: linear-gradient(135deg, #FF4B4B 0%, #FF2E2E 100%);
+    .basic-toggle-btn.active {
+        background: linear-gradient(135deg, #FFE066 0%, #F2C94C 100%);
+        color: #000;
+        box-shadow: 0 4px 15px rgba(242, 201, 76, 0.45);
+        font-weight: 800;
+    }
+
+    .discount-badge-basic {
+        background: linear-gradient(135deg, #2ec4b6 0%, #209f92 100%);
         color: #fff;
         font-size: 0.65rem;
         padding: 2px 7px;
@@ -332,24 +365,14 @@ const user = Astro.locals.user;
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        box-shadow: 0 2px 8px rgba(255, 46, 46, 0.4);
+        box-shadow: 0 2px 8px rgba(46, 196, 182, 0.4);
         display: inline-block;
     }
 
-    .price-container {
-        min-height: 80px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 5px;
-    }
-
-    .premium-desc-sub {
+    .premium-desc-sub, .basic-desc-sub {
         color: #2ec4b6;
         font-size: 0.82rem;
-        margin-top: 12px;
-        margin-bottom: 0;
+        margin: 12px auto 0 auto;
         background: rgba(46, 196, 182, 0.08);
         border: 1px solid rgba(46, 196, 182, 0.25);
         padding: 8px 14px;
@@ -364,6 +387,7 @@ const user = Astro.locals.user;
         text-align: center;
         animation: pulseGlowSub 2.5s infinite ease-in-out;
         box-shadow: 0 2px 10px rgba(46, 196, 182, 0.05);
+        width: fit-content;
     }
 
     @keyframes pulseGlowSub {
@@ -410,6 +434,30 @@ const user = Astro.locals.user;
         text-shadow: 0 0 15px rgba(255, 215, 0, 0.35);
     }
 
+    .price-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 85px;
+        margin: 5px 0;
+    }
+
+    .original-price {
+        font-family: 'Quicksand', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.38);
+        text-decoration: line-through;
+        margin-bottom: 2px;
+        letter-spacing: 0.5px;
+    }
+
+    .premium-tier .original-price {
+        color: rgba(255, 215, 0, 0.4);
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+    }
+
     .price {
         font-family: 'Quicksand', sans-serif;
         font-size: 3rem;
@@ -421,7 +469,7 @@ const user = Astro.locals.user;
         justify-content: center;
         align-items: flex-start;
         line-height: 1.1;
-        margin: 10px 0;
+        margin: 0;
     }
 
     .premium-tier .price {
@@ -565,35 +613,103 @@ const user = Astro.locals.user;
 
     /* FAQ Section */
     .faq-section {
-        background: rgba(20, 25, 40, 0.5);
-        border-radius: 20px;
-        padding: 40px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
+        max-width: 860px;
+        margin: 80px auto 0 auto;
+        padding: 0 20px;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
     }
 
     .faq-title {
         text-align: center;
         color: var(--gold-color, #F2C94C);
-        margin-bottom: 30px;
-        font-size: 2rem;
+        margin-bottom: 40px;
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        text-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
     }
 
-    .faq-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
+    :global(.faq-container) {
+        max-width: 800px;
+        margin: 0 auto;
     }
 
-    .faq-item h4 {
-        color: #fff;
+    :global(.faq-item) {
+        background-color: var(--button-bg);
+        border: 1px solid var(--card-back-border);
+        border-radius: 12px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    :global(.faq-item:hover) {
+        box-shadow: 0 0 15px rgba(242, 201, 76, 0.2);
+        border-color: #F2C94C;
+    }
+
+    :global(.faq-question) {
+        padding: 1.2rem 1.5rem;
+        font-family: 'Quicksand', sans-serif;
         font-size: 1.1rem;
-        margin-bottom: 10px;
+        color: #fff;
+        cursor: pointer;
+        list-style: none;
+        position: relative;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        user-select: none;
     }
 
-    .faq-item p {
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.95rem;
+    :global(.faq-question::after) {
+        content: '+';
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #F2C94C;
+        transition: transform 0.3s ease;
+    }
+
+    :global(details[open] .faq-question::after) {
+        transform: rotate(45deg);
+    }
+
+    :global(.faq-question::-webkit-details-marker) {
+        display: none;
+    }
+
+    :global(.faq-answer) {
+        padding: 0 1.5rem 1.5rem 1.5rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1rem;
         line-height: 1.6;
+        opacity: 0.9;
+        border-top: 1px solid rgba(142, 186, 255, 0.1);
+        margin-top: 0;
+        padding-top: 1rem;
+    }
+
+    :global(.faq-answer p) {
+        margin: 0;
+    }
+
+    :global(details[open] .faq-answer) {
+        animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 0.9;
+            transform: translateY(0);
+        }
     }
 
     /* Modal Styles */
@@ -1133,6 +1249,7 @@ const user = Astro.locals.user;
             // Get individual elements to update (NOT replace innerHTML)
             const amountDisplay = document.getElementById('premium-amount-display');
             const periodDisplay = document.getElementById('premium-period-display');
+            const originalDisplay = document.getElementById('premium-original-display');
 
             toggleBtns.forEach(tBtn => {
                 tBtn.addEventListener('click', () => {
@@ -1144,6 +1261,7 @@ const user = Astro.locals.user;
                         // Update only text nodes — no innerHTML replacement
                         if (amountDisplay) amountDisplay.textContent = '599.000';
                         if (periodDisplay) periodDisplay.textContent = '/năm';
+                        if (originalDisplay) originalDisplay.textContent = '₫2.388.000/năm';
                         if (premiumPriceSubtext) {
                             premiumPriceSubtext.style.display = 'flex';
                             premiumPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #ff6b6b; margin-right: 5px;"></i> Tương đương chỉ <strong>49.000₫/tháng</strong> — Tiết kiệm ngay <strong>75%</strong>!';
@@ -1155,6 +1273,7 @@ const user = Astro.locals.user;
                         // Monthly values
                         if (amountDisplay) amountDisplay.textContent = '199.000';
                         if (periodDisplay) periodDisplay.textContent = '/tháng';
+                        if (originalDisplay) originalDisplay.textContent = '₫399.000/tháng';
                         if (premiumPriceSubtext) {
                             premiumPriceSubtext.style.display = 'none';
                             premiumPriceSubtext.innerText = '';
@@ -1162,6 +1281,46 @@ const user = Astro.locals.user;
                         premiumBuyBtn.setAttribute('data-amount', '199000');
                         premiumBuyBtn.setAttribute('data-package', 'Vương Giả (Gói Tháng)');
                         premiumBuyBtn.innerText = 'Trở Thành VIP';
+                    }
+                });
+            });
+        }
+
+        // ===== Basic Toggle logic =====
+        const basicToggleBtns = document.querySelectorAll('.basic-toggle-btn');
+        const basicPriceSubtext = document.getElementById('basic-price-subtext');
+        const basicBuyBtn = document.getElementById('basic-buy-btn');
+
+        if (basicToggleBtns.length > 0 && basicBuyBtn) {
+            const basicAmountDisplay = document.getElementById('basic-amount-display');
+            const basicOriginalDisplay = document.getElementById('basic-original-display');
+
+            basicToggleBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    basicToggleBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const credits = btn.getAttribute('data-credits');
+                    if (credits === '10') {
+                        if (basicAmountDisplay) basicAmountDisplay.textContent = '129.000';
+                        if (basicOriginalDisplay) basicOriginalDisplay.textContent = '₫159.000';
+                        if (basicPriceSubtext) {
+                            basicPriceSubtext.style.display = 'flex';
+                            basicPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #2ec4b6; margin-right: 5px;"></i> Tiết kiệm ngay <strong>20%</strong>!';
+                        }
+                        basicBuyBtn.setAttribute('data-amount', '129000');
+                        basicBuyBtn.setAttribute('data-package', 'Đồng Hành (10 lượt)');
+                        basicBuyBtn.innerText = 'Chọn Gói 10 Credit';
+                    } else {
+                        if (basicAmountDisplay) basicAmountDisplay.textContent = '49.000';
+                        if (basicOriginalDisplay) basicOriginalDisplay.textContent = '₫69.000';
+                        if (basicPriceSubtext) {
+                            basicPriceSubtext.style.display = 'none';
+                            basicPriceSubtext.innerText = '';
+                        }
+                        basicBuyBtn.setAttribute('data-amount', '49000');
+                        basicBuyBtn.setAttribute('data-package', 'Khởi Đầu (3 lượt)');
+                        basicBuyBtn.innerText = 'Chọn Gói 3 Credit';
                     }
                 });
             });
@@ -1194,7 +1353,15 @@ const user = Astro.locals.user;
                 const amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
                 
-                packageNameEl.innerText = pkgName;
+                // Bản đồ tên gói hiển thị thân thiện (Cơ Bản / Nâng Cao)
+                const friendlyNames = {
+                    'Khởi Đầu (3 lượt)': 'Cơ Bản (3 Credit)',
+                    'Đồng Hành (10 lượt)': 'Cơ Bản (10 Credit)',
+                    'Vương Giả (Gói Tháng)': 'Nâng Cao (Gói Tháng)',
+                    'Chuyên Gia (Gói Năm)': 'Nâng Cao (Gói Năm)'
+                };
+                
+                packageNameEl.innerText = friendlyNames[pkgName] || pkgName;
                 amountEl.innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
                 
                 qrLoading.style.display = 'block';
