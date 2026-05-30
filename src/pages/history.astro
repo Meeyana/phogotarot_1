@@ -136,15 +136,33 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
             const btns = document.querySelectorAll('.tab-btn');
             const contents = document.querySelectorAll('.tab-content');
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTabParam = urlParams.get('tab');
+
+            function activateTab(targetId: string) {
+                btns.forEach(b => b.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+
+                const btn = document.querySelector(`.tab-btn[data-target="${targetId}"]`);
+                if (btn) btn.classList.add('active');
+                
+                const content = document.getElementById(targetId);
+                if (content) content.classList.add('active');
+            }
+
+            if (activeTabParam === 'yesno') {
+                activateTab('tab-yesno');
+            }
+
             btns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    btns.forEach(b => b.classList.remove('active'));
-                    contents.forEach(c => c.classList.remove('active'));
-
-                    btn.classList.add('active');
                     const target = btn.getAttribute('data-target');
-                    if(target) {
-                        document.getElementById(target)?.classList.add('active');
+                    if (target) {
+                        activateTab(target);
+                        // Cập nhật URL mà không reload
+                        const newUrl = new URL(window.location.href);
+                        newUrl.searchParams.set('tab', target === 'tab-yesno' ? 'yesno' : 'tarot');
+                        window.history.pushState({}, '', newUrl);
                     }
                 });
             });
@@ -190,10 +208,11 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(242, 201, 76, 0.2) 100%);
-            border-color: var(--gold-primary);
-            color: var(--gold-primary);
+            background: linear-gradient(135deg, #D4AF37 0%, #F2C94C 100%);
+            border-color: transparent;
+            color: #0b132b;
             font-weight: bold;
+            box-shadow: 0 4px 15px rgba(242, 201, 76, 0.4);
         }
 
         .tab-content {
