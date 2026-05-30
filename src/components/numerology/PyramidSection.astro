@@ -1,4 +1,5 @@
 ---
+import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -27,7 +28,7 @@ const stages = [
 
 <NumerologySection title="Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách" sectionId="pyramid-combined-box">
   {isLocked ? (
-    <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+    <LockedPlaceholder />
   ) : (
     <div>
       {stages.map(stage => {

@@ -1,0 +1,73 @@
+---
+---
+<div class="locked-placeholder">
+  <div class="locked-content">
+    <i class="fas fa-eye-slash locked-icon"></i>
+    <span>Nội dung Premium đang bị khóa</span>
+  </div>
+  <button class="btn-open-unlock-modal">
+    <i class="fas fa-unlock"></i> Mở khóa ngay
+  </button>
+</div>
+
+<style>
+  .locked-placeholder {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px dashed rgba(242, 201, 76, 0.4);
+    border-radius: 1rem;
+    margin-top: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .locked-placeholder:hover {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(242, 201, 76, 0.8);
+    transform: translateY(-2px);
+  }
+  .locked-content {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+  }
+  .locked-icon {
+    font-size: 2.5rem;
+    color: rgba(242, 201, 76, 0.7);
+    margin-bottom: 0.5rem;
+  }
+  .btn-open-unlock-modal {
+    background: rgba(242, 201, 76, 0.15);
+    border: 1px solid rgba(242, 201, 76, 0.6);
+    color: #f2c94c;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+  }
+  .locked-placeholder:hover .btn-open-unlock-modal {
+    background: #f2c94c;
+    color: #000;
+    box-shadow: 0 0 20px rgba(242, 201, 76, 0.4);
+  }
+</style>
+
+<script>
+  // Add listener to all locked placeholders and buttons inside them
+  document.querySelectorAll('.locked-placeholder').forEach(el => {
+    el.addEventListener('click', () => {
+      const modal = document.getElementById('unlock-modal');
+      if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      }
+    });
+  });
+</script>

@@ -1,4 +1,5 @@
 ---
+import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -22,7 +23,7 @@ const { debts, lessons, debtDataStore, lessonDataStore, isLocked = false } = Ast
     
     <NumerologySection title="Tổng Hợp Chỉ Số Nợ Nghiệp Cần Giải Quyết" isWarning={true} sectionId="karmic-debts-combined">
       {isLocked ? (
-        <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+        <LockedPlaceholder />
       ) : (
         <div>
           {debts.map(debtNum => {
@@ -50,7 +51,7 @@ const { debts, lessons, debtDataStore, lessonDataStore, isLocked = false } = Ast
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)" sectionId="karmic-lessons-combined">
         {isLocked ? (
-          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+          <LockedPlaceholder />
         ) : (
           <div>
             {lessons.map(num => {

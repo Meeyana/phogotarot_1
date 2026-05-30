@@ -1,4 +1,5 @@
 ---
+import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -28,7 +29,7 @@ const { stats, dataMap, isLocked = false } = Astro.props;
         <div class="max-w-4xl mx-auto rich-text-content">
           <NumerologySection title={blockTitle} sectionId={`core-${stat.key}-${stat.value}`}>
             {isLocked ? (
-              <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+              <LockedPlaceholder />
             ) : (
               <ContentBlock blocks={rawData.blocks} content={rawData.content} />
             )}

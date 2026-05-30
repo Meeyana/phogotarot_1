@@ -1,4 +1,5 @@
 ---
+import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -23,7 +24,7 @@ const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked =
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Chi Tiết Vận Trình 3 Năm (Trước - Nay - Sau)" sectionId="years-forecast-combined">
         {isLocked ? (
-          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+          <LockedPlaceholder />
         ) : (
           <div>
             {forecastYears.map((item, index) => {
@@ -55,7 +56,7 @@ const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked =
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Dự Báo Năng Lượng 3 Tháng Tới" sectionId="months-forecast-combined">
         {isLocked ? (
-          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+          <LockedPlaceholder />
         ) : (
           <div>
             {forecastMonths.map((item) => {

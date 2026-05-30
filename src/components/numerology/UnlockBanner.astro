@@ -2,16 +2,21 @@
 interface Props {
   fullName: string;
   dobStr: string;
+  currentCredit?: number;
 }
 
-const { fullName, dobStr } = Astro.props;
+const { fullName, dobStr, currentCredit = 0 } = Astro.props;
 ---
 
+<div id="unlock-modal" class="unlock-modal-overlay">
 <div class="unlock-banner">
+  <button id="btn-close-unlock-modal" class="btn-close-modal">
+    <i class="fas fa-times"></i>
+  </button>
   <div class="unlock-banner-glow-top"></div>
   <div class="unlock-banner-glow-bottom"></div>
   
-  <div class="unlock-banner-content">
+  <div id="unlock-main-content" class="unlock-banner-content">
     <div class="unlock-icon-container">
       <i class="fas fa-lock unlock-icon"></i>
       <i class="fas fa-lock unlock-icon-ping"></i>
@@ -43,9 +48,78 @@ const { fullName, dobStr } = Astro.props;
       <i class="fas fa-info-circle info-icon"></i> Mở khóa bằng Credit có giá trị vĩnh viễn cho hồ sơ này.
     </p>
   </div>
+  
+  <div id="unlock-confirm-content" class="unlock-banner-content" style="display: none;">
+    <div class="unlock-icon-container">
+      <i class="fas fa-question-circle unlock-icon"></i>
+    </div>
+    
+    <h3 class="unlock-title">
+      Xác nhận mở khóa
+    </h3>
+    
+    <p class="unlock-desc">
+      Bạn đang có <strong>{currentCredit} Credit</strong>.<br/><br/>
+      Bạn có đồng ý sử dụng <strong>3 Credit</strong> để mở khóa trọn đời hồ sơ thần số học này không?
+    </p>
+    
+    <div class="unlock-actions" style="margin-top: 1rem;">
+      <button id="btn-cancel-confirm" class="btn-unlock premium-btn" style="padding: 1rem 1.5rem;">
+        <i class="fas fa-arrow-left btn-icon"></i> 
+        <span>Quay lại</span>
+      </button>
+      
+      <button id="btn-execute-unlock" class="btn-unlock credit-btn" style="padding: 1rem 1.5rem;">
+        <i class="fas fa-check-circle btn-icon bounce-icon"></i> 
+        <span class="btn-text">Đồng ý mở khóa</span>
+      </button>
+    </div>
+  </div>
+  </div>
+</div>
 </div>
 
 <style>
+  .unlock-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    padding: 1rem;
+  }
+  
+  .unlock-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .btn-close-modal {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 20;
+    transition: color 0.3s ease;
+  }
+  
+  .btn-close-modal:hover {
+    color: #fff;
+  }
+
   .unlock-banner {
     margin-top: 3rem;
     padding: 3rem 2rem;
@@ -61,7 +135,12 @@ const { fullName, dobStr } = Astro.props;
     box-shadow: 0 0 50px rgba(242, 201, 76, 0.2);
     position: relative;
     overflow: hidden;
-    transition: all 0.5s ease;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .unlock-modal-overlay.active .unlock-banner {
+    transform: translateY(0) scale(1);
   }
   
   .unlock-banner:hover {
@@ -299,15 +378,59 @@ const { fullName, dobStr } = Astro.props;
 </style>
 
 <script define:vars={{ fullName, dobStr }}>
-  const btn = document.getElementById('btn-unlock-credit');
-  if (btn) {
-    btn.addEventListener('click', async () => {
-      const icon = btn.querySelector('.btn-icon');
-      const text = btn.querySelector('.btn-text');
+  const modal = document.getElementById('unlock-modal');
+  const btnClose = document.getElementById('btn-close-unlock-modal');
+  
+  const mainContent = document.getElementById('unlock-main-content');
+  const confirmContent = document.getElementById('unlock-confirm-content');
+  
+  const resetToMain = () => {
+    if (mainContent && confirmContent) {
+      mainContent.style.display = 'block';
+      confirmContent.style.display = 'none';
+    }
+  };
+  
+  if (btnClose && modal) {
+    btnClose.addEventListener('click', () => {
+      modal.classList.remove('active');
+      document.body.style.overflow = ''; // restore scrolling
+      setTimeout(resetToMain, 300);
+    });
+    
+    // Close on click outside
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+        setTimeout(resetToMain, 300);
+      }
+    });
+  }
+
+  const btnInitUnlock = document.getElementById('btn-unlock-credit');
+  const btnCancel = document.getElementById('btn-cancel-confirm');
+  const btnExecute = document.getElementById('btn-execute-unlock');
+
+  if (btnInitUnlock && mainContent && confirmContent) {
+    btnInitUnlock.addEventListener('click', () => {
+      mainContent.style.display = 'none';
+      confirmContent.style.display = 'block';
+    });
+  }
+  
+  if (btnCancel) {
+    btnCancel.addEventListener('click', resetToMain);
+  }
+
+  if (btnExecute) {
+    btnExecute.addEventListener('click', async () => {
+      const icon = btnExecute.querySelector('.btn-icon');
+      const text = btnExecute.querySelector('.btn-text');
       
       icon.className = 'fas fa-spinner fa-spin btn-icon text-xl';
       text.innerText = 'Đang xử lý...';
-      btn.classList.add('processing');
+      btnExecute.classList.add('processing');
       
       try {
         const res = await fetch('/api/numerology/unlock', {
@@ -320,19 +443,23 @@ const { fullName, dobStr } = Astro.props;
         if (res.ok) {
           icon.className = 'fas fa-check btn-icon text-xl';
           text.innerText = 'Thành công!';
-          btn.classList.add('success-state');
+          btnExecute.classList.add('success-state');
           setTimeout(() => window.location.reload(), 1000);
         } else {
           alert('Lỗi: ' + data.error);
-          icon.className = 'fas fa-coins btn-icon bounce-icon text-xl';
-          text.innerText = 'Dùng 3 Credit';
-          btn.classList.remove('processing');
+          icon.className = 'fas fa-check-circle btn-icon bounce-icon text-xl';
+          text.innerText = 'Đồng ý mở khóa';
+          btnExecute.classList.remove('processing');
+          
+          if (data.error && data.error.toLowerCase().includes('không đủ')) {
+            window.location.href = '/nap-credit';
+          }
         }
       } catch (err) {
         alert('Đã xảy ra lỗi mạng.');
-        icon.className = 'fas fa-coins btn-icon bounce-icon text-xl';
-        text.innerText = 'Dùng 3 Credit';
-        btn.classList.remove('processing');
+        icon.className = 'fas fa-check-circle btn-icon bounce-icon text-xl';
+        text.innerText = 'Đồng ý mở khóa';
+        btnExecute.classList.remove('processing');
       }
     });
   }
