@@ -62,6 +62,9 @@ const schema = {
   title={pageTitle}
   description={pageDesc}
 >
+    <script define:vars={{ isLoggedIn: !!Astro.locals.user }}>
+        window.IS_LOGGED_IN = isLoggedIn;
+    </script>
     <!-- CONFIRM MODAL OVERLAY (Toàn cục) -->
     <div id="credit-confirm-modal" class="confirm-modal hidden">
         <div class="confirm-modal-content">
@@ -79,6 +82,11 @@ const schema = {
     <div id="question-screen" class="screen active">
         <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
         <p class="subtitle">Trải bài này sẽ tự động rút 1 lá bài Yes/No cho bạn. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
+        {!Astro.locals.user && (
+            <a href="/login?redirect=/yes-no-reading" class="login-badge" style="margin-bottom: 20px; display: inline-block; padding: 6px 16px; background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 20px; color: #F2C94C; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease;">
+                <i class="fa-solid fa-lock" style="margin-right: 5px;"></i> Bạn cần đăng nhập để sử dụng miễn phí mỗi ngày
+            </a>
+        )}
         
         <div id="question-input-area" class="question-input-area">
             <textarea id="question-input" class="question-input" placeholder="Viết câu hỏi Yes/No của bạn ở đây..." style="min-height: 56px;"></textarea>
@@ -1187,6 +1195,11 @@ function preloadAllCardImages() {
 
 /** Xử lý khi nộp câu hỏi đầu tiên */
 async function handleQuestionSubmit() {
+    if (!window.IS_LOGGED_IN) {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+    }
+
     const questionFromInput = questionInput.value.trim();
     questionErrorDisplay.textContent = ''; 
     questionErrorDisplay.style.color = '#ff8a8a'; 
@@ -1282,6 +1295,11 @@ async function handleQuestionSubmit() {
 
 /** Xử lý khi nộp câu hỏi tiếp theo */
 async function handleFollowUpSubmit() {
+    if (!window.IS_LOGGED_IN) {
+        window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+    }
+
     const questionFromInput = followUpInput.value.trim();
     followUpErrorDisplay.textContent = ''; 
     followUpErrorDisplay.style.color = '#ff8a8a'; 

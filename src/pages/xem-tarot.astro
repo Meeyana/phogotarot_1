@@ -5,10 +5,6 @@ import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
 import '../styles/xem-tarot.css';
 
-if (!Astro.locals.user) {
-    return Astro.redirect('/login?redirect=/xem-tarot');
-}
-
 const pageTitle = "Trò Chuyện & Trải Bài Tarot Cùng Joanna | Phở Gõ Tarot";
 const pageDesc = "Trải nghiệm xem Tarot qua giao diện trò chuyện tương tác. Hỏi bất cứ điều gì, chọn bài và nhận thông điệp trực tiếp từ vũ trụ.";
 const pageUrl = new URL('/xem-tarot', Astro.site).href;
@@ -87,6 +83,11 @@ if (db && Astro.locals.user) {
         <div id="initial-greeting" class="initial-greeting">
             <h1 class="title-glow">Vấn đề bạn đang trăn trở là gì?</h1>
             <p class="subtitle-muted">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
+            {!Astro.locals.user && (
+                <a href="/login?redirect=/xem-tarot" class="login-badge" style="margin-top: 15px; display: inline-block; padding: 6px 16px; background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 20px; color: #F2C94C; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease;">
+                    <i class="fa-solid fa-lock" style="margin-right: 5px;"></i> Bạn cần đăng nhập để sử dụng miễn phí mỗi ngày
+                </a>
+            )}
         </div>
 
         <!-- Input Area -->
@@ -128,9 +129,11 @@ if (db && Astro.locals.user) {
         </div>
 
         <!-- Dòng chữ cập nhật hồ sơ hyperlink nằm ngay dưới nút narrative -->
-        <div class="profile-helper-text">
-            (<a href="#" id="open-profile-modal-btn">Cập nhật hồ sơ</a> để nhận thông điệp chính xác nhất)
-        </div>
+        {Astro.locals.user && (
+            <div class="profile-helper-text">
+                (<a href="#" id="open-profile-modal-btn">Cập nhật hồ sơ</a> để nhận thông điệp chính xác nhất)
+            </div>
+        )}
 
         <!-- --- PHẦN MỚI: BÀI VIẾT SEO / GEO --- -->
         <div class="seo-divider"></div>

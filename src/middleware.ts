@@ -43,7 +43,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   context.locals.user = user;
 
   // Bảo vệ route: Nếu user vào trang yêu cầu login mà chưa login
-  const protectedRoutes = ['/xem-tarot', '/chat', '/profile'];
+  const protectedRoutes = ['/chat', '/profile'];
   
   const isProtected = protectedRoutes.some(route => url.pathname.startsWith(route));
   if (isProtected && !user) {

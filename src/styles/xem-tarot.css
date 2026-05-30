@@ -747,7 +747,7 @@ body {
 
 .drawing-subheader { font-family: var(--font-body); color: #fff; font-size: 1.2rem; margin-bottom: 2rem; text-align: center; }
 
-#chosen-cards-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; height: auto; min-height: 170px; transition: margin-bottom 0.3s ease; }
+#chosen-cards-display { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 3rem; height: auto; min-height: 170px; transition: margin-bottom 0.3s ease; }
 #chosen-cards-display.spread-5 { margin-bottom: 3rem; }
 .chosen-card-placeholder {
     width: 110px; height: 170px; border: 2px dashed rgba(242, 201, 76, 0.3);
