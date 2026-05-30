@@ -137,9 +137,11 @@ export const POST: APIRoute = async (context) => {
       // Lấy System Prompt của Reader nếu có
       if (body.reader_id && env.DB) {
           try {
-              const reader = await env.DB.prepare('SELECT system_prompt FROM tarot_readers WHERE id = ?').bind(body.reader_id).first();
+              const reader = await env.DB.prepare('SELECT system_prompt, self_pronoun, user_pronoun FROM tarot_readers WHERE id = ?').bind(body.reader_id).first();
               if (reader) {
                   body.reader_prompt = reader.system_prompt;
+                    body.reader_self_pronoun = reader.self_pronoun || 'mình';
+                    body.reader_user_pronoun = reader.user_pronoun || 'bạn';
               }
           } catch (err) {
               console.error(`Lỗi lấy system_prompt cho reader ${body.reader_id}:`, err);
