@@ -1,0 +1,46 @@
+---
+interface Props {
+  blocks?: any[];
+  content?: string;
+  className?: string;
+}
+
+const { blocks, content, className = '' } = Astro.props;
+
+// Loại bỏ thẻ <p> thừa nếu có sẵn trong data
+const cleanHTML = (html: string) => html ? html.replace(/<p>|<\/p>/g, '') : '';
+---
+
+<div class={`interpretation-content-body ${className}`}>
+  {blocks && blocks.length > 0 ? (
+    blocks.map((block: any) => (
+      <div class="content-block">
+        {block.title && (
+          <div class="font-bold text-[#F2C94C] mt-4 mb-2 text-base block-title">
+            ✦ {block.title}
+          </div>
+        )}
+        
+        {block.type === 'list' && block.items ? (
+          <div class="list-block">
+            <ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90 space-y-2">
+              {block.items.map((item: string) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ) : block.type === 'quote' ? (
+          <div class="quote-block border-l-2 border-gold pl-4 italic opacity-80 my-2 bg-white/5 p-2 rounded-r text-gray-300">
+            <blockquote>{block.content}</blockquote>
+          </div>
+        ) : block.type === 'text' || block.content ? (
+          <div class="text-block mb-2 text-justify text-sm opacity-90">
+            <p set:html={cleanHTML(block.content)}></p>
+          </div>
+        ) : null}
+      </div>
+    ))
+  ) : content ? (
+    <div class="html-content text-sm opacity-90 text-justify mb-2" set:html={cleanHTML(content)}></div>
+  ) : null}
+</div>

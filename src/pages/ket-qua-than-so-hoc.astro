@@ -3,29 +3,59 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { 
     calculateLifePath, calculateDestiny, calculateSoul, 
     calculatePersonality, calculateAttitude, calculateMaturity, 
-    calculateRationalThought,
-    calculatePyramid, calculateChartData,
-    calculatePeriodCycles,
-    calculateKarmicDebt,
-    calculateKarmicLessons,
-    calculatePersonalityPercentages,
-    calculateCareerPercentages,
+    calculateRationalThought, calculatePyramid, calculateChartData,
+    calculatePeriodCycles, calculateKarmicDebt, calculateKarmicLessons,
+    calculatePersonalityPercentages, calculateCareerPercentages,
     calculateForecast
 } from '../utils/numerology';
 
-// [MỚI] Import dữ liệu trực tiếp từ Server (Đảm bảo file json nằm đúng đường dẫn này)
-import fullNumerologyData from '../data/numerology-data.json';
+// Import Data Access Layer
+import * as numData from '../utils/numerology-data';
 
-// Import components mới và CSS tối ưu hóa
+// Import components
 import NumerologyPyramid from '../components/NumerologyPyramid.astro';
 import NumerologyCTA from '../components/NumerologyCTA.astro';
+import LifePathSection from '../components/numerology/LifePathSection.astro';
+import CoreStatsSection from '../components/numerology/CoreStatsSection.astro';
+import ChartGridSection from '../components/numerology/ChartGridSection.astro';
+import KarmicSection from '../components/numerology/KarmicSection.astro';
+import PeriodCyclesSection from '../components/numerology/PeriodCyclesSection.astro';
+import ForecastSection from '../components/numerology/ForecastSection.astro';
+import PersonalityCareerSection from '../components/numerology/PersonalityCareerSection.astro';
+import PyramidSection from '../components/numerology/PyramidSection.astro';
+import UnlockBanner from '../components/numerology/UnlockBanner.astro';
 import '../styles/ket-qua-than-so-hoc.css';
+import { getDB } from '../db';
+import { hasUnlockedProfile } from '../lib/auth';
 
 // 1. Lấy tham số URL
 const url = Astro.url;
 const fullName = url.searchParams.get('name') || "Bạn Mình";
 const dobStr = url.searchParams.get('dob') || "2000-01-01";
 const nickname = url.searchParams.get('nickname') || "";
+
+// KIỂM TRA QUYỀN TRUY CẬP (PAYWALL)
+const user = Astro.locals.user;
+let isPremium = false;
+let hasUnlocked = false;
+const profileId = `${fullName.toLowerCase().trim()}|${dobStr}`;
+
+if (user) {
+    const rawDB = Astro.locals.runtime?.env?.DB || process.env.DB;
+    if (user.premiumUntil && user.premiumUntil.getTime() > Date.now()) {
+        isPremium = true;
+    } else if (rawDB) {
+        // Tự động tạo bảng nếu chưa có (fix lỗi no such table trên local D1)
+        try {
+            await rawDB.prepare(`CREATE TABLE IF NOT EXISTS unlocked_numerology_profiles (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, profile_id TEXT NOT NULL, unlocked_at INTEGER DEFAULT CURRENT_TIMESTAMP)`).run();
+        } catch (e) {
+            console.error('Lỗi khi tạo bảng:', e);
+        }
+        hasUnlocked = await hasUnlockedProfile(rawDB, user.id, profileId);
+    }
+}
+
+const isLocked = !isPremium && !hasUnlocked;
 
 // 2. Xử lý ngày sinh
 const [yStr, mStr, dStr] = dobStr.split('-');
@@ -49,120 +79,85 @@ const karmicDebts = calculateKarmicDebt(day, month, year, fullName);
 const karmicLessons = calculateKarmicLessons(fullName);
 const personalityStats = calculatePersonalityPercentages(chartData.strengthData, chartData.nameData, lifePath, destiny, soul, personality);
 const careerStats = calculateCareerPercentages(day, month, year, fullName, nickname, lifePath, destiny, soul);
-
-// TÍNH DỰ BÁO
 const forecast = calculateForecast(day, month);
-const renderCell = (number, countsArray) => {
+
+const renderCell = (number: number, countsArray: number[]) => {
     const count = countsArray[number - 1];
     if (!count || count === 0) return '';
     return String(number).repeat(count);
 };
 
-// ========================================================================
-// [MỚI] SERVER-SIDE FILTERING LOGIC
-// Lọc dữ liệu JSON khổng lồ thành object nhỏ gọn chỉ chứa thông tin cần thiết cho user này
-// ========================================================================
-
-const getData = (category, key) => {
-    return fullNumerologyData[category]?.[key] || fullNumerologyData['default'];
+// 4. Chuẩn bị data map cho CoreStatsSection
+const coreStatsDataMap = {
+  destiny: numData.getDestinyData(destiny),
+  soul: numData.getSoulData(soul),
+  personality: numData.getPersonalityData(personality),
+  attitude: numData.getAttitudeData(attitude),
+  maturity: numData.getMaturityData(maturity),
+  rational: numData.getRationalData(rational)
 };
 
-const filteredData = {
-    // Các chỉ số cốt lõi
-    lifePath: { [lifePath]: getData('lifePath', lifePath) },
-    destiny: { [destiny]: getData('destiny', destiny) },
-    soul: { [soul]: getData('soul', soul) },
-    personality: { [personality]: getData('personality', personality) },
-    attitude: { [attitude]: getData('attitude', attitude) },
-    maturity: { [maturity]: getData('maturity', maturity) },
-    rational: { [rational]: getData('rational', rational) },
-
-    // Biểu đồ & Mũi tên
-    strengthGrid: {}, 
-    synthesisGrid: {},
-    arrows: { strength: {}, synthesis: {} },
-    missingNumbers: { strength: {}, synthesis: {} },
-
-    // Nghiệp quả & Chu kỳ
-    karmicDebt: {},
-    karmicLessons: {},
-    periodCycleMeanings: {},
-    
-    // Dự báo
-    personalYear: {},
-    personalMonth: {},
-
-    pyramidData: { peaks: {}, challenges: {} },
-
-    // Giữ nguyên data tĩnh cho Chart biểu đồ cột
-    personalityChart: fullNumerologyData.personalityChart,
-    careerChart: fullNumerologyData.careerChart
-};
-
-// 1. Fill Strength Grid (Số trong biểu đồ ngày sinh)
-chartData.strengthData.forEach((count, index) => {
-    const num = index + 1;
-    if (count > 0) filteredData.strengthGrid[num] = getData('strengthGrid', num);
+// Chuẩn bị data cho ChartGridSection
+const strengthDataStore: Record<number, any> = {};
+chartData.strengthData.forEach((count: number, index: number) => {
+  if (count > 0) strengthDataStore[index + 1] = numData.getGridData('strengthGrid', index + 1);
+});
+const synthesisDataStore: Record<number, any> = {};
+chartData.synthesisData.forEach((count: number, index: number) => {
+  if (count > 0) synthesisDataStore[index + 1] = numData.getGridData('synthesisGrid', index + 1);
 });
 
-// 2. Fill Synthesis Grid (Số trong biểu đồ tổng hợp)
-chartData.synthesisData.forEach((count, index) => {
-    const num = index + 1;
-    if (count > 0) filteredData.synthesisGrid[num] = getData('synthesisGrid', num);
-});
-
-// 3. Fill Arrows (Mũi tên chỉ lấy cái có mặt/vắng mặt thực tế)
-const mapArrows = (arrowList, type) => {
-    if(!arrowList) return;
-    arrowList.forEach(arrow => {
-        const arrowData = fullNumerologyData.arrows?.[type]?.[arrow.id]?.[arrow.type];
-        if (arrowData) {
-            if (!filteredData.arrows[type][arrow.id]) filteredData.arrows[type][arrow.id] = {};
-            filteredData.arrows[type][arrow.id][arrow.type] = arrowData;
-        }
-    });
+// Chuẩn bị mũi tên
+const arrowStore: Record<string, any> = {};
+const mapArrows = (arrowList: any[], chartType: 'strength' | 'synthesis') => {
+  if (!arrowList) return;
+  arrowList.forEach(arrow => {
+    if (!arrowStore[arrow.id]) arrowStore[arrow.id] = {};
+    arrowStore[arrow.id][arrow.type] = numData.getArrowData(chartType, arrow.id, arrow.type);
+  });
 };
 mapArrows(chartData.strengthArrows, 'strength');
 mapArrows(chartData.synthesisArrows, 'synthesis');
 
-// 4. Fill Missing Numbers
-const mapMissing = (missingList, type) => {
-    if(!missingList) return;
-    missingList.forEach(num => {
-        filteredData.missingNumbers[type][num] = fullNumerologyData.missingNumbers?.[type]?.[num];
-    });
+// Chuẩn bị số thiếu
+const missingStore: Record<number, any> = {};
+const mapMissing = (missingList: number[], chartType: 'strength' | 'synthesis') => {
+  if (!missingList) return;
+  missingList.forEach(num => {
+    missingStore[num] = numData.getMissingNumberData(chartType, num);
+  });
 };
 mapMissing(chartData.strengthMissingNums, 'strength');
 mapMissing(chartData.synthesisMissingNums, 'synthesis');
 
-// 5. Fill Karmic Debt & Lessons
-karmicDebts.forEach(debt => filteredData.karmicDebt[debt] = getData('karmicDebt', debt));
-karmicLessons.forEach(lesson => filteredData.karmicLessons[lesson] = getData('karmicLessons', lesson));
+// Chuẩn bị chu kỳ
+const cyclesDataStore: Record<number, any> = {
+  [periodCycles.c1.number]: numData.getPeriodCycleData(periodCycles.c1.number),
+  [periodCycles.c2.number]: numData.getPeriodCycleData(periodCycles.c2.number),
+  [periodCycles.c3.number]: numData.getPeriodCycleData(periodCycles.c3.number)
+};
 
-// 6. Fill Chu kỳ (3 giai đoạn)
-[periodCycles.c1.number, periodCycles.c2.number, periodCycles.c3.number].forEach(num => {
-    filteredData.periodCycleMeanings[num] = getData('periodCycleMeanings', num);
-});
+// Chuẩn bị dự báo
+const yearDataStore: Record<number, any> = {};
+forecast.years.forEach((y: any) => yearDataStore[y.number] = numData.getForecastYearData(y.number));
+const monthDataStore: Record<number, any> = {};
+forecast.months.forEach((m: any) => monthDataStore[m.number] = numData.getForecastMonthData(m.number));
 
-// 7. Fill Dự báo
-forecast.years.forEach(y => filteredData.personalYear[y.number] = getData('personalYear', y.number));
-forecast.months.forEach(m => filteredData.personalMonth[m.number] = getData('personalMonth', m.number));
-
-// [MỚI] 8. Fill Pyramid (Đỉnh cao & Thử thách)
-// Lấy danh sách 4 đỉnh cao và 4 thử thách từ kết quả tính toán
-const userPeaks = [pyramid.peaks.p1, pyramid.peaks.p2, pyramid.peaks.p3, pyramid.peaks.p4];
-const userChallenges = [pyramid.challenges.c1, pyramid.challenges.c2, pyramid.challenges.c3, pyramid.challenges.c4];
-
-userPeaks.forEach(p => {
-    // Lưu ý: Đỉnh cao số 1 đôi khi được hiển thị là 10 hoặc 1 trong sách, ở đây ta map theo key json
-    filteredData.pyramidData.peaks[p] = fullNumerologyData.pyramid?.peaks?.[p];
-});
-
-userChallenges.forEach(c => {
-    filteredData.pyramidData.challenges[c] = fullNumerologyData.pyramid?.challenges?.[c];
-});
-
-// ========================================================================
+// Chuẩn bị pyramid data store
+const pyramidDataStore = {
+  peaks: {
+    [pyramid.peaks.p1]: numData.getPyramidData('peaks', pyramid.peaks.p1),
+    [pyramid.peaks.p2]: numData.getPyramidData('peaks', pyramid.peaks.p2),
+    [pyramid.peaks.p3]: numData.getPyramidData('peaks', pyramid.peaks.p3),
+    [pyramid.peaks.p4]: numData.getPyramidData('peaks', pyramid.peaks.p4)
+  },
+  challenges: {
+    [pyramid.challenges.c1]: numData.getPyramidData('challenges', pyramid.challenges.c1),
+    [pyramid.challenges.c2]: numData.getPyramidData('challenges', pyramid.challenges.c2),
+    [pyramid.challenges.c3]: numData.getPyramidData('challenges', pyramid.challenges.c3),
+    [pyramid.challenges.c4]: numData.getPyramidData('challenges', pyramid.challenges.c4)
+  }
+};
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
 ---
@@ -171,6 +166,22 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <script is:inline src="/js/numerology-charts.js"></script>
+
+    {/* Inline script inject data for charts */}
+    <script define:vars={{
+      personalityStats,
+      careerStats,
+      day,
+      month
+    }}>
+      window.__NUMEROLOGY_DATA__ = {
+        personalityStats,
+        careerStats,
+        day,
+        month
+      };
+    </script>
+    <script is:inline src="/js/numerology-result.js"></script>
 
     <div id="stars-bg"></div>
 
@@ -193,8 +204,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         )}
                     </div>
                 </header>
-
-                
 
                 <div class="chart-section fade-in-up">
                     <div class="hero-numerology mb-0">
@@ -235,14 +244,19 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                     </div>
                     
-                    <div id="lifepath-interpretations-container" class="max-w-4xl mx-auto rich-text-content mt-8">
-                        <div class="loading-placeholder text-center opacity-50">Đang tải luận giải đường đời...</div>
+                    <div class="max-w-4xl mx-auto rich-text-content mt-8">
+                        <LifePathSection lifePath={lifePath} data={numData.getLifePathData(lifePath)} />
                     </div>
                 </div>
 
-                <div id="core-stats-details-container" class="space-y-12 fade-in-up">
-                    <div class="loading-placeholder text-center opacity-50">Đang tải chi tiết cốt lõi...</div>
-                </div>
+                <CoreStatsSection stats={[
+                    { key: 'destiny', label: 'Số Sứ Mệnh', value: destiny },
+                    { key: 'soul', label: 'Số Linh Hồn', value: soul },
+                    { key: 'personality', label: 'Số Nhân Cách', value: personality },
+                    { key: 'attitude', label: 'Số Thái Độ', value: attitude },
+                    { key: 'rational', label: 'Số Tư Duy', value: rational },
+                    { key: 'maturity', label: 'Số Trưởng Thành', value: maturity }
+                ]} dataMap={coreStatsDataMap} />
 
                 <div class="divider-section"></div>
 
@@ -271,8 +285,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                                 <div class="grid-cell">{renderCell(7, chartData.strengthData)}</div>
                             </div>
                         </div>
-                        <div id="strength-interpretations" class="interpretations-container mt-8 rich-text-content">
-                            <div class="loading-placeholder text-center opacity-50">Đang tải luận giải...</div>
+                        <div class="interpretations-container mt-8 rich-text-content">
+                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} />
                         </div>
                     </div>
                 </div>
@@ -321,36 +335,18 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         </div>
                     </div>
                    
-                    <div id="synthesis-interpretations" class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <div class="loading-placeholder text-center opacity-50">Đang tải luận giải tổng hợp...</div>
+                    <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
+                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} />
                     </div>
                 </div>
 
                 <NumerologyPyramid pyramid={pyramid} day={day} month={month} year={year} />
 
-                {karmicDebts.length > 0 && (
-                    <div class="karmic-debt-section fade-in-up mt-12 max-w-4xl mx-auto rich-text-content">
-                        <div class="section-header text-center mb-8">
-                            <h3 class="section-subtitle">Chỉ Số Nợ Nghiệp</h3>
-                            <p class="section-text opacity-70">Các bài học quan trọng cần giải quyết</p>
-                        </div>
-                        <div class="grid grid-cols-1 gap-6" id="karmic-debts-container"></div>
-                    </div>
-                )}
+                <div class="max-w-4xl mx-auto rich-text-content mt-8">
+                    <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} />
+                </div>
 
-                {karmicLessons.length > 0 && (
-                    <div class="chart-section fade-in-up mt-12">
-                        <div class="section-header text-center mb-8">
-                            <h3 class="section-subtitle">Bài Học Đường Đời (Điểm Yếu)</h3>
-                            <p class="section-text opacity-70">Những mảng khuyết thiếu cần được bồi đắp để hoàn thiện bản thân</p>
-                        </div>
-                        <div class="max-w-4xl mx-auto rich-text-content">
-                            <div class="grid grid-cols-1 gap-6" id="karmic-lessons-container">
-                                <div class="loading-placeholder text-center opacity-50">Đang tải luận giải điểm yếu...</div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={karmicDebts.reduce((acc, curr) => ({...acc, [curr]: numData.getKarmicDebtData(curr)}), {} as Record<number,any>)} lessonDataStore={karmicLessons.reduce((acc, curr) => ({...acc, [curr]: numData.getKarmicLessonData(curr)}), {} as Record<number,any>)} isLocked={isLocked} />
 
                 <div class="divider-section"></div>
 
@@ -359,32 +355,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <div class="chart-section fade-in-up">
-                    <div class="section-header text-center mb-8">
-                        <p class="section-text opacity-70">Bản ngã tính cách & Định hướng nghề nghiệp</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
-                        <div class="chart-column">
-                            <div class="p-6 h-full rich-text-content">
-                                <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
-                                <div class="chart-container-responsive glass-card" style="position: relative; height: 400px;">
-                                    <canvas id="personalityChart"></canvas>
-                                </div>
-                                <div id="personality-interpretation" class="mt-6"></div>
-                            </div>
-                        </div>
-                        <div class="chart-column">
-                            <div class="p-6 h-full rich-text-content">
-                                <h3 class="section-subtitle">Tỉ Lệ Nhóm Ngành Phù Hợp</h3>
-                                <div class="chart-container-responsive glass-card" style="position: relative; height: 400px;">
-                                    <canvas id="careerChart"></canvas>
-                                </div>
-                                <div id="career-interpretation" class="mt-6"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={numData.getPersonalityChartData()} cData={numData.getCareerChartData()} />
 
                 <div class="divider-section"></div>
 
@@ -399,8 +370,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <p class="section-text opacity-70">3 Giai đoạn phát triển chính của cuộc đời bạn</p>
                     </div>
                     
-                    <div id="cycles-interpretations" class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <div class="loading-placeholder text-center opacity-50">Đang tải luận giải chu kỳ...</div>
+                    <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
+                        <PeriodCyclesSection periodCycles={periodCycles} cyclesDataStore={cyclesDataStore} isLocked={isLocked} />
                     </div>
                 </div>
 
@@ -419,37 +390,14 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <div class="chart-section fade-in-up mt-12">
-                    <div class="section-header text-center mb-8">
-                        <h3 class="section-subtitle">Dự Báo Năm Cá Nhân</h3>
-                        <p class="section-text opacity-70">Chi tiết 3 năm (Năm ngoái, Hiện tại, Năm tới)</p>
-                    </div>
-                    <div class="max-w-4xl mx-auto rich-text-content">
-                        <div id="year-forecast-list" class="space-y-6">
-                            <div class="loading-placeholder text-center opacity-50">Đang tải dự báo năm...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="chart-section fade-in-up mt-12">
-                    <div class="section-header text-center mb-8">
-                        <h3 class="section-subtitle">Dự Báo Tháng Cá Nhân</h3>
-                        <p class="section-text opacity-70">Chi tiết năng lượng 3 tháng sắp tới</p>
-                    </div>
-                    <div class="max-w-4xl mx-auto rich-text-content">
-                        <div id="month-forecast-list" class="space-y-6">
-                            <div class="loading-placeholder text-center opacity-50">Đang tải dự báo tháng...</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!--<div class="report-footer text-center pb-12 pt-8" style="margin-top: 5rem;">
-                    <a href="/than-so-hoc" class="mystic-btn-outline">
-                        <i class="fas fa-redo"></i> Tra cứu hồ sơ khác
-                    </a>
-                </div>-->
+                <ForecastSection forecastYears={forecast.years} forecastMonths={forecast.months} yearDataStore={yearDataStore} monthDataStore={monthDataStore} isLocked={isLocked} />
                 
-            </div> </section> </main>
+                {isLocked && <UnlockBanner fullName={fullName} dobStr={dobStr} />}
+
+            </div> 
+        </section> 
+    </main>
+    
     <div id="toc-container" class="toc-wrapper">
         <button id="toc-toggle" class="toc-btn" aria-label="Mục lục">
             <i class="fas fa-list-ol"></i>
@@ -464,882 +412,5 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
     <div class="divider-section"></div>
 
     <NumerologyCTA />
-
-    <script define:vars={{ 
-        day, month, lifePath,
-        strengthData: chartData.strengthData, 
-        synthesisData: chartData.synthesisData,
-        strengthArrows: chartData.strengthArrows, 
-        strengthMissingNums: chartData.strengthMissingNums,
-        synthesisArrows: chartData.synthesisArrows,
-        synthesisMissingNums: chartData.synthesisMissingNums,
-        periodCycles: periodCycles,
-        karmicDebts: karmicDebts,
-        karmicLessons: karmicLessons,
-        personalityStats: personalityStats,
-        careerStats: careerStats,
-        forecastYears: forecast.years,
-        forecastMonths: forecast.months,
-        destiny, soul, personality, attitude, maturity, rational,
-        serverFilteredData: filteredData,
-        pyramid: pyramid
-    }}>
-        let globalNumerologyData = serverFilteredData;
-
-        window.addEventListener('load', () => {
-            if (typeof drawWaveChart === 'function') {
-                drawWaveChart('personalYearChart', day, month);
-            }
-            drawPersonalityChart();
-            drawCareerChart();
-            setTimeout(initTOC, 1000);
-        });
-
-        // --- CÁC HÀM VẼ BIỂU ĐỒ (Giữ nguyên) ---
-        function drawPersonalityChart() {
-            const ctx = document.getElementById('personalityChart');
-            if (!ctx) return;
-            const labels = personalityStats.map(p => p.label);
-            const data = personalityStats.map(p => p.percent);
-            const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'];
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: colors,
-                        borderRadius: 4,
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            color: '#fff',
-                            anchor: 'end',
-                            align: 'end',
-                            formatter: (value) => value + '%',
-                            font: { weight: 'bold' }
-                        }
-                    },
-                    scales: {
-                        x: { display: false, max: 40 },
-                        y: { ticks: { color: '#e5e7eb', font: { size: 10 } }, grid: { display: false } }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        }
-
-        function drawCareerChart() {
-            const ctx = document.getElementById('careerChart');
-            if (!ctx) return;
-            const labels = careerStats.map(c => c.label);
-            const data = careerStats.map(c => c.percent);
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: data,
-                        backgroundColor: '#0066cc',
-                        borderRadius: 4,
-                        barPercentage: 0.6
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            color: '#fff',
-                            anchor: 'center',
-                            align: 'center',
-                            formatter: (value) => value + '%',
-                            font: { weight: 'bold' }
-                        }
-                    },
-                    scales: {
-                        x: { display: false, max: 40 },
-                        y: { ticks: { color: '#e5e7eb', font: { size: 11 } }, grid: { display: false } }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const lifePathContainer = document.getElementById('lifepath-interpretations-container');
-            const strengthContainer = document.getElementById('strength-interpretations');
-            const synthesisContainer = document.getElementById('synthesis-interpretations');
-            const cyclesContainer = document.getElementById('cycles-interpretations');
-            const karmicContainer = document.getElementById('karmic-debts-container');
-            const lessonsContainer = document.getElementById('karmic-lessons-container');
-            const personalityContainer = document.getElementById('personality-interpretation');
-            const careerContainer = document.getElementById('career-interpretation');
-            const yearContainer = document.getElementById('year-forecast-list');
-            const monthContainer = document.getElementById('month-forecast-list');
-            const coreStatsDetailsContainer = document.getElementById('core-stats-details-container');
-
-            const initPageData = () => {
-                renderAllInterpretations();
-            };
-
-            // [CẬP NHẬT] Hàm chuyển đổi Blocks thành HTML string (Đã thêm xử lý Title)
-            const safeBlocksToHTML = (blocks) => {
-                if (!blocks || !Array.isArray(blocks)) return '';
-                
-                return blocks.map(b => {
-                    let blockHTML = '';
-
-                    // 1. [MỚI] Hiển thị Title nếu có (Vd: Về Công việc, Về Tài chính...)
-                    if (b.title) {
-                        // Style text-gold để nổi bật trên nền tối, thêm icon ✦ cho đồng bộ
-                        blockHTML += `<div class="font-bold text-[#F2C94C] mt-4 mb-2 text-base block-title">✦ ${b.title}</div>`;
-                    }
-
-                    // 2. Xử lý nội dung theo từng loại (Giữ nguyên logic cũ)
-                    if (b.type === 'list' && b.items) {
-                        blockHTML += `<ul class="list-disc pl-5 mt-2 mb-2 text-sm opacity-90">${b.items.map(i => `<li>${i}</li>`).join('')}</ul>`;
-                    } 
-                    else if (b.type === 'quote') {
-                        blockHTML += `<blockquote class="border-l-2 border-gold pl-4 italic opacity-80 my-2 bg-white/5 p-2 rounded-r">${b.content || ''}</blockquote>`;
-                    } 
-                    else if (b.content) {
-                        // Loại bỏ thẻ p thừa nếu có sẵn trong data
-                        const cleanContent = b.content.replace(/<p>|<\/p>/g, '');
-                        blockHTML += `<p class="mb-2 text-justify">${cleanContent}</p>`;
-                    }
-                    
-                    return blockHTML;
-                }).join('');
-            };
-
-            // Hàm xử lý Blocks cho các phần render chi tiết (LifePath, Career...)
-            const processBlocks = (container, blocks, idPrefix) => {
-                blocks.forEach((block, idx) => {
-                    let html = '';
-                    if (block.title) {
-                        html += `<h5 class="font-bold text-white/90 text-lg mt-4 mb-2">✦ ${block.title}</h5>`;
-                    }
-                    switch(block.type) {
-                        case 'text':
-                            html += `<div class="content-block text-block">${block.content}</div>`;
-                            container.insertAdjacentHTML('beforeend', html);
-                            break;
-                        case 'list':
-                            const listItems = block.items.map(item => `<li>${item}</li>`).join('');
-                            html += `<div class="content-block list-block"><ul class="list-disc pl-5 space-y-2">${listItems}</ul></div>`;
-                            container.insertAdjacentHTML('beforeend', html);
-                            break;
-                        case 'quote':
-                            html += `<div class="content-block quote-block border-l-4 border-gold bg-white/5 p-4 my-4 italic text-gray-300 rounded-r">
-                                        <blockquote>${block.content}</blockquote>
-                                    </div>`;
-                            container.insertAdjacentHTML('beforeend', html);
-                            break;
-                        case 'reused_chart':
-                             const sourceEl = document.getElementById(block.sourceId);
-                             if (sourceEl) {
-                                 const clone = sourceEl.cloneNode(true);
-                                 clone.removeAttribute('id');
-                                 const sourceCanvas = sourceEl.querySelector('canvas');
-                                 if (sourceCanvas) {
-                                     const destCanvas = clone.querySelector('canvas');
-                                     if (destCanvas) {
-                                         const img = document.createElement('img');
-                                         img.src = sourceCanvas.toDataURL();
-                                         img.style.width = '100%'; img.style.display = 'block';
-                                         destCanvas.parentNode.replaceChild(img, destCanvas);
-                                     }
-                                 }
-                                 const wrapper = document.createElement('div');
-                                 wrapper.className = 'content-block chart-block reused-chart-wrapper mt-4';
-                                 wrapper.appendChild(clone);
-                                 if(block.label) {
-                                     const lbl = document.createElement('p');
-                                     lbl.className = 'text-center text-sm opacity-70 mt-2';
-                                     lbl.textContent = block.label;
-                                     wrapper.appendChild(lbl);
-                                 }
-                                 container.appendChild(wrapper);
-                            }
-                            break;
-                    }
-                });
-            };
-
-            const createInterpretationBlock = (container, data, number, uniqueKey, titleOverride, isWarning = false) => {
-                const wrapper = document.createElement('div');
-                wrapper.className = `number-interpretation-block glass-card mb-6 p-6 group ${isWarning ? 'border-red-400 bg-red-900/20' : ''}`;
-                
-                const header = document.createElement('div');
-                header.className = 'interp-header flex items-center mb-4 border-b border-white/10 pb-2';
-                /*header.innerHTML = `                   
-                    <h4 class="text-xl ${isWarning ? 'text-red-300' : 'text-gold'} font-title uppercase">
-                        ${titleOverride || data.title}
-                    </h4>
-                `;*/
-                wrapper.appendChild(header);
-
-                const body = document.createElement('div');
-                body.className = 'interpretation-content-body'; 
-                
-                if (data.blocks && Array.isArray(data.blocks)) {
-                    processBlocks(body, data.blocks, `inline-${uniqueKey}`);
-                } else if (data.content) {
-                    body.insertAdjacentHTML('beforeend', `<div class="html-content">${data.content}</div>`);
-                }
-                
-                wrapper.appendChild(body);
-                container.appendChild(wrapper);
-            };
-
-            // [ĐÃ FIX LỖI CRASH] Gom nhóm Dự Báo (Năm & Tháng)
-            const renderForecastInterpretations = () => {
-                if (!globalNumerologyData) return;
-                
-                // 1. DỰ BÁO NĂM
-                if (yearContainer && forecastYears.length > 0) {
-                    yearContainer.innerHTML = '';
-                    const yearDataStore = globalNumerologyData['personalYear'] || {};
-                    let yearHTML = '';
-                    forecastYears.forEach((item, index) => {
-                         const yearNum = item.number;
-                         const yearData = yearDataStore[yearNum];
-                         if (yearData) {
-                             const subTitle = `Năm ${item.year} - Vận niên số ${yearNum} ${index === 0 ? '(Hiện tại)' : ''}`;
-                             // Sử dụng hàm safeBlocksToHTML thay vì map thủ công gây lỗi
-                             const content = safeBlocksToHTML(yearData.blocks);
-
-                             yearHTML += `
-                                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                    <h5 class="text-gold font-bold text-lg mb-2 uppercase">✦ ${subTitle}</h5>
-                                    <div class="text-sm opacity-90">${content}</div>
-                                </div>
-                             `;
-                        }
-                    });
-                    if (yearHTML) {
-                        createInterpretationBlock(yearContainer, {
-                            title: "Chi Tiết Vận Trình 3 Năm (Trước - Nay - Sau)",
-                            content: yearHTML
-                        }, null, 'years-forecast-combined');
-                    }
-                }
-
-                // 2. DỰ BÁO THÁNG
-                if (monthContainer && forecastMonths.length > 0) {
-                    monthContainer.innerHTML = '';
-                    const monthDataStore = globalNumerologyData['personalMonth'] || {};
-                    let monthHTML = '';
-                    forecastMonths.forEach((item, index) => {
-                        const monthNum = item.number;
-                        const monthData = monthDataStore[monthNum];
-                        if (monthData) {
-                             const subTitle = `Tháng ${item.month}/${item.year} - Vận số ${monthNum}`;
-                             // Sử dụng hàm safeBlocksToHTML
-                             const content = safeBlocksToHTML(monthData.blocks);
-
-                             monthHTML += `
-                                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                    <h5 class="text-blue-300 font-bold text-lg mb-2 uppercase">✦ ${subTitle}</h5>
-                                    <div class="text-sm opacity-90">${content}</div>
-                                </div>
-                             `;
-                        }
-                    });
-                    if (monthHTML) {
-                        createInterpretationBlock(monthContainer, {
-                            title: "Dự Báo Năng Lượng 3 Tháng Tới",
-                            content: monthHTML
-                        }, null, 'months-forecast-combined');
-                    }
-                }
-            };
-
-            // [CẬP NHẬT] Render Charts Interpretations với Read More Wrapper
-            const renderNewChartsInterpretations = () => {
-                if (!globalNumerologyData) return;
-
-                // --- 1. LUẬN GIẢI TÍNH CÁCH (PERSONALITY) ---
-                const pData = globalNumerologyData['personalityChart'] || {};
-                if (personalityContainer && pData.meanings) {
-                    personalityContainer.innerHTML = '';
-                    let combinedHTML = '';
-
-                    // Thêm đoạn Intro đầu tiên (nếu có)
-                    //if(pData.intro) {
-                        //combinedHTML += `<div class="mb-4 italic text-gold border-b border-white/10 pb-2">${pData.intro}</div>`;
-                    //}
-
-                    // Lấy 2 tính cách nổi bật nhất
-                    const topTraits = [...personalityStats].sort((a,b) => b.percent - a.percent).slice(0, 2);
-                    
-                    topTraits.forEach(t => {
-                        const meaningData = pData.meanings[t.id]; 
-                        if (meaningData) {
-                            // Sử dụng safeBlocksToHTML để lấy nội dung HTML an toàn
-                            const content = meaningData.blocks ? safeBlocksToHTML(meaningData.blocks) : (meaningData.content || '');
-                            
-                            combinedHTML += `
-                                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                    <h5 class="text-gold font-bold text-lg mb-2">✦ Tính cách: ${t.label} (${t.percent}%)</h5>
-                                    <div class="text-sm opacity-90">${content}</div>
-                                </div>
-                            `;
-                        }
-                    });
-
-                    // Gọi hàm tạo Block chuẩn (sẽ tự động có Read More nếu dài)
-                    if (combinedHTML) {
-                        createInterpretationBlock(
-                            personalityContainer, 
-                            { 
-                                title: "Chi Tiết Luận Giải Tính Cách", // Tiêu đề Block
-                                content: combinedHTML 
-                            }, 
-                            null, 
-                            'personality-combined-box' // Unique ID
-                        );
-                    }
-                }
-
-                // --- 2. LUẬN GIẢI NGHỀ NGHIỆP (CAREER) ---
-                const cData = globalNumerologyData['careerChart'] || {};
-                if (careerContainer && cData.meanings) {
-                    careerContainer.innerHTML = '';
-                    let combinedHTML = '';
-
-                    //if(cData.intro) {
-                        //combinedHTML += `<div class="mb-4 italic text-blue-300 border-b border-white/10 pb-2">${cData.intro}</div>`;
-                    //}
-
-                    const topCareer = careerStats[0]; // Lấy ngành cao nhất
-                    if (topCareer) {
-                        const meaningData = cData.meanings[topCareer.id];
-                        if (meaningData) {
-                             const content = meaningData.blocks ? safeBlocksToHTML(meaningData.blocks) : (meaningData.content || '');
-                             
-                             combinedHTML += `
-                                <div class="mb-4">
-                                     <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: ${topCareer.label} (${topCareer.percent}%)</h5>
-                                     <div class="text-sm opacity-90">${content}</div>
-                                </div>
-                             `;
-                        }
-                    }
-
-                    // Gọi hàm tạo Block chuẩn
-                    if (combinedHTML) {
-                        createInterpretationBlock(
-                            careerContainer,
-                            {
-                                title: "Chi Tiết Định Hướng Nghề Nghiệp",
-                                content: combinedHTML
-                            },
-                            null,
-                            'career-combined-box'
-                        );
-                    }
-                }
-            };
-
-            // [ĐÃ FIX LỖI CRASH] Hàm render chi tiết số
-            const renderNumberDetails = (container, dataKey, countsArray, arrowsList, missingList, chartType) => {
-                container.innerHTML = '';
-                const dataStore = globalNumerologyData[dataKey] || {};
-                let combinedHTML = ''; 
-
-                for (let i = 1; i <= 9; i++) {
-                    if (countsArray[i - 1] > 0) {
-                        const numData = dataStore[i];
-                        if (numData) {
-                            const title = numData.title || `Số ${i}`;
-                            // Sử dụng safeBlocksToHTML
-                            let content = numData.blocks ? safeBlocksToHTML(numData.blocks) : (numData.content || '');
-
-                            combinedHTML += `
-                                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                    <h5 class="text-gold font-bold text-lg mb-2 uppercase">✦ ${title}</h5>
-                                    <div class="text-sm opacity-90">${content}</div>
-                                </div>
-                            `;
-                        }
-                    }
-                }
-
-                if (arrowsList && arrowsList.length > 0) {
-                    const arrowStore = globalNumerologyData['arrows'] || {};
-                    const specificArrowStore = arrowStore[chartType] || {};
-                    arrowsList.forEach(arrow => {
-                        const arrowDataConfig = specificArrowStore[arrow.id]; 
-                        if (arrowDataConfig) {
-                            const contentData = arrowDataConfig[arrow.type]; 
-                            if (contentData) {
-                                const title = contentData.title;
-                                // Sử dụng safeBlocksToHTML
-                                const content = contentData.blocks ? safeBlocksToHTML(contentData.blocks) : '';
-                                
-                                combinedHTML += `
-                                    <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                        <h5 class="text-${arrow.type === 'present' ? 'green-400' : 'gray-400'} font-bold text-lg mb-2 uppercase">
-                                            ${arrow.type === 'present' ? '✔' : '✘'} ${title}
-                                        </h5>
-                                        <div class="text-sm opacity-90">${content}</div>
-                                    </div>
-                                `;
-                            }
-                        }
-                    });
-                }
-
-                if (missingList && missingList.length > 0) {
-                    const missingStore = globalNumerologyData['missingNumbers'] || {};
-                    const specificMissingStore = missingStore[chartType] || {};
-                    
-                    combinedHTML += `<div class="mt-8 mb-4"><h4 class="text-red-400 font-bold text-xl uppercase border-b border-red-400/30 pb-2">⚠️ Điểm Cần Khắc Phục (Số Thiếu)</h4></div>`;
-                    missingList.forEach(num => {
-                        const missingData = specificMissingStore[num];
-                        if (missingData) {
-                            combinedHTML += `
-                                <div class="mb-4 bg-red-900/10 p-4 rounded border border-red-500/20">
-                                    <h5 class="text-red-300 font-bold text-md mb-1">Thiếu số ${num}</h5>
-                                    <div class="text-sm opacity-80">${missingData.content}</div>
-                                </div>
-                            `;
-                        }
-                    });
-                }
-
-                if (combinedHTML) {
-                    const boxTitle = chartType === 'strength' ? 'Tổng Hợp Luận Giải Biểu Đồ Ngày Sinh' : 'Tổng Hợp Luận Giải Biểu Đồ Tổng Hợp';
-                    const fakeData = {
-                        title: boxTitle,
-                        content: combinedHTML 
-                    };
-                    createInterpretationBlock(container, fakeData, null, `${chartType}-combined-box`);
-                } else {
-                    container.innerHTML = '<p class="text-center opacity-60 italic">Không có thông tin nổi bật.</p>';
-                }
-            };
-
-            // [ĐÃ FIX LỖI CRASH] Render Chu Kỳ
-            const renderCycleInterpretations = () => {
-                if (!cyclesContainer) return;
-                cyclesContainer.innerHTML = ''; 
-                
-                const cyclesData = globalNumerologyData['periodCycleMeanings'] || {};
-                
-                const list = [
-                    { id: 1, label: 'Gieo Hạt', data: periodCycles.c1 },
-                    { id: 2, label: 'Chín', data: periodCycles.c2 },
-                    { id: 3, label: 'Thu Hoạch', data: periodCycles.c3 }
-                ];
-
-                let gridHTML = '<div class="cycle-grid fade-in-up">';
-                list.forEach(item => {
-                    gridHTML += `
-                        <div class="cycle-card glass-card">
-                            <div class="neon-ring">
-                                <span>${item.data.number}</span>
-                            </div>
-                            <h4 class="cycle-title">
-                                Chu kỳ ${item.id}
-                                <span class="cycle-highlight">${item.label}</span>
-                            </h4>
-                            <div class="mt-4">
-                                <p class="cycle-meta text-white">${item.data.ageRange}</p>
-                                <p class="cycle-meta italic">(${item.data.yearRange})</p>
-                            </div>
-                        </div>
-                    `;
-                });
-                gridHTML += '</div>';
-                
-                cyclesContainer.insertAdjacentHTML('beforeend', gridHTML);
-
-                let combinedTextHTML = '';
-                list.forEach(item => {
-                    const textData = cyclesData[item.data.number];
-                    if (textData) {
-                        // FIX LỖI Ở ĐÂY: Dùng safeBlocksToHTML thay vì map trực tiếp
-                        const content = textData.blocks ? safeBlocksToHTML(textData.blocks) : (textData.content || '');
-                        
-                        combinedTextHTML += `
-                            <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                <h5 class="text-gold font-bold text-lg mb-2 uppercase">
-                                    ✦ Luận giải Chu kỳ ${item.id} (Số ${item.data.number})
-                                </h5>
-                                <div class="text-sm opacity-90">${content}</div>
-                            </div>
-                        `;
-                    }
-                });
-
-                if (combinedTextHTML) {
-                    createInterpretationBlock(
-                        cyclesContainer, 
-                        { content: combinedTextHTML }, 
-                        null, 
-                        'cycles-text-combined', 
-                        'Chi Tiết Ý Nghĩa Các Giai Đoạn' 
-                    );
-                }
-            };
-
-            // [ĐÃ FIX LỖI CRASH] Karmic Lessons
-            const renderKarmicLessons = () => {
-                if (!lessonsContainer || karmicLessons.length === 0) return;
-                lessonsContainer.innerHTML = '';
-                
-                const lessonsData = globalNumerologyData['karmicLessons'] || {};
-                let combinedHTML = '';
-                karmicLessons.forEach(num => {
-                    const data = lessonsData[num];
-                    if (data) {
-                        // Dùng safeBlocksToHTML
-                        const content = data.blocks ? safeBlocksToHTML(data.blocks) : (data.content || '');
-                        
-                        combinedHTML += `
-                            <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                <h5 class="text-white font-bold text-lg mb-2 uppercase">✦ Bài học thiếu số ${num}</h5>
-                                <div class="text-sm opacity-90">${content}</div>
-                            </div>
-                        `;
-                    }
-                });
-                if (combinedHTML) {
-                    createInterpretationBlock(lessonsContainer, { 
-                        title: "Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)", 
-                        content: combinedHTML 
-                    }, null, 'karmic-lessons-combined');
-                }
-            };
-
-            // [ĐÃ FIX LỖI CRASH] Nợ Nghiệp
-            const renderKarmicDebts = () => {
-                if (!karmicContainer || karmicDebts.length === 0) return;
-                karmicContainer.innerHTML = '';
-                
-                const karmicData = globalNumerologyData['karmicDebt'] || {};
-                let combinedHTML = '';
-                karmicDebts.forEach(debtNum => {
-                    const data = karmicData[debtNum];
-                    if (data) {
-                        const title = data.title || `Nợ nghiệp bài học ${debtNum}`;
-                        // Dùng safeBlocksToHTML
-                        const content = data.blocks ? safeBlocksToHTML(data.blocks) : (data.content || '');
-
-                        combinedHTML += `
-                            <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                                <h5 class="text-red-300 font-bold text-lg mb-2 uppercase">⚠️ ${title}</h5>
-                                <div class="text-sm opacity-90">${content}</div>
-                            </div>
-                        `;
-                    }
-                });
-                if (combinedHTML) {
-                    createInterpretationBlock(karmicContainer, { 
-                        title: "Tổng Hợp Chỉ Số Nợ Nghiệp Cần Giải Quyết", 
-                        content: combinedHTML 
-                    }, null, 'karmic-debts-combined');
-                }
-            };
-
-
-            // [CẬP NHẬT] Hàm Render Luận Giải Kim Tự Tháp (Giao diện phân cấp rõ ràng)
-            const renderPyramidInterpretations = () => {
-                const container = document.getElementById('pyramid-interpretations');
-                if (!container || !globalNumerologyData.pyramidData) return;
-
-                container.innerHTML = '';
-                const pyData = globalNumerologyData.pyramidData;
-
-                const stages = [
-                    { id: 1, label: "Giai đoạn 1 (Tuổi trẻ)", peak: pyramid.peaks.p1, chal: pyramid.challenges.c1, age: pyramid.ages.p1_text },
-                    { id: 2, label: "Giai đoạn 2 (Trưởng thành)", peak: pyramid.peaks.p2, chal: pyramid.challenges.c2, age: pyramid.ages.p2_text },
-                    { id: 3, label: "Giai đoạn 3 (Trung niên)", peak: pyramid.peaks.p3, chal: pyramid.challenges.c3, age: pyramid.ages.p3_text },
-                    { id: 4, label: "Giai đoạn 4 (Viên mãn)", peak: pyramid.peaks.p4, chal: pyramid.challenges.c4, age: pyramid.ages.p4_text }
-                ];
-
-                let combinedHTML = '';
-
-                stages.forEach(stage => {
-                    const peakData = pyData.peaks[stage.peak];
-                    const chalData = pyData.challenges[stage.chal];
-
-                    // Dùng safeBlocksToHTML để lấy nội dung chuẩn
-                    const peakContent = peakData && peakData.blocks ? safeBlocksToHTML(peakData.blocks) : '<p>Chưa có dữ liệu.</p>';
-                    const chalContent = chalData && chalData.blocks ? safeBlocksToHTML(chalData.blocks) : '<p>Chưa có dữ liệu.</p>';
-
-                    combinedHTML += `
-                        <div class="pyramid-stage-block mb-10 p-6 rounded-xl bg-white/5 border border-white/10">
-                            
-                            <div class="stage-header flex flex-col md:flex-row justify-between items-end border-b border-white/20 pb-4 mb-6">
-                                <h4 class="text-2xl text-gold font-bold uppercase tracking-wide" style="text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);">
-                                    ✦ ${stage.label}
-                                </h4>
-                                <span class="text-base text-gray-300 italic mt-2 md:mt-0 opacity-80">${stage.age}</span>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div class="peak-col">
-                                    <h5 class="text-green-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
-                                        <i class="fas fa-mountain"></i> Đỉnh cao số ${stage.peak}
-                                    </h5>
-                                    <div class="text-sm opacity-90 text-justify">${peakContent}</div>
-                                </div>
-
-                                <div class="chal-col">
-                                    <h5 class="text-red-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
-                                        <i class="fas fa-fire"></i> Thử thách số ${stage.chal}
-                                    </h5>
-                                    <div class="text-sm opacity-90 text-justify">${chalContent}</div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                if (combinedHTML) {
-                    createInterpretationBlock(
-                        container, 
-                        { 
-                            title: "Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách", 
-                            content: combinedHTML 
-                        }, 
-                        null, 
-                        'pyramid-combined-box'
-                    );
-                }
-            };
-
-
-
-            const renderLifePath = () => {
-                if (!lifePathContainer || !globalNumerologyData) return;
-
-                        
-                const headerHtml = `
-                    <div class="section-header text-center mb-8">
-                        <h3 class="section-subtitle">Số chủ đạo của bạn: Số ${lifePath}</h3>
-                    </div>
-                `;
-
-
-                lifePathContainer.innerHTML = headerHtml;
-              
-                
-                const lpData = globalNumerologyData['lifePath'] || {};
-                const data = lpData[lifePath];
-                if (data) {
-                    const blockData = {
-                        ...data,
-                        title: data.title || `Đường Đời Số ${lifePath}`
-                    };
-                    createInterpretationBlock(lifePathContainer, blockData, lifePath, `lp-${lifePath}`, blockData.title);
-                } else {
-                    lifePathContainer.innerHTML = '<p class="text-center">Đang cập nhật nội dung...</p>';
-                }
-            };
-
-            const renderCoreStatsDetails = () => {
-                if (!coreStatsDetailsContainer || !globalNumerologyData) return;
-                coreStatsDetailsContainer.innerHTML = ''; 
-
-                const statsToRender = [
-                    { key: 'destiny', label: 'Số Sứ Mệnh', value: destiny },
-                    { key: 'soul', label: 'Số Linh Hồn', value: soul },
-                    { key: 'personality', label: 'Số Nhân Cách', value: personality },
-                    { key: 'attitude', label: 'Số Thái Độ', value: attitude },
-                    { key: 'rational', label: 'Số Tư Duy', value: rational },
-                    { key: 'maturity', label: 'Số Trưởng Thành', value: maturity }
-                ];
-
-                statsToRender.forEach(stat => {
-                    const dataKey = stat.key;
-                    const number = stat.value;
-                    const dataStore = globalNumerologyData[dataKey];
-
-                    if (dataStore && (dataStore[number] || dataStore['default'])) {
-                        const rawData = dataStore[number] || dataStore['default'];
-                        const displayTitle = `${stat.label} của bạn: Số ${number}`;
-                        
-                        const sectionHtml = document.createElement('div');
-                        sectionHtml.className = "chart-section fade-in-up";
-                        
-                        const headerHtml = `
-                            <div class="section-header text-center mb-8">
-                                <h3 class="section-subtitle">${displayTitle}</h3>
-                            </div>
-                        `;
-                        sectionHtml.innerHTML = headerHtml;
-
-                        const contentBody = document.createElement('div');
-                        contentBody.className = "max-w-4xl mx-auto rich-text-content";
-                        
-                        const blockData = {
-                            ...rawData,
-                            title: rawData.title || displayTitle
-                        };
-                        createInterpretationBlock(contentBody, blockData, number, `core-${dataKey}-${number}`, blockData.title);
-
-                        sectionHtml.appendChild(contentBody);
-                        coreStatsDetailsContainer.appendChild(sectionHtml);
-                    }
-                });
-            };
-
-            // [TÍNH NĂNG THU GỌN - ĐÃ HOẠT ĐỘNG TRỞ LẠI]
-            const setupReadMore = () => {
-                const contentBodies = document.querySelectorAll('.interpretation-content-body');
-                contentBodies.forEach(body => {
-                    if (body.dataset.readMoreInit) return;
-                    
-                    if (body.scrollHeight > 300) {
-                        body.classList.add('expandable-content', 'collapsed');
-                        body.dataset.readMoreInit = "true";
-
-                        const btnWrapper = document.createElement('div');
-                        btnWrapper.className = 'text-center mt-4 pt-2 border-t border-white/5 relative z-10';
-
-                        const btn = document.createElement('button');
-                        btn.className = 'read-more-btn inline-flex items-center gap-2 px-6 py-2 rounded-full border border-gold/50 text-gold hover:bg-gold hover:text-black transition-all text-sm font-bold uppercase tracking-wider';
-                        btn.innerHTML = 'Xem chi tiết <i class="fas fa-chevron-down"></i>';
-                        
-                        btn.addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const isCollapsed = body.classList.contains('collapsed');
-                            
-                            if (isCollapsed) {
-                                body.classList.remove('collapsed');
-                                btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up"></i>';
-                            } else {
-                                body.classList.add('collapsed');
-                                btn.innerHTML = 'Xem chi tiết <i class="fas fa-chevron-down"></i>';
-                                body.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            }
-                        });
-
-                        btnWrapper.appendChild(btn);
-                        body.parentNode.insertBefore(btnWrapper, body.nextSibling);
-                    }
-                });
-            };
-
-            const renderAllInterpretations = () => {
-                if (!globalNumerologyData) return;
-                renderLifePath(); 
-                renderCoreStatsDetails();
-                
-                renderNumberDetails(strengthContainer, 'strengthGrid', strengthData, strengthArrows, strengthMissingNums, 'strength');
-                renderNumberDetails(synthesisContainer, 'synthesisGrid', synthesisData, synthesisArrows, synthesisMissingNums, 'synthesis');
-                renderKarmicDebts();
-                renderKarmicLessons();
-                renderPyramidInterpretations();
-                
-                renderNewChartsInterpretations();
-                renderCycleInterpretations();
-                renderForecastInterpretations();
-
-                // Vì các hàm trên đã fix lỗi crash, dòng này sẽ được thực thi
-                setTimeout(setupReadMore, 500); // Tăng thời gian delay một chút để DOM render kịp
-            };
-
-            initPageData();
-        });
-
-        // [CẬP NHẬT] Hàm khởi tạo Mục Lục (Phân cấp H2/H3)
-    const initTOC = () => {
-        const tocList = document.getElementById('toc-list');
-        const tocToggle = document.getElementById('toc-toggle');
-        const tocContent = document.getElementById('toc-content');
-        
-        if (!tocList || !tocToggle) return;
-        
-        // Reset list để tránh bị duplicate nếu chạy lại
-        tocList.innerHTML = '';
-
-        // Quét các thẻ Heading
-        const headings = document.querySelectorAll('h2.head-outline, h3.section-subtitle');
-
-        headings.forEach((heading, index) => {
-            const text = heading.innerText.replace(/\n/g, ' ').trim();
-            if (!text) return;
-
-            if (!heading.id) {
-                heading.id = `section-toc-${index}`;
-            }
-
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `#${heading.id}`;
-            a.textContent = text;
-            
-            // [MỚI] Phân loại thẻ để thêm Class style
-            if (heading.tagName === 'H2') {
-                li.className = 'toc-h2'; // Class cho mục lớn (I, II, III...)
-            } else {
-                li.className = 'toc-h3'; // Class cho mục nhỏ
-            }
-            
-            // Xử lý click (Giữ nguyên logic fix cứng)
-            a.addEventListener('click', (e) => {
-                e.preventDefault();
-                tocContent.classList.remove('active');
-                
-                // Trả lại icon ban đầu
-                const icon = tocToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-list-ol');
-
-                const target = document.getElementById(heading.id);
-                if (target) {
-                    const headerOffset = 80;
-                    const elementPosition = target.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    
-                    window.scrollTo({
-                        top: offsetPosition,
-                        behavior: "smooth"
-                    });
-                }
-            });
-
-            li.appendChild(a);
-            tocList.appendChild(li);
-        });
-
-        // Các sự kiện click toggle giữ nguyên
-        tocToggle.onclick = () => {
-            tocContent.classList.toggle('active');
-            const icon = tocToggle.querySelector('i');
-            if (tocContent.classList.contains('active')) {
-                icon.classList.remove('fa-list-ol');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-list-ol');
-            }
-        };
-
-        document.onclick = (e) => {
-            if (!tocContent.contains(e.target) && !tocToggle.contains(e.target)) {
-                tocContent.classList.remove('active');
-                const icon = tocToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-list-ol');
-            }
-        };
-    };
-    </script>
 
 </BaseLayout>

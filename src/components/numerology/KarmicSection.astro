@@ -1,0 +1,71 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  debts: number[];
+  lessons: number[];
+  debtDataStore: Record<number, any>;
+  lessonDataStore: Record<number, any>;
+  isLocked?: boolean;
+}
+
+const { debts, lessons, debtDataStore, lessonDataStore, isLocked = false } = Astro.props;
+---
+
+{debts.length > 0 && (
+  <div class="karmic-debt-section fade-in-up mt-12 max-w-4xl mx-auto rich-text-content">
+    <div class="section-header text-center mb-8">
+      <h3 class="section-subtitle">Chỉ Số Nợ Nghiệp</h3>
+      <p class="section-text opacity-70">Các bài học quan trọng cần giải quyết</p>
+    </div>
+    
+    <NumerologySection title="Tổng Hợp Chỉ Số Nợ Nghiệp Cần Giải Quyết" isWarning={true} sectionId="karmic-debts-combined">
+      {isLocked ? (
+        <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+      ) : (
+        <div>
+          {debts.map(debtNum => {
+            const data = debtDataStore[debtNum];
+            if (!data) return null;
+            return (
+              <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                <h5 class="text-red-300 font-bold text-lg mb-2 uppercase">⚠️ {data.title || `Nợ nghiệp bài học ${debtNum}`}</h5>
+                <ContentBlock blocks={data.blocks} content={data.content} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </NumerologySection>
+  </div>
+)}
+
+{lessons.length > 0 && (
+  <div class="chart-section fade-in-up mt-12">
+    <div class="section-header text-center mb-8">
+      <h3 class="section-subtitle">Bài Học Đường Đời (Điểm Yếu)</h3>
+      <p class="section-text opacity-70">Những mảng khuyết thiếu cần được bồi đắp để hoàn thiện bản thân</p>
+    </div>
+    <div class="max-w-4xl mx-auto rich-text-content">
+      <NumerologySection title="Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)" sectionId="karmic-lessons-combined">
+        {isLocked ? (
+          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+        ) : (
+          <div>
+            {lessons.map(num => {
+              const data = lessonDataStore[num];
+              if (!data) return null;
+              return (
+                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                  <h5 class="text-white font-bold text-lg mb-2 uppercase">✦ Bài học thiếu số {num}</h5>
+                  <ContentBlock blocks={data.blocks} content={data.content} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </NumerologySection>
+    </div>
+  </div>
+)}

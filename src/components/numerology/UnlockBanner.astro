@@ -1,0 +1,339 @@
+---
+interface Props {
+  fullName: string;
+  dobStr: string;
+}
+
+const { fullName, dobStr } = Astro.props;
+---
+
+<div class="unlock-banner">
+  <div class="unlock-banner-glow-top"></div>
+  <div class="unlock-banner-glow-bottom"></div>
+  
+  <div class="unlock-banner-content">
+    <div class="unlock-icon-container">
+      <i class="fas fa-lock unlock-icon"></i>
+      <i class="fas fa-lock unlock-icon-ping"></i>
+    </div>
+    
+    <h3 class="unlock-title">
+      Khám phá bí mật ẩn giấu
+    </h3>
+    
+    <p class="unlock-desc">
+      Bạn đã xem qua các chỉ số nền tảng. Để mở khóa toàn bộ <strong>Đỉnh cao kim tự tháp, Dự báo vận hạn, và Nợ nghiệp</strong> chuyên sâu cho hồ sơ này, hãy lựa chọn:
+    </p>
+    
+    <div class="unlock-actions">
+      <button id="btn-unlock-credit" class="btn-unlock credit-btn">
+        <i class="fas fa-coins btn-icon bounce-icon"></i> 
+        <span class="btn-text">Dùng 3 Credit</span>
+      </button>
+      
+      <div class="unlock-or">HOẶC</div>
+      
+      <a href="/nap-credit" class="btn-unlock premium-btn">
+        <i class="fas fa-crown btn-icon pulse-icon"></i> 
+        <span>Mua Premium</span>
+      </a>
+    </div>
+    
+    <p class="unlock-note">
+      <i class="fas fa-info-circle info-icon"></i> Mở khóa bằng Credit có giá trị vĩnh viễn cho hồ sơ này.
+    </p>
+  </div>
+</div>
+
+<style>
+  .unlock-banner {
+    margin-top: 3rem;
+    padding: 3rem 2rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgba(242, 201, 76, 0.4);
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    text-align: center;
+    max-width: 56rem;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 0 50px rgba(242, 201, 76, 0.2);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.5s ease;
+  }
+  
+  .unlock-banner:hover {
+    box-shadow: 0 0 80px rgba(242, 201, 76, 0.3);
+    border-color: rgba(242, 201, 76, 0.6);
+  }
+
+  .unlock-banner-glow-top {
+    position: absolute;
+    top: -6rem;
+    right: -6rem;
+    width: 12rem;
+    height: 12rem;
+    background: rgba(242, 201, 76, 0.2);
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .unlock-banner-glow-bottom {
+    position: absolute;
+    bottom: -6rem;
+    left: -6rem;
+    width: 12rem;
+    height: 12rem;
+    background: rgba(168, 85, 247, 0.2); /* Purple glow */
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .unlock-banner-content {
+    position: relative;
+    z-index: 10;
+  }
+
+  .unlock-icon-container {
+    font-size: 3.75rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+  }
+
+  .unlock-icon {
+    color: rgba(242, 201, 76, 0.9);
+    filter: drop-shadow(0 0 15px rgba(242, 201, 76, 0.8));
+  }
+
+  .unlock-icon-ping {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #f2c94c;
+    opacity: 0.2;
+    animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  .unlock-title {
+    font-size: 2.25rem;
+    font-weight: 900;
+    background: linear-gradient(to right, #f2c94c, #fef08a, #f2c94c);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-shadow: 0 2px 10px rgba(242, 201, 76, 0.2);
+  }
+
+  .unlock-desc {
+    color: #d1d5db; /* gray-300 */
+    margin-bottom: 2.5rem;
+    max-width: 42rem;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 1.125rem;
+    line-height: 1.625;
+  }
+  
+  .unlock-desc strong {
+    color: #f2c94c;
+    font-weight: bold;
+  }
+
+  .unlock-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (min-width: 640px) {
+    .unlock-actions {
+      flex-direction: row;
+    }
+  }
+
+  .btn-unlock {
+    position: relative;
+    overflow: hidden;
+    padding: 1rem 2.5rem;
+    border-radius: 9999px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1rem;
+    border: none;
+  }
+
+  .credit-btn {
+    background: linear-gradient(to right, #f2c94c, #eab308, #f2c94c);
+    color: #000;
+    box-shadow: 0 0 30px rgba(242, 201, 76, 0.4);
+  }
+
+  .credit-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 50px rgba(242, 201, 76, 0.6);
+  }
+  
+  .credit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(100%);
+    transition: transform 0.3s ease-out;
+  }
+
+  .credit-btn:hover::before {
+    transform: translateY(0);
+  }
+
+  .premium-btn {
+    border: 2px solid rgba(242, 201, 76, 0.7);
+    color: #f2c94c;
+    background: transparent;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .premium-btn:hover {
+    background-color: #f2c94c;
+    color: #000;
+    box-shadow: 0 0 40px rgba(242, 201, 76, 0.4);
+  }
+
+  .unlock-or {
+    color: rgba(255, 255, 255, 0.5);
+    font-weight: 500;
+    font-size: 0.875rem;
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .unlock-or {
+      display: block;
+    }
+  }
+
+  .unlock-note {
+    font-size: 0.875rem;
+    color: #9ca3af; /* gray-400 */
+    margin-top: 2rem;
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .info-icon {
+    color: rgba(242, 201, 76, 0.7);
+    margin-right: 0.25rem;
+  }
+
+  /* Animations */
+  @keyframes ping {
+    75%, 100% {
+      transform: scale(2);
+      opacity: 0;
+    }
+  }
+
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(-25%);
+      animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .bounce-icon {
+    animation: bounce 2s infinite;
+  }
+
+  .premium-btn:hover .pulse-icon {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .btn-icon, .btn-text {
+    position: relative;
+    z-index: 10;
+  }
+  
+  .processing {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  
+  .success-state {
+    background: linear-gradient(to right, #4ade80, #16a34a) !important;
+    color: white !important;
+  }
+</style>
+
+<script define:vars={{ fullName, dobStr }}>
+  const btn = document.getElementById('btn-unlock-credit');
+  if (btn) {
+    btn.addEventListener('click', async () => {
+      const icon = btn.querySelector('.btn-icon');
+      const text = btn.querySelector('.btn-text');
+      
+      icon.className = 'fas fa-spinner fa-spin btn-icon text-xl';
+      text.innerText = 'Đang xử lý...';
+      btn.classList.add('processing');
+      
+      try {
+        const res = await fetch('/api/numerology/unlock', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ fullName, dobStr })
+        });
+        
+        const data = await res.json();
+        if (res.ok) {
+          icon.className = 'fas fa-check btn-icon text-xl';
+          text.innerText = 'Thành công!';
+          btn.classList.add('success-state');
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          alert('Lỗi: ' + data.error);
+          icon.className = 'fas fa-coins btn-icon bounce-icon text-xl';
+          text.innerText = 'Dùng 3 Credit';
+          btn.classList.remove('processing');
+        }
+      } catch (err) {
+        alert('Đã xảy ra lỗi mạng.');
+        icon.className = 'fas fa-coins btn-icon bounce-icon text-xl';
+        text.innerText = 'Dùng 3 Credit';
+        btn.classList.remove('processing');
+      }
+    });
+  }
+</script>

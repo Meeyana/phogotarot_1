@@ -1,0 +1,85 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  chartType: 'strength' | 'synthesis';
+  countsArray: number[];
+  arrowsList: { id: string, type: 'present'|'missing' }[];
+  missingList: number[];
+  dataStore: Record<number, any>;
+  arrowStore: Record<string, any>;
+  missingStore: Record<number, any>;
+  isLocked?: boolean;
+}
+
+const { chartType, countsArray, arrowsList, missingList, dataStore, arrowStore, missingStore, isLocked = false } = Astro.props;
+
+const boxTitle = chartType === 'strength' ? 'Tổng Hợp Luận Giải Biểu Đồ Ngày Sinh' : 'Tổng Hợp Luận Giải Biểu Đồ Tổng Hợp';
+---
+
+<NumerologySection title={boxTitle} sectionId={`${chartType}-combined-box`}>
+  {isLocked ? (
+    <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+  ) : (
+    <div>
+      {/* 1. Các số xuất hiện trong biểu đồ */}
+      {countsArray.map((count, index) => {
+        if (count === 0) return null;
+        const i = index + 1;
+        const numData = dataStore[i];
+        if (!numData) return null;
+        
+        return (
+          <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+            <h5 class="text-gold font-bold text-lg mb-2 uppercase">✦ {numData.title || `Số ${i}`}</h5>
+            <ContentBlock blocks={numData.blocks} content={numData.content} />
+          </div>
+        );
+      })}
+
+      {/* 2. Mũi tên */}
+      {arrowsList && arrowsList.length > 0 && arrowsList.map(arrow => {
+        const arrowDataConfig = arrowStore[arrow.id];
+        if (!arrowDataConfig) return null;
+        
+        const contentData = arrowDataConfig[arrow.type];
+        if (!contentData) return null;
+
+        const isPresent = arrow.type === 'present';
+        
+        return (
+          <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+            <h5 class={`text-${isPresent ? 'green-400' : 'gray-400'} font-bold text-lg mb-2 uppercase`}>
+              {isPresent ? '✔' : '✘'} {contentData.title}
+            </h5>
+            <ContentBlock blocks={contentData.blocks} content={contentData.content} />
+          </div>
+        );
+      })}
+
+      {/* 3. Số thiếu */}
+      {missingList && missingList.length > 0 && (
+        <div class="mt-8 mb-4">
+          <h4 class="text-red-400 font-bold text-xl uppercase border-b border-red-400/30 pb-2">⚠️ Điểm Cần Khắc Phục (Số Thiếu)</h4>
+          
+          {missingList.map(num => {
+            const missingData = missingStore[num];
+            if (!missingData) return null;
+            return (
+              <div class="mb-4 bg-red-900/10 p-4 rounded border border-red-500/20 mt-4">
+                <h5 class="text-red-300 font-bold text-md mb-1">Thiếu số {num}</h5>
+                <ContentBlock blocks={missingData.blocks} content={missingData.content} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Trường hợp trống */}
+      {countsArray.every(c => c === 0) && arrowsList.length === 0 && missingList.length === 0 && (
+        <p class="text-center opacity-60 italic">Không có thông tin nổi bật.</p>
+      )}
+    </div>
+  )}
+</NumerologySection>

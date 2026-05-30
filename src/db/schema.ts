@@ -90,3 +90,10 @@ export const messageLogs = sqliteTable('message_logs', {
   totalTokens: integer('total_tokens').default(0),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const unlockedNumerologyProfiles = sqliteTable('unlocked_numerology_profiles', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  profileId: text('profile_id').notNull(), 
+  unlockedAt: integer('unlocked_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+});

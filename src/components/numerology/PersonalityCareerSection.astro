@@ -1,0 +1,80 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  personalityStats: { id: string, label: string, percent: number }[];
+  careerStats: { id: string, label: string, percent: number }[];
+  pData: any;
+  cData: any;
+  isLocked?: boolean;
+}
+
+const { personalityStats, careerStats, pData, cData, isLocked = false } = Astro.props;
+
+// Lấy 2 tính cách nổi bật nhất
+const topTraits = [...personalityStats].sort((a,b) => b.percent - a.percent).slice(0, 2);
+const topCareer = careerStats[0]; // Ngành cao nhất
+---
+
+<div class="chart-section fade-in-up">
+  <div class="section-header text-center mb-8">
+    <p class="section-text opacity-70">Bản ngã tính cách & Định hướng nghề nghiệp</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
+    
+    {/* 1. TÍNH CÁCH */}
+    <div class="chart-column">
+      <div class="p-6 h-full rich-text-content">
+        <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
+        <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
+          <canvas id="personalityChart"></canvas>
+        </div>
+        
+        <NumerologySection title="Chi Tiết Luận Giải Tính Cách" sectionId="personality-combined-box">
+          {isLocked ? (
+            <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+          ) : (
+            <div>
+              {topTraits.map(t => {
+                const meaningData = pData?.meanings?.[t.id];
+                if (!meaningData) return null;
+                return (
+                  <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                    <h5 class="text-gold font-bold text-lg mb-2">✦ Tính cách: {t.label} ({t.percent}%)</h5>
+                    <ContentBlock blocks={meaningData.blocks} content={meaningData.content} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </NumerologySection>
+      </div>
+    </div>
+
+    {/* 2. NGHỀ NGHIỆP */}
+    <div class="chart-column">
+      <div class="p-6 h-full rich-text-content">
+        <h3 class="section-subtitle">Tỉ Lệ Nhóm Ngành Phù Hợp</h3>
+        <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
+          <canvas id="careerChart"></canvas>
+        </div>
+        
+        <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
+          {isLocked ? (
+            <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+          ) : topCareer && cData?.meanings?.[topCareer.id] ? (
+            <div class="mb-4">
+              <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: {topCareer.label} ({topCareer.percent}%)</h5>
+              <ContentBlock blocks={cData.meanings[topCareer.id].blocks} content={cData.meanings[topCareer.id].content} />
+            </div>
+          ) : (
+            <p class="text-center opacity-60">Không có dữ liệu.</p>
+          )}
+        </NumerologySection>
+      </div>
+    </div>
+    
+  </div>
+</div>

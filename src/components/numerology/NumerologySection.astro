@@ -1,0 +1,26 @@
+---
+interface Props {
+  title: string;
+  sectionId?: string;
+  icon?: string;
+  isWarning?: boolean;
+  className?: string;
+}
+
+const { title, sectionId, icon, isWarning = false, className = '' } = Astro.props;
+---
+
+<div id={sectionId} class={`number-interpretation-block glass-card mb-6 p-6 group ${isWarning ? 'border-red-400 bg-red-900/20' : ''} ${className}`}>
+  {title && (
+    <div class="interp-header flex items-center mb-4 border-b border-white/10 pb-2">
+      <h4 class={`text-xl ${isWarning ? 'text-red-300' : 'text-gold'} font-title uppercase`}>
+        {icon && <i class={`fas ${icon} mr-2`}></i>}
+        {title}
+      </h4>
+    </div>
+  )}
+  
+  <div class="interpretation-content-body expandable-content">
+    <slot />
+  </div>
+</div>

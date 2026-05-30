@@ -9,6 +9,7 @@ if (!Astro.locals.user) {
 const db = Astro.locals.runtime?.env?.DB;
 let historyList: any[] = [];
 let yesnoList: any[] = [];
+let numerologyList: any[] = [];
 
 if (db) {
   try {
@@ -29,6 +30,17 @@ if (db) {
     if (resYesNo && resYesNo.results) {
       yesnoList = resYesNo.results;
     }
+
+    const qNum = `SELECT profile_id, unlocked_at as created_at FROM unlocked_numerology_profiles WHERE user_id = ? ORDER BY unlocked_at DESC`;
+    try {
+      const resNum = await db.prepare(qNum).bind(Astro.locals.user.id).all();
+      if (resNum && resNum.results) {
+        numerologyList = resNum.results;
+      }
+    } catch (e) {
+      // Bỏ qua nếu bảng chưa tồn tại
+      console.log('Chưa có bảng numerology profiles hoặc lỗi lấy data', e);
+    }
   } catch (error) {
     console.error("Lỗi lấy danh sách lịch sử:", error);
   }
@@ -45,9 +57,10 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
             <p class="subtitle">Những thông điệp vũ trụ đã trao gửi cho bạn được lưu giữ an toàn tại đây.</p>
         </div>
 
-        <div class="tabs-container">
+        <div class="tabs-container flex-wrap">
             <button class="tab-btn active" data-target="tab-tarot">Bói bài Tarot</button>
             <button class="tab-btn" data-target="tab-yesno">Tarot Yes/No</button>
+            <button class="tab-btn" data-target="tab-numerology">Thần số học</button>
         </div>
 
         <div class="history-content">
@@ -128,6 +141,64 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
                 </div>
             )}
             </div>
+
+            <div id="tab-numerology" class="tab-content">
+            {numerologyList.length === 0 ? (
+                <div class="empty-state">
+                    <div class="empty-icon">🔢</div>
+                    <h3>Chưa có hồ sơ nào</h3>
+                    <p>Bạn chưa mở khóa bất kỳ hồ sơ thần số học nào.</p>
+                    <a href="/than-so-hoc" class="btn-primary">Tra cứu ngay</a>
+                </div>
+            ) : (
+                <div class="history-list">
+                    {numerologyList.map(item => {
+                        let dateObj;
+                        if (typeof item.created_at === 'number') {
+                            dateObj = new Date(item.created_at);
+                        } else if (typeof item.created_at === 'string') {
+                            const dateStr = item.created_at.replace(' ', 'T') + 'Z';
+                            dateObj = new Date(dateStr);
+                        } else {
+                            dateObj = new Date(); // fallback
+                        }
+                        
+                        const formattedDate = dateObj.toLocaleDateString('vi-VN', {
+                            timeZone: 'Asia/Ho_Chi_Minh',
+                            year: 'numeric', month: '2-digit', day: '2-digit',
+                            hour: '2-digit', minute: '2-digit'
+                        });
+                        
+                        const parts = item.profile_id.split('|');
+                        const rawName = parts[0] || 'Bạn Mình';
+                        const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+                        const dob = parts[1] || '';
+                        
+                        // Định dạng ngày sinh hiển thị
+                        const dobParts = dob.split('-');
+                        const displayDob = dobParts.length === 3 ? `${dobParts[2]}/${dobParts[1]}/${dobParts[0]}` : dob;
+
+                        return (
+                            <a href={`/ket-qua-than-so-hoc?name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`} class="history-card">
+                                <div class="card-icon" style="color: #4ade80;">
+                                    <i class="fa-solid fa-infinity" style="font-size: 1.5rem;"></i>
+                                </div>
+                                <div class="card-info">
+                                    <h3 class="card-title">Hồ sơ: {name}</h3>
+                                    <div class="card-meta">
+                                        <span class="date">Sinh ngày: {displayDob}</span>
+                                        <span class="date">• Mở khóa: {formattedDate}</span>
+                                    </div>
+                                </div>
+                                <div class="card-arrow">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </a>
+                        );
+                    })}
+                </div>
+            )}
+            </div>
         </div>
     </main>
 
@@ -152,6 +223,8 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
 
             if (activeTabParam === 'yesno') {
                 activateTab('tab-yesno');
+            } else if (activeTabParam === 'numerology') {
+                activateTab('tab-numerology');
             }
 
             btns.forEach(btn => {
@@ -161,7 +234,10 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
                         activateTab(target);
                         // Cập nhật URL mà không reload
                         const newUrl = new URL(window.location.href);
-                        newUrl.searchParams.set('tab', target === 'tab-yesno' ? 'yesno' : 'tarot');
+                        let tabVal = 'tarot';
+                        if (target === 'tab-yesno') tabVal = 'yesno';
+                        if (target === 'tab-numerology') tabVal = 'numerology';
+                        newUrl.searchParams.set('tab', tabVal);
                         window.history.pushState({}, '', newUrl);
                     }
                 });

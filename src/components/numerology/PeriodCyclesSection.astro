@@ -1,0 +1,61 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  periodCycles: {
+    c1: { number: number, ageRange: string, yearRange: string },
+    c2: { number: number, ageRange: string, yearRange: string },
+    c3: { number: number, ageRange: string, yearRange: string }
+  };
+  cyclesDataStore: Record<number, any>;
+  isLocked?: boolean;
+}
+
+const { periodCycles, cyclesDataStore, isLocked = false } = Astro.props;
+
+const list = [
+  { id: 1, label: 'Gieo Hạt', data: periodCycles.c1 },
+  { id: 2, label: 'Chín', data: periodCycles.c2 },
+  { id: 3, label: 'Thu Hoạch', data: periodCycles.c3 }
+];
+---
+
+<div class="cycle-grid fade-in-up mb-8">
+  {list.map(item => (
+    <div class="cycle-card glass-card">
+      <div class="neon-ring">
+        <span>{item.data.number}</span>
+      </div>
+      <h4 class="cycle-title">
+        Chu kỳ {item.id}
+        <span class="cycle-highlight">{item.label}</span>
+      </h4>
+      <div class="mt-4">
+        <p class="cycle-meta text-white">{item.data.ageRange}</p>
+        <p class="cycle-meta italic">({item.data.yearRange})</p>
+      </div>
+    </div>
+  ))}
+</div>
+
+<NumerologySection title="Chi Tiết Ý Nghĩa Các Giai Đoạn" sectionId="cycles-text-combined">
+  {isLocked ? (
+    <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+  ) : (
+    <div>
+      {list.map(item => {
+        const textData = cyclesDataStore[item.data.number];
+        if (!textData) return null;
+        return (
+          <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+            <h5 class="text-gold font-bold text-lg mb-2 uppercase">
+              ✦ Luận giải Chu kỳ {item.id} (Số {item.data.number})
+            </h5>
+            <ContentBlock blocks={textData.blocks} content={textData.content} />
+          </div>
+        );
+      })}
+    </div>
+  )}
+</NumerologySection>

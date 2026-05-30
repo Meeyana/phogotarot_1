@@ -25,10 +25,11 @@ export async function createSession(db: any, userId: string): Promise<string> {
 // Xác thực session
 export async function validateSession(db: any, sessionId: string) {
   const result = await db.prepare(`
-    SELECT sessions.*, users.id as user_id, users.email, user_profiles.full_name as name 
+    SELECT sessions.*, users.id as user_id, users.email, credit_wallets.subscription_expires_at as premium_until, credit_wallets.balance, user_profiles.full_name as name 
     FROM sessions 
     INNER JOIN users ON sessions.user_id = users.id 
     LEFT JOIN user_profiles ON sessions.user_id = user_profiles.user_id
+    LEFT JOIN credit_wallets ON sessions.user_id = credit_wallets.user_id
     WHERE sessions.id = ?
   `).bind(sessionId).first();
 
@@ -47,7 +48,9 @@ export async function validateSession(db: any, sessionId: string) {
     email: result.email,
     name: result.name,
     avatar: null,
-    role: 'user'
+    role: 'user',
+    premiumUntil: result.premium_until ? new Date(result.premium_until) : null,
+    credits: result.balance || 0
   };
 
   // Kiểm tra hết hạn
@@ -104,5 +107,13 @@ export async function hashPassword(password: string, envObj?: any): Promise<stri
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Kiểm tra xem user có mở khóa hồ sơ thần số học chưa
+export async function hasUnlockedProfile(db: any, userId: string, profileId: string): Promise<boolean> {
+  const result = await db.prepare('SELECT id FROM unlocked_numerology_profiles WHERE user_id = ? AND profile_id = ?')
+    .bind(userId, profileId)
+    .first();
+  return !!result;
 }
 

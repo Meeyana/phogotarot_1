@@ -1,0 +1,70 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  pyramidInfo: {
+    peaks: { p1: number, p2: number, p3: number, p4: number },
+    challenges: { c1: number, c2: number, c3: number, c4: number },
+    ages: { p1_text: string, p2_text: string, p3_text: string, p4_text: string }
+  };
+  pyramidDataStore: {
+    peaks: Record<number, any>,
+    challenges: Record<number, any>
+  };
+  isLocked?: boolean;
+}
+
+const { pyramidInfo, pyramidDataStore, isLocked = false } = Astro.props;
+
+const stages = [
+  { id: 1, label: "Giai đoạn 1 (Tuổi trẻ)", peak: pyramidInfo.peaks.p1, chal: pyramidInfo.challenges.c1, age: pyramidInfo.ages.p1_text },
+  { id: 2, label: "Giai đoạn 2 (Trưởng thành)", peak: pyramidInfo.peaks.p2, chal: pyramidInfo.challenges.c2, age: pyramidInfo.ages.p2_text },
+  { id: 3, label: "Giai đoạn 3 (Trung niên)", peak: pyramidInfo.peaks.p3, chal: pyramidInfo.challenges.c3, age: pyramidInfo.ages.p3_text },
+  { id: 4, label: "Giai đoạn 4 (Viên mãn)", peak: pyramidInfo.peaks.p4, chal: pyramidInfo.challenges.c4, age: pyramidInfo.ages.p4_text }
+];
+---
+
+<NumerologySection title="Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách" sectionId="pyramid-combined-box">
+  {isLocked ? (
+    <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+  ) : (
+    <div>
+      {stages.map(stage => {
+        const peakData = pyramidDataStore.peaks?.[stage.peak];
+        const chalData = pyramidDataStore.challenges?.[stage.chal];
+        
+        return (
+          <div class="pyramid-stage-block mb-10 p-6 rounded-xl bg-white/5 border border-white/10">
+            <div class="stage-header flex flex-col md:flex-row justify-between items-end border-b border-white/20 pb-4 mb-6">
+              <h4 class="text-2xl text-gold font-bold uppercase tracking-wide" style="text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);">
+                ✦ {stage.label}
+              </h4>
+              <span class="text-base text-gray-300 italic mt-2 md:mt-0 opacity-80">{stage.age}</span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div class="peak-col">
+                <h5 class="text-green-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
+                  <i class="fas fa-mountain"></i> Đỉnh cao số {stage.peak}
+                </h5>
+                <div class="text-sm opacity-90 text-justify">
+                  {peakData ? <ContentBlock blocks={peakData.blocks} content={peakData.content} /> : <p>Chưa có dữ liệu.</p>}
+                </div>
+              </div>
+
+              <div class="chal-col">
+                <h5 class="text-red-400 font-bold mb-3 text-lg uppercase flex items-center gap-2 border-b border-white/5 pb-2">
+                  <i class="fas fa-fire"></i> Thử thách số {stage.chal}
+                </h5>
+                <div class="text-sm opacity-90 text-justify">
+                  {chalData ? <ContentBlock blocks={chalData.blocks} content={chalData.content} /> : <p>Chưa có dữ liệu.</p>}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+</NumerologySection>

@@ -1,0 +1,27 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  lifePath: number;
+  data: any;
+  isLocked?: boolean;
+}
+
+const { lifePath, data, isLocked = false } = Astro.props;
+const title = data?.title || `Đường Đời Số ${lifePath}`;
+---
+
+<div class="section-header text-center mb-8">
+  <h3 class="section-subtitle">Số chủ đạo của bạn: Số {lifePath}</h3>
+</div>
+
+<NumerologySection title={title} sectionId={`lp-${lifePath}`}>
+  {isLocked ? (
+    <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+  ) : data ? (
+    <ContentBlock blocks={data.blocks} content={data.content} />
+  ) : (
+    <p class="text-center opacity-60">Đang cập nhật nội dung...</p>
+  )}
+</NumerologySection>

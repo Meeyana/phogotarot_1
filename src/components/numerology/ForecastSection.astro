@@ -1,0 +1,78 @@
+---
+import NumerologySection from './NumerologySection.astro';
+import ContentBlock from './ContentBlock.astro';
+
+interface Props {
+  forecastYears: { number: number, year: number }[];
+  forecastMonths: { number: number, month: number, year: number }[];
+  yearDataStore: Record<number, any>;
+  monthDataStore: Record<number, any>;
+  isLocked?: boolean;
+}
+
+const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked = false } = Astro.props;
+---
+
+{/* 1. DỰ BÁO NĂM */}
+{forecastYears.length > 0 && (
+  <div class="chart-section fade-in-up mt-12">
+    <div class="section-header text-center mb-8">
+      <h3 class="section-subtitle">Dự Báo Năm Cá Nhân</h3>
+      <p class="section-text opacity-70">Chi tiết 3 năm (Năm ngoái, Hiện tại, Năm tới)</p>
+    </div>
+    <div class="max-w-4xl mx-auto rich-text-content">
+      <NumerologySection title="Chi Tiết Vận Trình 3 Năm (Trước - Nay - Sau)" sectionId="years-forecast-combined">
+        {isLocked ? (
+          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+        ) : (
+          <div>
+            {forecastYears.map((item, index) => {
+              const yearData = yearDataStore[item.number];
+              if (!yearData) return null;
+              const subTitle = `Năm ${item.year} - Vận niên số ${item.number} ${index === 0 ? '(Hiện tại)' : ''}`;
+              
+              return (
+                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                  <h5 class="text-gold font-bold text-lg mb-2 uppercase">✦ {subTitle}</h5>
+                  <ContentBlock blocks={yearData.blocks} content={yearData.content} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </NumerologySection>
+    </div>
+  </div>
+)}
+
+{/* 2. DỰ BÁO THÁNG */}
+{forecastMonths.length > 0 && (
+  <div class="chart-section fade-in-up mt-12">
+    <div class="section-header text-center mb-8">
+      <h3 class="section-subtitle">Dự Báo Tháng Cá Nhân</h3>
+      <p class="section-text opacity-70">Chi tiết năng lượng 3 tháng sắp tới</p>
+    </div>
+    <div class="max-w-4xl mx-auto rich-text-content">
+      <NumerologySection title="Dự Báo Năng Lượng 3 Tháng Tới" sectionId="months-forecast-combined">
+        {isLocked ? (
+          <div class="text-center p-4">🔒 Nội dung Premium đang bị khóa</div>
+        ) : (
+          <div>
+            {forecastMonths.map((item) => {
+              const monthData = monthDataStore[item.number];
+              if (!monthData) return null;
+              const subTitle = `Tháng ${item.month}/${item.year} - Vận số ${item.number}`;
+              
+              return (
+                <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
+                  <h5 class="text-blue-300 font-bold text-lg mb-2 uppercase">✦ {subTitle}</h5>
+                  <ContentBlock blocks={monthData.blocks} content={monthData.content} />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </NumerologySection>
+    </div>
+  </div>
+)}
