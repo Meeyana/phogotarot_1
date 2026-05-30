@@ -53,6 +53,32 @@ export const POST: APIRoute = async (context) => {
     }
 
 
+    
+    let profile = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
+    if (db && queryUserId) {
+        try {
+            const row = await db.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
+            if (row) {
+                profile.name = row.nickname || row.full_name || 'lữ khách';
+                profile.gender = row.gender || 'bạn';
+                
+                let combinedPersona = [];
+                let basicInfo = [];
+                if (row.date_of_birth) basicInfo.push(`Sinh ngày: ${row.date_of_birth}`);
+                if (row.location) basicInfo.push(`Nơi ở: ${row.location}`);
+                
+                if (basicInfo.length > 0) combinedPersona.push(`- Thông tin cơ bản: ${basicInfo.join(', ')}`);
+                if (row.current_status) combinedPersona.push(`- Tình trạng hiện tại: ${row.current_status}`);
+                if (row.user_persona) combinedPersona.push(`- Đánh giá năng lượng từ AI (Lịch sử): ${row.user_persona}`);
+                
+                profile.user_persona = combinedPersona.join('\n');
+            }
+        } catch (err) {
+            console.error("Lỗi lấy user_profiles cho yesno:", err);
+        }
+    }
+    body.userProfile = profile;
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
