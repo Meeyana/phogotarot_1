@@ -72,7 +72,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
                         return (
                             <a href={`/history/${item.id}`} class="history-card">
                                 <div class="card-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+                                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size: 1.5rem;"></i>
                                 </div>
                                 <div class="card-info">
                                     <h3 class="card-title">{item.title}</h3>
@@ -111,7 +111,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
                         return (
                             <a href={`/history/yesno/${item.id}`} class="history-card">
                                 <div class="card-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                                    <i class="fa-solid fa-scale-balanced" style="font-size: 1.5rem;"></i>
                                 </div>
                                 <div class="card-info">
                                     <h3 class="card-title">{item.title}</h3>
@@ -231,7 +231,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
 
         .title {
             font-family: var(--font-title);
-            color: var(--gold-primary);
+            color: var(--gold-color);
             font-size: clamp(2rem, 5vw, 3rem);
             margin-bottom: 1rem;
             text-shadow: 0 0 15px rgba(242, 201, 76, 0.4);
@@ -259,7 +259,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
         }
 
         .empty-state h3 {
-            color: var(--gold-primary);
+            color: var(--gold-color);
             font-size: 1.5rem;
             margin-bottom: 1rem;
         }
@@ -313,7 +313,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
             width: 50px;
             height: 50px;
             background: rgba(242, 201, 76, 0.1);
-            color: var(--gold-primary);
+            color: var(--gold-color);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -351,7 +351,7 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
         }
 
         .history-card:hover .card-arrow {
-            color: var(--gold-primary);
+            color: var(--gold-color);
             transform: translateX(3px);
         }
 

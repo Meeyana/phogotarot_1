@@ -1,5 +1,5 @@
 :root {
-    --gold-primary: #F2C94C;
+    --gold-color: #F2C94C;
     --bg-dark: #0b132b;
     --bg-panel: rgba(11, 19, 43, 0.8);
     --text-white: #ffffff;
@@ -41,15 +41,15 @@ body {
     flex-shrink: 0;
 }
 .header-info { display: none !important; }
-.header-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 2px solid var(--gold-primary); }
+.header-avatar { width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 2px solid var(--gold-color); }
 .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .header-text { display: flex; flex-direction: column; }
-.oracle-name { color: var(--gold-primary); font-family: var(--font-title); font-weight: 700; font-size: 1.5rem; margin: 0; line-height: 1.2; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3); }
+.oracle-name { color: var(--gold-color); font-family: var(--font-title); font-weight: 700; font-size: 1.5rem; margin: 0; line-height: 1.2; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3); }
 .oracle-status { font-size: 0.9rem; color: #ccc; }
 .new-chat-btn {
     background: rgba(242, 201, 76, 0.08);
     border: 1px solid rgba(242, 201, 76, 0.35);
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
     border-radius: 50%; /* Nút hình tròn cực xịn */
     width: 36px;
     height: 36px;
@@ -61,8 +61,8 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 .new-chat-btn:hover {
-    background: var(--gold-primary, #F2C94C);
-    border-color: var(--gold-primary, #F2C94C);
+    background: var(--gold-color, #F2C94C);
+    border-color: var(--gold-color, #F2C94C);
     color: #0b132b;
     transform: scale(1.06); /* Phóng nhẹ khi hover rất nhạy */
     box-shadow: 0 4px 12px rgba(242, 201, 76, 0.25);
@@ -158,7 +158,7 @@ body {
 }
 
 .narrative-pill-btn.open {
-    border-color: var(--gold-primary);
+    border-color: var(--gold-color);
 }
 
 .pill-avatar {
@@ -166,7 +166,7 @@ body {
     height: 28px;
     border-radius: 50%;
     object-fit: cover;
-    border: 1.5px solid var(--gold-primary);
+    border: 1.5px solid var(--gold-color);
     box-shadow: 0 0 8px rgba(242, 201, 76, 0.3);
 }
 
@@ -178,7 +178,7 @@ body {
 
 .pill-name {
     font-size: 0.88rem;
-    color: var(--gold-primary);
+    color: var(--gold-color);
     font-family: var(--font-title);
     font-weight: 700;
 }
@@ -191,7 +191,7 @@ body {
 }
 
 .narrative-pill-btn:hover .pill-arrow {
-    fill: var(--gold-primary);
+    fill: var(--gold-color);
 }
 
 .narrative-pill-btn.open .pill-arrow {
@@ -236,7 +236,7 @@ body {
 }
 
 .profile-helper-text a {
-    color: var(--gold-primary) !important;
+    color: var(--gold-color) !important;
     text-decoration: underline !important;
     font-weight: 600;
     transition: color 0.2s ease;
@@ -294,10 +294,10 @@ body {
 }
 .message-content img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
 .message-content pre { white-space: pre-wrap; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; }
-.message-content code { font-family: monospace; color: var(--gold-primary); background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 4px; }
-.message-content a { color: var(--gold-primary); font-weight: bold; }
-.message-content strong { color: var(--gold-primary); }
-.message-content h1, .message-content h2, .message-content h3 { color: var(--gold-primary); font-family: var(--font-title); margin-top: 10px; font-size: 1.2rem; }
+.message-content code { font-family: monospace; color: var(--gold-color); background: rgba(0,0,0,0.2); padding: 2px 5px; border-radius: 4px; }
+.message-content a { color: var(--gold-color); font-weight: bold; }
+.message-content strong { color: var(--gold-color); }
+.message-content h1, .message-content h2, .message-content h3 { color: var(--gold-color); font-family: var(--font-title); margin-top: 10px; font-size: 1.2rem; }
 
 .bot-message {
     align-self: flex-start;
@@ -314,7 +314,7 @@ body {
     border-radius: 50%;
     overflow: hidden;
     flex-shrink: 0;
-    border: 2px solid var(--gold-primary, #F2C94C);
+    border: 2px solid var(--gold-color, #F2C94C);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     background: #0b132b;
     display: flex;
@@ -335,7 +335,7 @@ body {
 .typing-indicator {
     align-self: flex-start;
     background: transparent;
-    color: var(--gold-primary);
+    color: var(--gold-color);
     font-style: italic;
     font-size: 0.95rem;
     display: flex;
@@ -465,7 +465,7 @@ body {
     flex-shrink: 0;
 }
 .chat-input-area:focus-within {
-    border-color: var(--gold-primary);
+    border-color: var(--gold-color);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 0 10px rgba(242, 201, 76, 0.12);
     background: rgba(15, 23, 42, 0.7);
 }
@@ -541,14 +541,14 @@ body {
 }
 .dropdown-toggle:hover {
     background: rgba(15, 23, 42, 0.5);
-    border-color: var(--gold-primary);
+    border-color: var(--gold-color);
     box-shadow: 0 0 15px rgba(242, 201, 76, 0.15);
     color: #ffffff;
 }
 .dropdown-toggle.open {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-color: var(--gold-primary);
+    border-color: var(--gold-color);
 }
 .arrow-icon {
     transition: transform 0.3s ease;
@@ -586,7 +586,7 @@ body {
 
 /* Category headers inside dropdown (gold, uppercase) */
 .category-title {
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
     font-family: var(--font-title);
     font-size: 0.88rem;
     font-weight: 700;
@@ -615,11 +615,11 @@ body {
 }
 .suggestion-item:hover {
     background: rgba(242, 201, 76, 0.08);
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
 }
 
 /* Legacy item hover (keep for safety) */
-.suggested-q-item:hover { background: rgba(242, 201, 76, 0.15) !important; color: var(--gold-primary) !important; }
+.suggested-q-item:hover { background: rgba(242, 201, 76, 0.15) !important; color: var(--gold-color) !important; }
 
 .chat-page-container:not(.initial-state) .initial-only-dropdown { display: none !important; }
 
@@ -631,7 +631,7 @@ body {
     width: 100%;
 }
 .profile-title {
-    font-family: var(--font-title); color: var(--gold-primary); text-align: center;
+    font-family: var(--font-title); color: var(--gold-color); text-align: center;
 }
 .profile-subtitle {
     text-align: center; color: rgba(255, 255, 255, 0.8); margin-bottom: 2rem; font-size: 0.95rem;
@@ -656,11 +656,11 @@ body {
 .form-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 .form-group select option { background: #0b132b; color: #fff; }
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    outline: none; border-color: var(--gold-primary); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
+    outline: none; border-color: var(--gold-color); background: rgba(255, 255, 255, 0.1); box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
 }
 .btn-primary {
     display: inline-flex; justify-content: center; align-items: center;
-    background-color: var(--gold-primary); color: #0b132b; border: none;
+    background-color: var(--gold-color); color: #0b132b; border: none;
     padding: 12px 20px; border-radius: 8px; font-weight: 700; font-size: 1rem;
     cursor: pointer; transition: all 0.3s;
 }
@@ -717,7 +717,7 @@ body {
 #drawing-screen { padding-top: 0.5rem !important; }
 
 .question-display-header {
-    font-family: var(--font-title); color: var(--gold-primary);
+    font-family: var(--font-title); color: var(--gold-color);
     font-size: clamp(1.15rem, 2.5vw, 1.35rem); /* Dùng clamp để chữ tự động co giãn và nhỏ lại khi hiển thị trên màn hình nhỏ/chữ dài */
     margin-bottom: 1rem; text-align: center; text-shadow: 0 0 10px rgba(242, 201, 76, 0.3);
     border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; width: 100%;
@@ -850,9 +850,9 @@ body {
     border-radius: 12px; cursor: pointer; color: white; transition: all 0.2s ease;
 }
 .reader-toggle:hover { background: rgba(255, 255, 255, 0.1); }
-.reader-toggle-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-primary); margin-right: 12px; }
+.reader-toggle-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold-color); margin-right: 12px; }
 .reader-toggle-info { flex-grow: 1; text-align: left; display: flex; flex-direction: column; }
-#selected-reader-name { font-weight: bold; font-size: 1rem; color: var(--gold-primary); font-family: var(--font-title); }
+#selected-reader-name { font-weight: bold; font-size: 1rem; color: var(--gold-color); font-family: var(--font-title); }
 .reader-desc-sm { font-size: 0.8rem; color: rgba(255, 255, 255, 0.7); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
 
 .reader-dropdown-menu {
@@ -898,7 +898,7 @@ body {
 
 .seo-title {
     font-family: var(--font-title);
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
     font-size: 1.8rem;
     text-align: center;
     margin-bottom: 1.5rem;
@@ -952,13 +952,13 @@ body {
 
 .seo-examples {
     background: rgba(242, 201, 76, 0.05);
-    border-left: 3px solid var(--gold-primary, #F2C94C);
+    border-left: 3px solid var(--gold-color, #F2C94C);
     padding: 1.5rem;
     border-radius: 0 12px 12px 0;
 }
 
 .example-title {
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
     font-size: 1.25rem;
     margin-bottom: 1rem;
     font-family: var(--font-title);
@@ -980,7 +980,7 @@ body {
     content: "✦";
     position: absolute;
     left: 0;
-    color: var(--gold-primary, #F2C94C);
+    color: var(--gold-color, #F2C94C);
 }
 
 .example-list li:last-child {

@@ -47,7 +47,7 @@ export const POST: APIRoute = async (context) => {
                 
                 if (!isPremium && wallet.balance <= 0 && wallet.daily_credits <= 0) {
                     return new Response(JSON.stringify({ 
-                        error: 'Bạn đã hết lượt xem bài. Vui lòng <a href="/nap-credit" style="color: var(--gold-primary); text-decoration: underline;">nạp thêm Credit</a> để tiếp tục.', 
+                        error: 'Bạn đã hết lượt xem bài. Vui lòng <a href="/nap-credit" style="color: var(--gold-color); text-decoration: underline;">nạp thêm Credit</a> để tiếp tục.', 
                         code: 'OUT_OF_CREDITS' 
                     }), { status: 402 });
                 }

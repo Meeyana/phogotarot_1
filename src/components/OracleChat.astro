@@ -51,7 +51,7 @@ const isLoggedIn = !!user;
 <style is:global>
   /* --- VARIABLES --- */
   :root {
-    --gold-primary: #F2C94C;
+    --gold-color: #F2C94C;
     --bg-dark: #0b132b;
     --bg-panel: rgba(20, 27, 45, 0.95);
     --text-white: #ffffff;
@@ -66,7 +66,7 @@ const isLoggedIn = !!user;
   /* --- NÚT TRÒN --- */
   .oracle-btn {
     width: 60px; height: 60px; border-radius: 50%; padding: 0;
-    border: 2px solid var(--gold-primary); background: var(--bg-dark); color: var(--gold-primary);
+    border: 2px solid var(--gold-color); background: var(--bg-dark); color: var(--gold-color);
     cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex; align-items: center; justify-content: center;
@@ -102,7 +102,7 @@ const isLoggedIn = !!user;
   .header-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .header-text { display: flex; flex-direction: column; justify-content: center; }
   .oracle-name { color: var(--text-white); font-weight: 700; font-size: 1rem; line-height: 1.2; }
-  .oracle-status { font-size: 0.75rem; color: var(--gold-primary); font-weight: 500; }
+  .oracle-status { font-size: 0.75rem; color: var(--gold-color); font-weight: 500; }
   .close-btn { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; padding: 0; transition: color 0.2s; }
   .close-btn:hover { color: var(--text-white); }
   .icon-btn { background: none; border: none; color: #aaa; cursor: pointer; padding: 5px; display: flex; transition: color 0.2s; }
@@ -202,7 +202,7 @@ const isLoggedIn = !!user;
   .bot-message .message-content { background: rgba(255, 255, 255, 0.1); color: #eee; border-bottom-left-radius: 2px; }
   
   .user-message { align-self: flex-end; }
-  .user-message .message-content { background: var(--gold-primary); color: var(--bg-dark); border-bottom-right-radius: 2px; font-weight: 600; }
+  .user-message .message-content { background: var(--gold-color); color: var(--bg-dark); border-bottom-right-radius: 2px; font-weight: 600; }
 
   /* --- REACTION STYLE (MỚI - MENU NẰM DƯỚI) --- */
   
@@ -255,7 +255,7 @@ const isLoggedIn = !!user;
     right: -5px;  /* Đè sang phải */
     
     background: var(--bg-dark);
-    border: 1px solid var(--gold-primary);
+    border: 1px solid var(--gold-color);
     border-radius: 50%;
     width: 20px; height: 20px;
     display: flex; align-items: center; justify-content: center;
@@ -274,9 +274,9 @@ const isLoggedIn = !!user;
   }
 
   /* --- CSS MARKDOWN --- */
-  .message-content strong { color: var(--gold-primary); font-weight: 700; text-shadow: 0 0 5px rgba(242, 201, 76, 0.3); }
-  .message-content a { color: var(--gold-primary); text-decoration: underline; font-weight: 600; }
-  .message-content a:hover { text-shadow: 0 0 8px var(--gold-primary); }
+  .message-content strong { color: var(--gold-color); font-weight: 700; text-shadow: 0 0 5px rgba(242, 201, 76, 0.3); }
+  .message-content a { color: var(--gold-color); text-decoration: underline; font-weight: 600; }
+  .message-content a:hover { text-shadow: 0 0 8px var(--gold-color); }
   .message-content em { color: #fff; font-style: italic; opacity: 0.9; }
   .message-content p { margin: 0 0 8px 0; }
   .message-content p:last-child { margin-bottom: 0; }
@@ -299,7 +299,7 @@ const isLoggedIn = !!user;
 
 
   #send-btn {
-    background: transparent; border: none; color: var(--gold-primary);
+    background: transparent; border: none; color: var(--gold-color);
     width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
     display: flex; align-items: center; justify-content: center; transition: background 0.2s;
   }
@@ -331,8 +331,8 @@ const isLoggedIn = !!user;
 
 .option-chip {
   background: transparent;
-  border: 1px solid var(--gold-primary);
-  color: var(--gold-primary);
+  border: 1px solid var(--gold-color);
+  color: var(--gold-color);
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -343,7 +343,7 @@ const isLoggedIn = !!user;
 }
 
 .option-chip:hover {
-  background: var(--gold-primary);
+  background: var(--gold-color);
   color: var(--bg-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 10px rgba(242, 201, 76, 0.3);
