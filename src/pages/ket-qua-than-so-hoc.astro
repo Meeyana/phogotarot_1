@@ -336,7 +336,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                    
                     <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} />
+                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} />
                     </div>
                 </div>
 
@@ -355,7 +355,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={numData.getPersonalityChartData()} cData={numData.getCareerChartData()} />
+                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={numData.getPersonalityChartData()} cData={numData.getCareerChartData()} isLocked={isLocked} />
 
                 <div class="divider-section"></div>
 

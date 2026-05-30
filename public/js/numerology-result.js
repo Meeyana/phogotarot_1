@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btnWrapper.className = 'text-center mt-4 pt-2 border-t border-white/5 relative z-10';
 
                 const btn = document.createElement('button');
-                btn.className = 'read-more-btn inline-flex items-center gap-2 px-6 py-2 rounded-full border border-gold/50 text-gold hover:bg-gold hover:text-black transition-all text-sm font-bold uppercase tracking-wider';
+                btn.className = 'read-more-btn inline-flex items-center gap-2 px-6 py-2 rounded-full border border-gold/50 text-gold transition-all text-sm font-bold uppercase tracking-wider';
                 btn.innerHTML = 'Xem chi tiết <i class="fas fa-chevron-down"></i>';
                 
                 btn.addEventListener('click', (e) => {
