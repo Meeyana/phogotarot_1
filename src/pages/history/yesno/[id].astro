@@ -113,16 +113,14 @@ const pageDesc = "Xem lại chi tiết trải bài Yes/No của bạn.";
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof showdown !== 'undefined') {
-                const converter = new showdown.Converter();
+                const converter = new showdown.Converter({ simpleLineBreaks: true, emoji: true });
                 document.querySelectorAll('.markdown-body').forEach(el => {
                     const rawContent = el.innerHTML;
-                    if (rawContent.includes('**') || rawContent.includes('##')) {
-                        const decoded = rawContent
-                            .replace(/&lt;/g, '<')
-                            .replace(/&gt;/g, '>')
-                            .replace(/&amp;/g, '&');
-                        el.innerHTML = converter.makeHtml(decoded);
-                    }
+                    const decoded = rawContent
+                        .replace(/&lt;/g, '<')
+                        .replace(/&gt;/g, '>')
+                        .replace(/&amp;/g, '&');
+                    el.innerHTML = converter.makeHtml(decoded);
                 });
             }
 
@@ -295,7 +293,9 @@ const pageDesc = "Xem lại chi tiết trải bài Yes/No của bạn.";
 
         .chat-drawn-cards {
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 12px;
             margin-bottom: 15px;
             overflow-x: auto;
             padding-bottom: 15px;
