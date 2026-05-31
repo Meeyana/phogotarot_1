@@ -5,7 +5,7 @@ export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
   email: text('email').unique(),
   passwordHash: text('password_hash'),
-  status: text('status').default('active'),
+  status: text('status', { enum: ['active', 'suspended', 'banned'] }).default('active'),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
@@ -50,7 +50,7 @@ export const paymentTransactions = sqliteTable('payment_transactions', {
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   amount: real('amount').notNull(),
   currency: text('currency').default('VND'),
-  status: text('status').notNull(),
+  status: text('status', { enum: ['pending', 'completed', 'failed', 'refunded'] }).notNull(),
   paymentGateway: text('payment_gateway'),
   gatewayTransactionId: text('gateway_transaction_id'),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),

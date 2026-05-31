@@ -1,8 +1,18 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit } from '../../../lib/rate-limiter';
+
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
+    // Rate Limiting
+    const clientIp = context.clientAddress || 'unknown';
+    const identifier = context.locals.user ? context.locals.user.id : clientIp;
+    const rateLimit = checkRateLimit(identifier, 5, 60);
+    if (!rateLimit.success) {
+      return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi 1 phút rồi thử lại.' }), { status: 429 });
+    }
+
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const webhookUrl = env.N8N_VALIDATE_YESNO;
