@@ -58,7 +58,7 @@ if (Astro.locals.user) {
         <form id="otp-form" class="auth-form" style="display: none;">
           <div class="form-group">
             <label for="otp">Mã Xác Nhận OTP</label>
-            <input type="text" id="otp" name="otp" placeholder="Nhập mã 6 số từ email" required maxlength="6" pattern="\\d{6}" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;" />
+            <input type="text" id="otp" name="otp" placeholder="Nhập mã 6 số" required maxlength="6" class="otp-input" inputmode="numeric" oninput="this.value = this.value.replace(/[^0-9]/g, '')" autocomplete="one-time-code" />
             <p style="font-size: 0.85rem; color: #aaa; margin-top: 10px; text-align: center;">Mã OTP đã được gửi đến email của bạn.<br/>Vui lòng kiểm tra cả hộp thư rác (Spam).</p>
           </div>
 
@@ -85,6 +85,7 @@ if (Astro.locals.user) {
     const errorMessage = document.getElementById('error-message');
     const successMessage = document.getElementById('success-message');
     const submitBtn = document.getElementById('submit-btn');
+    const googleBtn = document.getElementById('google-login-btn');
     const otpForm = document.getElementById('otp-form');
     const otpErrorMessage = document.getElementById('otp-error-message');
     const otpSubmitBtn = document.getElementById('otp-submit-btn');
@@ -175,6 +176,12 @@ if (Astro.locals.user) {
         const otp = otpInput.value.trim();
 
         if (!otp || !pendingRegistrationData) return;
+        
+        if (otp.length !== 6) {
+          otpErrorMessage.innerText = 'Vui lòng nhập đủ 6 số.';
+          otpErrorMessage.style.display = 'block';
+          return;
+        }
 
         const originalText = otpSubmitBtn.innerText;
         otpSubmitBtn.innerText = 'Đang xác thực...';
@@ -195,10 +202,12 @@ if (Astro.locals.user) {
           const result = await res.json();
 
           if (!res.ok) {
-            otpErrorMessage.innerText = result.error || 'Mã xác nhận không đúng.';
+            otpErrorMessage.innerText = result.error || 'Mã OTP sai, vui lòng kiểm tra và nhập lại.';
             otpErrorMessage.style.display = 'block';
             otpSubmitBtn.innerText = originalText;
             otpSubmitBtn.removeAttribute('disabled');
+            otpInput.value = ''; // Reset input để nhập lại
+            otpInput.focus();
           } else if (result.success) {
             if (successMessage) {
               successMessage.innerText = 'Đăng ký thành công! Đang chuyển hướng...';
@@ -381,6 +390,19 @@ if (Astro.locals.user) {
       border-color: var(--gold-color, #F2C94C);
       box-shadow: 0 0 10px rgba(242, 201, 76, 0.2);
       background: rgba(0, 0, 0, 0.5);
+    }
+    
+    .otp-input {
+      text-align: center;
+      font-size: 1.5rem !important;
+      letter-spacing: 8px;
+      font-weight: bold;
+    }
+    
+    .otp-input::placeholder {
+      font-size: 1rem;
+      letter-spacing: normal;
+      font-weight: normal;
     }
 
     .error-message {
