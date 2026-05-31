@@ -16,25 +16,20 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin gói nạp' }), { status: 400 });
     }
 
-    // Mapping bảng giá cứng trên server (Bảo mật)
-    const PACKAGES: Record<string, number> = {
-      'Khởi Đầu (3 lượt)': 49000,
-      'Đồng Hành (10 lượt)': 129000,
-      'Vương Giả (Gói Tháng)': 199000,
-      'Chuyên Gia (Gói Năm)': 599000,
-      'Khai Sáng (Trọn Đời)': 799000
-    };
-    
-    const serverAmount = PACKAGES[package_id];
-    if (!serverAmount) {
-      return new Response(JSON.stringify({ error: 'Gói nạp không hợp lệ' }), { status: 400 });
-    }
-
     const env: any = context.locals.runtime?.env ?? {};
     const db = env.DB;
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database not configured' }), { status: 500 });
     }
+
+    // Lấy thông tin gói nạp từ Database bảng packages
+    const packageRecord = await db.prepare('SELECT price, is_active FROM packages WHERE id = ?').bind(package_id).first();
+    
+    if (!packageRecord || !packageRecord.is_active) {
+      return new Response(JSON.stringify({ error: 'Gói nạp không tồn tại hoặc đã ngừng bán' }), { status: 400 });
+    }
+    
+    const serverAmount = packageRecord.price;
 
     // Kiểm tra nếu đã có đơn hàng pending cho cùng user + package trong 20 phút
     const existing = await db.prepare(`

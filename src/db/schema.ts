@@ -112,3 +112,14 @@ export const otpCodes = sqliteTable('otp_codes', {
   expiresAt: integer('expires_at').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const packages = sqliteTable('packages', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  price: integer('price').notNull(),
+  originalPrice: integer('original_price'),
+  credits: integer('credits').notNull(),
+  type: text('type').notNull(),
+  isActive: integer('is_active', { mode: 'boolean' }).default(true),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+});

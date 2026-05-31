@@ -144,33 +144,36 @@ export const POST: APIRoute = async (context) => {
 
     const crypto = globalThis.crypto;
 
-    // === Cộng Credit theo gói ===
-    if (reqAmount === 49000) {
-      await db.prepare('UPDATE credit_wallets SET balance = balance + 3 WHERE user_id = ?').bind(userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 3, 'purchase', 'Nạp thẻ gói 49K (SePay)')`).bind(crypto.randomUUID(), userId).run();
-      console.log('[SePay Webhook] +3 credits for user:', userId);
-    } else if (reqAmount === 129000) {
-      await db.prepare('UPDATE credit_wallets SET balance = balance + 10 WHERE user_id = ?').bind(userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 10, 'purchase', 'Nạp thẻ gói 129K (SePay)')`).bind(crypto.randomUUID(), userId).run();
-      console.log('[SePay Webhook] +10 credits for user:', userId);
-    } else if (reqAmount === 199000) {
-      const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
-      expiresAt.setMonth(expiresAt.getMonth() + 1);
-      const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+    // Lấy thông tin gói nạp từ Database
+    const packageRecord = await db.prepare('SELECT * FROM packages WHERE id = ?').bind(request.package_id).first();
+    if (!packageRecord) {
+      console.error('[SePay Webhook] Package not found in DB:', request.package_id);
+      return new Response(JSON.stringify({ success: false, error: 'Package not found' }), { status: 400 });
+    }
+
+    // === Cộng Credit / Gói VIP dựa trên thông tin DB ===
+    if (packageRecord.type === 'pack') {
+      const creditsToAdd = packageRecord.credits;
+      await db.prepare('UPDATE credit_wallets SET balance = balance + ? WHERE user_id = ?').bind(creditsToAdd, userId).run();
+      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageRecord.name} (SePay)`).run();
+      console.log(`[SePay Webhook] +${creditsToAdd} credits for user:`, userId);
+    } else if (packageRecord.type === 'subscription') {
+      let expiresAt: Date | null = new Date(new Date().getTime() + 7 * 3600 * 1000); // VN Time
+      let expStr: string | null = null;
+      
+      if (packageRecord.id === 'Vương Giả (Gói Tháng)') {
+        expiresAt.setMonth(expiresAt.getMonth() + 1);
+        expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+      } else if (packageRecord.id === 'Chuyên Gia (Gói Năm)') {
+        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+        expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+      } else if (packageRecord.id === 'Khai Sáng (Trọn Đời)') {
+        expStr = null; // NULL nghĩa là vĩnh viễn
+      }
+
       await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Tháng (SePay)')`).bind(crypto.randomUUID(), userId).run();
-      console.log('[SePay Webhook] Premium 1 month for user:', userId);
-    } else if (reqAmount === 599000) {
-      const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
-      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-      const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
-      await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Năm (SePay)')`).bind(crypto.randomUUID(), userId).run();
-      console.log('[SePay Webhook] Premium 1 year for user:', userId);
-    } else if (reqAmount === 799000) {
-      await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = NULL WHERE user_id = ?').bind('premium', userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium Trọn Đời (SePay)')`).bind(crypto.randomUUID(), userId).run();
-      console.log('[SePay Webhook] Premium lifetime for user:', userId);
+      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageRecord.name} (SePay)`).run();
+      console.log(`[SePay Webhook] Premium (${packageRecord.id}) for user:`, userId);
     }
 
     // SePay yêu cầu trả về { success: true } trong body
