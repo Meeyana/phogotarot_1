@@ -95,5 +95,7 @@ export const unlockedNumerologyProfiles = sqliteTable('unlocked_numerology_profi
   id: text('id').primaryKey(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   profileId: text('profile_id').notNull(), 
+  nickname: text('nickname'),
+  gender: text('gender'),
   unlockedAt: integer('unlocked_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });

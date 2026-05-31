@@ -2,10 +2,12 @@
 interface Props {
   fullName: string;
   dobStr: string;
+  nickname?: string;
+  gender?: string;
   currentCredit?: number;
 }
 
-const { fullName, dobStr, currentCredit = 0 } = Astro.props;
+const { fullName, dobStr, nickname = '', gender = '', currentCredit = 0 } = Astro.props;
 ---
 
 <div id="unlock-modal" class="unlock-modal-overlay">
@@ -377,7 +379,7 @@ const { fullName, dobStr, currentCredit = 0 } = Astro.props;
   }
 </style>
 
-<script define:vars={{ fullName, dobStr }}>
+<script define:vars={{ fullName, dobStr, nickname, gender }}>
   const modal = document.getElementById('unlock-modal');
   const btnClose = document.getElementById('btn-close-unlock-modal');
   
@@ -436,7 +438,7 @@ const { fullName, dobStr, currentCredit = 0 } = Astro.props;
         const res = await fetch('/api/numerology/unlock', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fullName, dobStr })
+          body: JSON.stringify({ fullName, dobStr, nickname, gender })
         });
         
         const data = await res.json();

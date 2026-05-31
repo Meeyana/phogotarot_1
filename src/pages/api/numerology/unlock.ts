@@ -20,19 +20,21 @@ export const POST: APIRoute = async (context) => {
     }
 
     const body = await request.json();
-    const { fullName, dobStr } = body;
+    const { fullName, dobStr, nickname = '', gender = '' } = body;
 
     if (!fullName || !dobStr) {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin hồ sơ.' }), { status: 400 });
     }
 
-    const profileId = `${fullName.toLowerCase().trim()}|${dobStr}`;
+    const profileId = `${fullName.toLowerCase().trim()}|${dobStr}|${nickname.toLowerCase().trim()}|${gender.toLowerCase().trim()}`;
 
     // Đảm bảo bảng tồn tại
     try {
-        await rawDB.prepare(`CREATE TABLE IF NOT EXISTS unlocked_numerology_profiles (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, profile_id TEXT NOT NULL, unlocked_at INTEGER DEFAULT CURRENT_TIMESTAMP)`).run();
+        await rawDB.prepare(`CREATE TABLE IF NOT EXISTS unlocked_numerology_profiles (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, profile_id TEXT NOT NULL, nickname TEXT, gender TEXT, unlocked_at INTEGER DEFAULT CURRENT_TIMESTAMP)`).run();
+        try { await rawDB.prepare(`ALTER TABLE unlocked_numerology_profiles ADD COLUMN nickname TEXT`).run(); } catch(e){}
+        try { await rawDB.prepare(`ALTER TABLE unlocked_numerology_profiles ADD COLUMN gender TEXT`).run(); } catch(e){}
     } catch (e) {
-        console.error('Lỗi khi tạo bảng trong API:', e);
+        console.error('Lỗi khi tạo/cập nhật bảng trong API:', e);
     }
 
     // Kiểm tra xem đã mở khóa chưa
@@ -64,8 +66,8 @@ export const POST: APIRoute = async (context) => {
       .run();
 
     // 3. Lưu hồ sơ đã mở
-    await rawDB.prepare('INSERT INTO unlocked_numerology_profiles (id, user_id, profile_id) VALUES (?, ?, ?)')
-      .bind(crypto.randomUUID(), user.id, profileId)
+    await rawDB.prepare('INSERT INTO unlocked_numerology_profiles (id, user_id, profile_id, nickname, gender) VALUES (?, ?, ?, ?, ?)')
+      .bind(crypto.randomUUID(), user.id, profileId, nickname, gender)
       .run();
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });

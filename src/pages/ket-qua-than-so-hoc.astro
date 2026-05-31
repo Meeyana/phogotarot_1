@@ -33,6 +33,7 @@ const url = Astro.url;
 const fullName = url.searchParams.get('name') || "Bạn Mình";
 const dobStr = url.searchParams.get('dob') || "2000-01-01";
 const nickname = url.searchParams.get('nickname') || "";
+const gender = url.searchParams.get('gender') || "";
 
 // KIỂM TRA QUYỀN TRUY CẬP (PAYWALL)
 const user = Astro.locals.user;
@@ -44,7 +45,7 @@ if (!user) {
 
 let isPremium = false;
 let hasUnlocked = false;
-const profileId = `${fullName.toLowerCase().trim()}|${dobStr}`;
+const profileId = `${fullName.toLowerCase().trim()}|${dobStr}|${nickname.toLowerCase().trim()}|${gender.toLowerCase().trim()}`;
 
 if (user) {
     const rawDB = Astro.locals.runtime?.env?.DB || process.env.DB;
@@ -398,7 +399,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
                 <ForecastSection forecastYears={forecast.years} forecastMonths={forecast.months} yearDataStore={yearDataStore} monthDataStore={monthDataStore} isLocked={isLocked} />
                 
-                {isLocked && <UnlockBanner fullName={fullName} dobStr={dobStr} currentCredit={user?.credits || 0} />}
+                {isLocked && <UnlockBanner fullName={fullName} dobStr={dobStr} nickname={nickname} gender={gender} currentCredit={user?.credits || 0} />}
 
             </div> 
         </section> 

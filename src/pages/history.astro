@@ -31,7 +31,7 @@ if (db) {
       yesnoList = resYesNo.results;
     }
 
-    const qNum = `SELECT profile_id, unlocked_at as created_at FROM unlocked_numerology_profiles WHERE user_id = ? ORDER BY unlocked_at DESC`;
+    const qNum = `SELECT profile_id, nickname, gender, unlocked_at as created_at FROM unlocked_numerology_profiles WHERE user_id = ? ORDER BY unlocked_at DESC`;
     try {
       const resNum = await db.prepare(qNum).bind(Astro.locals.user.id).all();
       if (resNum && resNum.results) {
@@ -178,8 +178,11 @@ const pageDesc = "Xem lại những thông điệp và lời khuyên từ vũ tr
                         const dobParts = dob.split('-');
                         const displayDob = dobParts.length === 3 ? `${dobParts[2]}/${dobParts[1]}/${dobParts[0]}` : dob;
 
+                        const nicknameParam = item.nickname ? `&nickname=${encodeURIComponent(item.nickname)}` : '';
+                        const genderParam = item.gender ? `&gender=${encodeURIComponent(item.gender)}` : '';
+
                         return (
-                            <a href={`/ket-qua-than-so-hoc?name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}`} class="history-card">
+                            <a href={`/ket-qua-than-so-hoc?name=${encodeURIComponent(name)}&dob=${encodeURIComponent(dob)}${nicknameParam}${genderParam}`} class="history-card">
                                 <div class="card-icon" style="color: #4ade80;">
                                     <i class="fa-solid fa-infinity" style="font-size: 1.5rem;"></i>
                                 </div>
