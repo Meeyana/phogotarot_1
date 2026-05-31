@@ -110,10 +110,16 @@ export async function hashPassword(password: string, envObj?: any): Promise<stri
 }
 
 // Kiểm tra xem user có mở khóa hồ sơ thần số học chưa
-export async function hasUnlockedProfile(db: any, userId: string, profileId: string): Promise<boolean> {
-  const result = await db.prepare('SELECT id FROM unlocked_numerology_profiles WHERE user_id = ? AND profile_id = ?')
+export async function hasUnlockedProfile(db: any, userId: string, profileId: string, legacyProfileId?: string): Promise<boolean> {
+  let result = await db.prepare('SELECT id FROM unlocked_numerology_profiles WHERE user_id = ? AND profile_id = ?')
     .bind(userId, profileId)
     .first();
+    
+  if (!result && legacyProfileId) {
+      result = await db.prepare('SELECT id FROM unlocked_numerology_profiles WHERE user_id = ? AND profile_id = ?')
+        .bind(userId, legacyProfileId)
+        .first();
+  }
   return !!result;
 }
 

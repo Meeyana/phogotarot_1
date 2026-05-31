@@ -63,6 +63,12 @@ const schema = {
       <p class="hero-subtitle">
         Nhập <span class="text-gold">Họ Tên</span> trên giấy khai sinh và <span class="text-gold">Ngày Sinh</span> dương lịch để vũ trụ gửi đến bạn bản đồ định mệnh.
       </p>
+      
+      {!isLoggedIn && (
+        <a href="/login?redirect=/than-so-hoc" class="login-badge" style="margin-top: 15px; display: inline-block; padding: 6px 16px; background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 20px; color: #F2C94C; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease;">
+            <i class="fa-solid fa-lock" style="margin-right: 5px;"></i> Bạn cần đăng nhập để sử dụng miễn phí
+        </a>
+      )}
     </section>
 
     <!-- Input Form - Style Dark Glass -->

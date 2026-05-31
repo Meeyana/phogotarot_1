@@ -58,7 +58,7 @@ if (user) {
         } catch (e) {
             console.error('Lỗi khi tạo bảng:', e);
         }
-        hasUnlocked = await hasUnlockedProfile(rawDB, user.id, profileId);
+        hasUnlocked = await hasUnlockedProfile(rawDB, user.id, profileId, `${fullName.toLowerCase().trim()}|${dobStr}`);
     }
 }
 

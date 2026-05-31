@@ -27,6 +27,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     const profileId = `${fullName.toLowerCase().trim()}|${dobStr}|${nickname.toLowerCase().trim()}|${gender.toLowerCase().trim()}`;
+    const legacyProfileId = `${fullName.toLowerCase().trim()}|${dobStr}`;
 
     // Đảm bảo bảng tồn tại
     try {
@@ -41,7 +42,7 @@ export const POST: APIRoute = async (context) => {
     const existing = await db.select().from(unlockedNumerologyProfiles)
       .where(eq(unlockedNumerologyProfiles.userId, user.id));
     
-    const isUnlocked = existing.some(p => p.profileId === profileId);
+    const isUnlocked = existing.some(p => p.profileId === profileId || p.profileId === legacyProfileId);
     if (isUnlocked || (user.premiumUntil && user.premiumUntil.getTime() > Date.now())) {
       return new Response(JSON.stringify({ success: true, message: 'Hồ sơ đã được mở khóa sẵn.' }), { status: 200 });
     }
