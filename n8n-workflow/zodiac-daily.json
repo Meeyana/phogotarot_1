@@ -269,6 +269,31 @@
           "name": "Google Service Account account"
         }
       }
+    },
+    {
+      "parameters": {
+        "jsCode": "const allZodiacs = $('Code in JavaScript').all().map(i => i.json);\nif (!allZodiacs.length) return [];\nconst dateStr = allZodiacs[0].date;\n\nconst parts = dateStr.split(\"-\");\nconst displayDate = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;\n\n// Tính Unix Timestamp cho 7:00 sáng cùng ngày (Múi giờ VN: UTC+7)\nconst publishDate = new Date(`${dateStr}T07:00:00+07:00`);\nconst scheduleUnix = Math.floor(publishDate.getTime() / 1000);\nconst nowUnix = Math.floor(Date.now() / 1000);\n\n// FB yêu cầu scheduled_publish_time phải lớn hơn hiện tại ít nhất 10 phút (600 giây)\nlet isScheduled = true;\nif (nowUnix + 600 >= scheduleUnix) {\n  isScheduled = false; // Đã quá 6h50 sáng, đăng ngay lập tức!\n}\n\n// Cấu hình mã UTM để tracking GA4\nconst utmUrl = `https://phogotarot.com/zodiac-daily?utm_source=facebook&utm_medium=social_auto&utm_campaign=zodiac_daily&utm_content=${dateStr}`;\nconst hashtags = \"#tarot #zodiac #12cunghoangdao #tarotdaily #phogotarot #cunghoangdao\";\n\nconst templates = [\n  {\n    header: `🔮 THÔNG ĐIỆP TAROT HÀNG NGÀY (${displayDate}) 🔮\\nVũ trụ gửi gắm điều gì đến 12 chòm sao hôm nay? Cùng điểm qua thẻ bài đại diện, màu sắc, đồ vật và địa điểm may mắn nhé:\\n\\n`,\n    footer: `✨ Trải bài chi tiết về Tình Yêu, Công việc & Tài Chính đã có trên web!\\n👉 Đọc luận giải đầy đủ nhất tại link bên dưới: ${utmUrl}\\n\\n${hashtags}`\n  },\n  {\n    header: `✨ NĂNG LƯỢNG TAROT NGÀY ${displayDate} ✨\\nHé lộ thông điệp từ các lá bài Tarot cho 12 cung hoàng đạo. Ai sẽ bùng nổ năng lượng hôm nay?\\n\\n`,\n    footer: `👉 Khám phá ngay dự báo Tình cảm và Sự nghiệp của bạn tại link bên dưới: ${utmUrl}\\n\\n${hashtags}`\n  },\n  {\n    header: `🌟 TRẢI BÀI TAROT 12 CUNG HOÀNG ĐẠO (${displayDate}) 🌟\\nSắp xếp hành trang ngày mới cùng những gợi ý may mắn từ vũ trụ:\\n\\n`,\n    footer: `🔮 Xem ngay lời khuyên tổng quan chi tiết tại link bên dưới: ${utmUrl}\\n\\n${hashtags}`\n  },\n  {\n    header: `🌙 LỜI THÌ THẦM TỪ VŨ TRỤ (${displayDate}) 🌙\\nMỗi lá bài Tarot là một thông điệp ẩn giấu. Cùng xem vũ trụ muốn nói gì với 12 chòm sao ngày hôm nay:\\n\\n`,\n    footer: `💌 Đừng bỏ lỡ những dự báo bất ngờ về Tình yêu và Tiền bạc. Xem chi tiết tại link bên dưới: ${utmUrl}\\n\\n${hashtags}`\n  },\n  {\n    header: `🔥 BẢN ĐỒ SAO & TAROT (${displayDate}) 🔥\\nChuẩn bị tinh thần đón nhận một ngày đầy năng lượng với những lá bài đại diện và vận may của 12 cung hoàng đạo:\\n\\n`,\n    footer: `📌 Xem luận giải sâu hơn cho cung của bạn tại link bên dưới: ${utmUrl}\\n\\n${hashtags}`\n  }\n];\n\nconst tpl = templates[Math.floor(Math.random() * templates.length)];\n\nconst zodiacIcons = {\n  \"Bạch Dương\": \"♈\", \"Kim Ngưu\": \"♉\", \"Song Tử\": \"♊\", \"Cự Giải\": \"♋\", \n  \"Sư Tử\": \"♌\", \"Xử Nữ\": \"♍\", \"Thiên Bình\": \"♎\", \"Bọ Cạp\": \"♏\", \n  \"Nhân Mã\": \"♐\", \"Ma Kết\": \"♑\", \"Bảo Bình\": \"♒\", \"Song Ngư\": \"♓\"\n};\n\nlet body = \"\";\nallZodiacs.forEach(item => {\n  const icon = zodiacIcons[item.zodiacSign] || \"⭐\";\n  body += `${icon} ${item.zodiacSign.toUpperCase()}: ${item.cardName}\\n`;\n  body += `   🎨 Màu may mắn: ${item.luckyColor}\\n`;\n  body += `   🎁 Vật may mắn: ${item.luckyObjects}\\n`;\n  body += `   📍 Địa điểm: ${item.luckyLocations}\\n\\n`; // Dòng trống để cách biệt giữa các cung\n});\n\nconst finalPost = tpl.header + body + tpl.footer;\n\n// Xây dựng gói tin Payload cho API của Facebook\nconst fbPayload = {\n  message: finalPost,\n  link: utmUrl,\n  access_token: \"ĐIỀN_TOKEN_VĨNH_VIỄN_CỦA_BẠN_VÀO_ĐÂY\"\n};\n\nif (isScheduled) {\n  fbPayload.published = false;\n  fbPayload.scheduled_publish_time = scheduleUnix;\n} else {\n  fbPayload.published = true;\n}\n\nreturn {\n  json: {\n    fbPayload: fbPayload\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 200],
+      "id": "format-fb-post-node",
+      "name": "Format FB Post"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.facebook.com/v25.0/942980862224764/feed",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.fbPayload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [780, 200],
+      "id": "post-to-fb-node",
+      "name": "Post to Fanpage"
     }
   ],
   "connections": {
@@ -302,7 +327,9 @@
     },
     "Loop Over Items": {
       "main": [
-        [],
+        [
+          {"node": "Format FB Post", "type": "main", "index": 0}
+        ],
         [
           {"node": "Build Prompt", "type": "main", "index": 0}
         ]
@@ -333,6 +360,13 @@
       "main": [
         [
           {"node": "Loop Over Items", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Format FB Post": {
+      "main": [
+        [
+          {"node": "Post to Fanpage", "type": "main", "index": 0}
         ]
       ]
     }

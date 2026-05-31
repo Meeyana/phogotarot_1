@@ -43,6 +43,9 @@ const allCustomPages = [...cardUrls, ...blogUrls];
 export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'server',
+  redirects: {
+    '/tarot': '/xem-tarot'
+  },
   adapter: cloudflare({
     platformProxy: {
       enabled: true
