@@ -18,8 +18,8 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin xác thực' }), { status: 400 });
     }
 
-    // Lấy OTP từ DB
-    const otpRecord = await db.prepare('SELECT id, otp_code, expires_at FROM otp_codes WHERE email = ? ORDER BY created_at DESC LIMIT 1')
+    // Lấy OTP từ DB (cần có attempts)
+    const otpRecord = await db.prepare('SELECT id, otp_code, expires_at, attempts FROM otp_codes WHERE email = ? ORDER BY created_at DESC LIMIT 1')
       .bind(email)
       .first();
 
@@ -27,9 +27,22 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Không tìm thấy mã xác nhận cho email này.' }), { status: 400 });
     }
 
+    // 1. Kiểm tra giới hạn 20 lần toàn bộ
+    const totalFailed = await db.prepare('SELECT SUM(attempts) as total FROM otp_codes WHERE email = ?').bind(email).first();
+    if (totalFailed && totalFailed.total >= 20) {
+      return new Response(JSON.stringify({ error: 'Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau.' }), { status: 400 });
+    }
+
+    // 2. Kiểm tra giới hạn 10 lần cho mã OTP này
+    if (otpRecord.attempts >= 10) {
+      return new Response(JSON.stringify({ error: 'Bạn đã thử quá nhiều lần đối với mã này, vui lòng gửi lại mã mới.' }), { status: 400 });
+    }
+
     // Kiểm tra mã OTP
     if (otpRecord.otp_code !== otp) {
-      return new Response(JSON.stringify({ error: 'Mã xác nhận không chính xác.' }), { status: 400 });
+      // Tăng số lần thử sai
+      await db.prepare('UPDATE otp_codes SET attempts = attempts + 1 WHERE id = ?').bind(otpRecord.id).run();
+      return new Response(JSON.stringify({ error: 'Mã OTP sai, vui lòng kiểm tra và nhập lại.' }), { status: 400 });
     }
 
     // Kiểm tra hết hạn

@@ -31,10 +31,19 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Email đã được sử dụng' }), { status: 400 });
     }
 
-    // Đảm bảo bảng otp_codes tồn tại
+    // Đảm bảo bảng otp_codes tồn tại và có cột attempts
     try {
         await db.prepare(`CREATE TABLE IF NOT EXISTS otp_codes (id TEXT PRIMARY KEY, email TEXT NOT NULL, otp_code TEXT NOT NULL, expires_at INTEGER NOT NULL, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)`).run();
+        try { await db.prepare(`ALTER TABLE otp_codes ADD COLUMN attempts INTEGER DEFAULT 0`).run(); } catch(e) {}
     } catch(e) { console.error(e); }
+
+    // Kiểm tra nếu tổng số lần nhập sai >= 20 thì chặn gửi tiếp
+    try {
+      const totalFailed = await db.prepare('SELECT SUM(attempts) as total FROM otp_codes WHERE email = ?').bind(email).first();
+      if (totalFailed && totalFailed.total >= 20) {
+        return new Response(JSON.stringify({ error: 'Bạn đã nhập sai quá nhiều lần. Vui lòng thử lại sau.' }), { status: 400 });
+      }
+    } catch (e) { console.error(e); }
 
     // Tạo mã OTP 6 số
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
