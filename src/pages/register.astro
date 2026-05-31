@@ -54,7 +54,24 @@ if (Astro.locals.user) {
           <button type="submit" class="submit-btn" id="submit-btn">Đăng Ký</button>
         </form>
 
-        <div class="auth-footer">
+        <!-- Form Nhập OTP (Ẩn lúc đầu) -->
+        <form id="otp-form" class="auth-form" style="display: none;">
+          <div class="form-group">
+            <label for="otp">Mã Xác Nhận OTP</label>
+            <input type="text" id="otp" name="otp" placeholder="Nhập mã 6 số từ email" required maxlength="6" pattern="\\d{6}" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px;" />
+            <p style="font-size: 0.85rem; color: #aaa; margin-top: 10px; text-align: center;">Mã OTP đã được gửi đến email của bạn.<br/>Vui lòng kiểm tra cả hộp thư rác (Spam).</p>
+          </div>
+
+          <div id="otp-error-message" class="error-message" style="display: none;"></div>
+
+          <button type="submit" class="submit-btn" id="otp-submit-btn">Xác Nhận Đăng Ký</button>
+          
+          <div style="text-align: center; margin-top: 15px;">
+            <button type="button" id="resend-otp-btn" style="background: none; border: none; color: var(--gold-color, #F2C94C); text-decoration: underline; cursor: pointer; font-size: 0.9rem;">Gửi lại mã</button>
+          </div>
+        </form>
+
+        <div class="auth-footer" id="auth-footer">
           <p>Đã có tài khoản? <a href="/login">Đăng nhập</a></p>
         </div>
       </div>
@@ -68,7 +85,13 @@ if (Astro.locals.user) {
     const errorMessage = document.getElementById('error-message');
     const successMessage = document.getElementById('success-message');
     const submitBtn = document.getElementById('submit-btn');
-    const googleBtn = document.getElementById('google-login-btn');
+    const otpForm = document.getElementById('otp-form');
+    const otpErrorMessage = document.getElementById('otp-error-message');
+    const otpSubmitBtn = document.getElementById('otp-submit-btn');
+    const resendOtpBtn = document.getElementById('resend-otp-btn');
+    const authFooter = document.getElementById('auth-footer');
+
+    let pendingRegistrationData: any = null;
 
     if (googleBtn) {
       googleBtn.addEventListener('click', async () => {
@@ -105,7 +128,7 @@ if (Astro.locals.user) {
         const data = Object.fromEntries(formData.entries());
 
         try {
-          const res = await fetch('/api/auth/register', {
+          const res = await fetch('/api/auth/send-register-otp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
@@ -119,17 +142,116 @@ if (Astro.locals.user) {
             submitBtn.innerText = originalText;
             submitBtn.removeAttribute('disabled');
           } else if (result.success) {
-            successMessage.innerText = 'Đăng ký thành công! Đang chuyển hướng...';
-            successMessage.style.display = 'block';
-            setTimeout(() => {
-              window.location.href = result.redirect || '/';
-            }, 1000);
+            pendingRegistrationData = data;
+            
+            // Chuyển sang form OTP
+            registerForm.style.display = 'none';
+            if (googleBtn) googleBtn.style.display = 'none';
+            document.querySelector('.divider')?.setAttribute('style', 'display: none;');
+            if (authFooter) authFooter.style.display = 'none';
+            
+            document.querySelector('.auth-header h1')!.innerHTML = 'Xác Nhận Email';
+            document.querySelector('.auth-header p')!.innerHTML = `Mã xác nhận đã được gửi đến <strong>${data.email}</strong>`;
+            
+            if (otpForm) otpForm.style.display = 'block';
           }
         } catch (error) {
           errorMessage.innerText = 'Lỗi kết nối. Vui lòng thử lại sau.';
           errorMessage.style.display = 'block';
           submitBtn.innerText = originalText;
           submitBtn.removeAttribute('disabled');
+        }
+      });
+    }
+
+    // Xử lý submit OTP
+    if (otpForm && otpErrorMessage && otpSubmitBtn) {
+      otpForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        otpErrorMessage.style.display = 'none';
+        if (successMessage) successMessage.style.display = 'none';
+        
+        const otpInput = document.getElementById('otp') as HTMLInputElement;
+        const otp = otpInput.value.trim();
+
+        if (!otp || !pendingRegistrationData) return;
+
+        const originalText = otpSubmitBtn.innerText;
+        otpSubmitBtn.innerText = 'Đang xác thực...';
+        otpSubmitBtn.setAttribute('disabled', 'true');
+
+        const payload = {
+          ...pendingRegistrationData,
+          otp
+        };
+
+        try {
+          const res = await fetch('/api/auth/verify-register-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await res.json();
+
+          if (!res.ok) {
+            otpErrorMessage.innerText = result.error || 'Mã xác nhận không đúng.';
+            otpErrorMessage.style.display = 'block';
+            otpSubmitBtn.innerText = originalText;
+            otpSubmitBtn.removeAttribute('disabled');
+          } else if (result.success) {
+            if (successMessage) {
+              successMessage.innerText = 'Đăng ký thành công! Đang chuyển hướng...';
+              successMessage.style.display = 'block';
+              otpForm.style.display = 'none';
+            }
+            setTimeout(() => {
+              window.location.href = result.redirect || '/';
+            }, 1000);
+          }
+        } catch (error) {
+          otpErrorMessage.innerText = 'Lỗi kết nối. Vui lòng thử lại sau.';
+          otpErrorMessage.style.display = 'block';
+          otpSubmitBtn.innerText = originalText;
+          otpSubmitBtn.removeAttribute('disabled');
+        }
+      });
+    }
+
+    // Xử lý gửi lại mã
+    if (resendOtpBtn) {
+      resendOtpBtn.addEventListener('click', async () => {
+        if (!pendingRegistrationData) return;
+        
+        const originalText = resendOtpBtn.innerText;
+        resendOtpBtn.innerText = 'Đang gửi...';
+        resendOtpBtn.setAttribute('disabled', 'true');
+        if (otpErrorMessage) otpErrorMessage.style.display = 'none';
+
+        try {
+          const res = await fetch('/api/auth/send-register-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pendingRegistrationData)
+          });
+          
+          if (!res.ok) {
+             const result = await res.json();
+             if (otpErrorMessage) {
+               otpErrorMessage.innerText = result.error || 'Lỗi gửi lại mã.';
+               otpErrorMessage.style.display = 'block';
+             }
+          } else {
+             alert('Mã xác nhận mới đã được gửi đến email của bạn.');
+          }
+        } catch(e) {
+             if (otpErrorMessage) {
+               otpErrorMessage.innerText = 'Lỗi kết nối khi gửi lại mã.';
+               otpErrorMessage.style.display = 'block';
+             }
+        } finally {
+          resendOtpBtn.innerText = originalText;
+          resendOtpBtn.removeAttribute('disabled');
         }
       });
     }

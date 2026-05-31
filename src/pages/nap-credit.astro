@@ -180,6 +180,8 @@ const user = Astro.locals.user;
             <button class="success-popup-btn" id="success-popup-close">Tuyệt vời!</button>
         </div>
     </div>
+    <!-- Confetti Script -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </BaseLayout>
 
 <style>
@@ -1155,6 +1157,11 @@ const user = Astro.locals.user;
         50% { box-shadow: 0 0 0 12px rgba(76,175,80,0); }
     }
 
+    @keyframes premiumPulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255,215,0,0.4); }
+        50% { box-shadow: 0 0 0 15px rgba(255,215,0,0); }
+    }
+
     .success-popup-title {
         color: #fff;
         font-size: 1.5rem;
@@ -1213,8 +1220,66 @@ const user = Astro.locals.user;
     }
 
     // ===== Success Popup =====
-    function showSuccessPopup() {
+    function showSuccessPopup(isPremium = false) {
         const popup = document.getElementById('success-popup');
+        const iconRing = document.querySelector('.success-icon-ring');
+        const title = document.querySelector('.success-popup-title');
+        const message = document.querySelector('.success-popup-message');
+        const btn = document.querySelector('.success-popup-btn');
+
+        if (isPremium) {
+            iconRing.innerHTML = '<i class="fa-solid fa-crown"></i>';
+            iconRing.style.color = '#FFD700';
+            iconRing.style.borderColor = 'rgba(255, 215, 0, 0.6)';
+            iconRing.style.background = 'radial-gradient(circle, rgba(255, 215, 0, 0.2) 0%, transparent 70%)';
+            iconRing.style.animation = 'premiumPulse 2s ease infinite';
+            
+            title.innerHTML = 'Nâng Cấp Thành Công!';
+            title.style.color = '#FFD700';
+            title.style.textShadow = '0 0 15px rgba(255, 215, 0, 0.4)';
+            
+            message.innerHTML = 'Chúc mừng bạn đã trở thành VIP.<br>Tất cả tính năng Premium đã được mở khóa! 👑';
+            
+            btn.style.background = 'linear-gradient(135deg, #FFD700, #F2994A)';
+            btn.style.color = '#000';
+            btn.style.boxShadow = '0 0 20px rgba(242, 201, 76, 0.4)';
+            
+            // Pháo bông bay
+            if (window.confetti) {
+                var duration = 3500;
+                var end = Date.now() + duration;
+
+                (function frame() {
+                    window.confetti({
+                        particleCount: 6,
+                        angle: 60,
+                        spread: 60,
+                        origin: { x: 0 },
+                        colors: ['#FFD700', '#F2994A', '#FFFFFF', '#ff6b6b']
+                    });
+                    window.confetti({
+                        particleCount: 6,
+                        angle: 120,
+                        spread: 60,
+                        origin: { x: 1 },
+                        colors: ['#FFD700', '#F2994A', '#FFFFFF', '#ff6b6b']
+                    });
+
+                    if (Date.now() < end) {
+                        requestAnimationFrame(frame);
+                    }
+                }());
+            }
+        } else {
+            // Reset to default
+            iconRing.innerHTML = '<i class="fa-solid fa-check"></i>';
+            iconRing.style.cssText = '';
+            title.innerHTML = 'Thanh toán thành công!';
+            title.style.cssText = '';
+            message.innerHTML = 'Credit đã được cộng vào tài khoản của bạn.<br>Chúc bạn trải nghiệm vui vẻ! 🌟';
+            btn.style.cssText = '';
+        }
+
         popup.classList.add('show');
     }
 
@@ -1238,6 +1303,7 @@ const user = Astro.locals.user;
         
         let currentTransactionId = null;
         let checkInterval = null;
+        let isPremiumPurchase = false;
 
         // ===== Billing Toggle logic for VIP Premium =====
         const toggleBtns = document.querySelectorAll('.billing-toggle-btn');
@@ -1352,6 +1418,7 @@ const user = Astro.locals.user;
                 
                 const amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
+                isPremiumPurchase = pkgName.includes('Vương Giả') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao');
                 
                 // Bản đồ tên gói hiển thị thân thiện (Cơ Bản / Nâng Cao)
                 const friendlyNames = {
@@ -1469,7 +1536,7 @@ const user = Astro.locals.user;
                     
                     setTimeout(() => {
                         closeModal();
-                        showSuccessPopup();
+                        showSuccessPopup(isPremiumPurchase);
                     }, 800);
                 } else if (data.success && data.status === 'insufficient') {
                     // Nạp thiếu tiền

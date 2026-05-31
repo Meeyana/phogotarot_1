@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS otp_codes (
+    id TEXT PRIMARY KEY,
+    email TEXT NOT NULL,
+    otp_code TEXT NOT NULL,
+    expires_at INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

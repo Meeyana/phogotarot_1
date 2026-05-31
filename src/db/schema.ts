@@ -104,3 +104,11 @@ export const unlockedNumerologyProfiles = sqliteTable('unlocked_numerology_profi
   gender: text('gender'),
   unlockedAt: integer('unlocked_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const otpCodes = sqliteTable('otp_codes', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull(),
+  otpCode: text('otp_code').notNull(),
+  expiresAt: integer('expires_at').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+});
