@@ -1,0 +1,340 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{}]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-512, 256],
+      "id": "6e65c810-e6da-4c03-a5cb-f318dbf33876",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"zodiacs\": [\"Bạch Dương\", \"Kim Ngưu\", \"Song Tử\", \"Cự Giải\",\"Sư Tử\",\"Xử Nữ\",\"Thiên Bình\",\"Bọ Cạp\",\"Nhân Mã\",\"Ma Kết\",\"Bảo Bình\",\"Song Ngư\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-320, 288],
+      "id": "ca8647ed-0ff2-4ed2-91a3-59c7033bc0c2",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 370354473,
+          "mode": "list"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [-128, 336],
+      "id": "985515e6-79aa-4e55-86fa-dd8e643c773b",
+      "name": "list_card",
+      "credentials": {
+        "googleApi": {
+          "id": "csqzboerlakrLVzv",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ===== INPUT =====\nconst zodiacsList = $('Edit Fields').first().json.zodiacs;\nconst allCards = $('list_card').all().map(item => ({\n  cardName: item.json['CardName'],\n  url: item.json['ImageURL']\n}));\n\n// ===== KHO DỮ LIỆU ĐA DẠNG THEO BỘ BÀI =====\nconst suitData = {\n  \"Wands\": {\n    colors: [\"đỏ rực\", \"cam đào\", \"vàng chanh\", \"đỏ tía\", \"vàng đồng\"],\n    objects: [\"bật lửa\", \"nến thơm\", \"kính râm\", \"giày thể thao\", \"mũ lưỡi trai\", \"bình giữ nhiệt\", \"đèn pin mini\", \"áo khoác da\", \"vòng tay chỉ đỏ\", \"móc khóa kim loại\"],\n    locations: [\"phòng gym\", \"sân vận động\", \"khu cắm trại\", \"phố đi bộ\", \"quán pub\", \"nhà hàng BBQ\", \"sân thượng lộng gió\", \"khu vui chơi giải trí\", \"bể bơi ngoài trời\", \"đỉnh núi\"]\n  },\n  \"Pentacles\": {\n    colors: [\"nâu đất\", \"xanh lục\", \"xanh rêu\", \"xám ngọc trai\", \"đen huyền bí\"],\n    objects: [\"ví da\", \"đồng hồ đeo tay\", \"sổ planner\", \"chậu cây mini\", \"đồng xu may mắn\", \"hộp đựng namecard\", \"cốc sứ\", \"nhẫn bạc\", \"túi vải canvas\", \"kẹp sách gỗ\"],\n    locations: [\"nhà sách\", \"quán cà phê yên tĩnh\", \"công viên\", \"vườn bách thảo\", \"siêu thị\", \"ngân hàng\", \"tiệm bánh ngọt\", \"vườn hoa\", \"cửa hàng đồ cổ\", \"nhà hàng chay\"]\n  },\n  \"Swords\": {\n    colors: [\"xanh lam\", \"trắng tinh khôi\", \"bạc lấp lánh\", \"xanh ngọc\", \"vàng nhạt\"],\n    objects: [\"tai nghe\", \"cuốn sách yêu thích\", \"điện thoại di động\", \"bút bi\", \"kính viễn cận\", \"máy tính bảng\", \"sổ tay nhỏ\", \"gương mini\", \"nước hoa\", \"chiếc ô nhỏ\"],\n    locations: [\"thư viện\", \"rạp chiếu phim\", \"studio nghệ thuật\", \"quán nhạc acoustic\", \"bảo tàng\", \"phòng triển lãm\", \"quán cà phê sách\", \"trung tâm thương mại\", \"cửa hàng tiện ích\", \"sân bay hoặc bến xe\"]\n  },\n  \"Cups\": {\n    colors: [\"xanh nước biển\", \"tím mộng mơ\", \"hồng pastel\", \"xanh mòng két\", \"trắng ngà\"],\n    objects: [\"bình nước thủy tinh\", \"vòng tay phong thủy\", \"đá thanh tẩy\", \"bùa bình an\", \"mặt dây chuyền\", \"cốc trà\", \"chiếc khăn tay\", \"kem dưỡng da\", \"gối tựa cổ\", \"khăn choàng mềm\"],\n    locations: [\"bờ sông\", \"ven hồ\", \"hồ bơi\", \"quán trà đạo\", \"ngôi chùa thanh tịnh\", \"phòng tập yoga\", \"nhà hàng hải sản\", \"spa thư giãn\", \"bờ biển\", \"cửa hàng lưu niệm\"]\n  }\n};\n\n// Tổng hợp kho Major Arcana (Gộp tất cả lại cho các lá Ẩn Chính)\nconst majorData = {\n  colors: [],\n  objects: [],\n  locations: []\n};\nfor (const suit of Object.values(suitData)) {\n  majorData.colors.push(...suit.colors);\n  majorData.objects.push(...suit.objects);\n  majorData.locations.push(...suit.locations);\n}\nsuitData[\"Major\"] = majorData;\n\n// ===== SHUFFLE =====\nfunction shuffleArray(array) {\n  const shuffled = [...array];\n  for (let i = shuffled.length - 1; i > 0; i--) {\n    const j = Math.floor(Math.random() * (i + 1));\n    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];\n  }\n  return shuffled;\n}\n\nconst shuffledCards = shuffleArray(allCards);\n\n// Trộn dữ liệu cho mỗi bộ bài và set index = 0\nfor (const data of Object.values(suitData)) {\n  data.shuffledColors = shuffleArray(data.colors);\n  data.shuffledObjects = shuffleArray(data.objects);\n  data.shuffledLocations = shuffleArray(data.locations);\n  data.usedColorIndex = 0;\n  data.usedObjectIndex = 0;\n  data.usedLocationIndex = 0;\n}\n\nconst scheduleData = $('Schedule Trigger').first().json;\nconst scheduleDate = scheduleData.timestamp ? scheduleData.timestamp.split(\"T\")[0] : new Date().toISOString().split(\"T\")[0];\n\n// HÀM LẤY NHÓM BÀI DỰA VÀO TÊN LÁ BÀI\nfunction getSuitFromCardName(cardName) {\n  const lowerName = cardName.toLowerCase();\n  if (lowerName.includes(\"wand\")) return \"Wands\";\n  if (lowerName.includes(\"cup\")) return \"Cups\";\n  if (lowerName.includes(\"sword\")) return \"Swords\";\n  if (lowerName.includes(\"pentacle\") || lowerName.includes(\"coin\")) return \"Pentacles\";\n  return \"Major\";\n}\n\n// GHÉP CUNG VÀ GÁN ITEMS TỪ LÁ BÀI\nreturn zodiacsList.map((zodiac, index) => {\n  const card = shuffledCards[index];\n  const suit = getSuitFromCardName(card.cardName);\n  const sData = suitData[suit];\n\n  // Lấy vòng lặp % để không bao giờ bị lỗi undefined nếu 1 bộ xuất hiện quá nhiều lần\n  const obj1 = sData.shuffledObjects[(sData.usedObjectIndex++) % sData.shuffledObjects.length];\n  const obj2 = sData.shuffledObjects[(sData.usedObjectIndex++) % sData.shuffledObjects.length];\n  const obj3 = sData.shuffledObjects[(sData.usedObjectIndex++) % sData.shuffledObjects.length];\n  const luckyObjects = [obj1, obj2, obj3].join(\", \");\n\n  const loc1 = sData.shuffledLocations[(sData.usedLocationIndex++) % sData.shuffledLocations.length];\n  const loc2 = sData.shuffledLocations[(sData.usedLocationIndex++) % sData.shuffledLocations.length];\n  const loc3 = sData.shuffledLocations[(sData.usedLocationIndex++) % sData.shuffledLocations.length];\n  const luckyLocations = [loc1, loc2, loc3].join(\", \");\n\n  const luckyColor = sData.shuffledColors[(sData.usedColorIndex++) % sData.shuffledColors.length];\n\n  return {\n    json: {\n      zodiacSign: zodiac,\n      cardName: card.cardName,\n      url: card.url,\n      date: scheduleDate,\n      luckyColor: luckyColor,\n      luckyObjects: luckyObjects,\n      luckyLocations: luckyLocations,\n      cardSuit: suit\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [80, 400],
+      "id": "c4485952-4b87-4a4e-979b-31aed2126b1b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [304, 368],
+      "id": "4bcb4450-548d-452e-a9ad-7d9d3b170822",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "const mySystemPrompt = \"Bạn là một chuyên gia Tarot dày dặn kinh nghiệm. Nhiệm vụ của bạn là giải bài hàng ngày cho các cung hoàng đạo bằng tiếng Việt.\";\nconst myUserPrompt = `📅 Ngày: ${$json.date}\\n♈ Cung hoàng đạo: ${$json.zodiacSign}\\n🎴 Lá bài Tarot: ${$json.cardName}\\n\\nHãy tạo lời giải Tarot theo cấu trúc JSON sau (KHÔNG thêm \\`\\`\\`json hay bất kỳ markdown nào):\\n\\n{\\n  \"keyword\": \"3-5 từ khóa ngắn gọn, cách nhau bởi dấu phẩy\",\\n  \"love\": \"Phân tích chi tiết về tình yêu, hẹn hò, quan hệ. Đưa ra dự báo cụ thể và lời khuyên thiết thực. 100-150 từ.\",\\n  \"job\": \"Phân tích về công việc, sự nghiệp, cơ hội thăng tiến, thách thức. Gợi ý hành động cụ thể. 100-150 từ.\",\\n  \"finance\": \"Phân tích về tài chính, đầu tư, thu nhập, chi tiêu. Lời khuyên về quản lý tiền bạc. 100-150 từ.\",\\n  \"advice\": \"Lời khuyên tổng quan cho cả ngày: nên làm gì, tránh làm gì, thái độ nên có. 80-120 từ.\"\\n}\\n\\nLƯU Ý QUAN TRỌNG:\\n- Viết hoàn toàn bằng tiếng Việt\\n- Trả về CHÍNH XÁC format JSON như trên, không thêm gì khác\\n- Không dùng markdown code blocks (\\`\\`\\`json)\\n- Nội dung phải phù hợp với ý nghĩa thực tế của lá bài ${$json.cardName}\\n- Liên kết ý nghĩa với cung hoàng đạo và ngày hiện tại được cung cấp trong nội dung\\n- Giọng văn thân thiện, dễ hiểu, không quá huyền bí`;\n\nreturn {\n  json: {\n    ...$json,\n    bodyPayload: {\n      model: \"n8n2\",\n      messages: [\n        { role: \"system\", content: mySystemPrompt },\n        { role: \"user\", content: myUserPrompt }\n      ],\n      temperature: 0.7\n    }\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [560, 480],
+      "id": "build-prompt-node-123",
+      "name": "Build Prompt"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.bodyPayload }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [780, 480],
+      "id": "call-ai-api-node-456",
+      "name": "Call AI API"
+    },
+    {
+      "parameters": {
+        "jsCode": "let rawText = $input.first().json?.choices?.[0]?.message?.content || \"\";\nconst previousData = $('Loop Over Items').item.json;\n\n// Hàm bóc tách JSON an toàn\nfunction extractJSON(str) {\n  if (typeof str === 'object') return str;\n  if (!str) return {};\n  \n  let jsonStr = str.trim();\n  if (jsonStr.includes('```')) {\n    const match = jsonStr.match(/```(?:json)?\\s*([\\s\\S]*?)\\s*```/i);\n    if (match && match[1]) {\n      jsonStr = match[1].trim();\n    } else {\n      jsonStr = jsonStr.replace(/```(?:json)?/gi, '').replace(/```/g, '').trim();\n    }\n  }\n  \n  const startIndex = jsonStr.indexOf('{');\n  const endIndex = jsonStr.lastIndexOf('}');\n  if (startIndex !== -1 && endIndex !== -1 && endIndex > startIndex) {\n    jsonStr = jsonStr.substring(startIndex, endIndex + 1);\n  }\n\n  try {\n    return JSON.parse(jsonStr);\n  } catch (e) {\n    return {\n      keyword: \"Lỗi JSON\",\n      love: \"Đã xảy ra lỗi khi tạo nội dung. Vui lòng thử lại.\",\n      job: \"\",\n      finance: \"\",\n      advice: \"\"\n    };\n  }\n}\n\nconst aiResponse = extractJSON(rawText);\n\n// Ghép kết quả phân tích của AI với Dữ liệu bốc ngẫu nhiên\nreturn {\n  json: {\n    date: previousData.date,\n    zodiacSign: previousData.zodiacSign,\n    cardName: previousData.cardName,\n    url: previousData.url,\n    color: previousData.luckyColor,\n    objects: previousData.luckyObjects,\n    locations: previousData.luckyLocations,\n    ...aiResponse\n  }\n};\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 480],
+      "id": "ebc195a3-7210-413f-b29e-d4e5b2fd45e2",
+      "name": "Extract JSON Data"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2095871889,
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "zodiacsign": "={{ $json.zodiacSign }}",
+            "cardname": "={{ $json.cardName }}",
+            "url": "={{ $json.url }}",
+            "keyword": "={{ $json.keyword }}",
+            "love": "={{ $json.love }}",
+            "job": "={{ $json.job }}",
+            "finance": "={{ $json.finance }}",
+            "color": "={{ $json.color }}",
+            "objects": "={{ $json.objects }}",
+            "locations": "={{ $json.locations }}",
+            "advice": "={{ $json.advice }}"
+          },
+          "matchingColumns": [
+            "zodiacsign"
+          ],
+          "schema": [
+            {
+              "id": "zodiacsign",
+              "displayName": "zodiacsign",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cardname",
+              "displayName": "cardname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "keyword",
+              "displayName": "keyword",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "love",
+              "displayName": "love",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "job",
+              "displayName": "job",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "finance",
+              "displayName": "finance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "color",
+              "displayName": "color",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "objects",
+              "displayName": "objects",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "locations",
+              "displayName": "locations",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "advice",
+              "displayName": "advice",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [1220, 480],
+      "id": "1d061bfc-6318-4039-ad13-205baa83fa0c",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "csqzboerlakrLVzv",
+          "name": "Google Service Account account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {"node": "Edit Fields", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {"node": "list_card", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "list_card": {
+      "main": [
+        [
+          {"node": "Code in JavaScript", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {"node": "Loop Over Items", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {"node": "Build Prompt", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Build Prompt": {
+      "main": [
+        [
+          {"node": "Call AI API", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Call AI API": {
+      "main": [
+        [
+          {"node": "Extract JSON Data", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Extract JSON Data": {
+      "main": [
+        [
+          {"node": "Append or update row in sheet", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {"node": "Loop Over Items", "type": "main", "index": 0}
+        ]
+      ]
+    }
+  }
+}

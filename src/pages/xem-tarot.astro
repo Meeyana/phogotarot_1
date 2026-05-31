@@ -114,7 +114,7 @@ if (db && Astro.locals.user) {
         <div class="narrative-pill-container" id="reader-selection-container">
             <div class="reader-dropdown centered-reader-dropdown">
                 <button type="button" id="reader-dropdown-toggle" class="narrative-pill-btn">
-                    <img id="selected-reader-avatar" src="/images/witcher-bot.jpg" alt="Avatar" class="pill-avatar" />
+                    <img id="selected-reader-avatar" src="/images/friend-bot.jpg" alt="Avatar" class="pill-avatar" />
                     <span class="pill-label">Reader:</span>
                     <span id="selected-reader-name" class="pill-name">Đang tải...</span>
                     <svg class="pill-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -207,7 +207,7 @@ if (db && Astro.locals.user) {
         const READING_ID_KEY = 'phogo_reading_id';
 
         let currentReaderId = null;
-        let currentReaderAvatar = '/images/witcher-bot.jpg';
+        let currentReaderAvatar = '/images/friend-bot.jpg';
 
         let currentReadingId = localStorage.getItem(READING_ID_KEY);
         if (!currentReadingId) {
@@ -356,9 +356,9 @@ if (db && Astro.locals.user) {
                     
                     if (!currentReaderId) {
                         const savedReader = localStorage.getItem('phogo_selected_reader');
-                        const defaultReader = readers.find(r => r.id === savedReader) || readers[0];
+                        const defaultReader = readers.find(r => r.id === savedReader) || readers.find(r => r.id === 'friend') || readers[0];
                         currentReaderId = defaultReader.id;
-                        currentReaderAvatar = defaultReader.avatar_url || '/images/witcher-bot.jpg';
+                        currentReaderAvatar = defaultReader.avatar_url || '/images/friend-bot.jpg';
                         if (selectedReaderName) selectedReaderName.textContent = defaultReader.name;
                         if (selectedReaderDesc) selectedReaderDesc.textContent = defaultReader.description;
                         if (selectedReaderAvatar) selectedReaderAvatar.src = currentReaderAvatar;
@@ -378,7 +378,7 @@ if (db && Astro.locals.user) {
                             `;
                             opt.addEventListener('click', () => {
                                 currentReaderId = reader.id;
-                                currentReaderAvatar = reader.avatar_url || '/images/witcher-bot.jpg';
+                                currentReaderAvatar = reader.avatar_url || '/images/friend-bot.jpg';
                                 selectedReaderName.textContent = reader.name;
                                 selectedReaderDesc.textContent = reader.description;
                                 selectedReaderAvatar.src = currentReaderAvatar;
