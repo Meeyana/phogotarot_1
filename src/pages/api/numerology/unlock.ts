@@ -73,7 +73,7 @@ export const POST: APIRoute = async (context) => {
     deductBalance = remainingToDeduct;
 
     // 1. Trừ tiền
-    await rawDB.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - ?, balance = balance - ? WHERE user_id = ?')
+    await rawDB.prepare('UPDATE credit_wallets SET daily_credits = COALESCE(daily_credits, 0) - ?, balance = COALESCE(balance, 0) - ? WHERE user_id = ?')
       .bind(deductDaily, deductBalance, user.id)
       .run();
 

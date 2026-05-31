@@ -36,6 +36,11 @@ export const authProviders = sqliteTable('auth_providers', {
 export const creditWallets = sqliteTable('credit_wallets', {
   userId: text('user_id').primaryKey().references(() => users.id, { onDelete: 'cascade' }),
   balance: integer('balance').default(0),
+  chatCount: integer('chat_count').default(0),
+  dailyCredits: integer('daily_credits').default(1),
+  lastDailyReset: text('last_daily_reset'),
+  subscriptionTier: text('subscription_tier').default('free'),
+  subscriptionExpiresAt: integer('subscription_expires_at', { mode: 'timestamp' }),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
   updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });

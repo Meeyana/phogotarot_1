@@ -446,6 +446,8 @@ const { fullName, dobStr, nickname = '', gender = '', currentCredit = 0 } = Astr
           icon.className = 'fas fa-check btn-icon text-xl';
           text.innerText = 'Thành công!';
           btnExecute.classList.add('success-state');
+          sessionStorage.removeItem('user_balance_cache');
+          sessionStorage.removeItem('user_balance_cache_time');
           setTimeout(() => window.location.reload(), 1000);
         } else {
           alert('Lỗi: ' + data.error);
