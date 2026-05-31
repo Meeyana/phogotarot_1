@@ -49,15 +49,32 @@ export const POST: APIRoute = async (context) => {
     // Lấy ví credit
     const walletResults = await db.select().from(creditWallets).where(eq(creditWallets.userId, user.id)).limit(1);
     const wallet = walletResults[0];
-    if (!wallet || wallet.balance < 3) {
+    
+    const totalCredits = (wallet?.balance || 0) + (wallet?.dailyCredits || 0);
+    
+    if (!wallet || totalCredits < 3) {
       return new Response(JSON.stringify({ error: 'Không đủ 3 Credit. Vui lòng nạp thêm.' }), { status: 403 });
     }
 
-    // Trừ 3 credit và lưu profile (Sử dụng rawDB để đảm bảo tương thích 100% với D1)
-    
+    // Tính toán trừ tiền: ưu tiên trừ daily_credits trước
+    let remainingToDeduct = 3;
+    let deductDaily = 0;
+    let deductBalance = 0;
+
+    if (wallet.dailyCredits > 0) {
+        if (wallet.dailyCredits >= remainingToDeduct) {
+            deductDaily = remainingToDeduct;
+            remainingToDeduct = 0;
+        } else {
+            deductDaily = wallet.dailyCredits;
+            remainingToDeduct -= wallet.dailyCredits;
+        }
+    }
+    deductBalance = remainingToDeduct;
+
     // 1. Trừ tiền
-    await rawDB.prepare('UPDATE credit_wallets SET balance = balance - 3 WHERE user_id = ?')
-      .bind(user.id)
+    await rawDB.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - ?, balance = balance - ? WHERE user_id = ?')
+      .bind(deductDaily, deductBalance, user.id)
       .run();
 
     // 2. Lưu giao dịch
