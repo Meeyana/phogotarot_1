@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { createSession, setSessionCookie, hashPassword } from '../../../lib/auth';
+import { createSession, setSessionCookie, verifyPassword } from '../../../lib/auth';
 
 export const prerender = false;
 
@@ -28,8 +28,8 @@ export const POST: APIRoute = async (context) => {
 
     // Kiểm tra mật khẩu
     const env = context.locals.runtime?.env || process.env || import.meta.env;
-    const hash = await hashPassword(password, env);
-    if (hash !== user.password_hash) {
+    const isMatch = await verifyPassword(password, user.password_hash as string, env, db, user.id as string);
+    if (!isMatch) {
       return new Response(JSON.stringify({ error: 'Email hoặc mật khẩu không chính xác' }), { status: 400 });
     }
 

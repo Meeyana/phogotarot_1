@@ -93,20 +93,76 @@ export async function deleteSession(context: APIContext, db: any) {
   context.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
 }
 
-// Băm mật khẩu sử dụng Web Crypto API (Nhanh và không bị giới hạn CPU trên Cloudflare Workers)
-export async function hashPassword(password: string, envObj?: any): Promise<string> {
+// Hàm hash mật khẩu cũ (Legacy SHA-256)
+export async function legacyHashPassword(password: string, envObj?: any): Promise<string> {
   const encoder = new TextEncoder();
-  
-  // Ưu tiên đọc biến môi trường truyền vào từ context, nếu không có thì fallback sang process.env / import.meta.env
   const env = envObj || (typeof process !== 'undefined' ? process.env : null) || import.meta.env || {};
-  
-  // Đọc biến PASSWORD_SALT từ môi trường, nếu chưa set thì dùng mã mặc định cũ để tránh làm lỗi các mật khẩu hiện tại
   const salt = env.PASSWORD_SALT || 'phogo_tarot_secret_salt_2026';
-  
   const data = encoder.encode(password + salt);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Băm mật khẩu an toàn sử dụng PBKDF2
+export async function hashPassword(password: string, envObj?: any): Promise<string> {
+  const encoder = new TextEncoder();
+  const env = envObj || (typeof process !== 'undefined' ? process.env : null) || import.meta.env || {};
+  const salt = env.PASSWORD_SALT || 'phogo_tarot_secret_salt_2026';
+  
+  const keyMaterial = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(password),
+    { name: "PBKDF2" },
+    false,
+    ["deriveBits"]
+  );
+  
+  const hashBuffer = await crypto.subtle.deriveBits(
+    {
+      name: "PBKDF2",
+      salt: encoder.encode(salt),
+      iterations: 100000,
+      hash: "SHA-256"
+    },
+    keyMaterial,
+    256
+  );
+  
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hexHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return `pbkdf2:100000:${hexHash}`;
+}
+
+// Kiểm tra mật khẩu (hỗ trợ cả mã cũ SHA-256 và mã mới PBKDF2)
+export async function verifyPassword(password: string, storedHash: string, envObj?: any, db?: any, userId?: string): Promise<boolean> {
+  // Hash cũ SHA-256 có đúng 64 ký tự hex và không chứa dấu ":"
+  const isLegacy = storedHash.length === 64 && !storedHash.includes(':');
+  
+  if (isLegacy) {
+    const legacyHash = await legacyHashPassword(password, envObj);
+    if (legacyHash === storedHash) {
+      // Mật khẩu đúng, nếu có DB và User ID thì ngầm nâng cấp Hash lên PBKDF2
+      if (db && userId) {
+        try {
+           const newHash = await hashPassword(password, envObj);
+           await db.prepare('UPDATE users SET password_hash = ? WHERE id = ?').bind(newHash, userId).run();
+        } catch (e) {
+           console.error('Lỗi khi tự động nâng cấp password hash:', e);
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+  
+  // Kiểm tra Hash mới chuẩn PBKDF2
+  if (storedHash.startsWith('pbkdf2:')) {
+    const newHash = await hashPassword(password, envObj);
+    return newHash === storedHash;
+  }
+  
+  return false;
 }
 
 // Kiểm tra xem user có mở khóa hồ sơ thần số học chưa

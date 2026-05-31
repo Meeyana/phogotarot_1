@@ -28,6 +28,7 @@ pnpm-debug.log*
 .dev.vars
 .wrangler/
 wrangler.toml
+danh-gia-he-thong-phogotarot.md
 
 # macOS-specific files
 .DS_Store
