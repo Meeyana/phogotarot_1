@@ -36,6 +36,12 @@ const nickname = url.searchParams.get('nickname') || "";
 
 // KIỂM TRA QUYỀN TRUY CẬP (PAYWALL)
 const user = Astro.locals.user;
+
+// Bảo vệ route: Nếu chưa đăng nhập thì đẩy ra trang đăng nhập
+if (!user) {
+    return Astro.redirect(`/login?redirect=${encodeURIComponent(url.pathname + url.search)}`);
+}
+
 let isPremium = false;
 let hasUnlocked = false;
 const profileId = `${fullName.toLowerCase().trim()}|${dobStr}`;

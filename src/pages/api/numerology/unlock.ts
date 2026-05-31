@@ -51,29 +51,22 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Không đủ 3 Credit. Vui lòng nạp thêm.' }), { status: 403 });
     }
 
-    // Trừ 3 credit và lưu profile (Sử dụng db.batch cho Cloudflare D1 thay vì transaction)
-    await db.batch([
-      // Trừ tiền
-      db.update(creditWallets)
-        .set({ balance: wallet.balance - 3 })
-        .where(eq(creditWallets.userId, user.id)),
+    // Trừ 3 credit và lưu profile (Sử dụng rawDB để đảm bảo tương thích 100% với D1)
+    
+    // 1. Trừ tiền
+    await rawDB.prepare('UPDATE credit_wallets SET balance = balance - 3 WHERE user_id = ?')
+      .bind(user.id)
+      .run();
 
-      // Lưu giao dịch
-      db.insert(creditTransactions).values({
-        id: crypto.randomUUID(),
-        walletId: user.id,
-        amount: -3,
-        transactionType: 'UNLOCK_NUMEROLOGY',
-        description: `Mở khóa hồ sơ thần số học: ${fullName} - ${dobStr}`
-      }),
+    // 2. Lưu giao dịch
+    await rawDB.prepare('INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, ?, ?)')
+      .bind(crypto.randomUUID(), user.id, -3, 'UNLOCK_NUMEROLOGY', `Mở khóa hồ sơ thần số học: ${fullName} - ${dobStr}`)
+      .run();
 
-      // Lưu hồ sơ đã mở
-      db.insert(unlockedNumerologyProfiles).values({
-        id: crypto.randomUUID(),
-        userId: user.id,
-        profileId: profileId
-      })
-    ]);
+    // 3. Lưu hồ sơ đã mở
+    await rawDB.prepare('INSERT INTO unlocked_numerology_profiles (id, user_id, profile_id) VALUES (?, ?, ?)')
+      .bind(crypto.randomUUID(), user.id, profileId)
+      .run();
 
     return new Response(JSON.stringify({ success: true }), { status: 200 });
 

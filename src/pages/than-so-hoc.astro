@@ -5,6 +5,9 @@ import '../styles/than-so-hoc.css';
 const pageTitle = "Tra Cứu Thần Số Học Miễn Phí - Luận Giải Chi Tiết | Phở Gõ Tarot";
 const pageDesc = "Công cụ tra cứu Thần Số Học miễn phí, chính xác nhất theo trường phái Pythagoras. Khám phá Số Chủ Đạo, Sứ Mệnh, Linh Hồn qua Họ Tên và Ngày Sinh.";
 
+// Kiểm tra trạng thái đăng nhập để truyền xuống client
+const isLoggedIn = !!Astro.locals.user;
+
 // Cấu trúc dữ liệu SEO (Schema Markup)
 const schema = {
   "@context": "https://schema.org",
@@ -103,7 +106,7 @@ const schema = {
         </div>
 
         <div class="action-area">
-            <button id="btn-analyze" class="btn-primary mystic-btn">
+            <button id="btn-analyze" class="btn-primary mystic-btn" data-is-logged-in={isLoggedIn ? 'true' : 'false'}>
                 Giải Mã Định Mệnh
             </button>
             <p id="error-msg" class="error-text hidden">Vui lòng nhập đầy đủ thông tin bắt buộc.</p>
@@ -266,7 +269,13 @@ const schema = {
             
             // Delay nhẹ để người dùng thấy hiệu ứng
             setTimeout(() => {
-                window.location.href = `/ket-qua-than-so-hoc?${params.toString()}`;
+                const isLoggedIn = btnAnalyze.getAttribute('data-is-logged-in') === 'true';
+                const targetUrl = `/ket-qua-than-so-hoc?${params.toString()}`;
+                if (!isLoggedIn) {
+                    window.location.href = `/login?redirect=${encodeURIComponent(targetUrl)}`;
+                } else {
+                    window.location.href = targetUrl;
+                }
             }, 800);
         });
     }
