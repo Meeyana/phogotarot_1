@@ -57,6 +57,9 @@ const schema = {
   ]
 };
 
+import fallbackTarotCards from '../data/tarot-cards.json';
+import fallbackYesNoCards from '../data/yesno-meanings.json';
+
 // Đọc gợi ý câu hỏi từ KV, nếu chưa có thì dùng mặc định
 let suggestedQuestionsKV = JSON.stringify([
   { "category": "Tình Cảm", "question": "Tôi có nên tiếp tục mối quan hệ này không?" },
@@ -72,12 +75,20 @@ let suggestedQuestionsKV = JSON.stringify([
   { "category": "Chung", "question": "Nếu tôi bắt đầu lại từ đầu bây giờ, có phải là quyết định đúng không?" },
   { "category": "Chung", "question": "Tôi có nên tin vào trực giác của mình trong việc này không?" }
 ]);
+let tarotCardsKV = JSON.stringify(fallbackTarotCards);
+let tarotCardsYesNoKV = JSON.stringify(fallbackYesNoCards);
 if (Astro.locals.runtime?.env?.SESSION) {
     try {
         const raw = await Astro.locals.runtime.env.SESSION.get('SUGGESTED_YN_QUESTIONS');
         if (raw) suggestedQuestionsKV = raw;
+        
+        const cardsRaw = await Astro.locals.runtime.env.SESSION.get('TAROT_CARDS');
+        if (cardsRaw) tarotCardsKV = cardsRaw;
+        
+        const ynRaw = await Astro.locals.runtime.env.SESSION.get('TAROT_CARDS_YESNO');
+        if (ynRaw) tarotCardsYesNoKV = ynRaw;
     } catch(e) {
-        console.error("Lỗi đọc SUGGESTED_YN_QUESTIONS từ KV:", e);
+        console.error("Lỗi đọc KV trong yes-no-reading.astro:", e);
     }
 }
 ---
@@ -913,6 +924,8 @@ if (Astro.locals.runtime?.env?.SESSION) {
 
 
     <div id="suggested-questions-data" style="display:none;" data-questions={suggestedQuestionsKV}></div>
+    <div id="tarot-cards-data" style="display:none;" data-cards={tarotCardsKV}></div>
+    <div id="tarot-cards-yesno-data" style="display:none;" data-cards={tarotCardsYesNoKV}></div>
 
     <script>
 /* ============================================= */
@@ -921,7 +934,6 @@ if (Astro.locals.runtime?.env?.SESSION) {
 
 const N8N_WEBHOOK_URL = '/api/yesno-interpret';
 const N8N_VALIDATE_URL = '/api/yesno-validate';
-const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
 
 // DOM Elements
 const screens = document.querySelectorAll('.screen');
@@ -996,23 +1008,29 @@ function showScreen(screenId) {
 /** Tải dữ liệu 78 lá bài */
 async function initialize() {
     try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const text = await response.text();
-        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-        const table = JSON.parse(jsonText).table;
-        cardData = table.rows.map((row, index) => ({
+        const dataDiv = document.getElementById('tarot-cards-data');
+        let rawData = [];
+        if (dataDiv && dataDiv.dataset.cards) {
+            try {
+                rawData = JSON.parse(dataDiv.dataset.cards);
+            } catch(e) { console.error("Lỗi parse TAROT_CARDS từ KV:", e); }
+        }
+
+        if (!rawData || rawData.length === 0) {
+            throw new Error("Không có dữ liệu lá bài.");
+        }
+        
+        cardData = rawData.map((row, index) => ({
             id: index,
-            name: row.c[0]?.v || 'Unknown Card',
-            image: row.c[1]?.v || 'https://placehold.co/200x340'
+            name: row[0] || 'Unknown Card',
+            image: row[1] || 'https://placehold.co/200x340'
         }));
         preloadAllCardImages();
     } catch (error)
     {
         console.error("Lỗi khi tải lá bài:", error);
         if (document.getElementById('card-spread-container')) {
-             document.getElementById('card-spread-container').innerHTML = '<p>Lỗi tải bộ bài. Vui lòng tải lại trang.</p>';
+             document.getElementById('card-spread-container').innerHTML = '<p>Lỗi tải bộ bài. Vui lòng tải lại trang hoặc kiểm tra TAROT_CARDS trong KV.</p>';
         }
     }
 }
@@ -1031,34 +1049,15 @@ async function loadCardMeanings() {
     }
 
     try {
-        const sheetName = 'YesNo_Meaning';
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${sheetName}&tqx=out:json&tq=SELECT%20A,%20B,%20C,%20D,%20E%20OFFSET%201`;
-        
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}. Lỗi khi tải tab '${sheetName}'.`);
-        const text = await response.text();
-        
-        if (text.startsWith('<!DOCTYPE html>')) {
-            throw new Error(`Không tìm thấy tab '${sheetName}' hoặc lỗi truy cập Google Sheet.`);
-        }
-        
-        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-        const data = JSON.parse(jsonText);
-
-        if (data.status === 'error') {
-            let errorMsg = data.errors.map(e => e.detailed_message).join(', ');
-            if (errorMsg.includes('Unable to parse query') || errorMsg.includes('Invalid sheet')) {
-                 throw new Error(`Lỗi GVIZ: Không tìm thấy tab tên là '${sheetName}'. Vui lòng kiểm tra lại tên tab trong Google Sheet.`);
-            }
-             if (errorMsg.includes('SELECT_E')) {
-                 throw new Error(`Lỗi GVIZ: Không tìm thấy Cột E trong tab '${sheetName}'. Vui lòng thêm cột E chứa URL hình ảnh.`);
-            }
-            throw new Error(`Lỗi GVIZ: ${errorMsg}`);
+        const dataDiv = document.getElementById('tarot-cards-yesno-data');
+        let rows = [];
+        if (dataDiv && dataDiv.dataset.cards) {
+            try {
+                rows = JSON.parse(dataDiv.dataset.cards);
+            } catch(e) { console.error("Lỗi parse TAROT_CARDS_YESNO từ KV:", e); }
         }
 
-        const table = data.table;
-        const rows = table.rows;
-        if (rows.length === 0) {
+        if (!rows || rows.length === 0) {
             cardMeaningsHtml = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Không có dữ liệu tra cứu.</p>';
             if (cardLookupTable1) cardLookupTable1.innerHTML = cardMeaningsHtml;
             if (cardLookupTable2) cardLookupTable2.innerHTML = cardMeaningsHtml;
@@ -1078,11 +1077,11 @@ async function loadCardMeanings() {
             <tbody>
         `;
         rows.forEach(row => {
-            const cardName = row.c[0]?.v || 'N/A';
-            const yesNo = row.c[1]?.v || 'N/A';
-            const upright = row.c[2]?.v || 'N/A';
-            const reversed = row.c[3]?.v || 'N/A';
-            const imageUrl = row.c[4]?.v || 'https://placehold.co/60x100?text=?'; 
+            const cardName = row[0] || 'N/A';
+            const yesNo = row[1] || 'N/A';
+            const upright = row[2] || 'N/A';
+            const reversed = row[3] || 'N/A';
+            const imageUrl = row[4] || 'https://placehold.co/60x100?text=?'; 
             
             html += `
                 <tr>

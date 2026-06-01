@@ -1,0 +1,548 @@
+[
+  [
+    "The Fool",
+    "yes",
+    "new beginnings, innocence, spontaneity",
+    "recklessness, risk-taking = NO",
+    "https://phogotarot.com/images/uploads/cards/0-The-Fool.jpg"
+  ],
+  [
+    "The Magician",
+    "yes",
+    "manifestation, skill, creativity",
+    "manipulation, wasted potential, deception = NO",
+    "https://phogotarot.com/images/uploads/cards/1-The-Magician.jpg"
+  ],
+  [
+    "The High Priestess",
+    "maybe",
+    "intuition and mystery",
+    "blocked intuition and confusion = maybe",
+    "https://phogotarot.com/images/uploads/cards/2-The-High-Priestess.jpg"
+  ],
+  [
+    "The Empress",
+    "yes",
+    "femininity, nurturing, fertility, abundance",
+    "dependence, smothering, emptiness = NO",
+    "https://phogotarot.com/images/uploads/cards/3-The-Empress.jpg"
+  ],
+  [
+    "The Emperor",
+    "yes",
+    "authority, leadership, structure",
+    "excessive control, rigidity, domination",
+    "https://phogotarot.com/images/uploads/cards/4-The-Emperor.jpg"
+  ],
+  [
+    "The Hierophant",
+    "yes",
+    "spiritual wisdom, tradition, conformity",
+    "rebellion, personal belief, challenging traditions",
+    "https://phogotarot.com/images/uploads/cards/5-The-Hierophant.jpg"
+  ],
+  [
+    "The Lovers",
+    "maybe (yes in love reading)",
+    "love, harmony, relationships",
+    "disharmony, imbalance, hesitancy = NO",
+    "https://phogotarot.com/images/uploads/cards/6-The-Lovers.jpg"
+  ],
+  [
+    "The Chariot",
+    "yes",
+    "success, determination, willpower",
+    "lack of control, lack of direction = NO",
+    "https://phogotarot.com/images/uploads/cards/7-The-Chariot.jpg"
+  ],
+  [
+    "Strength",
+    "yes",
+    "strength, courage, compassion, persuasion",
+    "self-doubt, weakness, insecurity, low energy, raw emotion = NO",
+    "https://phogotarot.com/images/uploads/cards/8-Strength.jpg"
+  ],
+  [
+    "The Hermit",
+    "no (yes if asking about a spiritual path)",
+    "wisdom, soul searching, spiritual enlightenment",
+    "loneliness, isolation, avoidance = NO",
+    "https://phogotarot.com/images/uploads/cards/9-The-Hermit.jpg"
+  ],
+  [
+    "Wheel of Fortune",
+    "yes",
+    "good luck, karma, life cycles",
+    "bad luck, resistance to change, setbacks = NO",
+    "https://phogotarot.com/images/uploads/cards/10-Wheel-of-Fortune.jpg"
+  ],
+  [
+    "Justice",
+    "maybe",
+    "justice, law, truth, honesty",
+    "dishonesty, unfair treatment, imbalance = NO",
+    "https://phogotarot.com/images/uploads/cards/11-Justice.jpg"
+  ],
+  [
+    "The Hanged Man",
+    "maybe/delayed",
+    "letting go, spiritual development",
+    "discontentment, stagnation = NO",
+    "https://phogotarot.com/images/uploads/cards/12-The-Hanged-Man.jpg"
+  ],
+  [
+    "Death",
+    "no",
+    "spiritual transformation, new beginnings",
+    "inability to move forward, resistance to change = NO",
+    "https://phogotarot.com/images/uploads/cards/13-Death.jpg"
+  ],
+  [
+    "Temperance",
+    "maybe",
+    "balance, moderation",
+    "imbalance, excess = NO",
+    "https://phogotarot.com/images/uploads/cards/14-Temperance.jpg"
+  ],
+  [
+    "The Devil",
+    "no",
+    "addiction and entrapment",
+    "overcoming addiction and regaining power = YES",
+    "https://phogotarot.com/images/uploads/cards/15-The-Devil.jpg"
+  ],
+  [
+    "The Tower",
+    "no",
+    "sudden change, upheaval, chaos, revelation",
+    "resisting change, avoiding tragedy, a narrow escape = NO",
+    "https://phogotarot.com/images/uploads/cards/16-The-Tower.jpg"
+  ],
+  [
+    "The Star",
+    "yes",
+    "hope, inspiration, renewal",
+    "hopelessness, despair = NO",
+    "https://phogotarot.com/images/uploads/cards/17-The-Star.jpg"
+  ],
+  [
+    "The Moon",
+    "no",
+    "illusion, fear, anxiety",
+    "release of fear, inner confusion = maybe",
+    "https://phogotarot.com/images/uploads/cards/18-The-Moon.jpg"
+  ],
+  [
+    "The Sun",
+    "yes",
+    "happiness, vitality, success",
+    "sadness, pessimism, lack of clarity = YES but delayed",
+    "https://phogotarot.com/images/uploads/cards/19-The-Sun.jpg"
+  ],
+  [
+    "Judgement",
+    "maybe",
+    "awakening, decision-making, renewal",
+    "self-doubt, stagnation = maybe",
+    "https://phogotarot.com/images/uploads/cards/20-Judgement.jpg"
+  ],
+  [
+    "The World",
+    "yes",
+    "completion, achievement, fulfillment",
+    "lack of closure, delays = NO",
+    "https://phogotarot.com/images/uploads/cards/21-The-World.jpg"
+  ],
+  [
+    "Ace of Wands",
+    "yes",
+    "creativity, inspiration, new beginnings",
+    "delays, setbacks, creative blocks = NO",
+    "https://phogotarot.com/images/uploads/cards/22-Ace-of-Wands.jpg"
+  ],
+  [
+    "Two of Wands",
+    "maybe",
+    "Progress, future planning, decisions",
+    "Restlessness, fear of the unknown = NO",
+    "https://phogotarot.com/images/uploads/cards/23-Two-of-Wands.jpg"
+  ],
+  [
+    "Three of Wands",
+    "yes",
+    "progress, expansion, overseas opportunities",
+    "playing small, lack of foresight, unexpected delays = NO",
+    "https://phogotarot.com/images/uploads/cards/24-Three-of-Wands.jpg"
+  ],
+  [
+    "Four of Wands",
+    "yes",
+    "celebration, joy, harmony",
+    "instability, unhappiness in family = NO",
+    "https://phogotarot.com/images/uploads/cards/25-Four-of-Wands.jpg"
+  ],
+  [
+    "Five of Wands",
+    "no",
+    "Competition, disagreements, challenges",
+    "Compromise, sparring, inner tension = maybe",
+    "https://phogotarot.com/images/uploads/cards/26-Five-of-Wands.jpg"
+  ],
+  [
+    "Six of Wands",
+    "yes",
+    "success, victory, recognition",
+    "failure, lack of recognition, broken promises = NO",
+    "https://phogotarot.com/images/uploads/cards/27-Six-of-Wands.jpg"
+  ],
+  [
+    "Seven of Wands",
+    "no",
+    "defensiveness, courage, taking a stand",
+    "overwhelm, giving up = NO",
+    "https://phogotarot.com/images/uploads/cards/28-Seven-of-Wands.jpg"
+  ],
+  [
+    "Eight of Wands",
+    "yes",
+    "swift action and rapid progression",
+    "slow progress, missed opportunities = NO",
+    "https://phogotarot.com/images/uploads/cards/29-Eight-of-Wands.jpg"
+  ],
+  [
+    "Nine of Wands",
+    "no",
+    "perseverance, stamina, courage",
+    "stubbornness, lack of trust = NO",
+    "https://phogotarot.com/images/uploads/cards/30-Nine-of-Wands.jpg"
+  ],
+  [
+    "Ten of Wands",
+    "no",
+    "burdened or overwhelmed",
+    "release of burdens or letting go of stress = NO",
+    "https://phogotarot.com/images/uploads/cards/31-Ten-of-Wands.jpg"
+  ],
+  [
+    "Page of Wands",
+    "yes",
+    "excitement and adventure",
+    "bad news and delays = NO",
+    "https://phogotarot.com/images/uploads/cards/32-Page-of-Wands.jpg"
+  ],
+  [
+    "Knight of Wands",
+    "yes",
+    "energy, enthusiasm, bravery, adventure",
+    "recklessness, impulsiveness, lack of direction = NO",
+    "https://phogotarot.com/images/uploads/cards/33-Knight-of-Wands.jpg"
+  ],
+  [
+    "Queen of Wands",
+    "yes",
+    "confidence, courage, social charisma",
+    "jealous, hot-tempered, selfishness = NO",
+    "https://phogotarot.com/images/uploads/cards/34-Queen-of-Wands.jpg"
+  ],
+  [
+    "King of Wands",
+    "yes",
+    "natural-born leader, visionary",
+    "impulsiveness, high expectations = NO",
+    "https://phogotarot.com/images/uploads/cards/35-King-of-Wands.jpg"
+  ],
+  [
+    "Ace of Cups",
+    "yes",
+    "new beginnings, happiness, emotional awakening, new love",
+    "anguish, emotional repression, loss of self-esteem = NO",
+    "https://phogotarot.com/images/uploads/cards/36-Ace-of-Cups.jpg"
+  ],
+  [
+    "Two of Cups",
+    "yes",
+    "partnership, harmony, emotional connection",
+    "disharmony, separation = NO",
+    "https://phogotarot.com/images/uploads/cards/37-Two-of-Cups.jpg"
+  ],
+  [
+    "Three of Cups",
+    "yes",
+    "celebration, friendship, happiness",
+    "neglected social life, cheating, frustration = NO",
+    "https://phogotarot.com/images/uploads/cards/38-Three-of-Cups.jpg"
+  ],
+  [
+    "Four of Cups",
+    "no",
+    "boredom, stagnation",
+    "seizing opportunities, renewed motivation = maybe",
+    "https://phogotarot.com/images/uploads/cards/39-Four-of-Cups.jpg"
+  ],
+  [
+    "Five of Cups",
+    "no",
+    "regret, failure, disappointment, pessimism",
+    "personal setbacks, self-forgiveness, moving on = NO",
+    "https://phogotarot.com/images/uploads/cards/40-Five-of-Cups.jpg"
+  ],
+  [
+    "Six of Cups",
+    "yes",
+    "nostalgia, innocence, joy, reconnection",
+    "living in the past, lack of playfulness = NO",
+    "https://phogotarot.com/images/uploads/cards/41-Six-of-Cups.jpg"
+  ],
+  [
+    "Seven of Cups",
+    "no",
+    "opportunities, wishful thinking, illusions",
+    "re-alignment, overwhelmed by choices = NO",
+    "https://phogotarot.com/images/uploads/cards/42-Seven-of-Cups.jpg"
+  ],
+  [
+    "Eight of Cups",
+    "no",
+    "letting go, walking away",
+    "stagnant, faking happiness = NO",
+    "https://phogotarot.com/images/uploads/cards/43-Eight-of-Cups.jpg"
+  ],
+  [
+    "Nine of Cups",
+    "Yes",
+    "wishes coming true, fulfilled dreams, prosperity",
+    "shattered dreams, sadness, failure = NO",
+    "https://phogotarot.com/images/uploads/cards/44-Nine-of-Cups.jpg"
+  ],
+  [
+    "Ten of Cups",
+    "yes",
+    "happiness, family, harmony",
+    "disharmony, broken family, conflict = NO",
+    "https://phogotarot.com/images/uploads/cards/45-Ten-of-Cups.jpg"
+  ],
+  [
+    "Page of Cups",
+    "yes",
+    "idealism, youthfulness, good news",
+    "immaturity, broken dreams, creative blocks = NO",
+    "https://phogotarot.com/images/uploads/cards/46-Page-of-Cups.jpg"
+  ],
+  [
+    "Knight of Cups",
+    "yes",
+    "romantic proposals and charm",
+    "overactive imagination, jealousy, moody = NO",
+    "https://phogotarot.com/images/uploads/cards/47-Knight-of-Cups.jpg"
+  ],
+  [
+    "Queen of Cups",
+    "yes",
+    "emotional security, intuition, compassion",
+    "emotional instability, manipulation, insecurity = NO",
+    "https://phogotarot.com/images/uploads/cards/48-Queen-of-Cups.jpg"
+  ],
+  [
+    "King of Cups",
+    "yes",
+    "compassionate, diplomatic, emotionally stable",
+    "emotionally immature, moody, stressed = NO",
+    "https://phogotarot.com/images/uploads/cards/49-King-of-Cups.jpg"
+  ],
+  [
+    "Ace of Swords",
+    "yes",
+    "truth, clarity, breakthrough",
+    "confusion, defeat, lies = NO",
+    "https://phogotarot.com/images/uploads/cards/50-Ace-of-Swords.jpg"
+  ],
+  [
+    "Two of Swords",
+    "no",
+    "decision, stalemate, blocked emotions",
+    "indecision, confusion, information overload = NO",
+    "https://phogotarot.com/images/uploads/cards/51-Two-of-Swords.jpg"
+  ],
+  [
+    "Three of Swords",
+    "no",
+    "heartbreak, sorrow, grief",
+    "recovery, forgiveness, moving on = NO",
+    "https://phogotarot.com/images/uploads/cards/52-Three-of-Swords.jpg"
+  ],
+  [
+    "Four of Swords",
+    "maybe",
+    "rest, relaxation, meditation",
+    "burnout, stress, anxiety = NO",
+    "https://phogotarot.com/images/uploads/cards/53-Four-of-Swords.jpg"
+  ],
+  [
+    "Five of Swords",
+    "no",
+    "conflict, defeat, win at all costs",
+    "walking away from conflict = NO",
+    "https://phogotarot.com/images/uploads/cards/54-Five-of-Swords.jpg"
+  ],
+  [
+    "Six of Swords",
+    "yes",
+    "transition, moving on, leaving behind",
+    "stuck, unable to move on = NO",
+    "https://phogotarot.com/images/uploads/cards/55-Six-of-Swords.jpg"
+  ],
+  [
+    "Seven of Swords",
+    "no",
+    "deception, strategy, sneakiness",
+    "confession, exposure, acceptance = NO",
+    "https://phogotarot.com/images/uploads/cards/56-Seven-of-Swords.jpg"
+  ],
+  [
+    "Eight of Swords",
+    "no",
+    "trapped, restricted, victim mentality",
+    "liberation, new perspective = maybe",
+    "https://phogotarot.com/images/uploads/cards/57-Eight-of-Swords.jpg"
+  ],
+  [
+    "Nine of Swords",
+    "no",
+    "anxiety, worry, fear",
+    "reaching out for help, despair = NO",
+    "https://phogotarot.com/images/uploads/cards/58-Nine-of-Swords.jpg"
+  ],
+  [
+    "Ten of Swords",
+    "no",
+    "rock bottom, failure, collapse",
+    "recovery, starting over, inevitable end = NO",
+    "https://phogotarot.com/images/uploads/cards/59-Ten-of-Swords.jpg"
+  ],
+  [
+    "Page of Swords",
+    "maybe",
+    "curiosity, new ideas, thirst for knowledge",
+    "deception, all talk = NO",
+    "https://phogotarot.com/images/uploads/cards/60-Page-of-Swords.jpg"
+  ],
+  [
+    "Knight of Swords",
+    "no",
+    "action, impulsiveness, defending beliefs",
+    "anger, aggression, recklessness = NO",
+    "https://phogotarot.com/images/uploads/cards/61-Knight-of-Swords.jpg"
+  ],
+  [
+    "Queen of Swords",
+    "no",
+    "independent, unbiased judgment, clear boundaries",
+    "cold, bitter, unforgiving, sharp-tongued = NO",
+    "https://phogotarot.com/images/uploads/cards/62-Queen-of-Swords.jpg"
+  ],
+  [
+    "King of Swords",
+    "yes",
+    "clear thinking, intellectual power, authority, objectivity",
+    "misuse of power, irrational, lacking clarity = NO",
+    "https://phogotarot.com/images/uploads/cards/63-King-of-Swords.jpg"
+  ],
+  [
+    "Ace of Pentacles",
+    "yes",
+    "new financial opportunity, prosperity",
+    "lost opportunity, lack of planning = NO",
+    "https://phogotarot.com/images/uploads/cards/64-Ace-of-Pentacles.jpg"
+  ],
+  [
+    "Two of Pentacles",
+    "maybe",
+    "balancing decisions, priorities",
+    "imbalance, disorganization = NO",
+    "https://phogotarot.com/images/uploads/cards/65-Two-of-Pentacles.jpg"
+  ],
+  [
+    "Three of Pentacles",
+    "yes",
+    "teamwork, collaboration, building",
+    "lack of teamwork, disorganised = NO",
+    "https://phogotarot.com/images/uploads/cards/66-Three-of-Pentacles.jpg"
+  ],
+  [
+    "Four of Pentacles",
+    "no",
+    "financial security, frugality",
+    "greed, materialism = NO",
+    "https://phogotarot.com/images/uploads/cards/67-Four-of-Pentacles.jpg"
+  ],
+  [
+    "Five of Pentacles",
+    "no",
+    "financial loss, poverty, insecurity",
+    "recovery, chronic disease = NO",
+    "https://phogotarot.com/images/uploads/cards/68-Five-of-Pentacles.jpg"
+  ],
+  [
+    "Six of Pentacles",
+    "yes",
+    "generosity, charity, sharing wealth",
+    "selfishness, debt, unpaid loans = NO",
+    "https://phogotarot.com/images/uploads/cards/69-Six-of-Pentacles.jpg"
+  ],
+  [
+    "Seven of Pentacles",
+    "delayed",
+    "long-term view, perseverance",
+    "lack of long-term vision, restriction = NO",
+    "https://phogotarot.com/images/uploads/cards/70-Seven-of-Pentacles.jpg"
+  ],
+  [
+    "Eight of Pentacles",
+    "yes",
+    "apprenticeship, mastery, honing skills",
+    "perfectionism, lack of ambition = NO",
+    "https://phogotarot.com/images/uploads/cards/71-Eight-of-Pentacles.jpg"
+  ],
+  [
+    "Nine of Pentacles",
+    "yes",
+    "luxury, self-sufficiency, culmination",
+    "showing off, empty success = NO",
+    "https://phogotarot.com/images/uploads/cards/72-Nine-of-Pentacles.jpg"
+  ],
+  [
+    "Ten of Pentacles",
+    "yes",
+    "wealth, family, legacy, inheritance",
+    "family disputes, financial failure = NO",
+    "https://phogotarot.com/images/uploads/cards/73-Ten-of-Pentacles.jpg"
+  ],
+  [
+    "Page of Pentacles",
+    "yes",
+    "manifestation, financial opportunity",
+    "lack of progress, procrastination = NO",
+    "https://phogotarot.com/images/uploads/cards/74-Page-of-Pentacles.jpg"
+  ],
+  [
+    "Knight of Pentacles",
+    "maybe",
+    "hard work, productivity, conservatism",
+    "stagnation, boredom, feeling stuck = NO",
+    "https://phogotarot.com/images/uploads/cards/75-Knight-of-Pentacles.jpg"
+  ],
+  [
+    "Queen of Pentacles",
+    "yes",
+    "nurturing, practical, providing financially",
+    "financial independence, self-care",
+    "https://phogotarot.com/images/uploads/cards/76-Queen-of-Pentacles.jpg"
+  ],
+  [
+    "King of Pentacles",
+    "yes",
+    "wealth, business, leadership, security",
+    "financially inept, greedy = NO",
+    "https://phogotarot.com/images/uploads/cards/77-King-of-Pentacles.jpg"
+  ]
+]

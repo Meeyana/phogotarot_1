@@ -1,0 +1,470 @@
+[
+  [
+    "The Fool",
+    "https://phogotarot.com/images/uploads/cards/0-The-Fool.jpg",
+    "Biểu trưng cho sự khởi đầu, lòng ngây thơ, tinh thần phiêu lưu và niềm tin thuần khiết vào cuộc sống.",
+    "Liều lĩnh, thiếu suy xét, bước vào nguy hiểm mà không nhận ra hậu quả."
+  ],
+  [
+    "The Magician",
+    "https://phogotarot.com/images/uploads/cards/1-The-Magician.jpg",
+    "Hiện thân của sự sáng tạo, sức mạnh ý chí và khả năng kiểm soát vận mệnh.",
+    "Mất phương hướng, cảm xúc bị kìm nén, tiềm năng không được khai thác."
+  ],
+  [
+    "The High Priestess",
+    "https://phogotarot.com/images/uploads/cards/2-The-High-Priestess.jpg",
+    "Biểu tượng của trực giác, tri thức huyền bí và kết nối sâu sắc với vũ trụ.",
+    "Rơi vào sự u mê, mất cân bằng nội tâm, không nghe theo tiếng gọi bên trong."
+  ],
+  [
+    "The Empress",
+    "https://phogotarot.com/images/uploads/cards/3-The-Empress.jpg",
+    "Đại diện cho sự sinh sôi, tình yêu, sự phong phú và che chở.",
+    "Sự phụ thuộc, ngột ngạt và cảm giác trống rỗng."
+  ],
+  [
+    "The Emperor",
+    "https://phogotarot.com/images/uploads/cards/4-The-Emperor.jpg",
+    "Hiện thân của quyền lực, kỷ luật, sự ổn định và trật tự.",
+    "Áp đặt quá mức, cứng nhắc và kiểm soát đến mức ngột ngạt."
+  ],
+  [
+    "The Hierophant",
+    "https://phogotarot.com/images/uploads/cards/5-The-Hierophant.jpg",
+    "Người gìn giữ truyền thống, chuẩn mực đạo đức và tri thức tâm linh.",
+    "Nổi loạn chống lại quy tắc, từ chối khuôn khổ, theo đuổi con đường cá nhân."
+  ],
+  [
+    "The Lovers",
+    "https://phogotarot.com/images/uploads/cards/6-The-Lovers.jpg",
+    "Tượng trưng cho tình yêu, sự kết nối và những lựa chọn mang tính quyết định.",
+    "Mâu thuẫn nội tâm, bất hòa và lựa chọn sai lầm."
+  ],
+  [
+    "The Chariot",
+    "https://phogotarot.com/images/uploads/cards/7-The-Chariot.jpg",
+    "Đại diện cho quyết tâm, kiểm soát và sự chinh phục.",
+    "Mất phương hướng, thiếu kiểm soát và dễ bị lung lay."
+  ],
+  [
+    "Strength",
+    "https://phogotarot.com/images/uploads/cards/8-Strength.jpg",
+    "Hiện thân của lòng can đảm, sự kiên nhẫn và kiểm soát bản thân.",
+    "Tự nghi ngờ, bất an và thiếu ý chí."
+  ],
+  [
+    "The Hermit",
+    "https://phogotarot.com/images/uploads/cards/9-The-Hermit.jpg",
+    "Tượng trưng cho sự tìm kiếm trí tuệ, giác ngộ và hành trình nội tâm.",
+    "Cô lập, lạc lõng và nỗi sợ hãi bao trùm."
+  ],
+  [
+    "Wheel of Fortune",
+    "https://phogotarot.com/images/uploads/cards/10-Wheel-of-Fortune.jpg",
+    "Biểu trưng cho những bước ngoặt, định mệnh và quy luật nhân quả.",
+    "Xui rủi, biến động và sự thay đổi không mong muốn."
+  ],
+  [
+    "Justice",
+    "https://phogotarot.com/images/uploads/cards/11-Justice.jpg",
+    "Đại diện cho sự công bằng, chính trực và hậu quả của hành động.",
+    "Gian lận, thiếu minh bạch và tránh né trách nhiệm."
+  ],
+  [
+    "The Hanged Man",
+    "https://phogotarot.com/images/uploads/cards/12-The-Hanged-Man.jpg",
+    "Biểu thị sự buông bỏ, thay đổi góc nhìn và giác ngộ qua thử thách.",
+    "Bế tắc, trì trệ và sợ hãi sự thay đổi."
+  ],
+  [
+    "Death",
+    "https://phogotarot.com/images/uploads/cards/13-Death.jpg",
+    "Không phải là sự kết thúc mà là sự chuyển hóa và tái sinh.",
+    "Chống lại sự thay đổi, mắc kẹt trong quá khứ."
+  ],
+  [
+    "Temperance",
+    "https://phogotarot.com/images/uploads/cards/14-Temperance.jpg",
+    "Đại diện cho sự cân bằng, kiên nhẫn và hòa hợp.",
+    "Mất cân bằng, vội vàng và hành vi cực đoan."
+  ],
+  [
+    "The Devil",
+    "https://phogotarot.com/images/uploads/cards/15-The-Devil.jpg",
+    "Tượng trưng cho những ràng buộc, cám dỗ và sự kiểm soát của vật chất.",
+    "Giải phóng bản thân, vượt qua nỗi sợ và tìm lại tự do."
+  ],
+  [
+    "The Tower",
+    "https://phogotarot.com/images/uploads/cards/16-The-Tower.jpg",
+    "Báo hiệu sự thay đổi dữ dội, sụp đổ của những điều cũ để xây dựng lại.",
+    "Cố bám víu vào điều không thể cứu vãn, sợ hãi sự thay đổi."
+  ],
+  [
+    "The Star",
+    "https://phogotarot.com/images/uploads/cards/17-The-Star.jpg",
+    "Biểu thị niềm tin, sự chữa lành và hướng đi mới.",
+    "Tuyệt vọng, mất niềm tin, cảm giác bế tắc."
+  ],
+  [
+    "The Moon",
+    "https://phogotarot.com/images/uploads/cards/18-The-Moon.jpg",
+    "Đại diện cho nỗi sợ hãi, ảo tưởng và sự mơ hồ.",
+    "Xóa tan ảo ảnh, tìm thấy sự thật và kiểm soát cảm xúc."
+  ],
+  [
+    "The Sun",
+    "https://phogotarot.com/images/uploads/cards/19-The-Sun.jpg",
+    "Tượng trưng cho hạnh phúc, thành công và sự khai sáng.",
+    "Mất phương hướng, trì hoãn và cảm giác thất vọng."
+  ],
+  [
+    "Judgement",
+    "https://phogotarot.com/images/uploads/cards/20-Judgement.jpg",
+    "Biểu thị sự thức tỉnh, phán xét và bước ngoặt quan trọng.",
+    "Bỏ lỡ cơ hội, tự ti và thiếu quyết đoán."
+  ],
+  [
+    "The World",
+    "https://phogotarot.com/images/uploads/cards/21-The-World.jpg",
+    "Đại diện cho sự hoàn thành, thống nhất và đạt được mục tiêu.",
+    "Chưa trọn vẹn, lạc lối và sự trì hoãn."
+  ],
+  [
+    "Ace of Wands",
+    "https://phogotarot.com/images/uploads/cards/22-Ace-of-Wands.jpg",
+    "Mở ra một hướng đi hoàn toàn mới.",
+    "Bạn gặp khó khăn trong việc xác định mục tiêu của bản thân."
+  ],
+  [
+    "Two of Wands",
+    "https://phogotarot.com/images/uploads/cards/23-Two-of-Wands.jpg",
+    "Bạn tiến bộ hơn khi thiết lập được những kế hoạch ngắn, dài hạn.",
+    "Bạn có thể gặp một vài trục trặc bất ngờ."
+  ],
+  [
+    "Three of Wands",
+    "https://phogotarot.com/images/uploads/cards/24-Three-of-Wands.jpg",
+    "Mọi thứ đang diễn ra như mong đợi.",
+    "Bạn gặp một vài sự cố và trì hoãn mục tiêu của mình."
+  ],
+  [
+    "Four of Wands",
+    "https://phogotarot.com/images/uploads/cards/25-Four-of-Wands.jpg",
+    "Bạn đang hạnh phúc, ổn định.",
+    "Bạn đang mắc kẹt trong bầu không khí ngột ngạt."
+  ],
+  [
+    "Five of Wands",
+    "https://phogotarot.com/images/uploads/cards/26-Five-of-Wands.jpg",
+    "Bạn đang ở giữa những cuộc xung đột, căng thẳng.",
+    "Bạn vượt qua sự giận dữ của bản thân."
+  ],
+  [
+    "Six of Wands",
+    "https://phogotarot.com/images/uploads/cards/27-Six-of-Wands.jpg",
+    "Bạn nhận được thành công, chiến thắng và sự công nhận.",
+    "Bạn đang tiêu cực về bản thân."
+  ],
+  [
+    "Seven of Wands",
+    "https://phogotarot.com/images/uploads/cards/28-Seven-of-Wands.jpg",
+    "Bạn đang gặp một chút thách thức. Hãy kiên trì, thành công sẽ đến với bạn ngay thôi.",
+    "Bạn đang cảm thấy bất an và dễ bị tổn thương."
+  ],
+  [
+    "Eight of Wands",
+    "https://phogotarot.com/images/uploads/cards/29-Eight-of-Wands.jpg",
+    "Các cuộc đấu tranh đã kết thúc.",
+    "Bạn đang phải đối mặt với nhiều trở ngại trong mục tiêu của mình."
+  ],
+  [
+    "Nine of Wands",
+    "https://phogotarot.com/images/uploads/cards/30-Nine-of-Wands.jpg",
+    "Đừng bỏ cuộc lúc này vì bạn sắp đạt được thành công.",
+    "Bạn do dự trước những cam kết."
+  ],
+  [
+    "Ten of Wands",
+    "https://phogotarot.com/images/uploads/cards/31-Ten-of-Wands.jpg",
+    "Bạn đang gặt gái những phần thưởng sau những cố gắng của bản thân.",
+    "Bạn đang có quá nhiều gánh nặng."
+  ],
+  [
+    "Page of Wands",
+    "https://phogotarot.com/images/uploads/cards/32-Page-of-Wands.jpg",
+    "Bạn đang ôm ấp nhiều dự định và chỉ chờ cơ hội để “bùng nổ”.",
+    "Bạn thiếu quyết đoán về con đường phía trước."
+  ],
+  [
+    "Knight of Wands",
+    "https://phogotarot.com/images/uploads/cards/33-Knight-of-Wands.jpg",
+    "Bạn tự tin, sẵn sàng chinh phục cả thế giới.",
+    "Sự mất mát của quyền lực cá nhân vì sử dụng chúng một cách tiêu cực."
+  ],
+  [
+    "Queen of Wands",
+    "https://phogotarot.com/images/uploads/cards/34-Queen-of-Wands.jpg",
+    "Bạn mạnh mẽ, độc lập, sáng tạo ngay cả khi đối mặt với nghịch cảnh.",
+    "Bạn mất niềm tin vào chính mình và trở nên e dè, sợ sệt."
+  ],
+  [
+    "King of Wands",
+    "https://phogotarot.com/images/uploads/cards/35-King-of-Wands.jpg",
+    "Nhắc nhở bạn định hướng cuộc sống với mục đích và tầm nhìn dài hạn.",
+    "Có thể bạn đang có những quyết định vội vàng, bốc đồng."
+  ],
+  [
+    "Ace of Cups",
+    "https://phogotarot.com/images/uploads/cards/36-Ace-of-Cups.jpg",
+    "Cơ hội cho sự vun đắp, chữa lành.",
+    "Bạn đã kìm nén cảm xúc quá lâu, hãy giải phóng chúng."
+  ],
+  [
+    "Two of Cups",
+    "https://phogotarot.com/images/uploads/cards/37-Two-of-Cups.jpg",
+    "Nói lên hôn nhân và sự hoà hợp.",
+    "Bạn gặp rắc rối với đối tác hoặc tình yêu."
+  ],
+  [
+    "Three of Cups",
+    "https://phogotarot.com/images/uploads/cards/38-Three-of-Cups.jpg",
+    "Khoảng thời gian hài hoà với đồng nghiệp, bạn bè.",
+    "Ám chỉ sự đổ vỡ trong tình yêu."
+  ],
+  [
+    "Four of Cups",
+    "https://phogotarot.com/images/uploads/cards/39-Four-of-Cups.jpg",
+    "Bạn đang buồn chán hoặc không hài lòng với hiện tại.",
+    "Bạn bất an, muốn chạy trốn khỏi hiện thực."
+  ],
+  [
+    "Five of Cups",
+    "https://phogotarot.com/images/uploads/cards/40-Five-of-Cups.jpg",
+    "Có thể bạn sẽ không đạt được kết quả như mong đợi.",
+    "Chấm dứt sự đau khổ, khởi đầu cho tình yêu mới."
+  ],
+  [
+    "Six of Cups",
+    "https://phogotarot.com/images/uploads/cards/41-Six-of-Cups.jpg",
+    "Bạn nhớ nhung quá khứ, bỏ quên thực tại.",
+    "Bạn đang có những ý tưởng không thực tế."
+  ],
+  [
+    "Seven of Cups",
+    "https://phogotarot.com/images/uploads/cards/42-Seven-of-Cups.jpg",
+    "Đánh giá lại vấn đề và đưa ra sự lựa chọn đúng đắn.",
+    "Bạn đang lãng phí thời gian để theo đuổi những thứ không thuộc về mình."
+  ],
+  [
+    "Eight of Cups",
+    "https://phogotarot.com/images/uploads/cards/43-Eight-of-Cups.jpg",
+    "Bạn muốn giải thoát khỏi sự bon chen của cuộc sống.",
+    "Từ bỏ lúc này là quyết định sáng suốt nhất."
+  ],
+  [
+    "Nine of Cups",
+    "https://phogotarot.com/images/uploads/cards/44-Nine-of-Cups.jpg",
+    "Giai đoạn cuối cùng của sự phát triển.",
+    "Mong muốn của bạn có thể không được như mong đợi."
+  ],
+  [
+    "Ten of Cups",
+    "https://phogotarot.com/images/uploads/cards/45-Ten-of-Cups.jpg",
+    "Bạn đang hạnh phúc trong tình yêu, hôn nhân.",
+    "Có ai đó chen ngang vào một trong số các mối quan hệ của bạn."
+  ],
+  [
+    "Page of Cups",
+    "https://phogotarot.com/images/uploads/cards/46-Page-of-Cups.jpg",
+    "Khởi đầu cho dự án sáng tạo hoặc liên doanh.",
+    "Sự bùng nổ cực đại về mặt cảm xúc."
+  ],
+  [
+    "Knight of Cups",
+    "https://phogotarot.com/images/uploads/cards/47-Knight-of-Cups.jpg",
+    "Sự khôn ngoan giúp bạn vượt qua trở ngại trong cuộc sống.",
+    "Cảm xúc dâng trào đến mức không thể kiểm soát."
+  ],
+  [
+    "Queen of Cups",
+    "https://phogotarot.com/images/uploads/cards/48-Queen-of-Cups.jpg",
+    "Bạn cần thông cảm cho hoàn cảnh của mọi người xung quanh.",
+    "Bạn đang bất an, căng thẳng."
+  ],
+  [
+    "King of Cups",
+    "https://phogotarot.com/images/uploads/cards/49-King-of-Cups.jpg",
+    "Cảm xúc cân bằng trong tầm kiểm soát.",
+    "Bạn cộc cằn, ủ rũ, cả tin."
+  ],
+  [
+    "Ace of Swords",
+    "https://phogotarot.com/images/uploads/cards/50-Ace-of-Swords.jpg",
+    "Đại diện cho một giai đoạn của cái nhìn sâu sắc.",
+    "Bạn đang bắt đầu trở nên hỗn loạn."
+  ],
+  [
+    "Two of Swords",
+    "https://phogotarot.com/images/uploads/cards/51-Two-of-Swords.jpg",
+    "Dường như bạn đang do dự, bế tắc trước vấn đề quan trọng.",
+    "Bạn đang lung lay trước quan điểm của người khác."
+  ],
+  [
+    "Three of Swords",
+    "https://phogotarot.com/images/uploads/cards/52-Three-of-Swords.jpg",
+    "Bạn sắp đối diện với sự buồn bã, chia ly.",
+    "Bạn vừa bình phục sau khi trải qua những đau khổ."
+  ],
+  [
+    "Four of Swords",
+    "https://phogotarot.com/images/uploads/cards/53-Four-of-Swords.jpg",
+    "Thời gian tốt để xây dựng sức mạnh tinh thần.",
+    "Bạn làm việc không ngừng nghỉ mà quên mất cơ thể cần nghỉ ngơi."
+  ],
+  [
+    "Five of Swords",
+    "https://phogotarot.com/images/uploads/cards/54-Five-of-Swords.jpg",
+    "Bạn đang quá tham vọng.",
+    "Bạn đã sẵn sàng để kết thúc những căng thẳng."
+  ],
+  [
+    "Six of Swords",
+    "https://phogotarot.com/images/uploads/cards/55-Six-of-Swords.jpg",
+    "Bạn đang đối diện với những chuyển biến khó khăn.",
+    "Bạn đang cố gắng thoát ra khỏi quá khứ."
+  ],
+  [
+    "Seven of Swords",
+    "https://phogotarot.com/images/uploads/cards/56-Seven-of-Swords.jpg",
+    "Bạn đang lén lút, dối lừa.",
+    "Bạn gặp thử thách trong hướng đi mới."
+  ],
+  [
+    "Eight of Swords",
+    "https://phogotarot.com/images/uploads/cards/57-Eight-of-Swords.jpg",
+    "Bạn đang mù quáng tin vào nhận định của bản thân.",
+    "Bạn đang dần trở nên cởi mở hơn."
+  ],
+  [
+    "Nine of Swords",
+    "https://phogotarot.com/images/uploads/cards/58-Nine-of-Swords.jpg",
+    "Bạn đang hà khắc với chính mình.",
+    "Bạn đang lo âu quá mức."
+  ],
+  [
+    "Ten of Swords",
+    "https://phogotarot.com/images/uploads/cards/59-Ten-of-Swords.jpg",
+    "Bạn sẽ thoát khỏi vực thẳm và rút ra được bài học đắt giá.",
+    "Kết thúc tình trạng tồi tệ."
+  ],
+  [
+    "Page of Swords",
+    "https://phogotarot.com/images/uploads/cards/60-Page-of-Swords.jpg",
+    "Phản ánh niềm đam mê, năng động, nhiệt huyết.",
+    "Bạn đang hành động vội vàng."
+  ],
+  [
+    "Knight of Swords",
+    "https://phogotarot.com/images/uploads/cards/61-Knight-of-Swords.jpg",
+    "Năng lượng bùng nổ, thúc đẩy bạn tiến về phía trước.",
+    "Bạn có chút thiếu kiên nhẫn, bốc đồng."
+  ],
+  [
+    "Queen of Swords",
+    "https://phogotarot.com/images/uploads/cards/62-Queen-of-Swords.jpg",
+    "Cần xử lý vấn đề bằng lý trí chứ không phải cảm xúc.",
+    "Bạn nên tập trung hơn vào hướng đi của bản thân."
+  ],
+  [
+    "King of Swords",
+    "https://phogotarot.com/images/uploads/cards/63-King-of-Swords.jpg",
+    "Đây là lúc bạn gạt bỏ cảm xúc, giữ sự khách quan.",
+    "Bạn thiếu định hướng trong thời gian này."
+  ],
+  [
+    "Ace of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/64-Ace-of-Pentacles.jpg",
+    "Bạn đang tận hưởng sự sung túc.",
+    "Bạn có thể bỏ lỡ cơ hội vì thiếu tầm nhìn xa."
+  ],
+  [
+    "Two of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/65-Two-of-Pentacles.jpg",
+    "Sự khởi đầu của một công việc mới.",
+    "Bạn đang gặp khó khăn trong việc quản lý các hoạt động của mình."
+  ],
+  [
+    "Three of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/66-Three-of-Pentacles.jpg",
+    "Sự hoàn thành ban đầu của một mục tiêu hay kế hoạch.",
+    "Sự thiếu tinh thần đồng đội."
+  ],
+  [
+    "Four of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/67-Four-of-Pentacles.jpg",
+    "Bạn hoàn thành mục tiêu và đạt được nhiều của cải.",
+    "Bạn bị ám ảnh về sự nghèo đói và buộc mình phải chạy theo vật chất."
+  ],
+  [
+    "Five of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/68-Five-of-Pentacles.jpg",
+    "Bạn gặp khó khăn trong tất cả mọi thứ.",
+    "Chấm dứt thời kỳ khó khăn."
+  ],
+  [
+    "Six of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/69-Six-of-Pentacles.jpg",
+    "Sự hào phóng về tiền tài, vật chất.",
+    "Hãy cẩn thận về những người bạn cho vay tiền."
+  ],
+  [
+    "Seven of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/70-Seven-of-Pentacles.jpg",
+    "Bạn đang tận hưởng những thành quả đạt được từ những khó khăn và nỗ lực.",
+    "Bạn có thể không gặt hái những thứ mình đang tìm kiếm."
+  ],
+  [
+    "Eight of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/71-Eight-of-Pentacles.jpg",
+    "Dấu hiệu tích cực cho sự khởi đầu mới.",
+    "Sự cầu toàn của bạn có thể trở thành rào cản."
+  ],
+  [
+    "Nine of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/72-Nine-of-Pentacles.jpg",
+    "Bạn đang chạm đến sự tự tin, tự do, tự túc.",
+    "Bạn đang trải qua mất mát vì những quyết định không khôn ngoan."
+  ],
+  [
+    "Ten of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/73-Ten-of-Pentacles.jpg",
+    "Bạn đạt đến đỉnh cao của sự nghiệp.",
+    "Có thể hôn nhân của bạn vừa tan vỡ."
+  ],
+  [
+    "Page of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/74-Page-of-Pentacles.jpg",
+    "Đây là lúc bạn cần hành động, mở rộng công việc làm ăn.",
+    "Bạn đang bị tắc nghẽn do không lập ra kế hoạch từ trước."
+  ],
+  [
+    "Knight of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/75-Knight-of-Pentacles.jpg",
+    "Bạn sắp nhận một nhiệm vụ quan trọng.",
+    "Bạn khao khát thoát ra khỏi sự nhàm chán."
+  ],
+  [
+    "Queen of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/76-Queen-of-Pentacles.jpg",
+    "Đại diện cho sự yêu thương, chăm sóc.",
+    "Bạn đang lo lắng về tự chủ tài chính."
+  ],
+  [
+    "King of Pentacles",
+    "https://phogotarot.com/images/uploads/cards/77-King-of-Pentacles.jpg",
+    "Bạn đã đạt đến đỉnh cao của thành công.",
+    "Có thể bạn đang lạm dụng quyền lực, quyền hạn và kiểm soát."
+  ]
+]

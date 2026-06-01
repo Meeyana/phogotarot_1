@@ -7,6 +7,8 @@ const pageTitle = "Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | P
 const pageDesc = "Sử dụng trải bài 3 lá (Quá khứ, Hiện tại, Tương lai) để nhận luận giải sâu sắc về các câu hỏi tình yêu, sự nghiệp và cuộc sống của bạn.";
 const pageUrl = new URL('/tarot', Astro.site).href;
 
+import fallbackTarotCards from '../data/tarot-cards.json';
+
 // CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph kết hợp Tool & Hướng dẫn)
 const schema = {
   "@context": "https://schema.org",
@@ -56,6 +58,21 @@ const schema = {
     }
   ]
 };
+
+// Đọc dữ liệu từ KV, fallback về JSON tĩnh
+let tarotCardsKV = JSON.stringify(fallbackTarotCards);
+let suggestedQuestionsKV = '[]';
+if (Astro.locals.runtime?.env?.SESSION) {
+    try {
+        const cardsRaw = await Astro.locals.runtime.env.SESSION.get('TAROT_CARDS');
+        if (cardsRaw) tarotCardsKV = cardsRaw;
+        
+        const qRaw = await Astro.locals.runtime.env.SESSION.get('SUGGESTED_QUESTIONS');
+        if (qRaw) suggestedQuestionsKV = qRaw;
+    } catch(e) {
+        console.error("Lỗi đọc KV trong tarot.astro:", e);
+    }
+}
 ---
 
 <BaseLayout
@@ -640,6 +657,9 @@ const schema = {
     </style>
 
     
+    <div id="tarot-cards-data" style="display:none;" data-cards={tarotCardsKV}></div>
+    <div id="suggested-questions-data" style="display:none;" data-questions={suggestedQuestionsKV}></div>
+    
     <script>
         /* ============================================= */
 /* === TAROT.JS (Tarot Game Logic) === */
@@ -651,8 +671,6 @@ const N8N_WEBHOOK_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/2a1c95d5-dd30-471
 // (MỚI - QUAN TRỌNG) URL Webhook để *kiểm tra* câu hỏi
 const N8N_VALIDATE_URL = 'https://n8n.n8ntuanphangz.xyz/webhook/fe3c376f-62f2-472d-ac01-d39ba5496e75'; // !!! BẠN PHẢI THAY THẾ URL NÀY !!!
 
-// (MỚI) Di chuyển SHEET_ID ra ngoài để dùng chung
-const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
 
 // DOM Elements (Game-specific)
 const screens = document.querySelectorAll('.screen');
@@ -721,45 +739,49 @@ function showScreen(screenId) {
 /** Tải dữ liệu 78 lá bài từ Google Sheet */
 async function initialize() {
     try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Cards&tqx=out:json&tq=SELECT%20*%20OFFSET%201`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const text = await response.text();
-        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-        const table = JSON.parse(jsonText).table;
+        const dataDiv = document.getElementById('tarot-cards-data');
+        let rawData = [];
+        if (dataDiv && dataDiv.dataset.cards) {
+            try {
+                rawData = JSON.parse(dataDiv.dataset.cards);
+            } catch(e) { console.error("Lỗi parse TAROT_CARDS từ KV:", e); }
+        }
 
-        cardData = table.rows.map((row, index) => ({
+        if (!rawData || rawData.length === 0) {
+            throw new Error("Không có dữ liệu lá bài.");
+        }
+
+        cardData = rawData.map((row, index) => ({
             id: index,
-            name: row.c[0]?.v || 'Unknown Card',
-            image: row.c[1]?.v || 'https://placehold.co/200x340'
+            name: row[0] || 'Unknown Card',
+            image: row[1] || 'https://placehold.co/200x340'
         }));
 
-        preloadAllCardImages(); // (MỚI) Bắt đầu tải trước ảnh
+        preloadAllCardImages();
     } catch (error)
     {
         console.error("Lỗi khi tải lá bài:", error);
         if (document.getElementById('card-spread-container')) {
-             document.getElementById('card-spread-container').innerHTML = '<p>Lỗi tải bộ bài. Vui lòng tải lại trang.</p>';
+             document.getElementById('card-spread-container').innerHTML = '<p>Lỗi tải bộ bài. Vui lòng tải lại trang hoặc cấu hình TAROT_CARDS trong KV.</p>';
         }
     }
 }
 
-/** Tải câu hỏi gợi ý từ Google Sheet */
 async function loadSuggestedQuestions() {
-    if (!suggestedQuestionsList) return; // Không làm gì nếu không có phần gợi ý
-    
+    if (!suggestedQuestionsList) return;
     try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const text = await response.text();
-        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-        const table = JSON.parse(jsonText).table;
-
-        const rawData = table.rows.map(row => ({
-            category: row.c[0]?.v,
-            question: row.c[1]?.v
-        }));
+        const dataDiv = document.getElementById('suggested-questions-data');
+        let rawData = [];
+        if (dataDiv && dataDiv.dataset.questions) {
+            try {
+                rawData = JSON.parse(dataDiv.dataset.questions);
+            } catch(e) { console.error("Lỗi parse KV JSON:", e); }
+        }
+        
+        if (!rawData || rawData.length === 0) {
+            suggestedQuestionsList.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Chưa có câu hỏi gợi ý nào.</p>';
+            return;
+        }
 
         const grouped = {};
         rawData.forEach(item => {
