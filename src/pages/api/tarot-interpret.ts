@@ -285,6 +285,11 @@ export const POST: APIRoute = async (context) => {
       }
     }
 
+    // Ẩn tên model thực tế trước khi trả về Frontend
+    if (data && data.model) {
+        data.model = 'PhogoTarot Oracle';
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
