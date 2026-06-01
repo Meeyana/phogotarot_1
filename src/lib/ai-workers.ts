@@ -10,8 +10,11 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
         // Thử gọi Custom API trước
         const apiUrl = config.AI_API_URL;
         const apiKey = config.DEFAULT_API_KEY || "";
-        // 9router chỉ nhận đúng tên model là "n8n" hoặc "n8n2"
+        // 9router chỉ nhận đúng tên model đặc thù (VD: "n8n", "n8n3", v.v.)
         let actualModel = passedModel;
+        
+        if (passedModel === 'n8n') actualModel = config.ROUTER_MODEL_1 || 'n8n';
+        if (passedModel === 'n8n2') actualModel = config.ROUTER_MODEL_2 || 'n8n2';
 
         try {
             const response = await fetch(apiUrl, {

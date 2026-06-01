@@ -313,6 +313,13 @@ export const POST: APIRoute = async (context) => {
         data.model = 'PhogoTarot Oracle';
     }
 
+    // Xóa các trường nội bộ không cần thiết lộ ra ngoài Network
+    if (data) {
+        delete data.usage;
+        delete data.topic;
+        delete data.needs_image;
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

@@ -204,6 +204,11 @@ export const POST: APIRoute = async (context) => {
         data.model = 'PhogoTarot Oracle';
     }
 
+    // Xóa trường usage để tránh lộ token
+    if (data) {
+        delete data.usage;
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
