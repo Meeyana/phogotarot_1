@@ -11,16 +11,17 @@ export const GET: APIRoute = async (context) => {
         const env: any = context.locals.runtime?.env || process.env;
         const kv = env.SESSION;
         
-        // Lấy ngày hiện tại theo giờ VN để làm Cache Key
+        // Lấy ngày hiện tại theo giờ VN
         const vnTime = new Date(new Date().getTime() + 7 * 3600 * 1000);
         const todayStr = vnTime.toISOString().split('T')[0]; // Ví dụ: 2026-06-01
-        const cacheKey = `ZODIAC_DAILY_${todayStr}`;
+        const cacheKey = `ZODIAC_DAILY_CACHE`;
 
-        // 1. KÊM TRA CACHE
+        // 1. KIỂM TRA CACHE
         if (kv) {
-            const cachedData = await kv.get(cacheKey, 'json');
-            if (cachedData) {
-                return new Response(JSON.stringify(cachedData), {
+            const cachedObject = await kv.get(cacheKey, 'json');
+            // Chỉ trả về nếu ngày trong cache khớp với ngày hôm nay
+            if (cachedObject && cachedObject.date === todayStr) {
+                return new Response(JSON.stringify(cachedObject.data), {
                     status: 200,
                     headers: { 
                         'Content-Type': 'application/json',
@@ -30,7 +31,7 @@ export const GET: APIRoute = async (context) => {
             }
         }
 
-        // 2. NẾU KHÔNG CÓ CACHE -> GỌI GOOGLE SHEETS
+        // 2. NẾU KHÔNG CÓ CACHE HOẶC KHÁC NGÀY -> GỌI GOOGLE SHEETS
         const response = await fetch(GVIZ_URL);
         if (!response.ok) {
             throw new Error(`Google Sheets API lỗi! HTTP Status: ${response.status}`);
@@ -68,10 +69,13 @@ export const GET: APIRoute = async (context) => {
             };
         }
 
-        // 3. LƯU VÀO CACHE (Hạn sử dụng: 24 tiếng = 86400 giây)
+        // 3. LƯU VÀO CACHE BẰNG CÁCH GHI ĐÈ KEY DUY NHẤT (Vẫn đặt Hạn sử dụng: 24 tiếng = 86400 giây cho an toàn dọn rác)
         if (kv) {
-            // Lưu bất đồng bộ để không chặn luồng trả về (nếu dùng ctx.waitUntil thì tốt hơn nhưng Astro mặc định chờ)
-            await kv.put(cacheKey, JSON.stringify(processedData), { expirationTtl: 86400 });
+            const cachePayload = {
+                date: todayStr,
+                data: processedData
+            };
+            await kv.put(cacheKey, JSON.stringify(cachePayload), { expirationTtl: 86400 });
         }
 
         return new Response(JSON.stringify(processedData), {

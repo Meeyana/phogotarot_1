@@ -816,7 +816,10 @@ function renderSuggestedQuestions(groupedData) {
 
 /** Tải trước hình ảnh 78 lá bài */
 function preloadAllCardImages() {
-    if (!cardData || cardData.length === 0) return;
+    if (!cardData || cardData.length === 0) {
+        allCardImagesLoaded = true;
+        return;
+    }
 
     console.log("Bắt đầu tải trước 78 hình ảnh lá bài...");
     const imagePromises = cardData.map(card => {
@@ -1226,10 +1229,12 @@ function transitionToResultsView() {
     const drawingScreen = document.getElementById('drawing-screen');
     drawingScreen.classList.add('results-active');
     
-    getInterpretationButton.style.display = 'inline-block'; 
+    getInterpretationButton.style.display = 'none'; 
+    
+    // Tự động gọi hàm luận giải sau 500ms để người dùng kịp nhìn lá bài vừa chọn
     setTimeout(() => {
-        getInterpretationButton.classList.add('visible');
-    }, 300); // Chờ hiệu ứng ẩn bộ bài
+        handleGetInterpretation();
+    }, 500);
 }
 
 /** Lấy luận giải từ AI */
