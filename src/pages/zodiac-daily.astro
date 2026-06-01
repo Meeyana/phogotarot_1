@@ -297,43 +297,24 @@ const schema = {
     <script>
         // LOGIC JS
         let tarotData = {};
-        const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig';
+        const SHEET_ID = '1Bqu2RBPRH-YeCOiX_5SjmQP8GETpKkqBZhMPZwqm_ig'; // Vẫn giữ lại đề phòng sau này cần tham khảo
         const SHEET_NAME = 'Zodiac';
 
         async function fetchZodiacData() {
-            const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
             setLoadingState(true);
             try {
-                const response = await fetch(gvizUrl);
+                // Gọi API trung gian thay vì gọi trực tiếp Google Sheets (Để tận dụng Caching)
+                const response = await fetch('/api/zodiac-data');
                 if (!response.ok) throw new Error(`Lỗi HTTP! ${response.status}`);
-                let text = await response.text();
-                const jsonpData = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/s);
-                if (!jsonpData || !jsonpData[1]) throw new Error("Lỗi parse JSONP");
-                const data = JSON.parse(jsonpData[1]);
-                const rows = data.table.rows;
-                const processedData = {};
-                for (let i = 1; i < rows.length; i++) {
-                    const row = rows[i].c;
-                    const zodiacSign = row[0]?.v;
-                    if (!zodiacSign) continue;
-                    processedData[zodiacSign] = {
-                        cardname: row[1]?.v || "N/A",
-                        url: row[2]?.v || "https://placehold.co/300x500/142850/f0f0ff?text=No+Image",
-                        keyword: row[3]?.v || "",
-                        love: row[4]?.v || "<p>Chưa có thông tin.</p>",
-                        job: row[5]?.v || "<p>Chưa có thông tin.</p>",
-                        finance: row[6]?.v || "<p>Chưa có thông tin.</p>",
-                        color: row[7]?.v || "N/A",
-                        objects: row[8]?.v || "N/A",
-                        locations: row[9]?.v || "N/A",
-                        advice: row[10]?.v || "<p>Chưa có thông tin.</p>",
-                    };
-                }
-                tarotData = processedData;
+                
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+
+                tarotData = data;
                 setLoadingState(false);
                 return true;
             } catch (error) {
-                console.error(error);
+                console.error("Lỗi tải Zodiac Data:", error);
                 setLoadingState(false, true);
                 return false;
             }
