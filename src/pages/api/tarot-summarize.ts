@@ -119,7 +119,8 @@ export const POST: APIRoute = async (context) => {
             // Cập nhật lại vào DB
             await db.prepare('UPDATE user_profiles SET user_persona = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ?')
                     .bind(newPersona, queryUserId).run();
-            return new Response(JSON.stringify({ success: true, persona: newPersona }), { status: 200 });
+            // CHỈ trả về thông báo thành công, KHÔNG trả về nội dung persona ra Network
+            return new Response(JSON.stringify({ success: true, message: "Summarized successfully" }), { status: 200 });
         }
     }
 

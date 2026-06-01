@@ -45,6 +45,29 @@ if (db && Astro.locals.user) {
     console.error("Lỗi lấy thông tin profile:", error);
   }
 }
+// Đọc gợi ý câu hỏi từ KV, nếu chưa có thì dùng mặc định
+let suggestedQuestionsKV = JSON.stringify([
+  { "category": "Tình Cảm", "question": "Tình cảm của tôi 3 tháng tới sẽ thế nào?" },
+  { "category": "Công Việc", "question": "Công việc của tôi 3 tháng tới sẽ ra sao?" },
+  { "category": "Tài Chính", "question": "Sắp tới tôi có nên đầu tư không?" },
+  { "category": "Chung", "question": "Điều gì đang ảnh hưởng mạnh đến cuộc sống của tôi lúc này?" },
+  { "category": "Tình Cảm", "question": "Điều gì đang ảnh hưởng đến tình cảm của tôi ở hiện tại?" },
+  { "category": "Công Việc", "question": "Tôi nên làm gì để phát triển sự nghiệp của mình?" },
+  { "category": "Tình Cảm", "question": "Khi nào tôi sẽ có mối quan hệ mới?" },
+  { "category": "Công Việc", "question": "Tôi đang gặp khó khăn gì trong công việc mà chưa nhận ra?" },
+  { "category": "Tài Chính", "question": "Cơ hội nào sắp tới có thể giúp tôi cải thiện tài chính?" },
+  { "category": "Chung", "question": "Tôi cần tập trung vào khía cạnh nào của bản thân ngay bây giờ?" },
+  { "category": "Chung", "question": "Thông điệp quan trọng nhất mà vũ trụ muốn gửi đến tôi là gì?" },
+  { "category": "Tài Chính", "question": "Tôi nên chi tiêu hay tiết kiệm trong giai đoạn này?" }
+]);
+if (Astro.locals.runtime?.env?.SESSION) {
+    try {
+        const raw = await Astro.locals.runtime.env.SESSION.get('SUGGESTED_QUESTIONS');
+        if (raw) suggestedQuestionsKV = raw;
+    } catch(e) {
+        console.error("Lỗi đọc SUGGESTED_QUESTIONS từ KV:", e);
+    }
+}
 ---
 
 <BaseLayout
@@ -197,6 +220,8 @@ if (db && Astro.locals.user) {
         window.IS_LOGGED_IN = isLoggedIn;
         window.SERVER_USER_ID = serverUserId || null;
     </script>
+
+    <div id="suggested-questions-data" style="display:none;" data-questions={suggestedQuestionsKV}></div>
 
     <script>
         // CONFIG
@@ -786,13 +811,27 @@ if (db && Astro.locals.user) {
                         isThinking = false;
                     }
                 } catch (err) {
+                    // Xóa tin nhắn user vừa gửi khỏi localStorage để không bị tính vào lượt chat
+                    const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+                    if (history.length > 0 && history[history.length - 1].sender === 'user') {
+                        history.pop();
+                        localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+                    }
+                    // Xóa bong bóng chat của user khỏi giao diện
+                    const messageElements = chatMessages.querySelectorAll('.message');
+                    for (let i = messageElements.length - 1; i >= 0; i--) {
+                        if (messageElements[i].classList.contains('user-message')) {
+                            messageElements[i].remove();
+                            break;
+                        }
+                    }
+
                     if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {
                         addMessage(err.message, 'bot', false);
-                        isThinking = false;
                     } else {
-                        // Fallback khi lỗi validate: Cho hiện box xác nhận để tránh nghẽn flow
-                        showConfirmationBox(question);
+                        addMessage('Đã xảy ra lỗi kết nối với máy chủ AI. Câu hỏi chưa được tính, vui lòng thử lại sau.', 'bot', false);
                     }
+                    isThinking = false;
                 } finally {
                     removeTypingIndicator();
                     submitBtn.disabled = false;
@@ -849,13 +888,27 @@ if (db && Astro.locals.user) {
                     isThinking = false;
                 }
             } catch (err) {
+                // Xóa tin nhắn user vừa gửi khỏi localStorage để không bị tính vào lượt chat
+                const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
+                if (history.length > 0 && history[history.length - 1].sender === 'user') {
+                    history.pop();
+                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
+                }
+                // Xóa bong bóng chat của user khỏi giao diện
+                const messageElements = chatMessages.querySelectorAll('.message');
+                for (let i = messageElements.length - 1; i >= 0; i--) {
+                    if (messageElements[i].classList.contains('user-message')) {
+                        messageElements[i].remove();
+                        break;
+                    }
+                }
+
                 if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {
                     addMessage(err.message, 'bot', false);
-                    isThinking = false;
                 } else {
-                    // Fallback khi lỗi validate: Cho hiện box xác nhận bốc bài luôn để tránh nghẽn flow test
-                    showConfirmationBox(question, targetSpreadCount);
+                    addMessage('Đã xảy ra lỗi kết nối với máy chủ AI. Câu hỏi chưa được tính, vui lòng thử lại sau.', 'bot', false);
                 }
+                isThinking = false;
             } finally {
                 removeTypingIndicator();
                 submitBtn.disabled = false;
@@ -1348,24 +1401,25 @@ if (db && Astro.locals.user) {
                 }
             });
             
-            // LOGIC GỢI Ý CÂU HỎI (Google Sheets gviz)
+            // LOGIC GỢI Ý CÂU HỎI (Cloudflare KV)
             const suggestedQuestionsToggle = document.getElementById('suggested-questions-toggle');
             const suggestedQuestionsList = document.getElementById('suggested-questions-list');
             
             async function loadSuggestedQuestions() {
                 if (!suggestedQuestionsList) return;
                 try {
-                    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=Questions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                    const text = await response.text();
-                    const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-                    const table = JSON.parse(jsonText).table;
-
-                    const rawData = table.rows.map(row => ({
-                        category: row.c[0]?.v,
-                        question: row.c[1]?.v
-                    }));
+                    const dataDiv = document.getElementById('suggested-questions-data');
+                    let rawData = [];
+                    if (dataDiv && dataDiv.dataset.questions) {
+                        try {
+                            rawData = JSON.parse(dataDiv.dataset.questions);
+                        } catch(e) { console.error("Lỗi parse KV JSON:", e); }
+                    }
+                    
+                    if (!rawData || rawData.length === 0) {
+                        suggestedQuestionsList.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Chưa có câu hỏi gợi ý nào. Quản trị viên cần thêm dữ liệu vào KV (SUGGESTED_QUESTIONS).</p>';
+                        return;
+                    }
 
                     const grouped = {};
                     rawData.forEach(item => {

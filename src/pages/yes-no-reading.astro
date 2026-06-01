@@ -56,6 +56,30 @@ const schema = {
     }
   ]
 };
+
+// Đọc gợi ý câu hỏi từ KV, nếu chưa có thì dùng mặc định
+let suggestedQuestionsKV = JSON.stringify([
+  { "category": "Tình Cảm", "question": "Tôi có nên tiếp tục mối quan hệ này không?" },
+  { "category": "Tình Cảm", "question": "Người ấy có còn tình cảm với tôi không?" },
+  { "category": "Tình Cảm", "question": "Nếu tôi chủ động nhắn tin, mọi chuyện có tiến triển tốt không?" },
+  { "category": "Công Việc", "question": "Tôi có nên nghỉ công việc hiện tại không?" },
+  { "category": "Công Việc", "question": "Công việc mới này có mang lại kết quả tích cực không?" },
+  { "category": "Công Việc", "question": "Nếu tôi đầu tư thời gian cho dự án này, có đáng không?" },
+  { "category": "Tài Chính", "question": "Tôi có nên đầu tư vào cơ hội này không?" },
+  { "category": "Tài Chính", "question": "Tình hình tài chính của tôi có cải thiện trong thời gian tới không?" },
+  { "category": "Tài Chính", "question": "Nếu tôi mạo hiểm một chút, kết quả có khả quan không?" },
+  { "category": "Chung", "question": "Tôi có đang đi đúng hướng cuộc sống không?" },
+  { "category": "Chung", "question": "Nếu tôi bắt đầu lại từ đầu bây giờ, có phải là quyết định đúng không?" },
+  { "category": "Chung", "question": "Tôi có nên tin vào trực giác của mình trong việc này không?" }
+]);
+if (Astro.locals.runtime?.env?.SESSION) {
+    try {
+        const raw = await Astro.locals.runtime.env.SESSION.get('SUGGESTED_YN_QUESTIONS');
+        if (raw) suggestedQuestionsKV = raw;
+    } catch(e) {
+        console.error("Lỗi đọc SUGGESTED_YN_QUESTIONS từ KV:", e);
+    }
+}
 ---
 
 <BaseLayout
@@ -888,6 +912,8 @@ const schema = {
     </style>   
 
 
+    <div id="suggested-questions-data" style="display:none;" data-questions={suggestedQuestionsKV}></div>
+
     <script>
 /* ============================================= */
 /* === TAROT.JS (Logic cho trang 1/3 lá) === */
@@ -1127,17 +1153,18 @@ function filterCardTable(event) {
 async function loadSuggestedQuestions() {
     if (!suggestedQuestionsList) return;
     try {
-        const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=YnQuestions&tqx=out:json&tq=SELECT%20A,%20B%20OFFSET%201`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const text = await response.text();
-        const jsonText = text.substring(text.indexOf('(') + 1, text.lastIndexOf(')'));
-        const table = JSON.parse(jsonText).table;
-
-        const rawData = table.rows.map(row => ({
-            category: row.c[0]?.v,
-            question: row.c[1]?.v
-        }));
+        const dataDiv = document.getElementById('suggested-questions-data');
+        let rawData = [];
+        if (dataDiv && dataDiv.dataset.questions) {
+            try {
+                rawData = JSON.parse(dataDiv.dataset.questions);
+            } catch(e) { console.error("Lỗi parse KV JSON:", e); }
+        }
+        
+        if (!rawData || rawData.length === 0) {
+            suggestedQuestionsList.innerHTML = '<p style="padding: 1rem; opacity: 0.7; text-align: center;">Chưa có câu hỏi gợi ý nào. Quản trị viên cần thêm dữ liệu vào KV (SUGGESTED_YN_QUESTIONS).</p>';
+            return;
+        }
         const grouped = {};
         rawData.forEach(item => {
             if (!item.category || !item.question) return; 
