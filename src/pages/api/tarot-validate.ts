@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { checkRateLimit } from '../../../lib/rate-limiter';
+import { checkRateLimit } from '../../lib/rate-limiter';
 
 export const prerender = false;
 
