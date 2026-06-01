@@ -10,10 +10,8 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
         // Thử gọi Custom API trước
         const apiUrl = config.AI_API_URL;
         const apiKey = config.DEFAULT_API_KEY || "";
+        // 9router chỉ nhận đúng tên model là "n8n" hoặc "n8n2"
         let actualModel = passedModel;
-        
-        if (passedModel === 'n8n') actualModel = config.MODEL_1 || 'n8n';
-        if (passedModel === 'n8n2') actualModel = config.MODEL_2 || 'n8n2';
 
         try {
             const response = await fetch(apiUrl, {
@@ -53,8 +51,8 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
         const fallbackKey = env.OPENAI_API_KEY || "";
         let fallbackModel = passedModel;
         
-        if (passedModel === 'n8n') fallbackModel = "gpt-4o";
-        if (passedModel === 'n8n2') fallbackModel = "gpt-4o-mini";
+        if (passedModel === 'n8n') fallbackModel = config.MODEL_1 || "gpt-4o";
+        if (passedModel === 'n8n2') fallbackModel = config.MODEL_2 || "gpt-4o-mini";
 
         const fbResponse = await fetch(fallbackUrl, {
             method: 'POST',
