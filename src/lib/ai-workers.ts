@@ -49,8 +49,8 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
     }
 
     if (useFallback) {
-        // Fallback OpenAI
-        const fallbackUrl = "https://api.openai.com/v1/chat/completions";
+        // Fallback OpenAI hoặc AI Gateway
+        const fallbackUrl = config.FALLBACK_API_URL || "https://api.openai.com/v1/chat/completions";
         const fallbackKey = env.OPENAI_API_KEY || "";
         let fallbackModel = passedModel;
         

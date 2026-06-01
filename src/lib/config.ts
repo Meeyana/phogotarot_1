@@ -6,6 +6,7 @@ export interface SystemConfig {
     MODEL_2: string;
     ROUTER_MODEL_1: string;
     ROUTER_MODEL_2: string;
+    FALLBACK_API_URL: string;
 }
 
 export async function getSystemConfig(env: any): Promise<SystemConfig> {
@@ -18,7 +19,8 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
         MODEL_1: env.MODEL_1 || 'gpt-4o',
         MODEL_2: env.MODEL_2 || 'gpt-4o-mini',
         ROUTER_MODEL_1: env.ROUTER_MODEL_1 || 'n8n',
-        ROUTER_MODEL_2: env.ROUTER_MODEL_2 || 'n8n2'
+        ROUTER_MODEL_2: env.ROUTER_MODEL_2 || 'n8n2',
+        FALLBACK_API_URL: env.FALLBACK_API_URL || 'https://api.openai.com/v1/chat/completions'
     };
 
     // 2. Thử đọc cấu hình từ Cloudflare KV (ghi đè lên cấu hình mặc định)
@@ -35,6 +37,7 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
                 if (kvConfig.MODEL_2) config.MODEL_2 = kvConfig.MODEL_2;
                 if (kvConfig.ROUTER_MODEL_1) config.ROUTER_MODEL_1 = kvConfig.ROUTER_MODEL_1;
                 if (kvConfig.ROUTER_MODEL_2) config.ROUTER_MODEL_2 = kvConfig.ROUTER_MODEL_2;
+                if (kvConfig.FALLBACK_API_URL) config.FALLBACK_API_URL = kvConfig.FALLBACK_API_URL;
             }
         } catch (error) {
             console.error("Lỗi đọc SYSTEM_CONFIG từ KV:", error);
