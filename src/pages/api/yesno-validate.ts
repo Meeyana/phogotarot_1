@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
 
 export const prerender = false;
@@ -15,9 +16,10 @@ export const POST: APIRoute = async (context) => {
 
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_VALIDATE_YESNO;
-    
-    if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
+    const useN8nFirst = config.USE_LOCAL_AI === true;
+    if (!webhookUrl && useN8nFirst) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
     const db = env.DB;
     const user = context.locals.user;
@@ -89,13 +91,75 @@ export const POST: APIRoute = async (context) => {
     }
     body.userProfile = profile;
 
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
 
-    const data = await response.json();
+    let data: any;
+
+    if (useN8nFirst && webhookUrl) {
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!response.ok) {
+                throw new Error(`n8n HTTP error ${response.status}`);
+            }
+            const responseText = await response.text();
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.warn('n8n validate trả về không phải JSON, chuyển sang AI nội bộ...');
+                const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
+                data = await runYesNoValidateWorker(body, env, config);
+            }
+        } catch (e) {
+            console.warn('n8n validate failed, chuyển sang AI nội bộ...');
+            const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
+            data = await runYesNoValidateWorker(body, env, config);
+        }
+    } else {
+        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ cho Yes/No Validate (Cloudflare Workers)...');
+        const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
+        data = await runYesNoValidateWorker(body, env, config);
+    }
+    
+    // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema)
+    let rawContent = null;
+    let rawUsage = null;
+    let rawModel = null;
+    if (Array.isArray(data) && data[0]?.choices?.[0]?.message?.content) {
+        rawContent = data[0].choices[0].message.content;
+        rawUsage = data[0].usage || {};
+        rawModel = data[0].model || 'n8n_agent';
+    } else if (data && data.choices?.[0]?.message?.content) {
+        rawContent = data.choices[0].message.content;
+        rawUsage = data.usage || {};
+        rawModel = data.model || 'n8n_agent';
+    }
+
+    if (rawContent) {
+        try {
+            let cleanContent = rawContent;
+            if (cleanContent.startsWith('```json')) {
+                cleanContent = cleanContent.replace(/^```json/, '').replace(/```$/, '').trim();
+            }
+            const parsed = JSON.parse(cleanContent);
+            data = {
+                ...parsed,
+                usage: rawUsage,
+                model: rawModel
+            };
+        } catch(e) {
+            data = {
+                isValid: true,
+                reason: rawContent,
+                pick_card: true,
+                usage: rawUsage,
+                model: rawModel
+            };
+        }
+    }
+
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }

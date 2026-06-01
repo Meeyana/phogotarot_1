@@ -79,6 +79,6 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error: any) {
     console.error('Lỗi tạo payment:', error?.message);
-    return new Response(JSON.stringify({ error: 'System error' }), { status: 500 });
+    return new Response(JSON.stringify({ error: `System error: ${error?.message}` }), { status: 500 });
   }
 };

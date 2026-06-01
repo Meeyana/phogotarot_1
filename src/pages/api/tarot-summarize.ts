@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getSystemConfig } from '../../lib/config';
 
 export const prerender = false;
 
@@ -6,10 +7,11 @@ export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
-    const webhookUrl = env.N8N_WEBHOOK_SUMMARIZE || '';
-    
+    const config = await getSystemConfig(env);
+    const webhookUrl = env.N8N_WEBHOOK_SUMMARIZE || 'https://n8n.n8ntuanphangz.xyz/webhook/0724835f-eb5a-4eb6-acc4-df1a7b4515b6';
+
     // Nếu người dùng chưa cấu hình webhook tóm tắt, ta bỏ qua mượt mà
-    if (!webhookUrl) {
+    if (!webhookUrl && config.USE_LOCAL_AI) {
         console.log('Skipping summarize: N8N_WEBHOOK_SUMMARIZE is missing or empty in env');
         return new Response(JSON.stringify({ message: 'Summarize webhook not configured, skipping.' }), { status: 200 });
     }
@@ -59,21 +61,51 @@ export const POST: APIRoute = async (context) => {
         return new Response(JSON.stringify({ message: 'No logs to summarize' }), { status: 200 });
     }
 
-    // Gọi lên n8n webhook tóm tắt
-    const response = await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            userId: queryUserId,
-            readingId: readingId,
-            currentPersona: profile.user_persona,
-            userProfile: profile,
-            history: logs.results
-        })
-    });
+    // Chuẩn bị payload
+    const payload = {
+        userId: queryUserId,
+        readingId: readingId,
+        currentPersona: profile.user_persona,
+        userProfile: profile,
+        history: logs.results
+    };
 
-    if (response.ok) {
-        const result = await response.json();
+    let result: any;
+    const useN8nFirst = config.USE_LOCAL_AI === true;
+
+    if (useN8nFirst && webhookUrl) {
+        try {
+            // Gọi lên n8n webhook tóm tắt
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`n8n HTTP error ${response.status}`);
+            }
+            
+            const responseText = await response.text();
+            try {
+                result = JSON.parse(responseText);
+            } catch (e) {
+                console.warn('n8n summarize trả về không phải JSON, chuyển sang AI nội bộ...');
+                const { runTarotSummarizeWorker } = await import('../../lib/ai-workers');
+                result = await runTarotSummarizeWorker(payload, env, config);
+            }
+        } catch (e) {
+            console.warn('n8n summarize failed, chuyển sang AI nội bộ...');
+            const { runTarotSummarizeWorker } = await import('../../lib/ai-workers');
+            result = await runTarotSummarizeWorker(payload, env, config);
+        }
+    } else {
+        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ cho Summarize (Cloudflare Workers)...');
+        const { runTarotSummarizeWorker } = await import('../../lib/ai-workers');
+        result = await runTarotSummarizeWorker(payload, env, config);
+    }
+
+    if (result) {
         let newPersona = '';
         if (result.summary || result.user_persona || result.persona) {
             newPersona = result.summary || result.user_persona || result.persona;

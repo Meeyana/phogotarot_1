@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
 
 export const prerender = false;
@@ -15,10 +16,11 @@ export const POST: APIRoute = async (context) => {
 
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_VALIDATE_TAROT
       || 'https://n8n.n8ntuanphangz.xyz/webhook/7179b8ca-c774-47a9-9ed4-6bf975344058'; // fallback localhost
     
-    if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
+    if (!webhookUrl && config.USE_LOCAL_AI) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;
@@ -158,22 +160,75 @@ export const POST: APIRoute = async (context) => {
           }
       }
 
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    });
-
-    const responseText = await response.text();
     let data: any;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('n8n validate webhook trả về không phải JSON:', response.status, responseText.substring(0, 300));
-      return new Response(JSON.stringify({ error: `Lỗi xác thực: n8n webhook không phản hồi JSON hợp lệ (HTTP ${response.status})` }), { 
-        status: 502, 
-        headers: { 'Content-Type': 'application/json' } 
-      });
+    const useN8nFirst = config.USE_LOCAL_AI === true;
+
+    if (useN8nFirst && webhookUrl) {
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                throw new Error(`n8n HTTP error ${response.status}`);
+            }
+
+            const responseText = await response.text();
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.warn('n8n validate trả về không phải JSON, chuyển sang AI nội bộ...');
+                const { runTarotValidateWorker } = await import('../../lib/ai-workers');
+                data = await runTarotValidateWorker(body, env, config);
+            }
+        } catch (e) {
+            console.warn('n8n validate failed, chuyển sang AI nội bộ...');
+            const { runTarotValidateWorker } = await import('../../lib/ai-workers');
+            data = await runTarotValidateWorker(body, env, config);
+        }
+    } else {
+        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ (Cloudflare Workers)...');
+        const { runTarotValidateWorker } = await import('../../lib/ai-workers');
+        data = await runTarotValidateWorker(body, env, config);
+    }
+    
+    // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema)
+    let rawContent = null;
+    let rawUsage = null;
+    let rawModel = null;
+    if (Array.isArray(data) && data[0]?.choices?.[0]?.message?.content) {
+        rawContent = data[0].choices[0].message.content;
+        rawUsage = data[0].usage || {};
+        rawModel = data[0].model || 'n8n_agent';
+    } else if (data && data.choices?.[0]?.message?.content) {
+        rawContent = data.choices[0].message.content;
+        rawUsage = data.usage || {};
+        rawModel = data.model || 'n8n_agent';
+    }
+
+    if (rawContent) {
+        try {
+            let cleanContent = rawContent;
+            if (cleanContent.startsWith('```json')) {
+                cleanContent = cleanContent.replace(/^```json/, '').replace(/```$/, '').trim();
+            }
+            const parsed = JSON.parse(cleanContent);
+            data = {
+                ...parsed,
+                usage: rawUsage,
+                model: rawModel
+            };
+        } catch(e) {
+            data = {
+                isValid: true,
+                reason: rawContent,
+                pick_card: true,
+                usage: rawUsage,
+                model: rawModel
+            };
+        }
     }
 
     // === LƯU VÀO D1 DATABASE ===

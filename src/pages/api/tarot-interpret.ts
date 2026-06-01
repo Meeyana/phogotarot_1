@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getSystemConfig } from '../../lib/config';
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
@@ -6,10 +7,10 @@ export const POST: APIRoute = async (context) => {
   try {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
-    const webhookUrl = env.N8N_WEBHOOK_TAROT
-      || 'https://n8n.n8ntuanphangz.xyz/webhook/fc76868a-6ee3-4376-98fe-b5db66b7a3ee'; // fallback localhost
+    const config = await getSystemConfig(env);
+    const webhookUrl = env.N8N_WEBHOOK_TAROT || 'https://n8n.n8ntuanphangz.xyz/webhook/ce565258-c0b7-4c48-b4b1-840994d93bd5';
     
-    if (!webhookUrl) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
+    if (!webhookUrl && config.USE_LOCAL_AI) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
     const db = env.DB;
     
@@ -164,22 +165,53 @@ export const POST: APIRoute = async (context) => {
       history: history
     };
 
-    const response = await fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const responseText = await response.text();
     let data: any;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error('n8n webhook trả về không phải JSON:', response.status, responseText.substring(0, 300));
-      return new Response(JSON.stringify({ error: `Lỗi luận giải: n8n webhook không phản hồi JSON hợp lệ (HTTP ${response.status})` }), { 
-        status: 502, 
-        headers: { 'Content-Type': 'application/json' } 
-      });
+    const useN8nFirst = config.USE_LOCAL_AI === true;
+
+    if (useN8nFirst && webhookUrl) {
+        try {
+            const response = await fetch(webhookUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`n8n HTTP error ${response.status}`);
+            }
+
+            const responseText = await response.text();
+            try {
+                data = JSON.parse(responseText);
+            } catch (e) {
+                console.warn('n8n interpret trả về không phải JSON, chuyển sang AI nội bộ...');
+                const { runTarotInterpretWorker } = await import('../../lib/ai-workers');
+                data = await runTarotInterpretWorker(payload, env, config);
+            }
+        } catch (e) {
+            console.warn('n8n interpret failed, chuyển sang AI nội bộ...');
+            const { runTarotInterpretWorker } = await import('../../lib/ai-workers');
+            data = await runTarotInterpretWorker(payload, env, config);
+        }
+    } else {
+        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ cho Interpret (Cloudflare Workers)...');
+        const { runTarotInterpretWorker } = await import('../../lib/ai-workers');
+        data = await runTarotInterpretWorker(payload, env, config);
+    }
+    
+    // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema)
+    if (Array.isArray(data) && data[0]?.choices?.[0]?.message?.content) {
+        data = {
+            interpretation: data[0].choices[0].message.content,
+            usage: data[0].usage || {},
+            model: data[0].model || 'n8n_agent'
+        };
+    } else if (data && data.choices?.[0]?.message?.content) {
+        data = {
+            interpretation: data.choices[0].message.content,
+            usage: data.usage || {},
+            model: data.model || 'n8n_agent'
+        };
     }
     
     // === LƯU VÀO D1 DATABASE ===
