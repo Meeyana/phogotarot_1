@@ -1103,7 +1103,7 @@ async function loadCardMeanings() {
 
     } catch (error) {
         console.error("Lỗi khi tải dữ liệu tra cứu bài:", error);
-        const errorHtml = `<p style="padding: 1rem; opacity: 0.7; text-align: center; color: #ff8a8a;">Lỗi tải dữ liệu tra cứu: ${error.message}<br>Vui lòng đảm bảo Google Sheet có một tab tên là 'Meanings' (đã thêm Cột E) và đã được chia sẻ công khai.</p>`;
+        const errorHtml = `<p style="padding: 1rem; opacity: 0.7; text-align: center; color: #ff8a8a;">Lỗi tải dữ liệu tra cứu: ${error.message}<br>Vui lòng đảm bảo dữ liệu TAROT_CARDS_YESNO trong Cloudflare KV đã được định dạng đúng chuẩn mảng JSON (Array).</p>`;
         if (cardLookupTable1) cardLookupTable1.innerHTML = errorHtml;
         if (cardLookupTable2) cardLookupTable2.innerHTML = errorHtml;
     }

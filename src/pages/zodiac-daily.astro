@@ -339,8 +339,6 @@ const schema = {
                 if (isError) {
                     mainZodiacName.textContent = 'Lỗi Tải Dữ Liệu';
                     cardDisplay.innerHTML = `<p style="text-align: center; color: #ff8a8a;">Không thể tải dữ liệu.</p>`;
-                } else {
-                    mainZodiacName.textContent = 'Bạch Dương'; 
                 }
             }
         }
@@ -479,8 +477,29 @@ const schema = {
                 shareBtn.addEventListener('click', handleShare);
             }
 
-            updateZodiacContent('Bạch Dương');
-            setActiveZodiac('Bạch Dương');
+            const signMap = {
+                'aries': 'Bạch Dương',
+                'taurus': 'Kim Ngưu',
+                'gemini': 'Song Tử',
+                'cancer': 'Cự Giải',
+                'leo': 'Sư Tử',
+                'virgo': 'Xử Nữ',
+                'libra': 'Thiên Bình',
+                'scorpio': 'Bọ Cạp',
+                'sagittarius': 'Nhân Mã',
+                'capricorn': 'Ma Kết',
+                'aquarius': 'Bảo Bình',
+                'pisces': 'Song Ngư'
+            };
+            const urlParams = new URLSearchParams(window.location.search);
+            const signQuery = urlParams.get('sign');
+            let initialZodiac = 'Bạch Dương';
+            if (signQuery && signMap[signQuery.toLowerCase()]) {
+                initialZodiac = signMap[signQuery.toLowerCase()];
+            }
+
+            updateZodiacContent(initialZodiac);
+            setActiveZodiac(initialZodiac);
         });
     </script>
 </BaseLayout>
