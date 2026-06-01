@@ -4,6 +4,7 @@ import type { SystemConfig } from './config';
 
 async function callOpenAI(messages: any[], temperature: number, env: any, config: SystemConfig, passedModel: string = "n8n2") {
     let useFallback = false;
+    let customErrorMsg = "";
 
     if (config.AI_API_URL) {
         // Thử gọi Custom API trước
@@ -31,14 +32,18 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
             if (response.ok) {
                 return await response.json();
             } else {
-                console.warn(`[AI API] Custom endpoint failed (HTTP ${response.status}). Chuyển sang Fallback OpenAI...`);
+                const errText = await response.text();
+                customErrorMsg = `HTTP ${response.status} - ${errText}`;
+                console.warn(`[AI API] Custom endpoint failed (${customErrorMsg}). Chuyển sang Fallback OpenAI...`);
                 useFallback = true;
             }
         } catch (err: any) {
-            console.warn(`[AI API] Custom endpoint fetch error (${err.message}). Chuyển sang Fallback OpenAI...`);
+            customErrorMsg = `Fetch error: ${err.message}`;
+            console.warn(`[AI API] Custom endpoint fetch error (${customErrorMsg}). Chuyển sang Fallback OpenAI...`);
             useFallback = true;
         }
     } else {
+        customErrorMsg = "AI_API_URL is empty";
         useFallback = true;
     }
 
@@ -65,7 +70,7 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
         });
 
         if (!fbResponse.ok) {
-            throw new Error(`Fallback AI API failed: ${fbResponse.status} ${await fbResponse.text()}`);
+            throw new Error(`9router Error: ${customErrorMsg} | Fallback Error: ${fbResponse.status} ${await fbResponse.text()}`);
         }
 
         return await fbResponse.json();
