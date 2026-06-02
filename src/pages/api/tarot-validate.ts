@@ -5,6 +5,10 @@ import { checkRateLimit } from '../../lib/rate-limiter';
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
+  let lockedValidate = false;
+  let safeReadingIdForUnlock = '';
+  let dbForUnlock: any = null;
+
   try {
     // Rate Limiting
     const clientIp = context.clientAddress || 'unknown';
@@ -18,10 +22,15 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const safeReadingId = body.readingId || crypto.randomUUID();
-    let lockedValidate = false;
+    
+    lockedValidate = false;
+    safeReadingIdForUnlock = safeReadingId;
+    dbForUnlock = env.DB;
+    
+    let preQueryUserId = context.locals.user ? context.locals.user.id : (body.userId || 'guest');
 
     // DB LOCKING & SMART POLLING FOR VALIDATE
-    if (env.DB) {
+    if (context.locals.user && env.DB) {
         const recentLog = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, '<!-- VALIDATE:%').first();
         if (recentLog) {
             if (recentLog.content === '<!-- VALIDATE:PROCESSING -->') {
@@ -40,7 +49,7 @@ export const POST: APIRoute = async (context) => {
             }
         }
         
-        await env.DB.prepare('INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)').bind(safeReadingId, 'system', 'Khởi tạo').run(); // Đảm bảo conversation tồn tại trước khi insert message
+        await env.DB.prepare('INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)').bind(safeReadingId, preQueryUserId, 'Khởi tạo').run(); // Đảm bảo conversation tồn tại trước khi insert message
         await env.DB.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "system", "<!-- VALIDATE:PROCESSING -->")').bind(safeReadingId).run();
         lockedValidate = true;
     }
@@ -360,8 +369,10 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error: any) {
     
-    if (lockedValidate && env.DB) {
-        await env.DB.prepare('DELETE FROM message_logs WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(safeReadingId).run();
+    if (lockedValidate && dbForUnlock && safeReadingIdForUnlock) {
+        try {
+            await dbForUnlock.prepare('DELETE FROM message_logs WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(safeReadingIdForUnlock).run();
+        } catch(e) {}
     }
         
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
