@@ -1,9 +1,16 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit } from '../../../lib/rate-limiter';
 
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
+    const ip = context.request.headers.get('cf-connecting-ip') || context.request.headers.get('x-forwarded-for') || 'unknown';
+    const rl = checkRateLimit(`send_otp:${ip}`, 3, 300); // 3 requests / 5 mins
+    if (!rl.success) {
+      return new Response(JSON.stringify({ error: 'Bạn đã yêu cầu gửi mã OTP quá nhiều lần. Vui lòng thử lại sau 5 phút.' }), { status: 429 });
+    }
+
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const db = env.DB;
     const resendApiKey = env.RESEND_API_KEY;
@@ -49,9 +56,13 @@ export const POST: APIRoute = async (context) => {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const expiresAt = Math.floor(Date.now() / 1000) + 5 * 60; // 5 phút
 
-    // Lưu OTP vào DB
+    // Mã hóa OTP trước khi lưu (Sử dụng hàm hashPassword đã có)
+    const { hashPassword } = await import('../../../lib/auth');
+    const hashedOtp = await hashPassword(otpCode);
+
+    // Lưu mã băm OTP vào DB (Không lưu plain text)
     await db.prepare('INSERT INTO otp_codes (id, email, otp_code, expires_at) VALUES (?, ?, ?, ?)')
-      .bind(crypto.randomUUID(), email, otpCode, expiresAt)
+      .bind(crypto.randomUUID(), email, hashedOtp, expiresAt)
       .run();
 
     // Gửi email qua Resend API

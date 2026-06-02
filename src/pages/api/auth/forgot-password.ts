@@ -1,9 +1,16 @@
 import type { APIRoute } from 'astro';
+import { checkRateLimit } from '../../../lib/rate-limiter';
 
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
+    const ip = context.request.headers.get('cf-connecting-ip') || context.request.headers.get('x-forwarded-for') || 'unknown';
+    const rl = checkRateLimit(`forgot_pw:${ip}`, 3, 300); // 3 requests / 5 mins
+    if (!rl.success) {
+      return new Response(JSON.stringify({ error: 'Bạn đã yêu cầu đặt lại mật khẩu quá nhiều lần. Vui lòng thử lại sau 5 phút.' }), { status: 429 });
+    }
+
     const body = await context.request.json();
     const { email } = body;
 

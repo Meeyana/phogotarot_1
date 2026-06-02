@@ -26,7 +26,9 @@ export const prerender = false;
 export const POST: APIRoute = async (context) => {
   try {
     const env: any = context.locals.runtime?.env ?? {};
-    console.log('[SePay Webhook] ENV keys:', Object.keys(env));
+    if (import.meta.env.DEV) {
+      console.log('[SePay Webhook] ENV keys:', Object.keys(env));
+    }
 
     const db = env.DB;
     if (!db) {
@@ -35,35 +37,38 @@ export const POST: APIRoute = async (context) => {
     }
 
     // === Xác thực API Key từ SePay ===
-    // SePay gửi header: Authorization: Apikey YOUR_API_KEY
     const sepayApiKey = env.SEPAY_API_KEY;
-    if (sepayApiKey) {
-      const authHeader = context.request.headers.get('Authorization') || '';
-      // SePay có thể gửi "Apikey xxx" hoặc "apikey xxx" → normalize
-      const incomingKey = authHeader.replace(/^apikey\s+/i, '').trim();
-      if (incomingKey !== sepayApiKey) {
+    if (!sepayApiKey) {
+      console.error('[SePay Webhook] SEPAY_API_KEY is missing on server!');
+      return new Response(JSON.stringify({ success: false, error: 'Server misconfiguration' }), { status: 500 });
+    }
+
+    const authHeader = context.request.headers.get('Authorization') || '';
+    const incomingKey = authHeader.replace(/^apikey\s+/i, '').trim();
+    if (incomingKey !== sepayApiKey) {
+      if (import.meta.env.DEV) {
         console.warn('[SePay Webhook] Unauthorized | authHeader:', authHeader);
-        return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), { status: 401 });
       }
-    } else {
-      console.warn('[SePay Webhook] SEPAY_API_KEY not set - running without auth check!');
+      return new Response(JSON.stringify({ success: false, error: 'Unauthorized' }), { status: 401 });
     }
 
     let body: any;
     try {
       body = await context.request.json();
     } catch (parseErr) {
-      console.error('[SePay Webhook] Failed to parse JSON body:', parseErr);
+      console.error('[SePay Webhook] Failed to parse JSON body');
       return new Response(JSON.stringify({ success: false, error: 'Invalid JSON body' }), { status: 400 });
     }
 
-    console.log('[SePay Webhook] Received:', JSON.stringify(body));
+    if (import.meta.env.DEV) {
+      console.log('[SePay Webhook] Received:', JSON.stringify(body));
+    }
 
     const { transferType, transferAmount, content, code: sepayCode } = body;
 
     // Chỉ xử lý giao dịch tiền vào
     if (transferType !== 'in') {
-      console.log('[SePay Webhook] Skipped: transferType =', transferType);
+      if (import.meta.env.DEV) console.log('[SePay Webhook] Skipped: transferType =', transferType);
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     }
 
@@ -72,28 +77,26 @@ export const POST: APIRoute = async (context) => {
     }
 
     // === Tìm transaction_id (PGTxxxxxx) ===
-    // Ưu tiên 1: field `code` do SePay tự parse (nếu cấu hình đúng Cấu trúc mã thanh toán)
-    // Ưu tiên 2: regex tìm trong `content`
     let transactionCode: string | null = null;
 
     if (sepayCode && String(sepayCode).toUpperCase().startsWith('PGT')) {
       transactionCode = String(sepayCode).toUpperCase();
-      console.log('[SePay Webhook] Got code from sepayCode field:', transactionCode);
     } else {
       const contentStr = String(content || '').toUpperCase();
       const match = contentStr.match(/PGT[A-Z0-9]{6,}/);
       if (match) {
         transactionCode = match[0];
-        console.log('[SePay Webhook] Got code from content regex:', transactionCode);
       }
     }
 
     if (!transactionCode) {
-      // Không tìm thấy mã giao dịch - bỏ qua (giao dịch không liên quan)
-      console.warn('[SePay Webhook] No PGT code found | content:', content, '| code:', sepayCode);
+      if (import.meta.env.DEV) console.warn('[SePay Webhook] No PGT code found');
       return new Response(JSON.stringify({ success: true }), { status: 200 });
     }
-    console.log('[SePay Webhook] Found transaction code:', transactionCode, '| Amount:', transferAmount);
+    
+    if (import.meta.env.DEV) {
+      console.log('[SePay Webhook] Processing PGT Code:', transactionCode);
+    }
 
     // === Tìm đơn hàng trong DB ===
     const request = await db
@@ -156,7 +159,7 @@ export const POST: APIRoute = async (context) => {
       const creditsToAdd = packageRecord.credits;
       await db.prepare('UPDATE credit_wallets SET balance = balance + ? WHERE user_id = ?').bind(creditsToAdd, userId).run();
       await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageRecord.name} (SePay)`).run();
-      console.log(`[SePay Webhook] +${creditsToAdd} credits for user:`, userId);
+      if (import.meta.env.DEV) console.log(`[SePay Webhook] +${creditsToAdd} credits for user:`, userId);
     } else if (packageRecord.type === 'subscription') {
       let expiresAt: Date | null = new Date(new Date().getTime() + 7 * 3600 * 1000); // VN Time
       let expStr: string | null = null;
@@ -173,7 +176,7 @@ export const POST: APIRoute = async (context) => {
 
       await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
       await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageRecord.name} (SePay)`).run();
-      console.log(`[SePay Webhook] Premium (${packageRecord.id}) for user:`, userId);
+      if (import.meta.env.DEV) console.log(`[SePay Webhook] Premium (${packageRecord.id}) for user:`, userId);
     }
 
     // SePay yêu cầu trả về { success: true } trong body

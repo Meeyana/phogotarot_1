@@ -38,8 +38,16 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Bạn đã thử quá nhiều lần đối với mã này, vui lòng gửi lại mã mới.' }), { status: 400 });
     }
 
-    // Kiểm tra mã OTP
-    if (otpRecord.otp_code !== otp) {
+    // Kiểm tra mã OTP (hỗ trợ cả mã cũ đang lưu dạng plain text 6 số và mã mới dạng hash)
+    let isOtpValid = false;
+    if (otpRecord.otp_code.length === 6) {
+      isOtpValid = (otpRecord.otp_code === otp);
+    } else {
+      const { verifyPassword } = await import('../../../lib/auth');
+      isOtpValid = await verifyPassword(otp, otpRecord.otp_code);
+    }
+
+    if (!isOtpValid) {
       // Tăng số lần thử sai
       await db.prepare('UPDATE otp_codes SET attempts = attempts + 1 WHERE id = ?').bind(otpRecord.id).run();
       return new Response(JSON.stringify({ error: 'Mã OTP sai, vui lòng kiểm tra và nhập lại.' }), { status: 400 });
@@ -59,7 +67,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     const userId = crypto.randomUUID();
-    const passwordHash = await hashPassword(password, env);
+    const passwordHash = await hashPassword(password);
 
     // Tạo user
     await db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')

@@ -7,5 +7,7 @@ CREATE TABLE IF NOT EXISTS payment_transactions (
     payment_gateway TEXT, -- 'momo', 'stripe', 'vnpay', 'zalopay'
     gateway_transaction_id TEXT, -- Mã giao dịch bên thứ 3
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CHECK (status IN ('pending', 'completed', 'failed', 'refunded')),
+    CHECK (amount >= 0)
 );

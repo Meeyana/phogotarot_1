@@ -32,8 +32,8 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Liên kết đã hết hạn. Vui lòng yêu cầu lại.' }), { status: 400 });
     }
 
-    // Mã hóa mật khẩu mới
-    const newPasswordHash = await hashPassword(password, env);
+    // Hash mật khẩu mới (tự động dùng random salt)
+    const newPasswordHash = await hashPassword(password);
 
     // Cập nhật mật khẩu trong bảng users, đánh dấu token đã dùng, và XÓA TOÀN BỘ session cũ để bảo mật
     const batch = [

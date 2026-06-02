@@ -1,10 +1,17 @@
 import type { APIRoute } from 'astro';
 import { createSession, setSessionCookie, verifyPassword } from '../../../lib/auth';
+import { checkRateLimit } from '../../../lib/rate-limiter';
 
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
+    const ip = context.request.headers.get('cf-connecting-ip') || context.request.headers.get('x-forwarded-for') || 'unknown';
+    const rl = checkRateLimit(`login:${ip}`, 5, 300); // 5 requests / 5 mins
+    if (!rl.success) {
+      return new Response(JSON.stringify({ error: 'Quá nhiều yêu cầu. Vui lòng thử lại sau 5 phút.' }), { status: 429 });
+    }
+
     const db = context.locals.runtime?.env?.DB;
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database not available' }), { status: 500 });

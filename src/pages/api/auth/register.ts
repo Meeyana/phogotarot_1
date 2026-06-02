@@ -1,10 +1,17 @@
 import type { APIRoute } from 'astro';
 import { createSession, setSessionCookie, hashPassword } from '../../../lib/auth';
+import { checkRateLimit } from '../../../lib/rate-limiter';
 
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   try {
+    const ip = context.request.headers.get('cf-connecting-ip') || context.request.headers.get('x-forwarded-for') || 'unknown';
+    const rl = checkRateLimit(`register:${ip}`, 5, 300); // 5 requests / 5 mins
+    if (!rl.success) {
+      return new Response(JSON.stringify({ error: 'Quá nhiều yêu cầu đăng ký. Vui lòng thử lại sau 5 phút.' }), { status: 429 });
+    }
+
     const db = context.locals.runtime?.env?.DB;
     if (!db) {
       return new Response(JSON.stringify({ error: 'Database not available' }), { status: 500 });
@@ -27,8 +34,7 @@ export const POST: APIRoute = async (context) => {
     }
 
     const userId = crypto.randomUUID();
-    const env = context.locals.runtime?.env || process.env || import.meta.env;
-    const passwordHash = await hashPassword(password, env);
+    const passwordHash = await hashPassword(password);
 
     // Tạo user
     await db.prepare('INSERT INTO users (id, email, password_hash) VALUES (?, ?, ?)')

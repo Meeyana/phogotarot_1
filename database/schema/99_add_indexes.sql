@@ -20,3 +20,9 @@ CREATE INDEX IF NOT EXISTS idx_payment_requests_user_id ON payment_requests(user
 
 -- 7. Index cho bảng Yes/No Readings (Tăng tốc độ load lịch sử bốc bài Yes/No)
 CREATE INDEX IF NOT EXISTS idx_yes_no_readings_user_id ON yes_no_readings(user_id);
+
+-- 8. Index cho bảng Payment Transactions
+CREATE INDEX IF NOT EXISTS idx_payment_transactions_user_id ON payment_transactions(user_id);
+
+-- 9. Index cho bảng Auth Providers
+CREATE INDEX IF NOT EXISTS idx_auth_providers_user_id ON auth_providers(user_id);

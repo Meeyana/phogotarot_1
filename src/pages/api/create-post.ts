@@ -8,7 +8,7 @@ export const POST: APIRoute = async ({ request }) => {
     const rawBody = await request.text();
 
     // Log cho chắc
-    console.log("🔍 rawBody:", rawBody);
+    if (import.meta.env.DEV) console.log("🔍 rawBody:", rawBody);
 
     if (!rawBody) {
       return new Response("Body trống - client không gửi JSON", { status: 400 });
