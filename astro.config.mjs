@@ -44,7 +44,8 @@ export default defineConfig({
   site: 'https://phogotarot.com',
   output: 'server',
   redirects: {
-    '/tarot': '/xem-tarot'
+    '/tarot': '/xem-tarot',
+    '/blog/moi-lien-he-giua-than-so-hoc-numerology-va-tarot-khien-ban-thau-hieu-hon-ve-ban-than-va-so-phan-cua-minh': '/blog/moi-lien-he-giua-than-so-hoc-va-tarot'
   },
   adapter: cloudflare({
     platformProxy: {
