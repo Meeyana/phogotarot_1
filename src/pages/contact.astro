@@ -224,6 +224,16 @@ const schema = {
                     formSubmitted = true;
                     successMessage.style.display = 'none';
                     const errorTimeout = setTimeout(showError, 8000);
+                    
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'contact',
+                        'action': 'submit_contact_form'
+                    });
+                    // --------------------
+
                     iframe.onload = function() {
                         if (formSubmitted) {
                             clearTimeout(errorTimeout);
@@ -252,6 +262,21 @@ const schema = {
                 submitButton.disabled = false;
                 submitButton.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Gửi Đăng Ký';
             }
+
+            // GTM Social Links Tracking
+            const socialLinks = document.querySelectorAll('.social-btn');
+            socialLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const label = link.getAttribute('aria-label') || 'unknown';
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'contact',
+                        'action': 'click_social_link',
+                        'social_network': label.toLowerCase()
+                    });
+                });
+            });
         });
     </script>
 

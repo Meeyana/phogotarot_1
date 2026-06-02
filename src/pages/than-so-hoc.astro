@@ -294,6 +294,31 @@ const schema = {
             }, 800);
         });
     }
+
+    // --- GTM Tracking for CTA Buttons ---
+    const btnUpgrade = document.querySelector('.btn-upgrade-premium');
+    if (btnUpgrade) {
+        btnUpgrade.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'feature_usage',
+                'feature_name': 'numerology',
+                'action': 'click_upgrade_premium_cta'
+            });
+        });
+    }
+
+    const btnBuyCredits = document.querySelector('.btn-buy-credits');
+    if (btnBuyCredits) {
+        btnBuyCredits.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'feature_usage',
+                'feature_name': 'numerology',
+                'action': 'click_buy_credits_cta'
+            });
+        });
+    }
   </script>
 
 </BaseLayout>
