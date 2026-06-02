@@ -13,7 +13,7 @@ export const POST: APIRoute = async (context) => {
     // Rate Limiting
     const clientIp = context.clientAddress || 'unknown';
     const identifier = context.locals.user ? context.locals.user.id : clientIp;
-    const rateLimit = checkRateLimit(identifier, 1, 3);
+    const rateLimit = checkRateLimit(identifier, 5, 10);
     if (!rateLimit.success) {
       return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi vài giây rồi thử lại.' }), { status: 429 });
     }

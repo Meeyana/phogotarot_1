@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
+
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
@@ -10,12 +11,13 @@ export const POST: APIRoute = async (context) => {
   let safeUserIdForRefund = null;
   let safeReadingIdForRefund = null;
   let dbForRefund = null;
+  
   try {
     const clientIp = context.clientAddress || 'unknown';
     const identifier = context.locals.user ? context.locals.user.id : clientIp;
-    const rateLimit = checkRateLimit(identifier, 1, 15);
+    const rateLimit = checkRateLimit(identifier, 5, 15);
     if (!rateLimit.success) {
-      return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi 15 giây rồi thử lại.' }), { status: 429 });
+      return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi vài giây rồi thử lại.' }), { status: 429 });
     }
 
     const body = await context.request.json();
