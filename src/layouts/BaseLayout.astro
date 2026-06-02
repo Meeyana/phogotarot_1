@@ -66,13 +66,13 @@ const ogImageURL = new URL(ogImage, Astro.site);
     
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-CF1CK7N9BR"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-CF1CK7N9BR');
-    </script>
+    <!-- Google Tag Manager -->
+    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-W364HZ6D');</script>
+    <!-- End Google Tag Manager -->
     
     {Astro.url.pathname === '/' && (
       <script type="application/ld+json" is:inline>
@@ -150,6 +150,10 @@ const ogImageURL = new URL(ogImage, Astro.site);
 </head>
 
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W364HZ6D"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
     <div id="stars-bg"></div>
 
     <nav class="main-nav">
