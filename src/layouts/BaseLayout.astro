@@ -472,6 +472,43 @@ const ogImageURL = new URL(ogImage, Astro.site);
             window.fetchBalance = fetchBalance;
             fetchBalance();
         });
+        
+        // --- HYBRID TRACKING (CAPI + PIXEL DEDUPLICATION) ---
+        // Ghi đè hàm dataLayer.push để tự động bắt sự kiện 'feature_usage'
+        // từ tất cả các trang web và gửi kèm lên Server CAPI.
+        window.dataLayer = window.dataLayer || [];
+        const originalPush = window.dataLayer.push;
+        window.dataLayer.push = function() {
+            // Gọi hàm gốc để GTM vẫn nhận được data bình thường
+            originalPush.apply(window.dataLayer, arguments);
+            
+            const args = Array.prototype.slice.call(arguments);
+            for (const item of args) {
+                if (item && (item.event === 'feature_usage' || item['event'] === 'feature_usage')) {
+                    
+                    // 1. Khởi tạo EventID dùng chung để Facebook Hủy trùng lặp (Deduplication)
+                    if (!item.eventID) {
+                        item.eventID = 'evt_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                    }
+                    
+                    // 2. Tách event ra, giữ lại các thông số custom
+                    const payloadData = { ...item };
+                    delete payloadData.event;
+
+                    // 3. Gửi thẳng data lên Server CAPI của chúng ta
+                    fetch('/api/fb-capi', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            eventName: 'FeatureUsage',
+                            eventID: item.eventID,
+                            eventURL: window.location.href,
+                            eventData: payloadData
+                        })
+                    }).catch(err => console.warn('CAPI push failed', err));
+                }
+            }
+        };
     </script>
 </body>
 </html>
