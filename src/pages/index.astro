@@ -816,11 +816,109 @@ const schema = {
           observer.observe(section); // Bắt đầu theo dõi
         });
       };
+      // GTM Tracking Logic
+      const initGTMTracking = () => {
+        // Hero CTA
+        const heroCta = document.querySelector('#home .btn-primary');
+        if (heroCta) {
+          heroCta.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_hero_cta'
+            });
+          });
+        }
+
+        // About CTA
+        const aboutCta = document.querySelector('#about .btn-outline');
+        if (aboutCta) {
+          aboutCta.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_about_cta'
+            });
+          });
+        }
+
+        // Services Cards
+        const magicCards = document.querySelectorAll('.magic-card');
+        magicCards.forEach(card => {
+          card.addEventListener('click', () => {
+            const href = card.getAttribute('href');
+            let serviceName = 'unknown';
+            if (href === '/xem-tarot') serviceName = 'ai_reader';
+            else if (href === '/yes-no-reading') serviceName = 'yes_no';
+            else if (href === '/zodiac-daily') serviceName = 'zodiac';
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_service_card',
+              'service_name': serviceName
+            });
+          });
+        });
+
+        // Zodiac Selector
+        const zodiacItems = document.querySelectorAll('.zodiac-item-standalone');
+        zodiacItems.forEach(item => {
+          item.addEventListener('click', () => {
+            const href = item.getAttribute('href') || '';
+            const signMatch = href.match(/sign=([^&]+)/);
+            const sign = signMatch ? signMatch[1] : 'unknown';
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_zodiac_quick_select',
+              'zodiac_sign': sign
+            });
+          });
+        });
+
+        // Blog Clicks
+        const blogLinks = document.querySelectorAll('#blog a');
+        blogLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_blog_link'
+            });
+          });
+        });
+
+        // Oracle CTA
+        const oracleCta = document.querySelector('#oracle .btn-primary');
+        if (oracleCta) {
+          oracleCta.addEventListener('click', () => {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+              'event': 'feature_usage',
+              'feature_name': 'homepage',
+              'action': 'click_footer_contact_cta'
+            });
+          });
+        }
+      };
 
       // Chạy hàm khi trang load xong
-      document.addEventListener('DOMContentLoaded', initScrollReveal);
+      document.addEventListener('DOMContentLoaded', () => {
+        initScrollReveal();
+        initGTMTracking();
+      });
       
-      // (Dành cho Astro View Transitions nếu bạn có dùng, nếu không thì dòng trên là đủ)
-      document.addEventListener('astro:page-load', initScrollReveal);
+      // (Dành cho Astro View Transitions)
+      document.addEventListener('astro:page-load', () => {
+        initScrollReveal();
+        initGTMTracking();
+      });
     </script>
 </BaseLayout>

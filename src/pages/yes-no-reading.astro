@@ -1795,6 +1795,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (cardSearchInputs.length > 0) {
             cardSearchInputs.forEach(input => {
                 input.addEventListener('input', filterCardTable);
+                // Theo dõi khi người dùng click vào ô tìm kiếm bảng tra cứu (chỉ đếm 1 lần/phiên)
+                input.addEventListener('focus', () => {
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'yes_no_reading',
+                        'action': 'search_card_meanings'
+                    });
+                    // --------------------
+                }, { once: true });
             });
         }
 
@@ -1814,6 +1825,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         // Button click listeners
         submitQuestionBtn.addEventListener('click', handleQuestionSubmit);
         suggestedQuestionsToggle.addEventListener('click', () => {
+            if (!suggestedQuestionsList.classList.contains('open')) {
+                // --- GTM Tracking ---
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'feature_usage',
+                    'feature_name': 'yes_no_reading',
+                    'action': 'view_suggested_questions'
+                });
+                // --------------------
+            }
             suggestedQuestionsList.classList.toggle('open');
             suggestedQuestionsToggle.classList.toggle('open');
         });

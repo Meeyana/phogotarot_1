@@ -1323,6 +1323,17 @@ const user = Astro.locals.user;
                     tBtn.classList.add('active');
 
                     const mode = tBtn.getAttribute('data-billing');
+
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'pricing',
+                        'action': 'switch_premium_billing',
+                        'package': mode
+                    });
+                    // --------------------
+
                     if (mode === 'yearly') {
                         // Update only text nodes — no innerHTML replacement
                         if (amountDisplay) amountDisplay.textContent = '599.000';
@@ -1367,6 +1378,17 @@ const user = Astro.locals.user;
                     btn.classList.add('active');
 
                     const credits = btn.getAttribute('data-credits');
+
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'pricing',
+                        'action': 'switch_basic_package',
+                        'package': credits + '_credits'
+                    });
+                    // --------------------
+
                     if (credits === '10') {
                         if (basicAmountDisplay) basicAmountDisplay.textContent = '129.000';
                         if (basicOriginalDisplay) basicOriginalDisplay.textContent = '₫159.000';
@@ -1419,6 +1441,17 @@ const user = Astro.locals.user;
                 const amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
                 isPremiumPurchase = pkgName.includes('Vương Giả') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao');
+                
+                // --- GTM Tracking ---
+                window.dataLayer = window.dataLayer || [];
+                window.dataLayer.push({
+                    'event': 'feature_usage',
+                    'feature_name': 'pricing',
+                    'action': 'click_select_package',
+                    'package': pkgName,
+                    'amount': amount
+                });
+                // --------------------
                 
                 // Bản đồ tên gói hiển thị thân thiện (Cơ Bản / Nâng Cao)
                 const friendlyNames = {

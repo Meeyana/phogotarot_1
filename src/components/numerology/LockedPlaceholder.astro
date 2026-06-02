@@ -63,6 +63,14 @@
   // Add listener to all locked placeholders and buttons inside them
   document.querySelectorAll('.locked-placeholder').forEach(el => {
     el.addEventListener('click', () => {
+      // --- GTM Tracking ---
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+          'event': 'feature_usage',
+          'feature_name': 'numerology_result',
+          'action': 'click_unlock_btn'
+      });
+      // --------------------
       const modal = document.getElementById('unlock-modal');
       if (modal) {
         modal.classList.add('active');

@@ -413,9 +413,18 @@ const { fullName, dobStr, nickname = '', gender = '', currentCredit = 0 } = Astr
   const btnInitUnlock = document.getElementById('btn-unlock-credit');
   const btnCancel = document.getElementById('btn-cancel-confirm');
   const btnExecute = document.getElementById('btn-execute-unlock');
+  const btnPremium = document.querySelector('a.premium-btn[href="/nap-credit"]');
 
   if (btnInitUnlock && mainContent && confirmContent) {
     btnInitUnlock.addEventListener('click', () => {
+      // --- GTM Tracking ---
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+          'event': 'feature_usage',
+          'feature_name': 'numerology_result',
+          'action': 'choose_unlock_credit'
+      });
+      // --------------------
       mainContent.style.display = 'none';
       confirmContent.style.display = 'block';
     });
@@ -423,6 +432,19 @@ const { fullName, dobStr, nickname = '', gender = '', currentCredit = 0 } = Astr
   
   if (btnCancel) {
     btnCancel.addEventListener('click', resetToMain);
+  }
+
+  if (btnPremium) {
+    btnPremium.addEventListener('click', () => {
+      // --- GTM Tracking ---
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+          'event': 'feature_usage',
+          'feature_name': 'numerology_result',
+          'action': 'choose_buy_premium'
+      });
+      // --------------------
+    });
   }
 
   if (btnExecute) {

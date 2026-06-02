@@ -21,6 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     const isCollapsed = body.classList.contains('collapsed');
                     
                     if (isCollapsed) {
+                        // --- GTM Tracking ---
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            'event': 'feature_usage',
+                            'feature_name': 'numerology_result',
+                            'action': 'read_more'
+                        });
+                        // --------------------
                         body.classList.remove('collapsed');
                         btn.innerHTML = 'Thu gọn <i class="fas fa-chevron-up"></i>';
                     } else {

@@ -401,6 +401,15 @@ if (Astro.locals.runtime?.env?.SESSION) {
                                 </div>
                             `;
                             opt.addEventListener('click', () => {
+                                // --- GTM Tracking ---
+                                window.dataLayer = window.dataLayer || [];
+                                window.dataLayer.push({
+                                    'event': 'feature_usage',
+                                    'feature_name': 'tarot_chat',
+                                    'action': 'select_reader',
+                                    'reader_id': reader.id
+                                });
+                                // --------------------
                                 currentReaderId = reader.id;
                                 currentReaderAvatar = reader.avatar_url || '/images/friend-bot.jpg';
                                 selectedReaderName.textContent = reader.name;
@@ -1455,6 +1464,17 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 loadSuggestedQuestions();
 
                 suggestedQuestionsToggle.addEventListener('click', () => {
+                    // Chỉ track khi modal chưa mở (tức là hành động này sẽ MỞ modal)
+                    if (!suggestedQuestionsList.classList.contains('open')) {
+                        // --- GTM Tracking ---
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            'event': 'feature_usage',
+                            'feature_name': 'tarot_chat',
+                            'action': 'view_suggested_questions'
+                        });
+                        // --------------------
+                    }
                     suggestedQuestionsList.classList.toggle('open');
                     suggestedQuestionsToggle.classList.toggle('open');
                 });
@@ -1483,7 +1503,16 @@ if (Astro.locals.runtime?.env?.SESSION) {
             const profileModalContainer = document.getElementById('profile-modal-container');
             
             if (openProfileModalBtn && profileModalContainer && closeProfileModalBtn) {
-                openProfileModalBtn.addEventListener('click', () => {
+                openProfileModalBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'tarot_chat',
+                        'action': 'open_profile_modal'
+                    });
+                    // --------------------
                     profileModalContainer.classList.remove('hidden');
                 });
                 closeProfileModalBtn.addEventListener('click', () => {

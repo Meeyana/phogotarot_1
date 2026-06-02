@@ -238,4 +238,23 @@ const schema = {
         .card-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const cardLinks = document.querySelectorAll('.card-item-link');
+      cardLinks.forEach(link => {
+        link.addEventListener('click', () => {
+          // --- GTM Tracking ---
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            'event': 'feature_usage',
+            'feature_name': 'tarot_library',
+            'action': 'view_card_details',
+            'card_name': link.getAttribute('title')
+          });
+          // --------------------
+        });
+      });
+    });
+  </script>
 </BaseLayout>

@@ -343,9 +343,19 @@ const schema = {
             }
         }
 
-        // (ĐÃ SỬA) HÀM CHIA SẺ HOẠT ĐỘNG THỰC SỰ
         async function handleShare() {
             const zodiacName = document.getElementById('main-zodiac-name').textContent;
+            
+            // --- GTM Tracking ---
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'feature_usage',
+                'feature_name': 'zodiac_daily',
+                'action': 'share_zodiac_daily',
+                'zodiac_name': zodiacName
+            });
+            // --------------------
+
             const cardName = document.getElementById('card-name').textContent;
             const adviceContent = document.getElementById('card-advice-content').innerText.trim();
             
@@ -446,6 +456,17 @@ const schema = {
             gridButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const zodiacName = button.dataset.zodiac;
+
+                    // --- GTM Tracking ---
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'zodiac_daily',
+                        'action': 'select_zodiac_sign',
+                        'zodiac_name': zodiacName
+                    });
+                    // --------------------
+
                     setActiveZodiac(zodiacName);
                     updateZodiacContent(zodiacName);
                 });
@@ -459,6 +480,17 @@ const schema = {
                 dropdownButtons.forEach(button => {
                     button.addEventListener('click', () => {
                         const zodiacName = button.dataset.zodiac;
+
+                        // --- GTM Tracking ---
+                        window.dataLayer = window.dataLayer || [];
+                        window.dataLayer.push({
+                            'event': 'feature_usage',
+                            'feature_name': 'zodiac_daily',
+                            'action': 'select_zodiac_sign',
+                            'zodiac_name': zodiacName
+                        });
+                        // --------------------
+
                         setActiveZodiac(zodiacName);
                         updateZodiacContent(zodiacName);
                         zodiacDropdownList.classList.remove('open');
@@ -500,6 +532,25 @@ const schema = {
 
             updateZodiacContent(initialZodiac);
             setActiveZodiac(initialZodiac);
+
+            // GTM CTA Tracking
+            const ctaLinks = document.querySelectorAll('.cta-link-btn');
+            ctaLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const href = link.getAttribute('href');
+                    let ctaName = 'unknown';
+                    if (href === '/xem-tarot') ctaName = 'ai_reader';
+                    if (href === '/yes-no-reading') ctaName = 'yes_no';
+                    
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        'event': 'feature_usage',
+                        'feature_name': 'zodiac_daily',
+                        'action': 'click_cta',
+                        'cta_name': ctaName
+                    });
+                });
+            });
         });
     </script>
 </BaseLayout>
