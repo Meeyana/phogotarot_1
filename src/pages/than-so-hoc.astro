@@ -270,6 +270,15 @@ const schema = {
             (btnAnalyze as HTMLButtonElement).style.opacity = "0.8";
             (btnAnalyze as HTMLButtonElement).disabled = true;
 
+            // --- GTM Tracking: Event feature_usage ---
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'feature_usage',
+                'feature_name': 'numerology',
+                'action': 'submit_info'
+            });
+            // -----------------------------------------
+
             // Tạo URL params với đủ 4 trường
             const params = new URLSearchParams({ name, dob, nickname, gender });
             

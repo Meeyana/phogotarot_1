@@ -1253,6 +1253,15 @@ if (Astro.locals.runtime?.env?.SESSION) {
         // === FETCH API LUẬN GIẢI ===
 
         async function requestInterpretation() {
+            // --- GTM Tracking: Event feature_usage ---
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'feature_usage',
+                'feature_name': 'tarot_reading',
+                'action': 'start_reading'
+            });
+            // -----------------------------------------
+            
             addTypingIndicator();
             
             // Khôi phục lại usage nếu bị refresh

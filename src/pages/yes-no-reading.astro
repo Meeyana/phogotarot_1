@@ -1433,6 +1433,15 @@ document.head.appendChild(styleSheet);
 
 /** Bắt đầu một lượt trải bài mới */
 function startNewReadingFlow() {
+    // --- GTM Tracking: Event feature_usage ---
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+        'event': 'feature_usage',
+        'feature_name': 'yes_no_reading',
+        'action': 'ask_question'
+    });
+    // -----------------------------------------
+
     sessionStorage.removeItem('tarotSession');
     shufflingQuestionDisplay.textContent = userQuestion;
     drawingQuestionDisplay.textContent = userQuestion;
