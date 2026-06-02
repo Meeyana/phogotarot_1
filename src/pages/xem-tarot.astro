@@ -502,19 +502,12 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 // Ta sẽ tự động chạy lại câu hỏi này để trả về hộp thoại xác nhận hoặc câu trả lời tương ứng.
                 const lastMsg = history[history.length - 1];
                 if (lastMsg && lastMsg.sender === 'user') {
-                    // Xóa tin nhắn vừa vẽ tạm thời trên UI để tránh bị trùng lặp
-                    const messageElements = chatMessages.querySelectorAll('.message');
-                    if (messageElements.length > 0) {
-                        messageElements[messageElements.length - 1].remove();
-                    }
-                    // Xóa khỏi localStorage để khi handleSend chạy lại sẽ ghi nhận mới
-                    history.pop();
-                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
-
-                    // Điền lại câu hỏi và tự động gửi
+                    // KHÔNG xóa tin nhắn khỏi giao diện nữa để user vẫn nhìn thấy câu hỏi của mình
+                    userQuestion = lastMsg.text;
+                    
+                    // Tự động gọi lại tiến trình xử lý
                     setTimeout(() => {
-                        questionInput.value = lastMsg.text;
-                        handleSend();
+                        handleSend(true); // isResume = true
                     }, 300);
                 }
             }
@@ -719,13 +712,16 @@ if (Astro.locals.runtime?.env?.SESSION) {
 
         // === FLOW XỬ LÝ CÂU HỎI & RÚT BÀI ===
 
-        async function handleSend() {
+        async function handleSend(isResume = false) {
+            if (typeof isResume !== 'boolean') {
+                isResume = false;
+            }
             if (!window.IS_LOGGED_IN) {
                 window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
                 return;
             }
             
-            const question = questionInput.value.trim();
+            const question = isResume ? userQuestion : questionInput.value.trim();
             if (!question || isThinking) return;
 
             const container = document.querySelector('.chat-page-container');
@@ -733,11 +729,14 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 container.classList.remove('initial-state');
             }
 
-            // 1. Thêm tin nhắn user vào chat
-            addMessage(question, 'user');
-            questionInput.value = '';
-            questionInput.style.height = 'auto';
-            userQuestion = question;
+            if (!isResume) {
+                // 1. Thêm tin nhắn user vào chat
+                addMessage(question, 'user');
+                questionInput.value = '';
+                questionInput.style.height = 'auto';
+                userQuestion = question;
+            }
+            
             isThinking = true;
 
             submitBtn.disabled = true;
@@ -819,19 +818,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
                         isThinking = false;
                     }
                 } catch (err) {
-                    // Xóa tin nhắn user vừa gửi khỏi localStorage để không bị tính vào lượt chat
-                    const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
-                    if (history.length > 0 && history[history.length - 1].sender === 'user') {
-                        history.pop();
-                        localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
-                    }
-                    // Xóa bong bóng chat của user khỏi giao diện
-                    const messageElements = chatMessages.querySelectorAll('.message');
-                    for (let i = messageElements.length - 1; i >= 0; i--) {
-                        if (messageElements[i].classList.contains('user-message')) {
-                            messageElements[i].remove();
-                            break;
-                        }
+                    // KHÔNG xóa tin nhắn user khỏi localStorage hay UI nữa, để họ vẫn thấy câu hỏi
+                    // Trả lại text vào ô input để tiện sửa đổi nếu muốn (chỉ khi không phải resume)
+                    if (!isResume) {
+                        questionInput.value = question;
                     }
 
                     if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {

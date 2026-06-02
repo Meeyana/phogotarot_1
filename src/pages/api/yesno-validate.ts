@@ -41,7 +41,10 @@ export const POST: APIRoute = async (context) => {
                         return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
                     }
                 }
-                return new Response(JSON.stringify({ error: 'AI đang xử lý nhưng mất quá nhiều thời gian. Vui lòng thử lại sau.' }), { status: 504 });
+                // Nếu đợi quá lâu (30s) mà vẫn PROCESSING, chứng tỏ request trước đã bị chết do user F5.
+                // Chúng ta sẽ tiếp quản (take over) và cho phép code chạy tiếp xuống dưới để gọi n8n lại.
+                console.log("DB Lock timeout, taking over...");
+                await env.DB.prepare('UPDATE message_logs SET created_at = CURRENT_TIMESTAMP WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(safeReadingId).run();
             } else if (recentLog.content.startsWith('<!-- VALIDATE:RESULT:')) {
                 const jsonStr = recentLog.content.replace('<!-- VALIDATE:RESULT:', '').replace(' -->', '');
                 return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
