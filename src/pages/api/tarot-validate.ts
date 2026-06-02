@@ -14,8 +14,37 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi vài giây rồi thử lại.' }), { status: 429 });
     }
 
+
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
+    const safeReadingId = body.readingId || crypto.randomUUID();
+    let lockedValidate = false;
+
+    // DB LOCKING & SMART POLLING FOR VALIDATE
+    if (env.DB) {
+        const recentLog = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, '<!-- VALIDATE:%').first();
+        if (recentLog) {
+            if (recentLog.content === '<!-- VALIDATE:PROCESSING -->') {
+                for (let i = 0; i < 15; i++) {
+                    await new Promise(r => setTimeout(r, 2000));
+                    const checkFinished = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, '<!-- VALIDATE:%').first();
+                    if (checkFinished && checkFinished.content.startsWith('<!-- VALIDATE:RESULT:')) {
+                        const jsonStr = checkFinished.content.replace('<!-- VALIDATE:RESULT:', '').replace(' -->', '');
+                        return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
+                    }
+                }
+                return new Response(JSON.stringify({ error: 'AI đang xử lý nhưng mất quá nhiều thời gian. Vui lòng thử lại sau.' }), { status: 504 });
+            } else if (recentLog.content.startsWith('<!-- VALIDATE:RESULT:')) {
+                const jsonStr = recentLog.content.replace('<!-- VALIDATE:RESULT:', '').replace(' -->', '');
+                return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+        }
+        
+        await env.DB.prepare('INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)').bind(safeReadingId, 'system', 'Khởi tạo').run(); // Đảm bảo conversation tồn tại trước khi insert message
+        await env.DB.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "system", "<!-- VALIDATE:PROCESSING -->")').bind(safeReadingId).run();
+        lockedValidate = true;
+    }
+        
     const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_VALIDATE_TAROT
       || 'https://n8n.n8ntuanphangz.xyz/webhook/7179b8ca-c774-47a9-9ed4-6bf975344058'; // fallback localhost
@@ -241,7 +270,7 @@ export const POST: APIRoute = async (context) => {
         const user = context.locals.user;
         if (user && question) {
             const safeUserId = user.id;
-            const safeReadingId = readingId || crypto.randomUUID();
+             // replaced
             const isValid = data.isValid === "true" || data.isValid === true;
             const pickCard = data.pick_card === "true" || data.pick_card === true;
             const actualModel = data.model || 'n8n_validate_agent';
@@ -320,11 +349,21 @@ export const POST: APIRoute = async (context) => {
         delete data.needs_image;
     }
 
+    
+    if (lockedValidate && env.DB) {
+        await env.DB.prepare('UPDATE message_logs SET content = ? WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(`<!-- VALIDATE:RESULT:${JSON.stringify(data)} -->`, safeReadingId).run();
+    }
+        
     return new Response(JSON.stringify(data), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error: any) {
+    
+    if (lockedValidate && env.DB) {
+        await env.DB.prepare('DELETE FROM message_logs WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(safeReadingId).run();
+    }
+        
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 };

@@ -8,6 +8,7 @@ export const POST: APIRoute = async (context) => {
   let creditDeducted = false;
   let isDailyCreditDeducted = false;
   let safeUserIdForRefund = null;
+  let safeReadingIdForRefund = null;
   let dbForRefund = null;
   try {
     const clientIp = context.clientAddress || 'unknown';
@@ -29,6 +30,8 @@ export const POST: APIRoute = async (context) => {
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;
+    const safeReadingId = body.readingId || crypto.randomUUID();
+    safeReadingIdForRefund = safeReadingId;
     let profile: any = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
     if (db) {
         let queryUserId = null;
@@ -42,6 +45,33 @@ export const POST: APIRoute = async (context) => {
             }
             queryUserId = body.userId; // Guest hợp lệ
         }
+
+        
+        if (db && safeReadingId) {
+            const finishedLog = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ?').bind(safeReadingId, '%CARDS_PAYLOAD%').first();
+            if (finishedLog) {
+                console.log("DB Lock: Đã có kết quả luận giải cho readingId này, trả về ngay.");
+                let interpretation = finishedLog.content.replace(/<!-- CARDS_PAYLOAD: .*? -->\n*/g, '');
+                return new Response(JSON.stringify({ interpretation }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+            }
+
+            const processingLog = await db.prepare('SELECT id FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content = ?').bind(safeReadingId, '<!-- PROCESSING_TAROT -->').first();
+            if (processingLog) {
+                console.log("DB Lock: Đang xử lý, bắt đầu Smart Polling...");
+                for (let i = 0; i < 15; i++) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    const checkFinished = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ?').bind(safeReadingId, '%CARDS_PAYLOAD%').first();
+                    if (checkFinished) {
+                        console.log("DB Lock: Đã có kết quả sau khi chờ.");
+                        let interpretation = checkFinished.content.replace(/<!-- CARDS_PAYLOAD: .*? -->\n*/g, '');
+                        return new Response(JSON.stringify({ interpretation }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+                    }
+                }
+                return new Response(JSON.stringify({ error: 'AI đang quá tải hoặc gặp lỗi. Vui lòng thử lại sau.' }), { status: 504 });
+            }
+            await db.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "assistant", ?)').bind(safeReadingId, '<!-- PROCESSING_TAROT -->').run();
+        }
+        
 
         if (queryUserId) {
             try {
@@ -266,7 +296,7 @@ export const POST: APIRoute = async (context) => {
         }
         
         const safeUserId = user.id;
-        const safeReadingId = readingId || crypto.randomUUID();
+        
         
         // 2. Lưu Conversation (Bỏ qua bước lưu User vì user bắt buộc đã tồn tại khi đăng nhập)
         const title = question ? (question.length > 50 ? question.substring(0, 50) + '...' : question) : 'Trải bài Tarot';
@@ -297,7 +327,11 @@ export const POST: APIRoute = async (context) => {
             dbInterpretation = `<!-- CARDS_PAYLOAD: ${JSON.stringify(cards)} -->\n` + dbInterpretation;
         }
 
-        await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
+        
+        const updateLog = await db.prepare("UPDATE message_logs SET content = ?, model = ?, prompt_tokens = ?, completion_tokens = ?, total_tokens = ? WHERE conversation_id = ? AND role = 'assistant' AND content = '<!-- PROCESSING_TAROT -->'").bind(dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens, safeReadingId).run();
+        if (updateLog.meta && updateLog.meta.changes === 0) {
+            await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
+        }
         
       } catch (dbError) {
         console.error("Lỗi lưu D1 (tarot):", dbError);
@@ -328,6 +362,7 @@ export const POST: APIRoute = async (context) => {
                 await dbForRefund.prepare('UPDATE credit_wallets SET balance = balance + 1 WHERE user_id = ?').bind(safeUserIdForRefund).run();
             }
             await dbForRefund.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 1, 'refund', 'Hoàn tiền do lỗi hệ thống AI (Tarot)')`).bind(crypto.randomUUID(), safeUserIdForRefund).run();
+            await dbForRefund.prepare('DELETE FROM message_logs WHERE conversation_id = ? AND content = "<!-- PROCESSING_TAROT -->"').bind(safeReadingIdForRefund).run();
             console.log(`Đã hoàn tiền cho user ${safeUserIdForRefund} do lỗi AI`);
         } catch (refundError) {
             console.error("Lỗi hoàn tiền:", refundError);
