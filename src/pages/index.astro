@@ -4,7 +4,6 @@ import BaseLayout from '../layouts/BaseLayout.astro'; // (Giả sử đường d
 
 // --- (MỚI) THÊM ĐOẠN NÀY ĐỂ LẤY DATA BLOG ---
 import { getCollection } from "astro:content";
-
 import { Image } from 'astro:assets';
 
 // Lấy tất cả bài viết trong collection 'blog'
@@ -19,8 +18,8 @@ const sortedPosts = allPosts.sort(
 const recentPosts = sortedPosts.slice(0, 3);
 
 // 2. (SỬA LẠI) TẠO CÁC BIẾN VÀ SCHEMA
-const pageTitle = "Phở Gõ Tarot - Trải Bài Tarot Mỗi Ngày & Luận Giải Sâu Sắc";
-const pageDesc = "Trải bài Tarot 3 lá, Yes/No chi tiết. Nhận ngay 1 lượt (credit) miễn phí mỗi ngày để khám phá thông điệp sâu sắc từ Vũ Trụ cùng Phở Gõ Tarot.";
+const pageTitle = "Phở Gõ Tarot | Xem Bói Bài Tarot Online Miễn Phí";
+const pageDesc = "Trải nghiệm bói Tarot online miễn phí, nhanh chóng và chính xác. Khám phá các thông điệp vũ trụ về tình yêu, công việc, tương lai và chữa lành tâm hồn.Vũ Trụ cùng Phở Gõ Tarot.";
 
 const schema = {
   "@context": "https://schema.org",
@@ -58,7 +57,7 @@ const schema = {
                     </div>
                     <div style="display:flex;">
                         <div class="spinning-wheel-container">
-                            <img src="/wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel">
+                            <img src="/wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel" fetchpriority="high" decoding="async">
                         </div>
                     </div>
                 </div>
@@ -71,7 +70,7 @@ const schema = {
             <div class="container">
                 <div class="grid-2">
                     <div>
-                        <img src="/img-1.jpg" alt="Tarot Reader" class="section-image">
+                        <img src="/img-1.jpg" alt="Tarot Reader" class="section-image" loading="lazy" decoding="async">
                     </div>
                     <div class="text-center" style="md:text-align: left;">
                         <h2 class="section-subtitle">Tarot là gì?</h2>
@@ -366,7 +365,7 @@ const schema = {
                         <a href="/contact" class="btn-primary">Đặt lịch tư vấn</a>
                     </div>
                     <div>
-                        <img src="/img-2.jpg" alt="Oracle Cards" class="section-image">
+                        <img src="/img-2.jpg" alt="Oracle Cards" class="section-image" loading="lazy" decoding="async">
                     </div>
                 </div>
             </div>

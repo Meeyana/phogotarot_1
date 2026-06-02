@@ -97,6 +97,10 @@
     0%, 100% { opacity: 0.3; transform: scale(1); }
     50% { opacity: 0.6; transform: scale(1.2); }
 }
+@keyframes twinkle-shadow {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 1; }
+}
 
         @keyframes sparkle {
             0% { opacity: 0.2; }

@@ -51,14 +51,15 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <meta property="og:image" content={ogImageURL} />
     <meta property="og:type" content="website" />
 
+    <!-- Tối ưu: Dùng preload để không chặn Render (PageSpeed Insights) -->
     <link 
-      rel="stylesheet" 
+      rel="preload" 
+      as="style" 
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" 
       integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" 
       crossorigin="anonymous" 
       referrerpolicy="no-referrer"
-      media="print"
-      onload="this.media='all'"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -66,12 +67,25 @@ const ogImageURL = new URL(ogImage, Astro.site);
     
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js" defer></script>
 
-    <!-- Google Tag Manager -->
-    <script is:inline>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-W364HZ6D');</script>
+    <!-- Google Tag Manager (Lazy Loaded) -->
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        let gtmLoaded = false;
+        const loadGTM = () => {
+            if (gtmLoaded) return;
+            gtmLoaded = true;
+            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-W364HZ6D');
+            
+            ['scroll', 'mousemove', 'touchstart', 'click', 'keydown'].forEach(e => window.removeEventListener(e, loadGTM));
+        };
+        ['scroll', 'mousemove', 'touchstart', 'click', 'keydown'].forEach(e => window.addEventListener(e, loadGTM, { passive: true, once: true }));
+        setTimeout(loadGTM, 5000); // Tự động load sau 5s nếu người dùng không tương tác
+      });
+    </script>
     <!-- End Google Tag Manager -->
     
     {Astro.url.pathname === '/' && (
@@ -159,7 +173,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="/" class="nav-link logo-link">
-                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image" width="50" height="50">
+                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image" fetchpriority="high" decoding="async">
             </a>
         </div>
         
@@ -265,7 +279,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
         <div class="footer-container">
             <div class="footer-column brand">
                 <a href="/" class="footer-logo">
-                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image" loading="lazy" width="100" height="100">
+                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image" loading="lazy" decoding="async">
                 </a>
                 <p class="footer-description">
                     Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những 

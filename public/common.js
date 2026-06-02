@@ -3,17 +3,35 @@
 /* ============================================= */
 const starContainer = document.getElementById('stars-bg');
 if (starContainer) {
-    for (let i = 0; i < 300; i++) {
-        const star = document.createElement('div');
-        const size = Math.random() * 2 + 1; // 1-3px
-        star.classList.add('star');
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.animationDuration = `${2 + Math.random() * 3}s`;
-        starContainer.appendChild(star);
-    }
+    // Tối ưu hiệu suất: Thay vì tạo 300 thẻ div, chia thành 4 lớp (layer) box-shadow
+    // Các lớp có tốc độ chớp tắt (opacity) khác nhau để tạo cảm giác tự nhiên như cũ
+    const createStarLayer = (count, duration, delay, baseSize, maxSpread) => {
+        const layer = document.createElement('div');
+        layer.style.width = `${baseSize}px`;
+        layer.style.height = `${baseSize}px`;
+        layer.style.borderRadius = '50%';
+        layer.style.background = 'transparent';
+        layer.style.position = 'absolute';
+        
+        let shadows = [];
+        for (let i = 0; i < count; i++) {
+            shadows.push(`${Math.floor(Math.random() * 100)}vw ${Math.floor(Math.random() * 100)}vh 0 ${Math.random() * maxSpread}px rgba(255,255,255,${Math.random() * 0.7 + 0.3})`);
+        }
+        layer.style.boxShadow = shadows.join(', ');
+        // Chỉ animate opacity, không dùng scale() để tránh lỗi phóng to toàn màn hình
+        layer.style.animation = `twinkle-shadow ${duration}s infinite alternate ease-in-out ${delay}s`;
+        return layer;
+    };
+    
+    // Đa dạng kích thước sao (1px đến 3px) điểm xuyết ngẫu nhiên
+    // Layer 1: Nhiều sao nhỏ, nét (base 1px)
+    starContainer.appendChild(createStarLayer(120, 4, 0, 1, 0.5));
+    // Layer 2: Sao kích thước vừa (base 2px)
+    starContainer.appendChild(createStarLayer(100, 6, -2, 2, 0.3));
+    // Layer 3: Sao to hơn (base 3px)
+    starContainer.appendChild(createStarLayer(60, 8, -4, 3, 0.2));
+    // Layer 4: Điểm xuyết vài ngôi sao rất sáng và rõ nét
+    starContainer.appendChild(createStarLayer(20, 10, -6, 2, 1.0));
 }
 // --- State ---
 let readingHistory = [];
