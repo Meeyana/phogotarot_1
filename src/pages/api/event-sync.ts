@@ -18,6 +18,7 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies, locals }
     const env = locals?.runtime?.env || process?.env || import.meta.env || {};
     const pixelId = env.FB_PIXEL_ID || import.meta.env.FB_PIXEL_ID;
     const accessToken = env.FB_ACCESS_TOKEN || import.meta.env.FB_ACCESS_TOKEN;
+    const testCode = env.FB_TEST_CODE || import.meta.env.FB_TEST_CODE;
 
     if (!pixelId || !accessToken) {
       console.error('Missing FB_PIXEL_ID or FB_ACCESS_TOKEN in environment variables.');
@@ -44,6 +45,11 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies, locals }
         }
       ]
     };
+
+    // Nếu có mã test_event_code từ Cloudflare, thêm vào payload để hiện lên màn hình Test
+    if (testCode) {
+      payload.test_event_code = testCode;
+    }
 
     // Send the data securely from our Server to Facebook's Server
     const response = await fetch(`https://graph.facebook.com/v19.0/${pixelId}/events?access_token=${accessToken}`, {
