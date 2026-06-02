@@ -886,19 +886,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     isThinking = false;
                 }
             } catch (err) {
-                // Xóa tin nhắn user vừa gửi khỏi localStorage để không bị tính vào lượt chat
-                const history = JSON.parse(localStorage.getItem(CHAT_HISTORY_KEY) || '[]');
-                if (history.length > 0 && history[history.length - 1].sender === 'user') {
-                    history.pop();
-                    localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(history));
-                }
-                // Xóa bong bóng chat của user khỏi giao diện
-                const messageElements = chatMessages.querySelectorAll('.message');
-                for (let i = messageElements.length - 1; i >= 0; i--) {
-                    if (messageElements[i].classList.contains('user-message')) {
-                        messageElements[i].remove();
-                        break;
-                    }
+                // KHÔNG xóa tin nhắn user khỏi localStorage hay UI nữa, để họ vẫn thấy câu hỏi
+                // Trả lại text vào ô input để tiện sửa đổi nếu muốn (chỉ khi không phải resume)
+                if (!isResume) {
+                    questionInput.value = question;
                 }
 
                 if (err.message && (err.message === 'OUT_OF_CREDITS' || err.message.includes('hết lượt'))) {

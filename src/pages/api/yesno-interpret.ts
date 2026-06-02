@@ -47,28 +47,34 @@ export const POST: APIRoute = async (context) => {
 
         
         if (db && safeReadingId) {
-            const finishedLog = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ?').bind(safeReadingId, '%CARDS_PAYLOAD%').first();
+            const lockHash = btoa(unescape(encodeURIComponent((body.question || '') + JSON.stringify(body.cards || [])))).substring(0, 32);
+            const lockProcessing = `<!-- PROCESSING_TAROT:${lockHash} -->`;
+            const lockResultLike = `%CARDS_PAYLOAD:${lockHash}%`;
+
+            const finishedLog = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ? ORDER BY id DESC LIMIT 1').bind(safeReadingId, lockResultLike).first();
             if (finishedLog) {
                 console.log("DB Lock: Đã có kết quả luận giải cho readingId này, trả về ngay.");
-                let interpretation = finishedLog.content.replace(/<!-- CARDS_PAYLOAD: .*? -->\n*/g, '');
+                let interpretation = finishedLog.content.replace(/<!-- CARDS_PAYLOAD:.*?-->\n*/g, '');
                 return new Response(JSON.stringify({ interpretation }), { status: 200, headers: { 'Content-Type': 'application/json' } });
             }
 
-            const processingLog = await db.prepare('SELECT id FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content = ?').bind(safeReadingId, '<!-- PROCESSING_TAROT -->').first();
+            const processingLog = await db.prepare('SELECT id FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content = ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, lockProcessing).first();
             if (processingLog) {
                 console.log("DB Lock: Đang xử lý, bắt đầu Smart Polling...");
                 for (let i = 0; i < 15; i++) {
                     await new Promise(resolve => setTimeout(resolve, 2000));
-                    const checkFinished = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ?').bind(safeReadingId, '%CARDS_PAYLOAD%').first();
+                    const checkFinished = await db.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "assistant" AND content LIKE ? ORDER BY id DESC LIMIT 1').bind(safeReadingId, lockResultLike).first();
                     if (checkFinished) {
                         console.log("DB Lock: Đã có kết quả sau khi chờ.");
-                        let interpretation = checkFinished.content.replace(/<!-- CARDS_PAYLOAD: .*? -->\n*/g, '');
+                        let interpretation = checkFinished.content.replace(/<!-- CARDS_PAYLOAD:.*?-->\n*/g, '');
                         return new Response(JSON.stringify({ interpretation }), { status: 200, headers: { 'Content-Type': 'application/json' } });
                     }
                 }
-                return new Response(JSON.stringify({ error: 'AI đang quá tải hoặc gặp lỗi. Vui lòng thử lại sau.' }), { status: 504 });
+                console.log("DB Lock timeout for interpret, taking over...");
+                await db.prepare('UPDATE message_logs SET created_at = CURRENT_TIMESTAMP WHERE conversation_id = ? AND role = "assistant" AND content = ?').bind(safeReadingId, lockProcessing).run();
+            } else {
+                await db.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "assistant", ?)').bind(safeReadingId, lockProcessing).run();
             }
-            await db.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "assistant", ?)').bind(safeReadingId, '<!-- PROCESSING_TAROT -->').run();
         }
         
 
@@ -248,6 +254,19 @@ export const POST: APIRoute = async (context) => {
             completionTokens,
             totalTokens
         ).run();
+
+        // 3. Cập nhật Message Logs (giống tarot-interpret)
+        let dbInterpretation = data.interpretation;
+        if (cards && cards.length > 0) {
+            const lockHash = btoa(unescape(encodeURIComponent((question || '') + JSON.stringify(cards || [])))).substring(0, 32);
+            const lockProcessing = `<!-- PROCESSING_TAROT:${lockHash} -->`;
+            dbInterpretation = `<!-- CARDS_PAYLOAD:${lockHash}:${JSON.stringify(cards)} -->\n` + dbInterpretation;
+            
+            const updateLog = await db.prepare("UPDATE message_logs SET content = ?, model = ?, prompt_tokens = ?, completion_tokens = ?, total_tokens = ? WHERE conversation_id = ? AND role = 'assistant' AND content = ?").bind(dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens, safeReadingId, lockProcessing).run();
+            if (updateLog.meta && updateLog.meta.changes === 0) {
+                await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'assistant', ?, ?, ?, ?, ?)`).bind(safeReadingId, dbInterpretation, actualModel, promptTokens, completionTokens, totalTokens).run();
+            }
+        }
         
       } catch (dbError) {
         console.error("Lỗi lưu D1 (yesno):", dbError);

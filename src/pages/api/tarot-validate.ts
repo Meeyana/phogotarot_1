@@ -29,31 +29,38 @@ export const POST: APIRoute = async (context) => {
     
     let preQueryUserId = context.locals.user ? context.locals.user.id : (body.userId || 'guest');
 
+    // Hashing question for unique DB Lock
+    const questionSnippet = (body.question || '').substring(0, 100);
+    const qHash = btoa(unescape(encodeURIComponent(questionSnippet))).substring(0, 32);
+    const lockPrefix = `<!-- VALIDATE:${qHash}:`;
+    const lockProcessing = `${lockPrefix}PROCESSING -->`;
+    const lockResult = `${lockPrefix}RESULT:`;
+
     // DB LOCKING & SMART POLLING FOR VALIDATE
     if (context.locals.user && env.DB) {
-        const recentLog = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, '<!-- VALIDATE:%').first();
+        const recentLog = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, `${lockPrefix}%`).first();
         if (recentLog) {
-            if (recentLog.content === '<!-- VALIDATE:PROCESSING -->') {
+            if (recentLog.content === lockProcessing) {
                 for (let i = 0; i < 15; i++) {
                     await new Promise(r => setTimeout(r, 2000));
-                    const checkFinished = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, '<!-- VALIDATE:%').first();
-                    if (checkFinished && checkFinished.content.startsWith('<!-- VALIDATE:RESULT:')) {
-                        const jsonStr = checkFinished.content.replace('<!-- VALIDATE:RESULT:', '').replace(' -->', '');
+                    const checkFinished = await env.DB.prepare('SELECT content FROM message_logs WHERE conversation_id = ? AND role = "system" AND content LIKE ? AND created_at > datetime("now", "-1 minute") ORDER BY id DESC LIMIT 1').bind(safeReadingId, `${lockPrefix}%`).first();
+                    if (checkFinished && checkFinished.content.startsWith(lockResult)) {
+                        const jsonStr = checkFinished.content.replace(lockResult, '').replace(' -->', '');
                         return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
                     }
                 }
                 // Nếu đợi quá lâu (30s) mà vẫn PROCESSING, chứng tỏ request trước đã bị chết do user F5.
                 // Chúng ta sẽ tiếp quản (take over) và cho phép code chạy tiếp xuống dưới để gọi n8n lại.
                 console.log("DB Lock timeout, taking over...");
-                await env.DB.prepare('UPDATE message_logs SET created_at = CURRENT_TIMESTAMP WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(safeReadingId).run();
-            } else if (recentLog.content.startsWith('<!-- VALIDATE:RESULT:')) {
-                const jsonStr = recentLog.content.replace('<!-- VALIDATE:RESULT:', '').replace(' -->', '');
+                await env.DB.prepare('UPDATE message_logs SET created_at = CURRENT_TIMESTAMP WHERE conversation_id = ? AND role = "system" AND content = ?').bind(safeReadingId, lockProcessing).run();
+            } else if (recentLog.content.startsWith(lockResult)) {
+                const jsonStr = recentLog.content.replace(lockResult, '').replace(' -->', '');
                 return new Response(jsonStr, { status: 200, headers: { 'Content-Type': 'application/json' } });
             }
         }
         
         await env.DB.prepare('INSERT OR IGNORE INTO conversations (id, user_id, title) VALUES (?, ?, ?)').bind(safeReadingId, preQueryUserId, 'Khởi tạo').run(); // Đảm bảo conversation tồn tại trước khi insert message
-        await env.DB.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "system", "<!-- VALIDATE:PROCESSING -->")').bind(safeReadingId).run();
+        await env.DB.prepare('INSERT INTO message_logs (conversation_id, role, content) VALUES (?, "system", ?)').bind(safeReadingId, lockProcessing).run();
         lockedValidate = true;
     }
         
@@ -363,7 +370,8 @@ export const POST: APIRoute = async (context) => {
 
     
     if (lockedValidate && env.DB) {
-        await env.DB.prepare('UPDATE message_logs SET content = ? WHERE conversation_id = ? AND role = "system" AND content = "<!-- VALIDATE:PROCESSING -->"').bind(`<!-- VALIDATE:RESULT:${JSON.stringify(data)} -->`, safeReadingId).run();
+        // Sử dụng lại biến lockProcessing và lockResult đã được tính ở trên cùng
+        await env.DB.prepare('UPDATE message_logs SET content = ? WHERE conversation_id = ? AND role = "system" AND content = ?').bind(`${lockResult}${JSON.stringify(data)} -->`, safeReadingId, lockProcessing).run();
     }
         
     return new Response(JSON.stringify(data), {
