@@ -12,6 +12,9 @@ import '@fontsource/quicksand/700.css';
 // Nếu bạn vẫn để ở public thì giữ nguyên thẻ link bên dưới, nhưng Astro khuyên dùng import thế này để nén code:
 import '../styles/global.css'; 
 
+import { Image } from 'astro:assets';
+import logoImg from '../assets/logo.png';
+
 export interface Props {
   title: string;
   description: string;
@@ -173,7 +176,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <nav class="main-nav">
         <div class="nav-logo">
             <a href="/" class="nav-link logo-link">
-                <img src="/images/logo.png" alt="Phở Gõ Tarot" class="nav-logo-image" fetchpriority="high" decoding="async">
+                <Image src={logoImg} alt="Phở Gõ Tarot" class="nav-logo-image" width={200} fetchpriority="high" decoding="async" />
             </a>
         </div>
         
@@ -279,7 +282,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
         <div class="footer-container">
             <div class="footer-column brand">
                 <a href="/" class="footer-logo">
-                    <img src="/images/logo.png" alt="Phở Gõ Tarot" class="footer-logo-image" loading="lazy" decoding="async">
+                    <Image src={logoImg} alt="Phở Gõ Tarot" class="footer-logo-image" width={400} loading="lazy" decoding="async" />
                 </a>
                 <p class="footer-description">
                     Tarot không phải là công cụ dự đoán tương lai, mà là cung cấp những 

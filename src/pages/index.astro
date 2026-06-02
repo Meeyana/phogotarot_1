@@ -2,9 +2,11 @@
 // 1. IMPORT (Thêm BaseLayout)
 import BaseLayout from '../layouts/BaseLayout.astro'; // (Giả sử đường dẫn layout)
 
-// --- (MỚI) THÊM ĐOẠN NÀY ĐỂ LẤY DATA BLOG ---
 import { getCollection } from "astro:content";
 import { Image } from 'astro:assets';
+import wheelImg from '../assets/wheel.png';
+import img1 from '../assets/img-1.jpg';
+import img2 from '../assets/img-2.jpg';
 
 // Lấy tất cả bài viết trong collection 'blog'
 const allPosts = await getCollection("blog");
@@ -57,7 +59,7 @@ const schema = {
                     </div>
                     <div style="display:flex;">
                         <div class="spinning-wheel-container">
-                            <img src="/wheel.png" alt="Vòng tròn Zodiac" class="section-image spinning-wheel" fetchpriority="high" decoding="async">
+                            <Image src={wheelImg} alt="Vòng tròn Zodiac" class="section-image spinning-wheel" width={700} fetchpriority="high" decoding="async" />
                         </div>
                     </div>
                 </div>
@@ -70,7 +72,7 @@ const schema = {
             <div class="container">
                 <div class="grid-2">
                     <div>
-                        <img src="/img-1.jpg" alt="Tarot Reader" class="section-image" loading="lazy" decoding="async">
+                        <Image src={img1} alt="Tarot Reader" class="section-image" width={700} loading="lazy" decoding="async" />
                     </div>
                     <div class="text-center" style="md:text-align: left;">
                         <h2 class="section-subtitle">Tarot là gì?</h2>
@@ -365,7 +367,7 @@ const schema = {
                         <a href="/contact" class="btn-primary">Đặt lịch tư vấn</a>
                     </div>
                     <div>
-                        <img src="/img-2.jpg" alt="Oracle Cards" class="section-image" loading="lazy" decoding="async">
+                        <Image src={img2} alt="Oracle Cards" class="section-image" width={700} loading="lazy" decoding="async" />
                     </div>
                 </div>
             </div>

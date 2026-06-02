@@ -1,6 +1,9 @@
 ---
 // 1. IMPORT (Giữ nguyên)
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { Image } from 'astro:assets';
+import img1 from '../assets/img-1.jpg';
+import img2 from '../assets/img-2.jpg';
 
 // 2. GIỮ NGUYÊN LOGIC CŨ
 const pageTitle = "Về Chúng Tôi | Phở Gõ Tarot";
@@ -42,7 +45,7 @@ const schema = {
             <div class="container">
                 <div class="grid-2-col">
                     <div class="image-wrapper tilt-effect">
-                        <img src="/img-2.jpg" alt="Rider Waite Tarot Deck" class="about-image" fetchpriority="high" decoding="async">
+                        <Image src={img2} alt="Rider Waite Tarot Deck" class="about-image" width={700} fetchpriority="high" decoding="async" />
                     </div>
                     
                     <div class="content-wrapper">
@@ -108,7 +111,7 @@ const schema = {
                     </div>
                     
                     <div class="image-wrapper">
-                        <img src="/img-1.jpg" alt="Trải nghiệm Tarot Online" class="about-image rounded-arch" loading="lazy" decoding="async">
+                        <Image src={img1} alt="Trải nghiệm Tarot Online" class="about-image rounded-arch" width={700} loading="lazy" decoding="async" />
                     </div>
                 </div>
             </div>
