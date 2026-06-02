@@ -1,10 +1,22 @@
 import type { APIRoute } from 'astro';
 import { getSystemConfig } from '../../lib/config';
+import { checkRateLimit } from '../../lib/rate-limiter';
 export const prerender = false;
 
 export const POST: APIRoute = async (context) => {
   console.log('🔵 yesno-interpret API route called');
+  let creditDeducted = false;
+  let isDailyCreditDeducted = false;
+  let safeUserIdForRefund = null;
+  let dbForRefund = null;
   try {
+    const clientIp = context.clientAddress || 'unknown';
+    const identifier = context.locals.user ? context.locals.user.id : clientIp;
+    const rateLimit = checkRateLimit(identifier, 1, 15);
+    if (!rateLimit.success) {
+      return new Response(JSON.stringify({ error: 'Bạn thao tác quá nhanh! Vui lòng đợi 15 giây rồi thử lại.' }), { status: 429 });
+    }
+
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const config = await getSystemConfig(env);
@@ -14,6 +26,7 @@ export const POST: APIRoute = async (context) => {
     if (!webhookUrl && useN8nFirst) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
     const db = env.DB;
+    dbForRefund = db;
     const user = context.locals.user;
     let queryUserId = null;
     let profile: any = { name: 'lữ khách', gender: 'bạn', user_persona: '' };
@@ -31,6 +44,7 @@ export const POST: APIRoute = async (context) => {
 
         if (queryUserId) {
             try {
+                safeUserIdForRefund = queryUserId;
                 // Kiểm tra Credit trước
                 const vnTime = new Date(new Date().getTime() + 7 * 3600 * 1000);
                 const todayStr = vnTime.toISOString().split('T')[0];
@@ -53,6 +67,31 @@ export const POST: APIRoute = async (context) => {
                         error: 'Bạn đã hết lượt xem bài. Vui lòng <a href="/nap-credit" style="color: var(--gold-color); text-decoration: underline;">nạp thêm Credit</a> để tiếp tục.', 
                         code: 'OUT_OF_CREDITS' 
                     }), { status: 402 });
+                }
+
+                // TRỪ CREDIT NGAY TRƯỚC KHI GỌI AI ĐỂ CHỐNG RACE CONDITION
+                if (!isPremium) {
+                    let updateResult = await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1 WHERE user_id = ? AND daily_credits > 0').bind(queryUserId).run();
+                    
+                    if (updateResult.meta && updateResult.meta.changes === 0) {
+                        updateResult = await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ? AND balance > 0').bind(queryUserId).run();
+                        if (updateResult.meta && updateResult.meta.changes > 0) {
+                            creditDeducted = true;
+                            isDailyCreditDeducted = false;
+                        }
+                    } else if (updateResult.meta && updateResult.meta.changes > 0) {
+                        creditDeducted = true;
+                        isDailyCreditDeducted = true;
+                    }
+
+                    if (!creditDeducted) {
+                         return new Response(JSON.stringify({ 
+                            error: 'Bạn đã hết lượt xem bài (Giao dịch đang xử lý). Vui lòng thử lại sau.', 
+                            code: 'OUT_OF_CREDITS' 
+                        }), { status: 402 });
+                    }
+                    
+                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_yesno', 'Luận giải Yes/No')`).bind(crypto.randomUUID(), queryUserId).run();
                 }
 
                 // Lấy thông tin cá nhân hóa của user
@@ -180,20 +219,6 @@ export const POST: APIRoute = async (context) => {
             totalTokens
         ).run();
         
-        // 5. TRỪ CREDIT
-        const walletAfter = await db.prepare('SELECT subscription_tier, subscription_expires_at FROM credit_wallets WHERE user_id = ?').bind(safeUserId).first();
-        if (walletAfter) {
-            const isPremium = walletAfter.subscription_tier === 'premium' && (!walletAfter.subscription_expires_at || new Date(walletAfter.subscription_expires_at) > new Date());
-            if (!isPremium) {
-                let updateResult = await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1 WHERE user_id = ? AND daily_credits > 0').bind(safeUserId).run();
-                if (updateResult.meta && updateResult.meta.changes === 0) {
-                    updateResult = await db.prepare('UPDATE credit_wallets SET balance = balance - 1 WHERE user_id = ? AND balance > 0').bind(safeUserId).run();
-                }
-                if (updateResult.meta && updateResult.meta.changes > 0) {
-                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_yesno', 'Luận giải Yes/No')`).bind(crypto.randomUUID(), safeUserId).run();
-                }
-            }
-        }
       } catch (dbError) {
         console.error("Lỗi lưu D1 (yesno):", dbError);
       }
@@ -214,6 +239,20 @@ export const POST: APIRoute = async (context) => {
       headers: { 'Content-Type': 'application/json' }
     });
   } catch (error: any) {
+    // Hoàn tiền nếu đã trừ nhưng AI gặp lỗi
+    if (creditDeducted && safeUserIdForRefund && dbForRefund) {
+        try {
+            if (isDailyCreditDeducted) {
+                await dbForRefund.prepare('UPDATE credit_wallets SET daily_credits = daily_credits + 1 WHERE user_id = ?').bind(safeUserIdForRefund).run();
+            } else {
+                await dbForRefund.prepare('UPDATE credit_wallets SET balance = balance + 1 WHERE user_id = ?').bind(safeUserIdForRefund).run();
+            }
+            await dbForRefund.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 1, 'refund', 'Hoàn tiền do lỗi hệ thống AI (Yes/No)')`).bind(crypto.randomUUID(), safeUserIdForRefund).run();
+            console.log(`Đã hoàn tiền cho user ${safeUserIdForRefund} do lỗi AI`);
+        } catch (refundError) {
+            console.error("Lỗi hoàn tiền:", refundError);
+        }
+    }
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
   }
 };
