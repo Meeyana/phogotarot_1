@@ -1431,6 +1431,9 @@ const user = Astro.locals.user;
 
         
         // Mở modal và tạo/lấy lại mã QR
+        let currentAmountForTracking = 0;
+        let currentPackageForTracking = '';
+        
         planBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!userEmail) {
@@ -1441,6 +1444,9 @@ const user = Astro.locals.user;
                 const amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
                 isPremiumPurchase = pkgName.includes('Vương Giả') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao');
+                
+                currentAmountForTracking = amount;
+                currentPackageForTracking = pkgName;
                 
                 // --- GTM Tracking ---
                 window.dataLayer = window.dataLayer || [];
@@ -1563,6 +1569,38 @@ const user = Astro.locals.user;
                     confirmBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Thanh toán thành công!';
                     confirmBtn.style.background = '#4CAF50';
                     confirmBtn.style.color = '#fff';
+                    
+                    // --- HYBRID TRACKING: PURCHASE EVENT ---
+                    const eventID = 'evt_pur_' + currentTransactionId;
+                    
+                    // 1. Push to DataLayer (Cho GA4 / GTM)
+                    window.dataLayer = window.dataLayer || [];
+                    window.dataLayer.push({
+                        event: 'purchase',
+                        eventID: eventID,
+                        value: Number(currentAmountForTracking),
+                        currency: 'VND',
+                        transaction_id: currentTransactionId,
+                        items: [{ item_name: currentPackageForTracking }]
+                    });
+
+                    // 2. Push trực tiếp CAPI (Standard Event: Purchase)
+                    fetch('/api/event-sync', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            eventName: 'Purchase', // Tên event chuẩn của Facebook để đếm doanh thu
+                            eventID: eventID,
+                            eventURL: window.location.href,
+                            eventData: {
+                                value: Number(currentAmountForTracking),
+                                currency: 'VND',
+                                content_name: currentPackageForTracking,
+                                order_id: currentTransactionId
+                            }
+                        })
+                    }).catch(err => console.warn('CAPI Purchase push failed', err));
+                    // ----------------------------------------
                     
                     // Cập nhật ví hiển thị
                     if (window.fetchBalance) window.fetchBalance(true);
