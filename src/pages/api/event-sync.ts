@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
+export const POST: APIRoute = async ({ request, clientAddress, cookies, locals }) => {
   try {
     // Parse the payload sent from our frontend
     const body = await request.json();
@@ -13,9 +13,11 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
     // Cloudflare passes the real IP in the cf-connecting-ip header
     const clientIp = request.headers.get('cf-connecting-ip') || clientAddress || '';
 
-    // Get credentials from environment variables (.env)
-    const pixelId = import.meta.env.FB_PIXEL_ID;
-    const accessToken = import.meta.env.FB_ACCESS_TOKEN;
+    // Cố gắng đọc từ Astro locals (Cloudflare runtime) trước, nếu không có thì fallback về import.meta.env
+    // @ts-ignore
+    const env = locals?.runtime?.env || process?.env || import.meta.env || {};
+    const pixelId = env.FB_PIXEL_ID || import.meta.env.FB_PIXEL_ID;
+    const accessToken = env.FB_ACCESS_TOKEN || import.meta.env.FB_ACCESS_TOKEN;
 
     if (!pixelId || !accessToken) {
       console.error('Missing FB_PIXEL_ID or FB_ACCESS_TOKEN in environment variables.');
@@ -61,8 +63,8 @@ export const POST: APIRoute = async ({ request, clientAddress, cookies }) => {
 
     return new Response(JSON.stringify({ success: true, event_id: eventID }), { status: 200 });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('CAPI Internal Error:', error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
+    return new Response(JSON.stringify({ error: 'Internal Server Error', message: error.message, stack: error.stack }), { status: 500 });
   }
 };

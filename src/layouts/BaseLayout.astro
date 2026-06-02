@@ -496,7 +496,7 @@ const ogImageURL = new URL(ogImage, Astro.site);
                     delete payloadData.event;
 
                     // 3. Gửi thẳng data lên Server CAPI của chúng ta
-                    fetch('/api/fb-capi', {
+                    fetch('/api/event-sync', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
