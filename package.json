@@ -17,7 +17,8 @@
     "@supabase/supabase-js": "^2.106.2",
     "astro": "^5.16.4",
     "dotenv": "^17.2.3",
-    "drizzle-orm": "^0.45.2"
+    "drizzle-orm": "^0.45.2",
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260524.1",

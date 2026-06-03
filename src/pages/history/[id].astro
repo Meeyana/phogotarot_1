@@ -49,6 +49,15 @@ if (db && id) {
       const msgsData = await db.prepare('SELECT * FROM message_logs WHERE conversation_id = ? ORDER BY id ASC').bind(id).all();
       if (msgsData && msgsData.results) {
         messages = msgsData.results;
+        
+        if (conversation.title === 'Khởi tạo') {
+            const firstUserMsg = messages.find((m: any) => m.role === 'user');
+            if (firstUserMsg && firstUserMsg.content) {
+                let msg = firstUserMsg.content;
+                if (msg.length > 50) msg = msg.substring(0, 50) + '...';
+                conversation.title = 'Trải bài: ' + msg;
+            }
+        }
       }
     }
   } catch (error) {

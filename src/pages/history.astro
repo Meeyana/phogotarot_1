@@ -17,17 +17,8 @@ if (db) {
     const query = `
       SELECT 
         c.id, 
-        CASE 
-          WHEN c.title = 'Khởi tạo' THEN 
-            COALESCE(
-              (SELECT 'Trải bài: ' || SUBSTR(content, 1, 50) || CASE WHEN LENGTH(content) > 50 THEN '...' ELSE '' END 
-               FROM message_logs m 
-               WHERE m.conversation_id = c.id AND m.role = 'user' 
-               ORDER BY m.id ASC LIMIT 1), 
-              c.title
-            )
-          ELSE c.title 
-        END as title, 
+        c.title as original_title, 
+        (SELECT content FROM message_logs m WHERE m.conversation_id = c.id AND m.role = 'user' ORDER BY m.id ASC LIMIT 1) as first_user_message,
         c.created_at 
       FROM conversations c
       WHERE c.user_id = ? 
@@ -35,7 +26,19 @@ if (db) {
     `;
     const result = await db.prepare(query).bind(Astro.locals.user.id).all();
     if (result && result.results) {
-      historyList = result.results;
+      historyList = result.results.map((item: any) => {
+          let finalTitle = item.original_title;
+          if (finalTitle === 'Khởi tạo' && item.first_user_message) {
+              let msg = item.first_user_message;
+              if (msg.length > 50) msg = msg.substring(0, 50) + '...';
+              finalTitle = 'Trải bài: ' + msg;
+          }
+          return {
+              id: item.id,
+              title: finalTitle,
+              created_at: item.created_at
+          };
+      });
     }
 
     const qYesNo = `SELECT id, question as title, created_at FROM yes_no_readings WHERE user_id = ? ORDER BY created_at DESC`;
