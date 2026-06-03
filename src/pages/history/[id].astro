@@ -59,6 +59,15 @@ if (db && id) {
             }
         }
       }
+      
+      // 4. Lấy thông tin reader
+      if (conversation.reader_id) {
+          const readerData = await db.prepare('SELECT avatar_url, name FROM tarot_readers WHERE id = ?').bind(conversation.reader_id).first();
+          if (readerData) {
+              conversation.reader_avatar = readerData.avatar_url;
+              conversation.reader_name = readerData.name;
+          }
+      }
     }
   } catch (error) {
     console.error("Lỗi lấy chi tiết lịch sử:", error);
@@ -143,9 +152,9 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
                     
                     return (
                         <div class={`message ${msg.role === 'user' ? 'user-message' : 'bot-message'}`}>
-                            {msg.role !== 'user' && (
+                            {msg.role !== 'user' && conversation.reader_avatar && (
                                 <div class="avatar">
-                                    <img src="/images/witcher-bot.jpg" alt="Pho Go Avatar" />
+                                    <img src={conversation.reader_avatar} alt={conversation.reader_name || "Reader Avatar"} />
                                 </div>
                             )}
                             <div class="message-content">

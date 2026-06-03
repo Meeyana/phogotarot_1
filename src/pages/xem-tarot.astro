@@ -846,7 +846,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 const response = await fetch(N8N_VALIDATE_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ question, readingId: currentReadingId, userId: currentUserId })
+                    body: JSON.stringify({ question, readingId: currentReadingId, userId: currentUserId, reader_id: currentReaderId })
                 });
 
                 if (!response.ok) {

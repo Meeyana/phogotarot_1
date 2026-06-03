@@ -300,7 +300,7 @@ export const POST: APIRoute = async (context) => {
             if (!isValid || !pickCard) {
                 // 1. Đảm bảo Conversation tồn tại
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
-                await db.prepare(`UPDATE conversations SET title = ? WHERE id = ? AND title = 'Khởi tạo'`).bind("Trò chuyện: " + title, safeReadingId).run();
+                await db.prepare(`UPDATE conversations SET title = ?, reader_id = COALESCE(reader_id, ?) WHERE id = ? AND title = 'Khởi tạo'`).bind("Trò chuyện: " + title, body.reader_id || null, safeReadingId).run();
                 
                 try {
                     // 2. Lưu tin nhắn User kèm Token validate trực tiếp
@@ -350,7 +350,7 @@ export const POST: APIRoute = async (context) => {
             } else {
                 // LƯU CÂU HỎI VÀ LƯU TOKEN VALIDATE TRỰC TIẾP LÊN DÒNG TIN NHẮN CỦA USER (Nhánh pick_card = true)
                 const title = question.length > 50 ? question.substring(0, 50) + '...' : question;
-                await db.prepare(`UPDATE conversations SET title = ? WHERE id = ? AND title = 'Khởi tạo'`).bind("Trải bài: " + title, safeReadingId).run();
+                await db.prepare(`UPDATE conversations SET title = ?, reader_id = COALESCE(reader_id, ?) WHERE id = ? AND title = 'Khởi tạo'`).bind("Trải bài: " + title, body.reader_id || null, safeReadingId).run();
                 
                 try {
                     await db.prepare(`INSERT INTO message_logs (conversation_id, role, content, model, prompt_tokens, completion_tokens, total_tokens) VALUES (?, 'user', ?, ?, ?, ?, ?)`).bind(safeReadingId, question, actualModel, promptTokens, completionTokens, totalTokens).run();
