@@ -84,15 +84,15 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
             <div class="action-buttons">
                 <button id="continue-chat-btn" class="continue-btn" data-id={id} data-messages={JSON.stringify(messages)} data-reading={JSON.stringify(reading)}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                    Tiếp tục trò chuyện
+                    <span class="action-text">Tiếp tục trò chuyện</span>
                 </button>
                 <button id="share-btn" class="share-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
-                    Chia sẻ
+                    <span class="action-text">Chia sẻ</span>
                 </button>
                 <button id="delete-conversation-btn" class="delete-btn" data-id={id}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                    Xóa
+                    <span class="action-text">Xóa</span>
                 </button>
             </div>
         </div>
@@ -105,6 +105,8 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
         <div class="chat-history">
             <div class="messages-container">
                 {messages.map((msg, index) => {
+                    if (msg.role === 'system' || msg.content.startsWith('VALIDATE:')) return null;
+
                     let cards = [];
                     let cleanContent = msg.content;
                     const match = cleanContent.match(/<!-- CARDS_PAYLOAD: (.*?) -->/);
@@ -120,6 +122,8 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
                     if (cards.length === 0 && isFirstBotMessage && reading && reading.cards) {
                         cards = reading.cards;
                     }
+
+                    if (!cleanContent.trim() && cards.length === 0) return null;
 
                     // Gắn URL ảnh cho lá bài
                     if (cards.length > 0) {
@@ -573,6 +577,11 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
         @media (max-width: 600px) {
             .message { max-width: 95%; }
             .history-detail-container { padding: 1rem; }
+            .action-text { display: none; }
+            .action-buttons { gap: 5px; }
+            .continue-btn, .share-btn, .delete-btn { padding: 8px 10px; }
+            .title { font-size: 1.5rem; }
+            .header-actions { margin-bottom: 1.5rem; }
         }
     </style>
 </BaseLayout>
