@@ -1,6 +1,6 @@
 ---
 title: "Tâm thế chuẩn bị trước khi bước vào buổi xem Tarot để đạt hiệu quả tốt nhất"
-image: "/images/uploads/tam-the-chuan-bi-truoc-khi-buoc-vao-buoi-xem-tarot.png"
+image: "../../assets/uploads/tam-the-chuan-bi-truoc-khi-buoc-vao-buoi-xem-tarot.png"
 excerpt: "Chuẩn bị tâm thế đúng trước buổi xem Tarot giúp bạn đón nhận thông điệp rõ hơn, bớt phụ thuộc và biết cách chọn hướng đi phù hợp."
 pubDate: 2026-06-19
 ---
