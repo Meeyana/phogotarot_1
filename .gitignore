@@ -41,3 +41,7 @@ cms-worker
 # Local Netlify folder
 .netlify
 
+# Content Plan folder
+content-plan/
+
+
