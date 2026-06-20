@@ -3,6 +3,8 @@ title: "Bói Tarot Ai Đang Yêu Bạn? 5 Dấu Hiệu Chắc Chắn Bạn Khôn
 image: "../../assets/uploads/boi-tarot-ai-dang-yeu-ban-5-dau-hieu-chac-chan.png"
 excerpt: "Khám phá 5 dấu hiệu ai đang thật sự yêu bạn qua Tarot. Hiểu rõ hơn về tình cảm và năng lượng yêu thương tiềm ẩn. Khám phá ngay!"
 pubDate: 2025-11-14
+category: "tình yêu & mối quan hệ"
+tags: ["tình yêu", "dấu hiệu yêu", "bói tarot", "the lovers", "năng lượng"]
 slug: "boi-tarot-ai-dang-yeu-ban-5-dau-hieu-chac-chan"
 ---
 

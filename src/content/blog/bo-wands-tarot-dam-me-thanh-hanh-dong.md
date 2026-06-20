@@ -3,6 +3,8 @@ title: "Bộ Wands trong Tarot: Khi đam mê biến thành hành động"
 image: "../../assets/uploads/bo-wands-tarot-dam-me-thanh-hanh-dong.png"
 excerpt: "Mỗi hành trình vĩ đại đều bắt đầu từ một tia lửa ý tưởng, một thôi thúc hành động không thể cưỡng lại. Trong thế giới Tarot, nguồn năng lượng nguyên sơ, bùng nổ và đầy nhiệt huyết đó được gói gọn trong bộ Wands (bộ Gậy)"
 pubDate: 2025-11-16
+category: "ý nghĩa lá bài"
+tags: ["wands", "nguyên tố lửa", "đam mê", "hành động", "minor arcana"]
 ---
 
 Mỗi hành trình vĩ đại đều bắt đầu từ một tia lửa ý tưởng, một thôi thúc hành động không thể cưỡng lại. Trong thế giới Tarot, nguồn năng lượng nguyên sơ, bùng nổ và đầy nhiệt huyết đó được gói gọn trong bộ Wands (bộ Gậy). Tượng trưng cho nguyên tố Lửa, bộ ẩn này là bản đồ hành trình của đam mê, tham vọng và ý chí. Nó soi chiếu con đường biến nguồn cảm hứng ban sơ thành hiện thực, từ lúc khát khao hình thành cho đến khi gặt hái thành quả rực rỡ.

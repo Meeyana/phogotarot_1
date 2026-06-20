@@ -1,9 +1,10 @@
 ---
-title: Bộ Swords trong Tarot — Lưỡi kiếm vô tình hay liều thuốc đắng dã tật?
+title: "Bộ Swords trong Tarot — Lưỡi kiếm vô tình hay liều thuốc đắng dã tật?"
+image: "../../assets/uploads/bo-kiem-tarot-luoi-kiem-vo-tinh-hay-lieu-thuoc-dang-da-tat.png"
+excerpt: "Đây có lẽ là bộ Ẩn Phụ đáng sợ nhất nhưng nếu vượt qua được nó, quả ngọt và thành công sẽ đến với bạn."
 pubDate: 2025-11-17
-image: ../../assets/uploads/bo-kiem-tarot-luoi-kiem-vo-tinh-hay-lieu-thuoc-dang-da-tat.png
-excerpt: Đây có lẽ là bộ Ẩn Phụ đáng sợ nhất nhưng nếu vượt qua được nó, quả
-  ngọt và thành công sẽ đến với bạn.
+category: "ý nghĩa lá bài"
+tags: ["swords", "nguyên tố khí", "trí tuệ", "xung đột", "minor arcana"]
 ---
 Nếu phải chọn một bộ Ẩn Phụ dễ khiến người ta… thở dài nhất, thì chắc chắn đó chính là **Swords**. Mỗi lá bài đều phảng phất sự mệt mỏi, căng thẳng, tuyệt vọng—như thể bạn đang đứng giữa “tận cùng nỗi đau”.
 

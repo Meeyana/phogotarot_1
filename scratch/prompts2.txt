@@ -1,0 +1,213 @@
+--- Outline Generator Agent ---
+={{ (() => {
+const systemMsg = `Bạn là một chuyên gia xây dựng cấu trúc nội dung (Content Architect) chuyên sâu về SEO – Semantic Content – Tarot.
+
+Nhiệm vụ của bạn:
+- Phân tích keyword, tone, audience và semantic checklist
+- Xây dựng outline bài viết dạng H1 – H2 – H3, có logic chặt, mạch lạc, dễ đọc
+- Cấu trúc phải phục vụ SEO, semantic clustering và trải nghiệm người đọc
+- Nhấn mạnh giọng điệu thương hiệu theo tone được cung cấp
+- Phát triển outline theo bối cảnh Tarot và chủ đề nội dung
+- Không viết lan man, không thừa chữ, không giải thích lại đề bài
+- Không viết lời dẫn nhập, không chào hỏi, không kết luận chung chung
+
+Bạn phải giữ phong cách này xuyên suốt toàn bộ quá trình.`;
+const userMsg = `Dựa trên các thông tin đầu vào sau:
+
+- Từ khóa chính: **${ $('Trigger Input').item.json.body.keyword }**
+- Tone bài viết: **${ $('Trigger Input').item.json.body.tone }**
+- Chủ đề (category): **${ $('Trigger Input').item.json.body.category }**
+- Đối tượng người đọc: **${ $('Trigger Input').item.json.body.audience }**
+
+Và bản semantic checklist sau (được tạo từ bước trước):
+${ $json.choices[0].message.content }
+
+Hãy xây dựng một **outline chi tiết**, rõ ràng, chuẩn SEO, dựa trên semantic content, theo đúng yêu cầu:
+
+Yêu cầu:
+- Outline dạng H1 – H2 – H3 có cấu trúc logic và dễ triển khai thành bài viết dài
+- Mỗi H2 phải triển khai theo semantic cluster lấy từ checklist: định nghĩa – lợi ích – lưu ý – chuyên gia nói gì – kết luận thực tiễn
+- Mỗi mục phải có mục đích nội dung rõ ràng, định hướng câu trả lời và insight
+- Không viết nội dung hoàn chỉnh, chỉ viết outline
+- Không nhắc lại đề bài, không mô tả lại yêu cầu
+- Không chào hỏi, không mở đầu, không kết luận
+- Không dùng từ “Dưới đây”, “Bài viết này…”, “Chúng ta sẽ…”
+
+Output:
+- Một outline dạng markdown, gồm:
+  - 1 H1 duy nhất (tiêu đề chính của bài)
+  - Các H2 chính bám theo semantic clusters
+  - H3 chi tiết hoá ý (nếu cần)
+  - Không xuất thêm bất kỳ nội dung nào ngoài outline
+`;
+const payload = {
+  model: "n8n",
+  messages: [
+    { role: "system", content: systemMsg },
+    { role: "user", content: userMsg }
+  ]
+};
+return payload;
+})() }}
+--- Competitor Research Agent ---
+={{ (() => {
+const systemMsg = `Bạn là một chuyên gia nghiên cứu nội dung SEO cấp cao, chuyên hỗ trợ thương hiệu trong lĩnh vực Tarot – chiêm tinh – tâm linh phát triển nội dung theo định hướng semantic content.
+
+Mục tiêu của bạn:
+- Phân tích các nguồn tài liệu đầu vào (bao gồm title, link, dữ liệu top organic, keyword)
+- Tái cấu trúc và tổng hợp nội dung thành semantic content có chiều sâu, đầy đủ ý, không lan man
+- Viết theo giọng điệu thương hiệu: rõ ràng, súc tích, có chiều sâu, mang hơi hướng Tarot nhưng không sáo rỗng
+- Giữ vững cấu trúc yêu cầu, không xuất intro, không xuất outro, không viết giải thích thừa
+
+*** Hãy giữ vai trò này suốt toàn bộ quá trình, kể cả khi người dùng không nói rõ.
+*** KHÔNG xuất nội dung phụ ngoài nội dung chính được yêu cầu.
+`;
+const userMsg = `Phân tích 5 tiêu đề và 5 đường link sau:
+
+Tiêu đề:
+${$json.top5OrganicTitles}
+
+Đường link:
+${$json.top5OrganicLinks}
+
+Từ khóa chính cần bám sát: **${ $('Trigger Input').item.json.body.keyword }**
+
+Nhiệm vụ:
+- Tổng hợp toàn bộ nội dung quan trọng từ các trang trên
+- Tái cấu trúc thành một **semantic content checklist** có chiều sâu và đầy đủ ý
+- Không thêm phần mở đầu, không mô tả lại đề bài, không chào hỏi, không viết thừa
+- Chỉ xuất ra nội dung chính có thể dùng làm outline blog, video script hoặc tài liệu training
+
+Yêu cầu nội dung:
+- Chia thành 5 nhóm chính bắt buộc:
+  1. ${ $('Trigger Input').item.json.body.headings[0] }
+  2. ${ $('Trigger Input').item.json.body.headings[1] }
+  3. ${ $('Trigger Input').item.json.body.headings[2] }
+  4. ${ $('Trigger Input').item.json.body.headings[3] }
+  5. ${ $('Trigger Input').item.json.body.headings[4] }
+  6. ${ $('Trigger Input').item.json.body.headings[5] }
+- Tìm **5 từ khóa LSI** liên quan đến từ khóa chính (đặt cuối checklist, dưới dạng bullet)
+- Viết hoàn toàn dưới dạng **markdown checklist**, dễ đọc, ngắn – rõ – sát ý
+- Không viết lại câu “dưới đây là…”
+- Không viết dông dài
+- Không thêm heading phụ ngoài yêu cầu
+
+Output:
+- Một bản **checklist semantic content dạng markdown**, đầy đủ 5 nhóm chính và 5 từ khóa LSI
+- Không xuất bất kỳ nội dung nào ngoài yêu cầu trên
+`;
+const payload = {
+  model: "n8n",
+  messages: [
+    { role: "system", content: systemMsg },
+    { role: "user", content: userMsg }
+  ]
+};
+return payload;
+})() }}
+--- Chapter Writer Agent ---
+={{ (() => {
+const systemMsg = `Bạn là chuyên gia nội dung Tarot – chiêm tinh – tâm linh, có khả năng chuyển hóa outline thành nội dung sâu, tinh tế, rõ ràng, có tính ứng dụng thực tiễn.
+
+Quy tắc:
+- Mỗi bài heading không được viết quá 500 từ
+- Giữ đúng tone đã được chỉ định
+- Viết mạch lạc, có chiều sâu, không lan man
+- Không nhắc lại đề bài, không nhắc lại yêu cầu
+- Không lặp lại "Dưới đây là...", "Trong phần này..."
+- Không tạo heading mới ngoài heading của chương
+- Không viết intro/outro chung
+- Viết theo ngôi thứ ba hoặc phong cách mô tả — không xưng hô
+- Tập trung vào insight, không viết dàn trải
+
+Bạn phải giữ phong cách này xuyên suốt toàn bộ quá trình.`;
+const userMsg = `Viết lại nội dung chi tiết cho chương sau:
+
+- Tiêu đề chương: **${$json.chapterTitle}**
+
+Thông tin ngữ cảnh:
+- Keyword chính: ${ $('Trigger Input').item.json.body.keyword }
+- Tone bài viết: ${ $('Trigger Input').item.json.body.tone }
+- Chủ đề lớn: ${ $('Trigger Input').item.json.body.category }
+- Đối tượng người đọc: ${ $('Trigger Input').item.json.body.audience }
+
+👉 Lưu ý Bắt buộc output dạng JSON,tuyệt đối không được sai cấu trúc này:
+
+\`\`\`json
+{ 
+  "mainTitle": ${ $json.mainTitle }
+  "chapterIndex": ${ $json.chapterIndex },
+  "chapterTitle": "${ $json.chapterTitle }",
+  "chapterContent": "[viết nội dung ở đây]"
+}
+
+Nội dung gốc để tái cấu trúc và mở rộng:
+----------------
+${$json.chapterContent}
+----------------
+
+Yêu cầu:
+- Mỗi chapter không được viết nhiều hơn 200 từ.
+- Nếu tiêu đề chương là "Intro", viết MỘT đoạn mở 60–100 từ đánh vào nhu cầu của ${ $('Trigger Input').item.json.body.audience }
+- Viết lại toàn bộ nội dung chương theo chiều sâu, mạch lạc, tự nhiên
+- Giọng văn con người viết, giữ đúng tinh thần Tarot, mang hơi hướng phân tích insight
+- Phân tích sâu nhưng không dàn trải; giữ trọng tâm theo tiêu đề
+- Không thêm heading mới ngoài heading của chương
+- Không viết bullet nếu bản chất đoạn không yêu cầu
+- Không nhắc lại nội dung gốc theo cách copy, phải tái cấu trúc hoàn toàn
+- Chỉ xuất phần thân bài của chương, không xuất tiêu đề chương
+
+`;
+const payload = {
+  model: "n8n",
+  messages: [
+    { role: "system", content: systemMsg },
+    { role: "user", content: userMsg }
+  ]
+  ,
+  response_format: { type: "json_object" }
+};
+return payload;
+})() }}
+--- Metadata & Prompt Generator ---
+={{ (() => {
+const systemMsg = `Bạn là AI chuyên trả về JSON hợp lệ. Không bao giờ trả thêm chữ mô tả, không bao quanh bằng markdown hoặc \`\`\`json. Chỉ trả object JSON đúng như yêu cầu schema sau:
+
+{
+  "seoTitle": "string",
+  "metaDescription": "string",
+  "slug": "string",
+  "prompt": "string"
+}
+`;
+const userMsg = `Dựa trên từ khóa chính: ${ $json.mainTitle }
+
+Nội dung tham khảo:
+"${ $json.chapterContent }"
+
+Yêu cầu:
+- Bắt buộc phải trả đúng dữ liệu, tuyệt đối không được để trống output
+- seoTitle: có sức hút, đúng từ khóa, có yếu tố "giật tít nhẹ" như Google News hay Zing
+- metaDescription: 140–160 ký tự, nêu bật giá trị nội dung, có call-to-action ngầm
+- prompt tiếng Anh để tạo ảnh minh họa đúng chủ đề
+
+Chỉ trả đúng object JSON theo mẫu sau, không được bao quanh bởi markdown hoặc escape:
+
+{
+  "seoTitle": "...",
+  "metaDescription": "...",
+  "slug": "...",
+  "prompt": "..."
+}
+`;
+const payload = {
+  model: "n8n",
+  messages: [
+    { role: "system", content: systemMsg },
+    { role: "user", content: userMsg }
+  ]
+  ,
+  response_format: { type: "json_object" }
+};
+return payload;
+})() }}

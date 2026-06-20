@@ -28,33 +28,33 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 8. (CẬP NHẬT) Lọc bài viết liên quan thông minh theo 'category'
-const currentCategory = post.data.category;
-let relatedPosts = [];
-
-if (currentCategory) {
-  const postsInSameCategory = allPosts
-    .filter(p => p.slug !== post.slug && p.data.category === currentCategory)
-    .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
-
-  if (postsInSameCategory.length >= 3) {
-    relatedPosts = postsInSameCategory.slice(0, 3);
-  } else {
-    relatedPosts = [...postsInSameCategory];
+// 8. (CẬP NHẬT) Lọc bài viết liên quan thông minh theo Category và Semantic Tags
+function scoreRelatedPost(current, candidate) {
+  let score = 0;
+  // Category match = 3 điểm
+  if (current.data.category && candidate.data.category === current.data.category) {
+    score += 3;
   }
+  // Tag match = 2 điểm cho mỗi tag chung
+  const currentTags = current.data.tags || [];
+  const candidateTags = candidate.data.tags || [];
+  const sharedTags = currentTags.filter(t => candidateTags.includes(t));
+  score += sharedTags.length * 2;
+  return score;
 }
 
-if (relatedPosts.length < 3) {
-  const existingSlugs = new Set(relatedPosts.map(p => p.slug));
-  existingSlugs.add(post.slug);
-  
-  const fillerPosts = allPosts
-    .filter(p => !existingSlugs.has(p.slug))
-    .sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
-
-  const needed = 3 - relatedPosts.length;
-  relatedPosts.push(...fillerPosts.slice(0, needed));
-}
+let relatedPosts = allPosts
+  .filter(p => p.slug !== post.slug)
+  .map(p => ({ ...p, semanticScore: scoreRelatedPost(post, p) }))
+  .sort((a, b) => {
+    // Sắp xếp theo điểm số semantic trước
+    if (b.semanticScore !== a.semanticScore) {
+      return b.semanticScore - a.semanticScore;
+    }
+    // Nếu điểm bằng nhau, sắp xếp theo ngày mới nhất
+    return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
+  })
+  .slice(0, 3);
 
 // 9. (GIỮ NGUYÊN) TẠO SCHEMA JSON-LD
 const schema = {

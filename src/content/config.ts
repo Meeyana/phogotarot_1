@@ -23,7 +23,8 @@ const blogCollection = defineCollection({
       "tarot theo tình huống",
       "công cụ trải bài",
       "tarot mở rộng"
-    ]).optional()
+    ]).optional(),
+    tags: z.array(z.string()).default([]),
   }),
 });
 

@@ -1,12 +1,10 @@
 ---
-title: Hướng dẫn cách tráo bài Tarot đúng cách để kết nối năng lượng
+title: "Hướng dẫn cách tráo bài Tarot đúng cách để kết nối năng lượng"
+image: "../../assets/uploads/huong-dan-cach-trao-bai-tarot-dung-cach-de-ket-noi-nang-luong-va-muc-dich.png"
+excerpt: "Bạn đang cảm thấy việc tráo bài Tarot có vẻ đơn giản, nhưng liệu bạn đã thực sự biết cách biến hành động này thành một nghi thức kết nối năng lượng sâu sắc? Đừng để những lá bài chỉ là những mảnh giấy vô tri, hãy biến chúng thành cầu nối giữa bạn và vũ trụ."
 pubDate: 2025-11-22
-image: ../../assets/uploads/huong-dan-cach-trao-bai-tarot-dung-cach-de-ket-noi-nang-luong-va-muc-dich.png
-category: kỹ năng đọc bài
-excerpt: Bạn đang cảm thấy việc tráo bài Tarot có vẻ đơn giản, nhưng liệu bạn đã
-  thực sự biết cách biến hành động này thành một nghi thức kết nối năng lượng
-  sâu sắc? Đừng để những lá bài chỉ là những mảnh giấy vô tri, hãy biến chúng
-  thành cầu nối giữa bạn và vũ trụ.
+category: "kỹ năng đọc bài"
+tags: ["tráo bài", "shuffle", "kỹ năng", "năng lượng", "nghi thức"]
 ---
 
 Bạn đang cảm thấy việc tráo bài Tarot có vẻ đơn giản, nhưng liệu bạn đã thực sự biết cách biến hành động này thành một nghi thức kết nối năng lượng sâu sắc? Đừng để những lá bài chỉ là những mảnh giấy vô tri, hãy biến chúng thành cầu nối giữa bạn và vũ trụ. Bài viết này sẽ hướng dẫn bạn từng bước để việc tráo bài không chỉ là kỹ thuật, mà còn là một nghệ thuật.

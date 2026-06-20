@@ -3,6 +3,8 @@ title: "Shadow Work là gì? Dùng Tarot để đối diện với bóng tối t
 image: "../../assets/uploads/shadow-work-tarot-doi-dien-voi-bong-toi-tam-hon-va-hanh-trinh-chua-lanh-chieu-sau.png"
 excerpt: "Khám phá Shadow Work và cách Tarot giúp bạn đối diện với bóng tối tâm hồn. Hé mở sức mạnh tiềm ẩn và bắt đầu hành trình chữa lành."
 pubDate: 2025-11-23
+category: "chữa lành & tâm lý"
+tags: ["shadow work", "carl jung", "chữa lành", "tiềm thức", "bóng tối"]
 ---
 
 Thật khó để chấp nhận những góc khuất trong tâm hồn mình, phải không? Chúng ta thường có xu hướng tránh né, phủ nhận những phần mà mình cho là "xấu xí" hay "không hoàn hảo". Nhưng điều gì sẽ xảy ra nếu tôi nói với bạn rằng, chính trong bóng tối đó lại ẩn chứa sức mạnh và tiềm năng phát triển phi thường? "Shadow Work" chính là cánh cửa dẫn lối bạn đến với những khám phá sâu sắc này, và Tarot, với vai trò là người bạn đồng hành đáng tin cậy, sẽ là ánh sáng soi rọi cho hành trình đó.

@@ -1,8 +1,10 @@
 ---
 title: "Bạch Dương Bốc Hỏa Với Bài Tarot: Hé Lộ Bí Mật Hành Động & Đam Mê!"
 image: "../../assets/uploads/trai-bai-tarot-nguoi-cung-bach-duong.png"
-excerpt: "Khám phá sức mạnh thôi thúc hành động và làm chủ đam mê của người SĐ Song Ngư qua lăng kính Tarot. Bản đồ nội tâm cho người tiên phong."
+excerpt: "Khám phá sức mạnh thôi thúc hành động và làm chủ đam mê của người cung Bạch Dương qua lăng kính Tarot. Bản đồ nội tâm cho người tiên phong."
 pubDate: 2025-11-15
+category: "tarot mở rộng"
+tags: ["bạch dương", "aries", "the emperor", "the chariot", "nguyên tố lửa"]
 ---
 
 Trong vòng tròn Hoàng đạo, Bạch Dương là tia lửa đầu tiên, là cú hích khởi tạo mọi hành trình. Năng lượng này, khi soi chiếu qua lăng kính Tarot, không chỉ là những dự đoán về tương lai, mà còn là bản đồ nội tâm cho những ai mang trong mình tinh thần tiên phong. Việc kết nối Tarot với phẩm chất của Bạch Dương mở ra một cách tiếp cận độc đáo, giúp giải mã những thôi thúc hành động, làm chủ ngọn lửa đam mê và can đảm bước vào những con đường chưa ai khai phá. Đây là hành trình khám phá cách các lá bài trở thành kim chỉ nam cho người thủ lĩnh bên trong bạn.

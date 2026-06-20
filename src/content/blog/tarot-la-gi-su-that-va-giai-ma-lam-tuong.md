@@ -3,6 +3,8 @@ title: "Tarot là gì? Sự thật Giải mã những lầm tưởng phổ biế
 image: "../../assets/uploads/tarot-la-gi-su-that-va-giai-ma-lam-tuong.png"
 excerpt: "Khám phá Tarot không phải là sách định mệnh mà là bản đồ tâm thức. Giải mã ý nghĩa biểu tượng và tìm hiểu trí tuệ nội tại qua 78 lá bài. Đọc ngay để thấu hiểu bản thân!"
 pubDate: 2025-11-18
+category: "tarot căn bản"
+tags: ["tarot là gì", "lịch sử", "rider-waite-smith", "carl jung", "lầm tưởng"]
 ---
 
 Giữa vô vàn định kiến và huyền thoại, bản chất thật sự của Tarot vẫn là một ẩn số với nhiều người. Bộ bài không phải là một cuốn sách định mệnh có sẵn câu trả lời, mà là một tấm bản đồ chi tiết về hành trình tâm thức của con người. 78 lá bài hoạt động như một hệ thống cổ mẫu (archetype), một ngôn ngữ biểu tượng giúp giải mã những dòng chảy ngầm trong tiềm thức và khám phá động lực sâu xa đằng sau mỗi lựa chọn. Việc tìm hiểu Tarot, vì thế, là một phương pháp tiếp cận trí tuệ nội tại một cách có cấu trúc.

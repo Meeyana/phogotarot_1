@@ -1,0 +1,61 @@
+// 🎯 Step 2: Validate + Normalize input for Tarot Content Pipeline
+
+const input = $input.first().json.body;
+
+// 1) Validate
+if (!input.keyword || input.keyword.trim() === "") {
+  throw new Error("Thiếu 'keyword' – đây là trường bắt buộc.");
+}
+
+if (!input.category || input.category.trim() === "") {
+  throw new Error("Thiếu 'category' – cần có chủ đề lớn của bài.");
+}
+
+// 2) Tạo title fallback nếu không có
+const title = input.title && input.title.trim() !== "" 
+  ? input.title.trim()
+  : input.keyword.trim();
+
+// 3) Tạo slug chuẩn SEO
+function toSlug(str) {
+  return str
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") 
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-")
+    .slice(0, 80);
+}
+
+const slug = toSlug(title);
+
+// 4) Tạo ngày xuất bản
+const pubDate = new Date().toISOString().split("T")[0];
+
+// 5) Chuẩn hóa tone và audience
+const tone = input.tone || "mystical, spiritual";
+const audience = input.audience || "người xem tarot, người mới học tarot";
+
+// 6) Chuẩn bị object clean để workflow sau dùng
+return [
+  {
+    json: {
+      keyword: input.keyword.trim(),
+      category: input.category.trim(),
+      title,
+      slug,
+      tone,
+      audience,
+      pubDate,
+
+      // bổ sung field để AI dễ dùng trong steps sau
+      context: {
+        keyword: input.keyword.trim(),
+        category: input.category.trim(),
+        tone,
+        audience
+      }
+    }
+  }
+];

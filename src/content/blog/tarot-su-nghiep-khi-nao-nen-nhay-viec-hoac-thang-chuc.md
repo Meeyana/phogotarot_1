@@ -3,6 +3,8 @@ title: "Tarot Sự nghiệp: Khi nào nên nhảy việc hoặc thăng chức?"
 image: "../../assets/uploads/tarot-su-nghiep-khi-nao-nen-nhay-viec-hoac-thang-chuc.png"
 excerpt: "Bạn đang phân vân giữa việc nhảy việc hay thăng chức? Khám phá thông điệp Tarot để đưa ra quyết định sự nghiệp sáng suốt và tìm thấy con đường phát triển phù hợp nhất."
 pubDate: 2025-11-22
+category: "công việc & tài chính"
+tags: ["sự nghiệp", "nhảy việc", "thăng chức", "cơ hội", "the chariot"]
 ---
 
 Bạn đang đứng trước ngã ba đường sự nghiệp? Cảm thấy băn khoăn giữa việc gắn bó với công việc hiện tại hay tìm kiếm một khởi đầu mới đầy hứa hẹn? Trong thế giới không ngừng biến đổi của công việc, việc đưa ra quyết định quan trọng như nhảy việc hay thăng chức có thể khiến bất cứ ai cũng phải trăn trở. Đôi khi, chúng ta cần một góc nhìn sâu sắc hơn, một lời chỉ dẫn từ vũ trụ để thấu hiểu con đường nào thực sự phù hợp. Tarot, với những hình ảnh biểu tượng và thông điệp ẩn chứa, có thể là kim chỉ nam giúp bạn vén màn những điều còn mơ hồ trong hành trình công danh sự nghiệp.

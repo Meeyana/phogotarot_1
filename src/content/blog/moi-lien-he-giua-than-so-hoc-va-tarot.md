@@ -3,6 +3,8 @@ title: "Mối liên hệ giữa Thần số học (Numerology) và Tarot"
 image: "../../assets/uploads/moi-lien-he-giua-than-so-hoc-numerology-va-tarot-khien-ban-thau-hieu-hon-ve-ban-than-va-so-phan-cua-minh.png"
 excerpt: "Khám phá mối liên hệ độc đáo giữa Thần số học và Tarot, hai công cụ hé mở bí mật về bản thân và tương lai. Tìm hiểu sâu hơn về hành trình cuộc đời bạn ngay hôm nay!"
 pubDate: 2025-11-23
+category: "tarot mở rộng"
+tags: ["thần số học", "numerology", "lá bài linh hồn", "ngày sinh", "con số"]
 ---
 
 Bạn có bao giờ tự hỏi, liệu có một sợi dây vô hình nào đó liên kết những con số định mệnh trong cuộc đời bạn với những lá bài Tarot đầy bí ẩn? Nhiều người tin rằng, Thần số học và Tarot không chỉ là hai công cụ riêng lẻ để khám phá bản thân và tương lai, mà chúng còn là những tấm gương phản chiếu lẫn nhau, mang đến cái nhìn sâu sắc và đa chiều hơn về hành trình cuộc đời. Bài viết này sẽ cùng bạn khám phá mối liên hệ độc đáo giữa Thần số học và Tarot, hé mở những cánh cửa mới cho sự thấu hiểu nội tâm.

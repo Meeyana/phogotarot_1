@@ -3,6 +3,8 @@ title: "Nghệ thuật đặt câu hỏi trong Tarot: Hỏi đúng để nhận 
 image: "../../assets/uploads/nghe-thuat-dat-cau-hoi-tarot-hoi-dung-de-nhan-cau-tra-loi-hay.png"
 excerpt: "Khám phá cách đặt câu hỏi Tarot hiệu quả để nhận thông điệp sâu sắc và đưa ra quyết định sáng suốt. Biến mỗi trải bài thành hành trình khám phá ý nghĩa."
 pubDate: 2025-11-22
+category: "kỹ năng đọc bài"
+tags: ["đặt câu hỏi", "câu hỏi mở", "kỹ năng", "tình yêu", "sự nghiệp"]
 ---
 
 Bạn đã bao giờ cảm thấy bối rối sau một trải bài Tarot, không biết mình nhận được câu trả lời gì, hay tệ hơn là cảm thấy thông điệp quá chung chung? Vấn đề không nằm ở lá bài, mà thường xuất phát từ cách chúng ta đặt câu hỏi. Một câu hỏi đúng, sâu sắc sẽ mở ra cánh cửa đến những thông điệp giá trị, giúp bạn thực sự thấu hiểu và đưa ra quyết định sáng suốt. Hãy cùng khám phá nghệ thuật đặt câu hỏi để biến mỗi trải bài thành một hành trình khám phá đầy ý nghĩa.

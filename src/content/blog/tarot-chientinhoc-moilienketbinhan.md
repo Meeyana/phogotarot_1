@@ -3,6 +3,8 @@ title: "TIẾT LỘ CHẤN ĐỘNG: Tarot & Chiêm Tinh Học - Mối Liên Kế
 image: "../../assets/uploads/tarot-chientinhoc-moilienketbinhan.png"
 excerpt: "Khám phá sự kết hợp đỉnh cao giữa Tarot và Chiêm tinh học, giải mã những bí ẩn vũ trụ và thấu hiểu bản thân sâu sắc. Đọc ngay để mở ra cánh cửa mới!"
 pubDate: 2025-11-15
+category: "tarot mở rộng"
+tags: ["chiêm tinh", "astrology", "cung hoàng đạo", "hành tinh", "nguyên tố"]
 ---
 
 Trong vũ trụ huyền diệu của những biểu tượng, Tarot và Chiêm tinh học nổi lên như hai ngôn ngữ cổ xưa, song hành và tương hỗ. Chúng không phải là hai con đường riêng rẽ, mà là hai dòng chảy cùng bắt nguồn từ một suối nguồn minh triết vũ trụ. Khi kết hợp chúng lại, mỗi lá bài Tarot không chỉ là một hình ảnh, mà còn là một bản đồ thiên thể thu nhỏ, hé lộ những tầng ý nghĩa sâu sắc hơn về hành trình của linh hồn. Đây là hành trình khám phá sự giao thoa thiêng liêng đó, mở ra một chiều không gian mới cho sự thấu hiểu bản thân.

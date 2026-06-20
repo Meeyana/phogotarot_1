@@ -3,6 +3,8 @@ title: "Bộ Cups Tarot: Khám Phá Thế Giới Cảm Xúc và Tình Yêu Qua N
 image: "../../assets/uploads/bo-cups-tarot.png"
 excerpt: "Tìm hiểu ý nghĩa sâu sắc của bộ Cups trong Tarot - tấm gương soi chiếu tâm hồn, tình yêu và trực giác. Khám phá chìa khóa thấu hiểu và chữa lành."
 pubDate: 2025-11-16
+category: "ý nghĩa lá bài"
+tags: ["cups", "nguyên tố nước", "cảm xúc", "tình yêu", "minor arcana"]
 ---
 
 Trong hành trình khám phá bản thân qua Tarot, bộ Cups hiện lên như một tấm gương soi chiếu thế giới nội tâm sâu thẳm, nơi những dòng chảy của tình yêu, sự sáng tạo và trực giác hội tụ. Đây là bộ ẩn của trái tim, nói lên ngôn ngữ của cảm xúc, các mối quan hệ và những kết nối vô hình. Nắm vững ý nghĩa của bộ Cups không chỉ giúp giải mã những trải bài về tình cảm, mà còn là chìa khóa để lắng nghe, thấu hiểu và chữa lành chính tâm hồn mình, mở ra cánh cửa đến với sự đồng cảm và trí tuệ cảm xúc.

@@ -1,10 +1,10 @@
 ---
-title: Hướng Dẫn Tự Học Tarot Cho Người Mới Bắt Đầu (A-Z)
+title: "Hướng Dẫn Tự Học Tarot Cho Người Mới Bắt Đầu (A-Z)"
+image: "../../assets/uploads/huong-dan-tu-hoc-tarot-cho-nguoi-moi-bat-dau1.png"
+excerpt: "Khám phá lộ trình tự học Tarot bài bản từ A-Z, xây dựng nền tảng vững chắc, rèn luyện kỹ năng giải nghĩa biểu tượng và phát triển thói quen thực hành. Bắt đầu hành trình Tarot của bạn ngay!"
 pubDate: 2025-11-18
-image: ../../assets/uploads/huong-dan-tu-hoc-tarot-cho-nguoi-moi-bat-dau1.png
-excerpt: Khám phá lộ trình tự học Tarot bài bản từ A-Z, xây dựng nền tảng vững
-  chắc, rèn luyện kỹ năng giải nghĩa biểu tượng và phát triển thói quen thực
-  hành. Bắt đầu hành trình Tarot của bạn ngay!
+category: "tarot căn bản"
+tags: ["tự học tarot", "người mới", "rider-waite-smith", "major arcana", "lộ trình"]
 ---
 Hướng dẫn này thiết kế lộ trình tự học tarot tập trung vào nhu cầu thực tế của người xem và người mới bắt đầu: xây dựng thư viện học thuật, rèn luyện kỹ năng giải nghĩa biểu tượng và phát triển thói quen thực hành. Phần mở gợi ý cách tiếp cận hệ thống — phân chia kiến thức thành modules nhỏ, kết hợp thực hành hàng ngày với nhật ký bài đọc, và đặt tiêu chí đạo đức khi giải bài. Mục tiêu là tạo nền tảng vững chắc qua phương pháp phân tích, không lệ thuộc vào trực giác duy nhất, giúp người học tiến bộ có hệ thống và bền vững.
 
