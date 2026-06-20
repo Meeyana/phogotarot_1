@@ -1,0 +1,76 @@
+--- Outline Generator Agent ---
+{
+  "method": "POST",
+  "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+  "sendHeaders": true,
+  "headerParameters": {
+    "parameters": [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "name": "Authorization",
+        "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+      }
+    ]
+  },
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "={{ (() => {\nconst systemMsg = `Bạn là một chuyên gia xây dựng cấu trúc nội dung (Content Architect) chuyên sâu về SEO – Semantic Content – Tarot.\n\nNhiệm vụ của bạn:\n- Phân tích keyword, tone, audience và semantic checklist\n- Xây dựng outline bài viết dạng H1 – H2 – H3, có logic chặt, mạch lạc, dễ đọc\n- Cấu trúc phải phục vụ SEO, semantic clustering và trải nghiệm người đọc\n- Nhấn mạnh giọng điệu thương hiệu theo tone được cung cấp\n- Phát triển outline theo bối cảnh Tarot và chủ đề nội dung\n- Không viết lan man, không thừa chữ, không giải thích lại đề bài\n- Không viết lời dẫn nhập, không chào hỏi, không kết luận chung chung\n\nBạn phải giữ phong cách này xuyên suốt toàn bộ quá trình.`;\nconst userMsg = `Dựa trên các thông tin đầu vào sau:\n\n- Từ khóa chính: **${ $('Trigger Input').item.json.body.keyword }**\n- Tone bài viết: **${ $('Trigger Input').item.json.body.tone }**\n- Chủ đề (category): **${ $('Trigger Input').item.json.body.category }**\n- Đối tượng người đọc: **${ $('Trigger Input').item.json.body.audience }**\n\nVà bản semantic checklist sau (được tạo từ bước trước):\n${ $json.choices[0].message.content }\n\nHãy xây dựng một **outline chi tiết**, rõ ràng, chuẩn SEO, dựa trên semantic content, theo đúng yêu cầu:\n\nYêu cầu:\n- Outline dạng H1 – H2 – H3 có cấu trúc logic và dễ triển khai thành bài viết dài\n- Mỗi H2 phải triển khai theo semantic cluster lấy từ checklist: định nghĩa – lợi ích – lưu ý – chuyên gia nói gì – kết luận thực tiễn\n- Mỗi mục phải có mục đích nội dung rõ ràng, định hướng câu trả lời và insight\n- Không viết nội dung hoàn chỉnh, chỉ viết outline\n- Không nhắc lại đề bài, không mô tả lại yêu cầu\n- Không chào hỏi, không mở đầu, không kết luận\n- Không dùng từ “Dưới đây”, “Bài viết này…”, “Chúng ta sẽ…”\n\nOutput:\n- Một outline dạng markdown, gồm:\n  - 1 H1 duy nhất (tiêu đề chính của bài)\n  - Các H2 chính bám theo semantic clusters\n  - H3 chi tiết hoá ý (nếu cần)\n  - Không xuất thêm bất kỳ nội dung nào ngoài outline\n`;\nconst payload = {\n  model: \"n8n\",\n  messages: [\n    { role: \"system\", content: systemMsg },\n    { role: \"user\", content: userMsg }\n  ]\n};\nreturn payload;\n})() }}",
+  "options": {
+    "timeout": 120000
+  }
+}
+--- Chapter Writer Agent ---
+{
+  "method": "POST",
+  "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+  "sendHeaders": true,
+  "headerParameters": {
+    "parameters": [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "name": "Authorization",
+        "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+      }
+    ]
+  },
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "={{ (() => {\nconst systemMsg = `Bạn là chuyên gia nội dung Tarot – chiêm tinh – tâm linh, có khả năng chuyển hóa outline thành nội dung sâu, tinh tế, rõ ràng, có tính ứng dụng thực tiễn.\n\nQuy tắc:\n- Mỗi bài heading không được viết quá 500 từ\n- Giữ đúng tone đã được chỉ định\n- Viết mạch lạc, có chiều sâu, không lan man\n- Không nhắc lại đề bài, không nhắc lại yêu cầu\n- Không lặp lại \"Dưới đây là...\", \"Trong phần này...\"\n- Không tạo heading mới ngoài heading của chương\n- Không viết intro/outro chung\n- Viết theo ngôi thứ ba hoặc phong cách mô tả — không xưng hô\n- Tập trung vào insight, không viết dàn trải\n\nBạn phải giữ phong cách này xuyên suốt toàn bộ quá trình.`;\nconst userMsg = `Viết lại nội dung chi tiết cho chương sau:\n\n- Tiêu đề chương: **${$json.chapterTitle}**\n\nThông tin ngữ cảnh:\n- Keyword chính: ${ $('Trigger Input').item.json.body.keyword }\n- Tone bài viết: ${ $('Trigger Input').item.json.body.tone }\n- Chủ đề lớn: ${ $('Trigger Input').item.json.body.category }\n- Đối tượng người đọc: ${ $('Trigger Input').item.json.body.audience }\n\n👉 Lưu ý Bắt buộc output dạng JSON,tuyệt đối không được sai cấu trúc này:\n\n\\`\\`\\`json\n{ \n  \"mainTitle\": ${ $json.mainTitle }\n  \"chapterIndex\": ${ $json.chapterIndex },\n  \"chapterTitle\": \"${ $json.chapterTitle }\",\n  \"chapterContent\": \"[viết nội dung ở đây]\"\n}\n\nNội dung gốc để tái cấu trúc và mở rộng:\n----------------\n${$json.chapterContent}\n----------------\n\nYêu cầu:\n- Mỗi chapter không được viết nhiều hơn 200 từ.\n- Nếu tiêu đề chương là \"Intro\", viết MỘT đoạn mở 60–100 từ đánh vào nhu cầu của ${ $('Trigger Input').item.json.body.audience }\n- ĐẶC BIỆT: Hãy khéo léo lồng ghép lời kêu gọi (Call to Action) khuyến khích độc giả đặt lịch trải bài Tarot cá nhân tại Phố Gỗ Tarot để giải quyết triệt để vấn đề của họ. Khuyến khích chèn vào phần kết luận hoặc nơi phù hợp nhất. Không PR lố lăng, hãy giữ giọng văn thấu cảm và chân thành.\n- Viết lại toàn bộ nội dung chương theo chiều sâu, mạch lạc, tự nhiên\n- Giọng văn con người viết, giữ đúng tinh thần Tarot, mang hơi hướng phân tích insight\n- Phân tích sâu nhưng không dàn trải; giữ trọng tâm theo tiêu đề\n- Không thêm heading mới ngoài heading của chương\n- Không viết bullet nếu bản chất đoạn không yêu cầu\n- Không nhắc lại nội dung gốc theo cách copy, phải tái cấu trúc hoàn toàn\n- Chỉ xuất phần thân bài của chương, không xuất tiêu đề chương\n\n`;\nconst payload = {\n  model: \"n8n\",\n  messages: [\n    { role: \"system\", content: systemMsg },\n    { role: \"user\", content: userMsg }\n  ]\n  ,\n  response_format: { type: \"json_object\" }\n};\nreturn payload;\n})() }}",
+  "options": {
+    "timeout": 120000
+  }
+}
+--- Combine Chapters ---
+{
+  "jsCode": "const items = $input.all();\n\n// Extract chapter objects từ key \"output\"\nconst chapters = items\n  .map(i => (i.json.output || (i.json.choices && JSON.parse(i.json.choices[0].message.content))))\n  .filter(Boolean);\n\n// Sort theo chapterIndex cho chắc chắn đúng thứ tự\nchapters.sort((a, b) => a.chapterIndex - b.chapterIndex);\n\n// Lấy mainTitle từ item đầu tiên (đã đồng nhất rồi)\nconst mainTitle = chapters[0].mainTitle || \"Untitled\";\n\n// Gộp thành 1 chuỗi markdown\nconst fullContent = [\n     // ⬅️ Thêm heading chính cho bài .md\n  ...chapters.map(ch => {\n\n    // Intro giữ nguyên, không tự thêm heading\n    if (ch.chapterIndex === 0) {\n      return ch.chapterContent.trim();\n    }\n\n    // Nếu chapterContent đã gồm heading ##, không thêm lại nữa\n    if (ch.chapterContent.trim().startsWith(\"##\")) {\n      return ch.chapterContent.trim();\n    }\n\n    // Nếu chapterContent chưa có heading\n    return `## ${ch.chapterTitle}\\n\\n${ch.chapterContent.trim()}`;\n  })\n]\n.join(\"\\n\\n\");\n\n// Loại bỏ Markdown heading và ký tự đặc biệt\nconst cleanText = fullContent\n  .replace(/[#>*_`]/g, '')        // bỏ markdown symbols\n  .replace(/\\s+/g, ' ')           // normalize khoảng trắng\n  .trim();\n\n// Lấy 160 ký tự đầu (chuẩn SEO meta description)\nconst excerpt = cleanText.slice(0, 160).trim() + '...';\n\nreturn [\n  {\n    json: {\n      mainTitle,\n      excerpt,\n      fullContent\n    }\n  }\n];\n"
+}
+--- Metadata & Prompt Generator ---
+{
+  "method": "POST",
+  "url": "https://9router.n8ntuanphangz.xyz/v1/chat/completions",
+  "sendHeaders": true,
+  "headerParameters": {
+    "parameters": [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "name": "Authorization",
+        "value": "Bearer sk-449ef7d4db870f28-gbnei2-bef49749"
+      }
+    ]
+  },
+  "sendBody": true,
+  "specifyBody": "json",
+  "jsonBody": "={{ (() => {\nconst systemMsg = `Bạn là AI chuyên trả về JSON hợp lệ. Không bao giờ trả thêm chữ mô tả, không bao quanh bằng markdown hoặc \\`\\`\\`json. Chỉ trả object JSON đúng như yêu cầu schema sau:\n\n{\n  \"seoTitle\": \"string\",\n  \"metaDescription\": \"string\",\n  \"slug\": \"string\",\n  \"prompt\": \"string\",\n  \"tags\": [\"string\", \"string\"]\n}\n`;\nconst userMsg = `Dựa trên từ khóa chính: ${ $json.mainTitle }\n\nNội dung tham khảo:\n\"${ $json.chapterContent }\"\n\nYêu cầu:\n- Bắt buộc phải trả đúng dữ liệu, tuyệt đối không được để trống output\n- seoTitle: có sức hút, đúng từ khóa, có yếu tố \"giật tít nhẹ\" như Google News hay Zing\n- metaDescription: 140–160 ký tự, nêu bật giá trị nội dung, có call-to-action ngầm\n- prompt tiếng Anh để tạo ảnh minh họa đúng chủ đề\n- tags: tạo ra 3-5 tags (từ khóa ngắn) liên quan đến bài viết, trả về dưới dạng mảng (list) các chuỗi.\n\nChỉ trả đúng object JSON theo mẫu sau, không được bao quanh bởi markdown hoặc escape:\n\n{\n  \"seoTitle\": \"...\",\n  \"metaDescription\": \"...\",\n  \"slug\": \"...\",\n  \"prompt\": \"...\",\n  \"tags\": [\"...\", \"...\"]\n}\n`;\nconst payload = {\n  model: \"n8n\",\n  messages: [\n    { role: \"system\", content: systemMsg },\n    { role: \"user\", content: userMsg }\n  ]\n  ,\n  response_format: { type: \"json_object\" }\n};\nreturn payload;\n})() }}",
+  "options": {
+    "timeout": 120000
+  }
+}
