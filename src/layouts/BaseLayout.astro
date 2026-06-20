@@ -21,6 +21,7 @@ export interface Props {
   ogImage?: string;
   showChatbot?: boolean;
   canonical?: string;
+  ogType?: string; // MỚI: Thêm ogType để tùy chỉnh cho bài viết
 }
 
 import OracleChat from '../components/OracleChat.astro';
@@ -30,7 +31,8 @@ const {
   description, 
   ogImage = '/images/phogotarot-og-image.jpg',
   showChatbot = true,
-  canonical 
+  canonical,
+  ogType = 'website' // Mặc định là website
 } = Astro.props;
 
 const canonicalURL = canonical 
@@ -48,11 +50,19 @@ const ogImageURL = new URL(ogImage, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalURL} />
+    
+    <!-- Open Graph Tags -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImageURL} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
 
     <!-- Tối ưu: Dùng preload để không chặn Render (PageSpeed Insights) -->
     <link 
