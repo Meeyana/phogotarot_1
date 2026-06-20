@@ -1,6 +1,6 @@
 ---
 title: "Trải bài Tarot công việc tháng tới: Những cơ hội, thách thức và lời khuyên dành cho bạn"
-image: "https://phogotarot.com/images/uploads/trai-bai-tarot-cong-viec-thang-toi-co-hoi-thach-thuc-loi-khuyen.png"
+image: "../../assets/uploads/trai-bai-tarot-cong-viec-thang-toi-co-hoi-thach-thuc-loi-khuyen.png"
 excerpt: "Khám phá trải bài Tarot công việc tháng tới để nhận diện cơ hội, thách thức và lời khuyên giúp bạn chọn hướng đi vững vàng hơn."
 pubDate: 2026-06-20
 category: "công việc & tài chính"
