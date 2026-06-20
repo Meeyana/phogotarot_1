@@ -13,6 +13,7 @@ for node in data.get('nodes', []):
     elif node['name'] == 'Format Markdown Post':
         jscode = node['parameters']['jsCode']
         jscode = jscode.replace('https://phogotarot.com/images/uploads/', '../../assets/uploads/')
+        jscode = jscode.replace('/images/uploads/', '../../assets/uploads/')
         node['parameters']['jsCode'] = jscode
 
 # 2. Update connections
