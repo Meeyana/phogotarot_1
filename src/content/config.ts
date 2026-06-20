@@ -16,7 +16,13 @@ const blogCollection = defineCollection({
       "chữa lành & tâm lý",
       "cẩm nang xem tarot",
       "thông điệp vũ trụ",
-      "giải mã bản thân"
+      "giải mã bản thân",
+      "tarot căn bản",
+      "kỹ năng đọc bài",
+      "ý nghĩa lá bài",
+      "tarot theo tình huống",
+      "công cụ trải bài",
+      "tarot mở rộng"
     ]).optional()
   }),
 });
