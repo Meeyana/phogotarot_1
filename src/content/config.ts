@@ -11,12 +11,12 @@ const blogCollection = defineCollection({
     pubDate: z.date(),
     isFeatured: z.boolean().default(false), 
     category: z.enum([
-      "tarot căn bản",
-      "kỹ năng đọc bài",
-      "ý nghĩa lá bài",
-      "tarot theo tình huống",
-      "công cụ trải bài",
-      "tarot mở rộng"
+      "tình yêu & mối quan hệ",
+      "công việc & tài chính",
+      "chữa lành & tâm lý",
+      "cẩm nang xem tarot",
+      "thông điệp vũ trụ",
+      "giải mã bản thân"
     ]).optional()
   }),
 });
