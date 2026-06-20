@@ -33,7 +33,7 @@ if (db && id) {
                 reading.cards = reading.cards.map((card: any) => {
                     const contentCard = allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase()));
                     if (contentCard && contentCard.data.image) {
-                        card.image = contentCard.data.image || contentCard.data.image;
+                        card.image = contentCard.data.image.src || contentCard.data.image;
                     } else {
                         card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
                     }
@@ -141,7 +141,7 @@ const pageDesc = "Xem lại chi tiết trải bài và cuộc trò chuyện củ
                                 // Tìm trong bộ sưu tập thẻ bài
                                 const contentCard = allCards ? allCards.find(c => c.data.title.toLowerCase().includes(card.name.toLowerCase())) : null;
                                 if (contentCard && contentCard.data.image) {
-                                    card.image = contentCard.data.image || contentCard.data.image;
+                                    card.image = contentCard.data.image.src || contentCard.data.image;
                                 } else {
                                     card.image = `/cards/${card.name.toLowerCase().replace(/ /g, '-')}.jpg`;
                                 }

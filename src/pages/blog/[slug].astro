@@ -62,7 +62,7 @@ const articleSchema = {
   "@type": "BlogPosting",
   "headline": post.data.title,
   "description": post.data.excerpt,
-  "image": post.data.image ? new URL(post.data.image, Astro.site).href : '',
+  "image": post.data.image ? new URL(post.data.image.src, Astro.site).href : '',
   "author": { "@type": "Organization", "name": "Phở Gõ Tarot" },
   "publisher": {
     "@type": "Organization",
@@ -104,13 +104,13 @@ const breadcrumbSchema = {
 const schemas = [articleSchema, breadcrumbSchema];
 
 const currentUrl = Astro.url.href;
-const shareImage = post.data.image ? new URL(post.data.image, Astro.site).href : '';
+const shareImage = post.data.image ? new URL(post.data.image.src, Astro.site).href : '';
 ---
 
 <BaseLayout
   title={`${post.data.title} - Phở Gõ Tarot`}
   description={post.data.excerpt}
-  ogImage={post.data.image ? post.data.image : ''}
+  ogImage={post.data.image ? post.data.image.src : ''}
   showChatbot={false}
   ogType="article"
 >

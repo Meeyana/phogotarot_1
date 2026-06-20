@@ -47,7 +47,7 @@ const schema = {
       const cardUrl = new URL(`/cards/${card.slug}`, siteUrl).href;
       // Lưu ý: Nếu card.data.image là object import thì logic lấy URL sẽ khác một chút, 
       // ở đây giữ nguyên logic cũ của bạn nếu nó đang chạy đúng.
-      const cardImage = card.data.image ? new URL(card.data.image, siteUrl).href : null;
+      const cardImage = card.data.image ? new URL(card.data.image.src, siteUrl).href : null;
       return {
         "@type": "ListItem",
         "position": index + 1,

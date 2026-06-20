@@ -3,10 +3,10 @@ import { defineCollection, z } from 'astro:content';
 // 1. Collection 'blog'
 const blogCollection = defineCollection({
   // Thay đổi ở đây: Thêm ({ image }) vào đầu hàm schema
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     // Sửa image() thành z.string() để tránh lỗi Sharp trên Cloudflare khi ảnh n8n bị upload chậm hơn bài viết
-    image: z.string().optional(), 
+    image: image().optional(), 
     excerpt: z.string().optional(),
     pubDate: z.date(),
     isFeatured: z.boolean().default(false), 
@@ -31,12 +31,12 @@ const blogCollection = defineCollection({
 // 2. Collection 'cards'
 const cardsCollection = defineCollection({
   // Thay đổi ở đây: Thêm ({ image }) vào đầu hàm schema
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(), 
     
     // QUAN TRỌNG: Sửa image() thành z.string() để đồng nhất với blog và tránh lỗi Sharp Cloudflare
     // Decap CMS vẫn lưu là string trong file .md
-    image: z.string(), 
+    image: image(), 
     
     excerpt: z.string().optional(),
     index: z.number(),

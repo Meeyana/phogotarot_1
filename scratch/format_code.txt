@@ -1,0 +1,89 @@
+// --- Lấy tất cả items từ input ---
+const items = $input.all();
+
+// --- Detect AI output (hỗ trợ cả AI Agent2 & debug seotitle) ---
+let ai = {};
+const aiItem = items.find(i => i.json && (i.json.output || i.json.seoTitle));
+
+if (aiItem) {
+  ai = aiItem.json.output || aiItem.json;
+}
+
+// --- Tìm content từ node Combine Chapters ---
+const chapterItem = items.find(i => i.json && (i.json.fullContent || i.json.chapterContent));
+let content = chapterItem ? (chapterItem.json.fullContent || chapterItem.json.chapterContent || "") : "";
+
+// --- Tìm node chứa img1/img2/img3 ---
+const urlItem = items.find(i => i.json && (i.json.img1 || i.json.img2 || i.json.img3));
+
+// --- Hàm convert URL Google Drive sang thumbnail ---
+function convertToThumbnail(url) {
+  if (!url) return null;
+  const match = url.match(/id=([^&]+)/);
+  if (!match) return url;
+  const fileId = match[1];
+  return `https://drive.google.com/thumbnail?id=${fileId}&sz=w1080`;
+}
+
+// --- Convert 3 URL ảnh ---
+const imageUrls = [];
+if (urlItem) {
+  if (urlItem.json.img1) imageUrls.push(convertToThumbnail(urlItem.json.img1));
+  if (urlItem.json.img2) imageUrls.push(convertToThumbnail(urlItem.json.img2));
+  if (urlItem.json.img3) imageUrls.push(convertToThumbnail(urlItem.json.img3));
+}
+
+// --- Trích xuất metadata ---
+const title = ai.seoTitle || "Untitled";
+const excerpt = ai.metaDescription || "";
+const slug = ai.slug || "untitled";
+const category = ai.category || "tarot mở rộng";
+const tagsArray = Array.isArray(ai.tags) ? ai.tags : [];
+const tagsString = JSON.stringify(tagsArray);
+const pubDate = new Date().toISOString().split("T")[0];
+const image = `/images/uploads/${slug}.png`;
+const fileName = `${slug}.md`;
+
+// --- Chèn ảnh sau mỗi heading level 2 (## ) ---
+if (imageUrls.length > 0) {
+  const lines = content.split('\n');
+  let imageIndex = 0;
+  let newContent = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    newContent.push(lines[i]);
+
+    if (lines[i].trim().startsWith('## ') && imageIndex < imageUrls.length) {
+      newContent.push('');
+      newContent.push(`![Hình ảnh minh họa ${imageIndex + 1}](${imageUrls[imageIndex]})`);
+      newContent.push('');
+      imageIndex++;
+    }
+  }
+
+  content = newContent.join('\n');
+}
+
+// --- Tạo markdown output ---
+const markdown =
+`---
+title: "${title}"
+image: "${image}"
+excerpt: "${excerpt}"
+pubDate: ${pubDate}
+category: "${category}"
+tags: ${tagsString}
+---
+
+${content}
+`;
+
+// --- Trả về kết quả cho node tiếp theo ---
+return [
+  {
+    json: {
+      fileName,
+      markdown
+    }
+  }
+];
