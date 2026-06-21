@@ -121,7 +121,7 @@ export function getCareerChartData() {
 
 /**
  * Đọc dữ liệu từ KV trước, nếu không có thì fallback về file cứng.
- * @param kv - KVNamespace (env.SESSION), có thể null/undefined
+ * @param kv - KVNamespace (env.NUMEROLOGY_KV), có thể null/undefined
  */
 async function getCategoryDataFromKV(
   kv: any,
