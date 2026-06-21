@@ -10,6 +10,115 @@ function formatMarkdownData(entry: any) {
   };
 }
 
+const FRONTMATTER_KEYS = new Set([
+  'category',
+  'number',
+  'title',
+  'subCategory',
+  'description',
+  'slug',
+  'order',
+  'draft'
+]);
+
+function parseScalarValue(value: string) {
+  const v = String(value ?? '').trim();
+  if (v === 'true') return true;
+  if (v === 'false') return false;
+  if (!Number.isNaN(Number(v)) && v !== '') return Number(v);
+  if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+    return v.slice(1, -1);
+  }
+  return v;
+}
+
+function parseYamlLikeFrontmatter(yamlText: string) {
+  const frontmatter: Record<string, any> = {};
+  for (const line of String(yamlText || '').split(/\r?\n/)) {
+    const colonIdx = line.indexOf(':');
+    if (colonIdx > 0) {
+      const key = line.substring(0, colonIdx).trim();
+      const value = line.substring(colonIdx + 1).trim();
+      if (key) frontmatter[key] = parseScalarValue(value);
+    }
+  }
+  return frontmatter;
+}
+
+function parseFrontmatterFromRawMarkdown(rawMarkdown: string) {
+  const raw = String(rawMarkdown || '').replace(/^\uFEFF/, '');
+  const delimited = raw.match(/^---[ \t]*\r?\n([\s\S]*?)\r?\n---[ \t]*(?:\r?\n|$)([\s\S]*)$/);
+  if (delimited) {
+    return {
+      frontmatter: parseYamlLikeFrontmatter(delimited[1]),
+      body: delimited[2].replace(/^\s+/, '')
+    };
+  }
+
+  const lines = raw.split(/\r?\n/);
+  const frontmatter: Record<string, any> = {};
+  let cursor = 0;
+  let consumed = 0;
+
+  for (; cursor < lines.length; cursor++) {
+    const line = lines[cursor];
+    if (!line.trim()) {
+      if (consumed > 0) cursor++;
+      break;
+    }
+
+    const colonIdx = line.indexOf(':');
+    if (colonIdx <= 0) break;
+
+    const field = line.slice(0, colonIdx).trim();
+    if (!FRONTMATTER_KEYS.has(field)) break;
+
+    frontmatter[field] = parseScalarValue(line.slice(colonIdx + 1));
+    consumed++;
+  }
+
+  return consumed > 0
+    ? { frontmatter, body: lines.slice(cursor).join('\n').replace(/^\s+/, '') }
+    : { frontmatter: {}, body: raw };
+}
+
+function stripLeakedFrontmatterHtml(content: string) {
+  let html = String(content || '').trimStart();
+
+  // Bad KV entries produced from raw frontmatter look like:
+  // <hr> category: ... title: ... <hr> <h3>...
+  const hrMatch = html.match(/^<hr\s*\/?>\s*([\s\S]*?)\s*<hr\s*\/?>\s*/i);
+  if (hrMatch) {
+    return {
+      frontmatter: parseYamlLikeFrontmatter(hrMatch[1].replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')),
+      content: html.slice(hrMatch[0].length).trimStart()
+    };
+  }
+
+  // A second defensive path for entries where the --- lines were already dropped.
+  const textPrefix = html.match(/^((?:(?:category|number|title|subCategory|description|slug|order|draft):[^\n<]*(?:\n|<br\s*\/?>))+)\s*/i);
+  if (textPrefix) {
+    return {
+      frontmatter: parseYamlLikeFrontmatter(textPrefix[1].replace(/<br\s*\/?>/gi, '\n')),
+      content: html.slice(textPrefix[0].length).trimStart()
+    };
+  }
+
+  return { frontmatter: {}, content };
+}
+
+function normalizeKvData(kvData: any) {
+  const rawParsed = kvData?.rawMarkdown ? parseFrontmatterFromRawMarkdown(kvData.rawMarkdown) : null;
+  const htmlParsed = stripLeakedFrontmatterHtml(kvData?.content || '');
+
+  return {
+    ...(rawParsed?.frontmatter || {}),
+    ...(htmlParsed.frontmatter || {}),
+    ...(kvData?.frontmatter || {}),
+    content: htmlParsed.content
+  };
+}
+
 // Helper để lấy data theo category an toàn
 export function getCategoryData(category: string, key: string | number, subCategory: string | null = null) {
   let targetPath = `../content/numerology/${category}/${key}.md`;
@@ -137,10 +246,7 @@ async function getCategoryDataFromKV(
         : `numerology:${category}:${key}`;
       const kvData = await kv.get(kvKey, 'json');
       if (kvData && kvData.content) {
-        return {
-          ...kvData.frontmatter,
-          content: kvData.content
-        };
+        return normalizeKvData(kvData);
       }
     } catch (e) {
       // KV lỗi → fallback

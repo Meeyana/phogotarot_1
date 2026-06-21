@@ -30,8 +30,8 @@ pnpm-debug.log*
 wrangler.toml
 danh-gia-he-thong-phogotarot.md
 n8n-workflow
-cms-worker
 tools
+cms-worker
 
 # macOS-specific files
 .DS_Store
