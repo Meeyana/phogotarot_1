@@ -1,6 +1,7 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 
 // 2. TẠO METADATA VÀ SCHEMA
 const pageTitle = "Trải Bài 3 Lá - Phân Tích Tình Yêu, Sự Nghiệp | Phở Gõ Tarot";
@@ -10,69 +11,30 @@ const pageUrl = new URL('/tarot', Astro.site).href;
 import fallbackTarotCards from '../data/tarot-cards.json';
 
 // CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph kết hợp Tool & Hướng dẫn)
-const schema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebApplication",
-      "name": "Trải Bài Tarot 3 Lá Online - Phở Gõ Tarot",
-      "url": pageUrl,
-      "description": "Công cụ bói bài Tarot online miễn phí, giúp giải mã tình yêu, công việc qua trải bài Quá khứ - Hiện tại - Tương lai.",
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Any"
-    },
-    {
-      "@type": "HowTo",
-      "name": "Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng Để Nhận Thông Điệp Chính Xác",
-      "description": "Hướng dẫn chi tiết cách đặt câu hỏi cho Tarot (Tarot Phrasing) để nhận được câu trả lời cụ thể, hữu ích nhất từ vũ trụ.",
-      "step": [
-        {
-          "@type": "HowToStep",
-          "name": "Tránh câu hỏi Yes/No đóng",
-          "text": "Thay vì hỏi 'Anh ấy có yêu tôi không?', hãy hỏi 'Mối quan hệ này đang đi về đâu?' để nhận được bức tranh toàn cảnh."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Tập trung vào bản thân",
-          "text": "Đặt chủ ngữ là 'Tôi' để trao quyền cho chính mình. Ví dụ: 'Tôi cần làm gì để cải thiện tình hình tài chính?'."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Giữ tâm trí trung lập",
-          "text": "Hít thở sâu và thả lỏng kỳ vọng trước khi bấm nút trải bài để năng lượng được thuần khiết nhất."
-        }
-      ]
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Nên xem Tarot bao lâu một lần?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Với cùng một vấn đề, bạn nên đợi ít nhất 1-3 tháng hoặc khi có tình tiết mới. Xem quá nhiều lần cho một câu hỏi sẽ gây nhiễu loạn năng lượng."
-          }
-        }
-      ]
-    }
-  ]
-};
-
-// Đọc dữ liệu từ KV, fallback về JSON tĩnh
-let tarotCardsKV = JSON.stringify(fallbackTarotCards);
-let suggestedQuestionsKV = '[]';
-if (Astro.locals.runtime?.env?.SESSION) {
-    try {
-        const cardsRaw = await Astro.locals.runtime.env.SESSION.get('TAROT_CARDS');
-        if (cardsRaw) tarotCardsKV = cardsRaw;
-        
-        const qRaw = await Astro.locals.runtime.env.SESSION.get('SUGGESTED_QUESTIONS');
-        if (qRaw) suggestedQuestionsKV = qRaw;
-    } catch(e) {
-        console.error("Lỗi đọc KV trong tarot.astro:", e);
-    }
-}
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc }),
+  webApplicationSchema({
+    url: pageUrl,
+    name: 'Trải Bài Tarot 3 Lá Online - Phở Gõ Tarot',
+    description: 'Công cụ bói bài Tarot online miễn phí, giúp giải mã tình yêu, công việc qua trải bài Quá khứ - Hiện tại - Tương lai.'
+  }),
+  {
+    '@type': 'HowTo',
+    '@id': pageUrl + '#howto',
+    name: 'Cách Đặt Câu Hỏi Tarot Chuẩn Năng Lượng Để Nhận Thông Điệp Chính Xác',
+    description: 'Hướng dẫn chi tiết cách đặt câu hỏi cho Tarot để nhận được câu trả lời cụ thể, hữu ích nhất.',
+    inLanguage: 'vi-VN',
+    step: [
+      { '@type': 'HowToStep', name: 'Tránh câu hỏi Yes/No đóng', text: 'Thay câu hỏi đóng bằng câu hỏi mở để nhận được bức tranh toàn cảnh.' },
+      { '@type': 'HowToStep', name: 'Tập trung vào bản thân', text: 'Đặt chủ ngữ là tôi để trao quyền cho chính mình trong quá trình đọc bài.' },
+      { '@type': 'HowToStep', name: 'Giữ tâm trí trung lập', text: 'Hít thở sâu và thả lỏng kỳ vọng trước khi rút bài.' }
+    ]
+  },
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Trải bài Tarot 3 lá', url: '/tarot' }
+  ])
+]);
 ---
 
 <BaseLayout

@@ -1,51 +1,35 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { articleSchema, breadcrumbListSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 import '../styles/than-so-hoc.css';
 
 const pageTitle = "Tra Cứu Thần Số Học Miễn Phí - Luận Giải Chi Tiết | Phở Gõ Tarot";
 const pageDesc = "Công cụ tra cứu Thần Số Học miễn phí, chính xác nhất theo trường phái Pythagoras. Khám phá Số Chủ Đạo, Sứ Mệnh, Linh Hồn qua Họ Tên và Ngày Sinh.";
+const pageUrl = new URL('/than-so-hoc', Astro.site).href;
 
 // Kiểm tra trạng thái đăng nhập để truyền xuống client
 const isLoggedIn = !!Astro.locals.user;
 
 // Cấu trúc dữ liệu SEO (Schema Markup)
-const schema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebApplication",
-      "name": "Công Cụ Tra Cứu Thần Số Học Phở Gõ",
-      "url": "https://phogotarot.com/than-so-hoc",
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "All",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "VND"
-      },
-      "description": "Phần mềm tra cứu thần số học online miễn phí, luận giải chi tiết bản đồ cuộc đời."
-    },
-    {
-      "@type": "Article",
-      "headline": "Thần Số Học Là Gì? Hướng Dẫn Tra Cứu Bản Đồ Vận Mệnh Chuẩn Xác",
-      "image": "https://phogotarot.com/images/than-so-hoc-cover.jpg", 
-      "author": {
-        "@type": "Organization",
-        "name": "Phở Gõ Tarot"
-      },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Phở Gõ Tarot",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://phogotarot.com/images/logo.png"
-        }
-      },
-      "datePublished": "2023-10-25", 
-      "description": "Tìm hiểu về Thần số học Pythagoras và cách sử dụng công cụ tra cứu để thấu hiểu bản thân, định hướng tương lai."
-    }
-  ]
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc }),
+  webApplicationSchema({
+    url: pageUrl,
+    name: 'Công Cụ Tra Cứu Thần Số Học Phở Gõ',
+    description: 'Phần mềm tra cứu thần số học online miễn phí, luận giải chi tiết bản đồ cuộc đời.'
+  }),
+  articleSchema({
+    url: pageUrl,
+    title: 'Thần Số Học Là Gì? Hướng Dẫn Tra Cứu Bản Đồ Vận Mệnh Chuẩn Xác',
+    description: 'Tìm hiểu về Thần số học Pythagoras và cách sử dụng công cụ tra cứu để thấu hiểu bản thân, định hướng tương lai.',
+    image: 'https://phogotarot.com/images/than-so-hoc-cover.jpg',
+    datePublished: '2023-10-25'
+  }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Thần số học', url: '/than-so-hoc' }
+  ])
+]);
 ---
 
 <BaseLayout title={pageTitle} description={pageDesc} >

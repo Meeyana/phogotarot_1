@@ -14,6 +14,7 @@ import '../styles/global.css';
 
 import { Image } from 'astro:assets';
 import logoImg from '../assets/logo.png';
+import { graphSchema } from '../lib/schema';
 
 export interface Props {
   title: string;
@@ -39,6 +40,7 @@ const canonicalURL = canonical
   ? new URL(canonical, Astro.site) 
   : new URL(Astro.url.pathname, Astro.site);
 const ogImageURL = new URL(ogImage, Astro.site);
+const homeSchema = graphSchema([]);
 ---
 <!DOCTYPE html>
 <html lang="vi">
@@ -100,46 +102,8 @@ const ogImageURL = new URL(ogImage, Astro.site);
       });
     </script>
     <!-- End Google Tag Manager -->
-    
     {Astro.url.pathname === '/' && (
-      <script type="application/ld+json" is:inline>
-        {
-          "@context": "https://schema.org",
-          "@graph": [
-            {
-              "@type": "WebSite",
-              "@id": "https://phogotarot.com/#website",
-              "url": "https://phogotarot.com/",
-              "name": "Phở Gõ Tarot",
-              "description": "Nền tảng xem Tarot Online và giải mã thần số học uy tín.",
-              "publisher": {
-                "@id": "https://phogotarot.com/#organization"
-              },
-              "inLanguage": "vi-VN"
-            },
-            {
-              "@type": "Organization",
-              "@id": "https://phogotarot.com/#organization",
-              "name": "Phở Gõ Tarot",
-              "alternateName": ["Pho Go Tarot", "Tiệm Phở Gõ Tarot"],
-              "url": "https://phogotarot.com/",
-              "logo": {
-                "@type": "ImageObject",
-                "url": "https://phogotarot.com/images/logo.png",
-                "width": 112,
-                "height": 112
-              },
-              "description": "Dịch vụ xem Tarot trực tuyến, chữa lành tâm hồn và định hướng tương lai. Không bán phở, chỉ bán lời khuyên.",
-              "sameAs": [
-                "https://www.facebook.com/phogotarot",
-                "https://www.tiktok.com/@phogo_tarot",
-                "https://www.instagram.com/pho_go_tarot/",
-                "https://www.youtube.com/@phogotarot"
-              ]
-            }
-          ]
-        }
-        </script>
+      <script type="application/ld+json" set:html={JSON.stringify(homeSchema)} />
     )}
     <slot name="head" />
 

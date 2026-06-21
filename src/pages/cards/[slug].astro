@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 // (QUAN TRỌNG) Import component Image tối ưu
 import { Image } from 'astro:assets';
+import { articleSchema, breadcrumbListSchema, graphSchema, imageUrl, webPageSchema } from '../../lib/schema';
 
 export const prerender = true;
 
@@ -30,24 +31,31 @@ const displayDate = postDate ? postDate.toLocaleDateString('vi-VN', {
     year: 'numeric'
 }) : null;
 
-// 8. Schema JSON-LD
-// Lưu ý: Nếu 'image' là object import từ content collection, bạn cần dùng image.src. 
-// Ở đây giữ nguyên logic cũ của bạn với giả định image là string path hoặc tương thích.
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": title,
-  "description": excerpt,
-  "image": image ? new URL(image.src, Astro.site).href : '',
-  "author": { "@type": "Organization", "name": "Phở Gõ Tarot" },
-  "publisher": { "@type": "Organization", "name": "Phở Gõ Tarot", "logo": { "@type": "ImageObject", "url": "https://phogotarot.com/images/logo.png" }},
-  ...(postDate && { "datePublished": postDate.toISOString() })
-};
+// 8. Schema JSON-LD dung chung cho SEO/GEO
+const pageUrl = new URL(`/cards/${card.slug}`, Astro.site).href;
+const cardImage = imageUrl(image, Astro.site?.href);
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: title, description: excerpt }),
+  articleSchema({
+    type: 'Article',
+    url: pageUrl,
+    title,
+    description: excerpt,
+    image: cardImage,
+    keywords: [...(upright_keywords || []), ...(reversed_keywords || [])].join(', ') || undefined,
+    datePublished: postDate ? postDate.toISOString() : undefined,
+    dateModified: postDate ? postDate.toISOString() : undefined
+  }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Các lá bài Tarot', url: '/cards' },
+    { name: title, url: `/cards/${card.slug}` }
+  ])
+]);
 
 // 9. URL chia sẻ
 const currentUrl = Astro.url.href;
-// (Lưu ý: shareImage cần đường dẫn tuyệt đối string cho meta tags)
-const shareImage = image ? new URL(image.src, Astro.site).href : '';
+const shareImage = cardImage || '';
 
 // 10. Lấy lá bài liên quan (Cùng group)
 const relatedCards = allCards

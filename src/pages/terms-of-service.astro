@@ -1,23 +1,20 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, graphSchema, webPageSchema } from '../lib/schema';
 
 // 2. TẠO METADATA VÀ SCHEMA
 const pageTitle = "Điều Khoản Sử Dụng Dịch Vụ | Phở Gõ Tarot";
 const pageDesc = "Quy định điều khoản sử dụng dịch vụ bói bài Tarot, giải mã Thần số học và bảo vệ sở hữu trí tuệ tại Phở Gõ Tarot.";
 const pageUrl = new URL('/terms-of-service', Astro.site).href;
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc, type: 'WebPage' }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: pageTitle.replace(' | Phở Gõ Tarot', ''), url: '/terms-of-service' }
+  ])
+]);
 ---
 
 <BaseLayout

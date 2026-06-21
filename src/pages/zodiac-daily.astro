@@ -1,6 +1,7 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, graphSchema, webPageSchema } from '../lib/schema';
 import '../styles/zodiac-daily.css';
 
 // 2. TẠO METADATA VÀ SCHEMA
@@ -8,17 +9,13 @@ const pageTitle = "Zodiac Tarot Hàng Ngày - Lá Bài Cung Hoàng Đạo | Ph�
 const pageDesc = "Khám phá lá bài Tarot hàng ngày cho 12 cung hoàng đạo. Nhận thông điệp và lời khuyên từ vũ trụ cho Bạch Dương, Kim Ngưu, Song Tử, v.v.";
 const pageUrl = new URL('/zodiac-daily', Astro.site).href;
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc, type: 'WebPage' }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: pageTitle.replace(' | Phở Gõ Tarot', ''), url: '/zodiac-daily' }
+  ])
+]);
 ---
 
 <BaseLayout

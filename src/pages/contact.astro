@@ -1,35 +1,40 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, graphSchema, webPageSchema } from '../lib/schema';
 
 // 2. TẠO METADATA VÀ SCHEMA
 const pageTitle = "Liên Hệ & Đặt Lịch | Phở Gõ Tarot";
 const pageDesc = "Liên hệ với Phở Gõ Tarot để đặt lịch trải bài cá nhân hoặc gửi góp ý. Chúng tôi luôn sẵn sàng lắng nghe bạn.";
 const pageUrl = new URL('/contact', Astro.site).href;
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "ContactPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "mainEntity": {
-    "@type": "Organization",
-    "name": "Phở Gõ Tarot",
-    "email": "contact@phogotarot.com",
-    "telephone": "+84352677543",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Quận Bình Thạnh",
-      "addressRegion": "Hồ Chí Minh",
-      "addressCountry": "VN"
+const schema = graphSchema([
+  webPageSchema({
+    url: pageUrl,
+    name: pageTitle,
+    description: pageDesc,
+    type: 'ContactPage',
+    extra: {
+      mainEntity: {
+        '@type': 'Organization',
+        '@id': 'https://phogotarot.com/#organization',
+        name: 'Phở Gõ Tarot',
+        email: 'contact@phogotarot.com',
+        telephone: '+84352677543',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Quận Bình Thạnh',
+          addressRegion: 'Hồ Chí Minh',
+          addressCountry: 'VN'
+        }
+      }
     }
-  },
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
-};
+  }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Liên hệ', url: '/contact' }
+  ])
+]);
 ---
 
 <BaseLayout

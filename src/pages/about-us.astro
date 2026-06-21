@@ -1,6 +1,7 @@
 ---
 // 1. IMPORT (Giữ nguyên)
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, graphSchema, webPageSchema } from '../lib/schema';
 import { Image } from 'astro:assets';
 import img1 from '../assets/img-1.jpg';
 import img2 from '../assets/img-2.jpg';
@@ -10,17 +11,13 @@ const pageTitle = "Về Chúng Tôi | Phở Gõ Tarot";
 const pageDesc = "Tìm hiểu về Phở Gõ Tarot, quan điểm của chúng tôi về Tarot và trải nghiệm 1 lượt luận giải miễn phí mỗi ngày như tô phở gõ ấm áp.";
 const pageUrl = new URL('/about-us', Astro.site).href;
 
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "AboutPage",
-  "name": pageTitle,
-  "description": pageDesc,
-  "url": pageUrl,
-  "isPartOf": {
-    "@type": "WebSite",
-    "url": Astro.site ? Astro.site.href : "https://phogotarot.com/"
-  }
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc, type: 'AboutPage' }),
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: pageTitle.replace(' | Phở Gõ Tarot', ''), url: '/about-us' }
+  ])
+]);
 ---
 
 <BaseLayout title={pageTitle} description={pageDesc}>

@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 // (QUAN TRỌNG) Import component Image để tối ưu ảnh
 import { Image } from 'astro:assets';
+import { breadcrumbListSchema, graphSchema, imageUrl, itemListSchema, webPageSchema } from '../lib/schema';
 
 // 2. LẤY DỮ LIỆU & SẮP XẾP
 const allBlogPosts = await getCollection('blog');
@@ -72,41 +73,40 @@ const customCanonical = currentPage > 1
 
 // 5. SCHEMA
 const siteUrl = Astro.site ? Astro.site.href : '/';
-// URL trong schema cũng nên đồng bộ với logic Canonical
-const pageUrl = currentPage > 1 
-  ? new URL(`/blog?page=${currentPage}`, siteUrl).href 
+const pageUrl = currentPage > 1
+  ? new URL(`/blog?page=${currentPage}`, siteUrl).href
   : new URL('/blog', siteUrl).href;
-
-// Schema bao gồm cả Featured Post nếu đang ở trang 1
-const schemaPosts = currentPage === 1 && featuredPost 
-  ? [featuredPost, ...postsForThisPage] 
+const pageTitle = `Blog - Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`;
+const pageDesc = 'Tổng hợp các bài viết, kiến thức Tarot chuyên sâu từ Phở Gõ Tarot.';
+const schemaPosts = currentPage === 1 && featuredPost
+  ? [featuredPost, ...postsForThisPage]
   : postsForThisPage;
-
-const schema = {
-  "@context": "https://schema.org",
-  "@type": "Blog",
-  "name": `Blog - Bài Viết | Phở Gõ Tarot`,
-  "description": "Tổng hợp các bài viết mới nhất về kiến thức tarot chuyên sâu.",
-  "url": pageUrl,
-  "mainEntity": {
-    "@type": "ItemList",
-    "itemListElement": schemaPosts.map((post, index) => ({
-      "@type": "ListItem",
-      "position": index + 1,
-      "item": {
-        "@type": "Article",
-        "name": post.data.title,
-        "url": new URL(`/blog/${post.slug}`, siteUrl).href,
-        ...(post.data.image && { "image": new URL(post.data.image, siteUrl).href })
-      }
-    }))
-  }
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc }),
+  {
+    '@type': 'Blog',
+    '@id': `${pageUrl}#blog`,
+    name: pageTitle,
+    description: pageDesc,
+    url: pageUrl,
+    inLanguage: 'vi-VN',
+    mainEntity: itemListSchema(schemaPosts.map((post) => ({
+      name: post.data.title,
+      url: new URL(`/blog/${post.slug}`, siteUrl).href,
+      image: imageUrl(post.data.image, siteUrl),
+      type: 'BlogPosting'
+    })))
+  },
+  breadcrumbListSchema(pageUrl, [
+    { name: 'Trang chủ', url: '/' },
+    { name: 'Bài viết', url: '/blog' }
+  ])
+]);
 ---
 
 <BaseLayout
-  title={`Blog - Bài Viết Tarot (Trang ${currentPage}) | Phở Gõ Tarot`}
-  description="Tổng hợp các bài viết, kiến thức Tarot chuyên sâu từ Phở Gõ Tarot."
+  title={pageTitle}
+  description={pageDesc}
   canonical={customCanonical}
 >
   <main id="homepage-content">

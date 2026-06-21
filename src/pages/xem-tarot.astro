@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
+import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 import '../styles/xem-tarot.css';
 
 const pageTitle = "Xem Tarot Online Miễn Phí Với Reader AI | Phở Gõ Tarot";
@@ -29,63 +30,15 @@ const faqItems = [
   }
 ];
 
-const schema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebPage",
-      "@id": `${pageUrl}#webpage`,
-      "url": pageUrl,
-      "name": pageTitle,
-      "description": pageDesc,
-      "inLanguage": "vi-VN",
-      "isPartOf": {
-        "@id": "https://phogotarot.com/#website"
-      }
-    },
-    {
-      "@type": "WebApplication",
-      "@id": `${pageUrl}#app`,
-      "name": "Xem Tarot Online Với Reader AI - Phở Gõ Tarot",
-      "url": pageUrl,
-      "description": pageDesc,
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Any",
-      "isAccessibleForFree": true,
-      "inLanguage": "vi-VN"
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": `${pageUrl}#breadcrumb`,
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Trang chủ",
-          "item": "https://phogotarot.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Xem Tarot Online",
-          "item": pageUrl
-        }
-      ]
-    },
-    {
-      "@type": "FAQPage",
-      "@id": `${pageUrl}#faq`,
-      "mainEntity": faqItems.map((item) => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer
-        }
-      }))
-    }
-  ]
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc }),
+  webApplicationSchema({ url: pageUrl, name: "Xem Tarot Online Với Reader AI - Phở Gõ Tarot", description: pageDesc }),
+  breadcrumbListSchema(pageUrl, [
+    { name: "Trang chủ", url: "/" },
+    { name: "Xem Tarot Online", url: "/xem-tarot" }
+  ]),
+  faqPageSchema(pageUrl, faqItems)
+]);
 
 // Lấy thông tin profile
 const db = Astro.locals.runtime?.env?.DB;

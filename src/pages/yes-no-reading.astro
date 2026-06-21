@@ -1,6 +1,7 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 
 // 2. Tạo metadata và schema
 const pageTitle = "Tarot Yes/No Online Miễn Phí - Rút 1 Lá Có Hoặc Không | Phở Gõ Tarot";
@@ -27,63 +28,15 @@ const faqItems = [
   }
 ];
 
-const schema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebPage",
-      "@id": `${pageUrl}#webpage`,
-      "url": pageUrl,
-      "name": pageTitle,
-      "description": pageDesc,
-      "inLanguage": "vi-VN",
-      "isPartOf": {
-        "@id": "https://phogotarot.com/#website"
-      }
-    },
-    {
-      "@type": "WebApplication",
-      "@id": `${pageUrl}#app`,
-      "name": "Tarot Yes/No Online - Phở Gõ Tarot",
-      "url": pageUrl,
-      "description": pageDesc,
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Any",
-      "isAccessibleForFree": true,
-      "inLanguage": "vi-VN"
-    },
-    {
-      "@type": "BreadcrumbList",
-      "@id": `${pageUrl}#breadcrumb`,
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Trang chủ",
-          "item": "https://phogotarot.com/"
-        },
-        {
-          "@type": "ListItem",
-          "position": 2,
-          "name": "Tarot Yes/No Online",
-          "item": pageUrl
-        }
-      ]
-    },
-    {
-      "@type": "FAQPage",
-      "@id": `${pageUrl}#faq`,
-      "mainEntity": faqItems.map((item) => ({
-        "@type": "Question",
-        "name": item.question,
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": item.answer
-        }
-      }))
-    }
-  ]
-};
+const schema = graphSchema([
+  webPageSchema({ url: pageUrl, name: pageTitle, description: pageDesc }),
+  webApplicationSchema({ url: pageUrl, name: "Tarot Yes/No Online - Phở Gõ Tarot", description: pageDesc }),
+  breadcrumbListSchema(pageUrl, [
+    { name: "Trang chủ", url: "/" },
+    { name: "Tarot Yes/No Online", url: "/yes-no-reading" }
+  ]),
+  faqPageSchema(pageUrl, faqItems)
+]);
 
 import fallbackTarotCards from '../data/tarot-cards.json';
 import fallbackYesNoCards from '../data/yesno-meanings.json';
