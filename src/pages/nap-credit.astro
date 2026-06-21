@@ -44,7 +44,6 @@ const user = Astro.locals.user;
 
                     <!-- Subtext tiết kiệm cho gói cơ bản -->
                     <p class="basic-desc-sub" id="basic-price-subtext" style="display: none;"></p>
-                    <p class="sale-countdown basic-countdown" id="basic-sale-countdown" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
@@ -55,13 +54,13 @@ const user = Astro.locals.user;
                     </ul>
                 </div>
                 <button class="select-plan-btn premium-btn" id="basic-buy-btn" data-amount="49000" data-package="Gói 3 Credit">Chọn Gói Này</button>
+                <p class="sale-countdown basic-countdown" id="basic-sale-countdown" style="display: none;"></p>
             </div>
 
             <!-- Gói 2: Nâng Cao (Premium với Billing Toggle) -->
             <div class="pricing-card premium-tier">
                 <div class="popular-plan-badge">
-                    <i class="fa-solid fa-star"></i>
-                    <span>Được chọn nhiều nhất</span>
+                    <span>Phổ biến</span>
                 </div>
                 <div class="card-header">
                     <h3><i class="fa-solid fa-crown"></i> Nâng Cao</h3>
@@ -84,7 +83,6 @@ const user = Astro.locals.user;
 
                     <!-- Subtext tiết kiệm -->
                     <p class="premium-desc-sub" id="premium-price-subtext" style="display: none;"></p>
-                    <p class="sale-countdown" id="premium-sale-countdown" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
@@ -96,6 +94,7 @@ const user = Astro.locals.user;
                     </ul>
                 </div>
                 <button class="select-plan-btn premium-btn" id="premium-buy-btn" data-amount="199000" data-package="Gói Tháng">Trở Thành VIP</button>
+                <p class="sale-countdown" id="premium-sale-countdown" style="display: none;"></p>
             </div>
         </div>
 
@@ -298,28 +297,23 @@ const user = Astro.locals.user;
 
     .popular-plan-badge {
         position: absolute;
-        top: 16px;
-        right: 16px;
+        top: 14px;
+        right: 14px;
         z-index: 2;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 6px;
         max-width: calc(100% - 32px);
-        padding: 7px 12px;
+        padding: 5px 10px;
         border-radius: 999px;
-        border: 1px solid rgba(255, 215, 0, 0.55);
-        background: rgba(20, 16, 30, 0.92);
-        color: #FFD700;
-        font-size: 0.72rem;
-        font-weight: 800;
+        border: 1px solid rgba(255, 215, 0, 0.35);
+        background: rgba(255, 215, 0, 0.1);
+        color: rgba(255, 215, 0, 0.92);
+        font-size: 0.68rem;
+        font-weight: 700;
         line-height: 1.2;
         text-transform: uppercase;
-        box-shadow: 0 0 18px rgba(255, 215, 0, 0.22);
-    }
-
-    .popular-plan-badge i {
-        font-size: 0.7rem;
+        box-shadow: none;
     }
 
     /* Billing Toggle Switch CSS */
@@ -1387,7 +1381,7 @@ const user = Astro.locals.user;
         const hours = Math.floor((totalSeconds % 86400) / 3600);
         const minutes = Math.floor((totalSeconds % 3600) / 60);
         const seconds = totalSeconds % 60;
-        if (days > 0) return `${days} ngày ${hours} giờ ${minutes} phút`;
+        if (msLeft > 86400000) return `${days} ngày ${hours} giờ`;
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }
 
@@ -1419,6 +1413,11 @@ const user = Astro.locals.user;
 
         render();
         saleCountdownTimers.set(el, setInterval(render, 1000));
+    }
+
+    function updatePopularBadge(el, packageId) {
+        if (!el) return;
+        el.style.display = packageId === 'Gói Tháng' ? 'inline-flex' : 'none';
     }
 
     function updateSavingsText(el, packageId, options = {}) {
@@ -1461,6 +1460,9 @@ const user = Astro.locals.user;
         if (options.countdownEl) {
             updateSaleCountdown(options.countdownEl, packageId);
         }
+        if (options.popularBadgeEl) {
+            updatePopularBadge(options.popularBadgeEl, packageId);
+        }
     }
 
     async function loadPricingPackages() {
@@ -1491,6 +1493,7 @@ const user = Astro.locals.user;
                     originalSuffix: activeBilling === 'yearly' ? '/năm' : '/tháng',
                     savingsEl: document.getElementById('premium-price-subtext'),
                     countdownEl: document.getElementById('premium-sale-countdown'),
+                    popularBadgeEl: document.querySelector('.popular-plan-badge'),
                     iconColor: '#ff6b6b',
                     monthlyEquivalent: activeBilling === 'yearly',
                 }
@@ -1524,6 +1527,7 @@ const user = Astro.locals.user;
         const premiumPriceDisplay = document.getElementById('premium-price-display');
         const premiumPriceSubtext = document.getElementById('premium-price-subtext');
         const premiumSaleCountdown = document.getElementById('premium-sale-countdown');
+        const popularPlanBadge = document.querySelector('.popular-plan-badge');
         const premiumBuyBtn = document.getElementById('premium-buy-btn');
 
         if (toggleBtns.length > 0 && premiumBuyBtn) {
@@ -1557,6 +1561,7 @@ const user = Astro.locals.user;
                             originalSuffix: '/năm',
                             savingsEl: premiumPriceSubtext,
                             countdownEl: premiumSaleCountdown,
+                            popularBadgeEl: popularPlanBadge,
                             iconColor: '#ff6b6b',
                             monthlyEquivalent: true,
                         });
@@ -1568,6 +1573,7 @@ const user = Astro.locals.user;
                             originalSuffix: '/tháng',
                             savingsEl: premiumPriceSubtext,
                             countdownEl: premiumSaleCountdown,
+                            popularBadgeEl: popularPlanBadge,
                             iconColor: '#ff6b6b',
                         });
                     }
