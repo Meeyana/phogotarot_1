@@ -3,6 +3,16 @@ import { getEffectivePackagePrice, type PackageRecord } from '../../lib/pricing'
 
 export const prerender = false;
 
+const PACKAGE_DISPLAY_NAMES: Record<string, string> = {
+  'Khởi Đầu (3 lượt)': 'Gói 3 Credit',
+  'Gói Khởi Đầu': 'Gói 3 Credit',
+  'Đồng Hành (10 lượt)': 'Gói 10 Credit',
+  'Gói Đồng Hành': 'Gói 10 Credit',
+  'Vương Giả (Gói Tháng)': 'Gói Tháng',
+  'Chuyên Gia (Gói Năm)': 'Gói Năm',
+  'Khai Sáng (Trọn Đời)': 'Gói Trọn Đời',
+};
+
 export const GET: APIRoute = async (context) => {
   try {
     const env: any = context.locals.runtime?.env ?? {};
@@ -25,7 +35,7 @@ export const GET: APIRoute = async (context) => {
       const pricing = getEffectivePackagePrice(pkg);
       return {
         id: pkg.id,
-        name: pkg.name,
+        name: PACKAGE_DISPLAY_NAMES[pkg.id] || PACKAGE_DISPLAY_NAMES[pkg.name] || pkg.name,
         type: pkg.type,
         credits: pkg.credits,
         is_active: pkg.is_active,

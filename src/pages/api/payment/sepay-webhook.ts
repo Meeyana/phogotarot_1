@@ -2,6 +2,16 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+const PACKAGE_DISPLAY_NAMES: Record<string, string> = {
+  'Khởi Đầu (3 lượt)': 'Gói 3 Credit',
+  'Gói Khởi Đầu': 'Gói 3 Credit',
+  'Đồng Hành (10 lượt)': 'Gói 10 Credit',
+  'Gói Đồng Hành': 'Gói 10 Credit',
+  'Vương Giả (Gói Tháng)': 'Gói Tháng',
+  'Chuyên Gia (Gói Năm)': 'Gói Năm',
+  'Khai Sáng (Trọn Đời)': 'Gói Trọn Đời',
+};
+
 /**
  * SePay Webhook Endpoint
  * URL cấu hình trong SePay: https://yourdomain.com/api/payment/sepay-webhook
@@ -158,24 +168,26 @@ export const POST: APIRoute = async (context) => {
     if (packageRecord.type === 'pack') {
       const creditsToAdd = packageRecord.credits;
       await db.prepare('UPDATE credit_wallets SET balance = balance + ? WHERE user_id = ?').bind(creditsToAdd, userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageRecord.name} (SePay)`).run();
+      const packageName = PACKAGE_DISPLAY_NAMES[packageRecord.id] || PACKAGE_DISPLAY_NAMES[packageRecord.name] || packageRecord.name;
+      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageName} (SePay)`).run();
       if (import.meta.env.DEV) console.log(`[SePay Webhook] +${creditsToAdd} credits for user:`, userId);
     } else if (packageRecord.type === 'subscription') {
       let expiresAt: Date | null = new Date(new Date().getTime() + 7 * 3600 * 1000); // VN Time
       let expStr: string | null = null;
       
-      if (packageRecord.id === 'Vương Giả (Gói Tháng)') {
+      if (packageRecord.id === 'Gói Tháng' || packageRecord.id === 'Vương Giả (Gói Tháng)') {
         expiresAt.setMonth(expiresAt.getMonth() + 1);
         expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
-      } else if (packageRecord.id === 'Chuyên Gia (Gói Năm)') {
+      } else if (packageRecord.id === 'Gói Năm' || packageRecord.id === 'Chuyên Gia (Gói Năm)') {
         expiresAt.setFullYear(expiresAt.getFullYear() + 1);
         expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
-      } else if (packageRecord.id === 'Khai Sáng (Trọn Đời)') {
+      } else if (packageRecord.id === 'Gói Trọn Đời' || packageRecord.id === 'Khai Sáng (Trọn Đời)') {
         expStr = null; // NULL nghĩa là vĩnh viễn
       }
 
       await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageRecord.name} (SePay)`).run();
+      const packageName = PACKAGE_DISPLAY_NAMES[packageRecord.id] || PACKAGE_DISPLAY_NAMES[packageRecord.name] || packageRecord.name;
+      await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageName} (SePay)`).run();
       if (import.meta.env.DEV) console.log(`[SePay Webhook] Premium (${packageRecord.id}) for user:`, userId);
     }
 

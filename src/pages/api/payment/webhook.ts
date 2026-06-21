@@ -2,6 +2,16 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
+const PACKAGE_DISPLAY_NAMES: Record<string, string> = {
+  'Khởi Đầu (3 lượt)': 'Gói 3 Credit',
+  'Gói Khởi Đầu': 'Gói 3 Credit',
+  'Đồng Hành (10 lượt)': 'Gói 10 Credit',
+  'Gói Đồng Hành': 'Gói 10 Credit',
+  'Vương Giả (Gói Tháng)': 'Gói Tháng',
+  'Chuyên Gia (Gói Năm)': 'Gói Năm',
+  'Khai Sáng (Trọn Đời)': 'Gói Trọn Đời',
+};
+
 export const POST: APIRoute = async (context) => {
   try {
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
@@ -55,22 +65,26 @@ export const POST: APIRoute = async (context) => {
 
     if (packageRecord.type === 'pack') {
         const creditsToAdd = packageRecord.credits;
+        const packageName = PACKAGE_DISPLAY_NAMES[packageRecord.id] || PACKAGE_DISPLAY_NAMES[packageRecord.name] || packageRecord.name;
         await db.prepare('UPDATE credit_wallets SET balance = balance + ? WHERE user_id = ?').bind(creditsToAdd, userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageRecord.name}`).run();
+        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageName}`).run();
     } else if (packageRecord.type === 'subscription') {
         let expStr: string | null = null;
         const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
 
-        if (packageRecord.id === 'Vương Giả (Gói Tháng)') {
+        if (packageRecord.id === 'Gói Tháng' || packageRecord.id === 'Vương Giả (Gói Tháng)') {
           expiresAt.setMonth(expiresAt.getMonth() + 1);
           expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
-        } else if (packageRecord.id === 'Chuyên Gia (Gói Năm)') {
+        } else if (packageRecord.id === 'Gói Năm' || packageRecord.id === 'Chuyên Gia (Gói Năm)') {
           expiresAt.setFullYear(expiresAt.getFullYear() + 1);
           expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+        } else if (packageRecord.id === 'Gói Trọn Đời' || packageRecord.id === 'Khai Sáng (Trọn Đời)') {
+          expStr = null;
         }
 
         await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageRecord.name}`).run();
+        const packageName = PACKAGE_DISPLAY_NAMES[packageRecord.id] || PACKAGE_DISPLAY_NAMES[packageRecord.name] || packageRecord.name;
+        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageName}`).run();
     }
 
     return new Response(JSON.stringify({ 

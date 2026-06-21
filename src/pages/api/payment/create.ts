@@ -3,6 +3,14 @@ import { getEffectivePackagePrice, type PackageRecord } from '../../../lib/prici
 
 export const prerender = false;
 
+const PACKAGE_ID_ALIASES: Record<string, string> = {
+  'Gói 3 Credit': 'Khởi Đầu (3 lượt)',
+  'Gói 10 Credit': 'Đồng Hành (10 lượt)',
+  'Gói Tháng': 'Vương Giả (Gói Tháng)',
+  'Gói Năm': 'Chuyên Gia (Gói Năm)',
+  'Gói Trọn Đời': 'Khai Sáng (Trọn Đời)',
+};
+
 export const POST: APIRoute = async (context) => {
   try {
     const user = context.locals.user;
@@ -24,7 +32,8 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Lấy thông tin gói nạp từ Database bảng packages
-    const packageRecord = await db.prepare('SELECT * FROM packages WHERE id = ?').bind(package_id).first<PackageRecord>();
+    const legacyPackageId = PACKAGE_ID_ALIASES[package_id] || package_id;
+    const packageRecord = await db.prepare('SELECT * FROM packages WHERE id = ? OR id = ? LIMIT 1').bind(package_id, legacyPackageId).first<PackageRecord>();
     
     if (!packageRecord || !packageRecord.is_active) {
       return new Response(JSON.stringify({ error: 'Gói nạp không tồn tại hoặc đã ngừng bán' }), { status: 400 });
@@ -39,7 +48,7 @@ export const POST: APIRoute = async (context) => {
         AND created_at > datetime('now', '-20 minutes')
       ORDER BY created_at DESC
       LIMIT 1
-    `).bind(user.id, package_id).first();
+    `).bind(user.id, packageRecord.id).first();
 
     if (existing) {
       // Reuse transaction ID cũ
@@ -63,7 +72,7 @@ export const POST: APIRoute = async (context) => {
     await db.prepare(`
         INSERT INTO payment_requests (id, user_id, package_id, amount, status) 
         VALUES (?, ?, ?, ?, 'pending')
-    `).bind(transactionId, user.id, package_id, serverAmount).run();
+    `).bind(transactionId, user.id, packageRecord.id, serverAmount).run();
 
     // Query lại để lấy created_at chính xác do SQLite tự sinh
     const newReq = await db.prepare('SELECT created_at FROM payment_requests WHERE id = ?').bind(transactionId).first();

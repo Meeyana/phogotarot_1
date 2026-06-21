@@ -53,7 +53,7 @@ const user = Astro.locals.user;
                         <li><i class="fa-solid fa-check"></i> <span>Luận giải chi tiết chuẩn xác cùng Reader AI</span></li>
                     </ul>
                 </div>
-                <button class="select-plan-btn premium-btn" id="basic-buy-btn" data-amount="49000" data-package="Khởi Đầu (3 lượt)">Chọn Gói Này</button>
+                <button class="select-plan-btn premium-btn" id="basic-buy-btn" data-amount="49000" data-package="Gói 3 Credit">Chọn Gói Này</button>
             </div>
 
             <!-- Gói 2: Nâng Cao (Premium với Billing Toggle) -->
@@ -89,7 +89,7 @@ const user = Astro.locals.user;
                         <li><i class="fa-solid fa-wand-magic-sparkles"></i> <span><strong>Ưu tiên trải nghiệm</strong> các tính năng mới sớm nhất</span></li>
                     </ul>
                 </div>
-                <button class="select-plan-btn premium-btn" id="premium-buy-btn" data-amount="199000" data-package="Vương Giả (Gói Tháng)">Trở Thành VIP</button>
+                <button class="select-plan-btn premium-btn" id="premium-buy-btn" data-amount="199000" data-package="Gói Tháng">Trở Thành VIP</button>
             </div>
         </div>
 
@@ -545,7 +545,7 @@ const user = Astro.locals.user;
         flex-shrink: 0;
     }
 
-    /* Custom glowing colors for special icons on Vương Giả */
+    /* Custom glowing colors for special icons on Premium */
     .card-features li i.fa-check {
         color: #F2C94C;
         filter: drop-shadow(0 0 5px rgba(242, 201, 76, 0.5));
@@ -1289,19 +1289,26 @@ const user = Astro.locals.user;
     }
 
     let pricingPackages = {};
+    const PACKAGE_ID_ALIASES = {
+        'Gói 3 Credit': 'Khởi Đầu (3 lượt)',
+        'Gói 10 Credit': 'Đồng Hành (10 lượt)',
+        'Gói Tháng': 'Vương Giả (Gói Tháng)',
+        'Gói Năm': 'Chuyên Gia (Gói Năm)',
+        'Gói Trọn Đời': 'Khai Sáng (Trọn Đời)',
+    };
 
     function formatVndAmount(amount) {
         return new Intl.NumberFormat('vi-VN').format(Number(amount || 0));
     }
 
     function packageById(id) {
-        return pricingPackages[id] || null;
+        return pricingPackages[id] || pricingPackages[PACKAGE_ID_ALIASES[id]] || null;
     }
 
     function applyPackageToButton(btn, packageId, amountEl, originalEl) {
         const pkg = packageById(packageId);
         if (!pkg || !btn) return;
-        btn.setAttribute('data-package', pkg.id);
+        btn.setAttribute('data-package', packageId || pkg.id);
         btn.setAttribute('data-amount', String(pkg.price));
         if (amountEl) amountEl.textContent = formatVndAmount(pkg.price);
         if (originalEl) {
@@ -1393,7 +1400,7 @@ const user = Astro.locals.user;
                             premiumPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #ff6b6b; margin-right: 5px;"></i> Tương đương chỉ <strong>49.000₫/tháng</strong> — Tiết kiệm ngay <strong>75%</strong>!';
                         }
                         premiumBuyBtn.setAttribute('data-amount', '599000');
-                        premiumBuyBtn.setAttribute('data-package', 'Chuyên Gia (Gói Năm)');
+                        premiumBuyBtn.setAttribute('data-package', 'Gói Năm');
                         premiumBuyBtn.innerText = 'Trở Thành VIP (Gói Năm)';
                     } else {
                         // Monthly values
@@ -1405,7 +1412,7 @@ const user = Astro.locals.user;
                             premiumPriceSubtext.innerText = '';
                         }
                         premiumBuyBtn.setAttribute('data-amount', '199000');
-                        premiumBuyBtn.setAttribute('data-package', 'Vương Giả (Gói Tháng)');
+                        premiumBuyBtn.setAttribute('data-package', 'Gói Tháng');
                         premiumBuyBtn.innerText = 'Trở Thành VIP';
                     }
                     applyPackageToButton(premiumBuyBtn, premiumBuyBtn.getAttribute('data-package'), amountDisplay, originalDisplay);
@@ -1447,7 +1454,7 @@ const user = Astro.locals.user;
                             basicPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #2ec4b6; margin-right: 5px;"></i> Tiết kiệm ngay <strong>20%</strong>!';
                         }
                         basicBuyBtn.setAttribute('data-amount', '129000');
-                        basicBuyBtn.setAttribute('data-package', 'Đồng Hành (10 lượt)');
+                        basicBuyBtn.setAttribute('data-package', 'Gói 10 Credit');
                         basicBuyBtn.innerText = 'Chọn Gói 10 Credit';
                     } else {
                         if (basicAmountDisplay) basicAmountDisplay.textContent = '49.000';
@@ -1457,7 +1464,7 @@ const user = Astro.locals.user;
                             basicPriceSubtext.innerText = '';
                         }
                         basicBuyBtn.setAttribute('data-amount', '49000');
-                        basicBuyBtn.setAttribute('data-package', 'Khởi Đầu (3 lượt)');
+                        basicBuyBtn.setAttribute('data-package', 'Gói 3 Credit');
                         basicBuyBtn.innerText = 'Chọn Gói 3 Credit';
                     }
                     applyPackageToButton(basicBuyBtn, basicBuyBtn.getAttribute('data-package'), basicAmountDisplay, basicOriginalDisplay);
@@ -1494,7 +1501,7 @@ const user = Astro.locals.user;
                 
                 let amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
-                isPremiumPurchase = pkgName.includes('Vương Giả') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao');
+                isPremiumPurchase = pkgName.includes('Gói Tháng') || pkgName.includes('Gói Năm') || pkgName.includes('Gói Trọn Đời') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao') || pkgName.includes('Khai Sáng');
                 
                 currentAmountForTracking = amount;
                 currentPackageForTracking = pkgName;
@@ -1512,10 +1519,16 @@ const user = Astro.locals.user;
                 
                 // Bản đồ tên gói hiển thị thân thiện (Cơ Bản / Nâng Cao)
                 const friendlyNames = {
-                    'Khởi Đầu (3 lượt)': 'Cơ Bản (3 Credit)',
-                    'Đồng Hành (10 lượt)': 'Cơ Bản (10 Credit)',
-                    'Vương Giả (Gói Tháng)': 'Nâng Cao (Gói Tháng)',
-                    'Chuyên Gia (Gói Năm)': 'Nâng Cao (Gói Năm)'
+                    'Gói 3 Credit': 'Gói 3 Credit',
+                    'Gói 10 Credit': 'Gói 10 Credit',
+                    'Gói Tháng': 'Gói Tháng',
+                    'Gói Năm': 'Gói Năm',
+                    'Gói Trọn Đời': 'Gói Trọn Đời',
+                    'Khởi Đầu (3 lượt)': 'Gói 3 Credit',
+                    'Đồng Hành (10 lượt)': 'Gói 10 Credit',
+                    'Vương Giả (Gói Tháng)': 'Gói Tháng',
+                    'Chuyên Gia (Gói Năm)': 'Gói Năm',
+                    'Khai Sáng (Trọn Đời)': 'Gói Trọn Đời'
                 };
                 
                 packageNameEl.innerText = friendlyNames[pkgName] || pkgName;
