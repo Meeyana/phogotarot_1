@@ -1305,7 +1305,34 @@ const user = Astro.locals.user;
         return pricingPackages[id] || pricingPackages[PACKAGE_ID_ALIASES[id]] || null;
     }
 
-    function applyPackageToButton(btn, packageId, amountEl, originalEl) {
+    function discountPercentForPackage(pkg) {
+        const listPrice = Number(pkg?.list_price || 0);
+        const salePrice = Number(pkg?.price || 0);
+        if (!listPrice || !salePrice || listPrice <= salePrice) return 0;
+        return Math.round(((listPrice - salePrice) / listPrice) * 100);
+    }
+
+    function updateSavingsText(el, packageId, options = {}) {
+        if (!el) return;
+        const pkg = packageById(packageId);
+        const discountPercent = discountPercentForPackage(pkg);
+        if (!pkg || discountPercent <= 0) {
+            el.style.display = 'none';
+            el.innerText = '';
+            return;
+        }
+
+        const iconColor = options.iconColor || '#2ec4b6';
+        if (options.monthlyEquivalent) {
+            const monthlyEquivalent = Math.round(Number(pkg.price || 0) / 12);
+            el.innerHTML = `<i class="fa-solid fa-fire" style="color: ${iconColor}; margin-right: 5px;"></i> Tương đương chỉ <strong>${formatVndAmount(monthlyEquivalent)}₫/tháng</strong> — Tiết kiệm ngay <strong>${discountPercent}%</strong>!`;
+        } else {
+            el.innerHTML = `<i class="fa-solid fa-fire" style="color: ${iconColor}; margin-right: 5px;"></i> Tiết kiệm ngay <strong>${discountPercent}%</strong>!`;
+        }
+        el.style.display = 'flex';
+    }
+
+    function applyPackageToButton(btn, packageId, amountEl, originalEl, options = {}) {
         const pkg = packageById(packageId);
         if (!pkg || !btn) return;
         btn.setAttribute('data-package', packageId || pkg.id);
@@ -1313,8 +1340,14 @@ const user = Astro.locals.user;
         if (amountEl) amountEl.textContent = formatVndAmount(pkg.price);
         if (originalEl) {
             const shouldShowOriginal = pkg.list_price && Number(pkg.list_price) > Number(pkg.price);
-            originalEl.textContent = shouldShowOriginal ? '₫' + formatVndAmount(pkg.list_price) : '';
+            originalEl.textContent = shouldShowOriginal ? '₫' + formatVndAmount(pkg.list_price) + (options.originalSuffix || '') : '';
             originalEl.style.display = shouldShowOriginal ? '' : 'none';
+        }
+        if (options.savingsEl) {
+            updateSavingsText(options.savingsEl, packageId, {
+                iconColor: options.iconColor,
+                monthlyEquivalent: options.monthlyEquivalent,
+            });
         }
     }
 
@@ -1329,13 +1362,24 @@ const user = Astro.locals.user;
                 document.getElementById('basic-buy-btn'),
                 document.getElementById('basic-buy-btn')?.getAttribute('data-package'),
                 document.getElementById('basic-amount-display'),
-                document.getElementById('basic-original-display')
+                document.getElementById('basic-original-display'),
+                {
+                    savingsEl: document.getElementById('basic-price-subtext'),
+                    iconColor: '#2ec4b6',
+                }
             );
+            const activeBilling = document.querySelector('.billing-toggle-btn.active')?.getAttribute('data-billing');
             applyPackageToButton(
                 document.getElementById('premium-buy-btn'),
                 document.getElementById('premium-buy-btn')?.getAttribute('data-package'),
                 document.getElementById('premium-amount-display'),
-                document.getElementById('premium-original-display')
+                document.getElementById('premium-original-display'),
+                {
+                    originalSuffix: activeBilling === 'yearly' ? '/năm' : '/tháng',
+                    savingsEl: document.getElementById('premium-price-subtext'),
+                    iconColor: '#ff6b6b',
+                    monthlyEquivalent: activeBilling === 'yearly',
+                }
             );
         } catch (e) {
             console.warn('Could not load dynamic packages pricing', e);
@@ -1391,31 +1435,25 @@ const user = Astro.locals.user;
                     // --------------------
 
                     if (mode === 'yearly') {
-                        // Update only text nodes — no innerHTML replacement
-                        if (amountDisplay) amountDisplay.textContent = '599.000';
                         if (periodDisplay) periodDisplay.textContent = '/năm';
-                        if (originalDisplay) originalDisplay.textContent = '₫2.388.000/năm';
-                        if (premiumPriceSubtext) {
-                            premiumPriceSubtext.style.display = 'flex';
-                            premiumPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #ff6b6b; margin-right: 5px;"></i> Tương đương chỉ <strong>49.000₫/tháng</strong> — Tiết kiệm ngay <strong>75%</strong>!';
-                        }
-                        premiumBuyBtn.setAttribute('data-amount', '599000');
                         premiumBuyBtn.setAttribute('data-package', 'Gói Năm');
                         premiumBuyBtn.innerText = 'Trở Thành VIP (Gói Năm)';
+                        applyPackageToButton(premiumBuyBtn, 'Gói Năm', amountDisplay, originalDisplay, {
+                            originalSuffix: '/năm',
+                            savingsEl: premiumPriceSubtext,
+                            iconColor: '#ff6b6b',
+                            monthlyEquivalent: true,
+                        });
                     } else {
-                        // Monthly values
-                        if (amountDisplay) amountDisplay.textContent = '199.000';
                         if (periodDisplay) periodDisplay.textContent = '/tháng';
-                        if (originalDisplay) originalDisplay.textContent = '₫399.000/tháng';
-                        if (premiumPriceSubtext) {
-                            premiumPriceSubtext.style.display = 'none';
-                            premiumPriceSubtext.innerText = '';
-                        }
-                        premiumBuyBtn.setAttribute('data-amount', '199000');
                         premiumBuyBtn.setAttribute('data-package', 'Gói Tháng');
                         premiumBuyBtn.innerText = 'Trở Thành VIP';
+                        applyPackageToButton(premiumBuyBtn, 'Gói Tháng', amountDisplay, originalDisplay, {
+                            originalSuffix: '/tháng',
+                            savingsEl: premiumPriceSubtext,
+                            iconColor: '#ff6b6b',
+                        });
                     }
-                    applyPackageToButton(premiumBuyBtn, premiumBuyBtn.getAttribute('data-package'), amountDisplay, originalDisplay);
                 });
             });
         }
@@ -1447,27 +1485,20 @@ const user = Astro.locals.user;
                     // --------------------
 
                     if (credits === '10') {
-                        if (basicAmountDisplay) basicAmountDisplay.textContent = '129.000';
-                        if (basicOriginalDisplay) basicOriginalDisplay.textContent = '₫159.000';
-                        if (basicPriceSubtext) {
-                            basicPriceSubtext.style.display = 'flex';
-                            basicPriceSubtext.innerHTML = '<i class="fa-solid fa-fire" style="color: #2ec4b6; margin-right: 5px;"></i> Tiết kiệm ngay <strong>20%</strong>!';
-                        }
-                        basicBuyBtn.setAttribute('data-amount', '129000');
                         basicBuyBtn.setAttribute('data-package', 'Gói 10 Credit');
                         basicBuyBtn.innerText = 'Chọn Gói 10 Credit';
+                        applyPackageToButton(basicBuyBtn, 'Gói 10 Credit', basicAmountDisplay, basicOriginalDisplay, {
+                            savingsEl: basicPriceSubtext,
+                            iconColor: '#2ec4b6',
+                        });
                     } else {
-                        if (basicAmountDisplay) basicAmountDisplay.textContent = '49.000';
-                        if (basicOriginalDisplay) basicOriginalDisplay.textContent = '₫69.000';
-                        if (basicPriceSubtext) {
-                            basicPriceSubtext.style.display = 'none';
-                            basicPriceSubtext.innerText = '';
-                        }
-                        basicBuyBtn.setAttribute('data-amount', '49000');
                         basicBuyBtn.setAttribute('data-package', 'Gói 3 Credit');
                         basicBuyBtn.innerText = 'Chọn Gói 3 Credit';
+                        applyPackageToButton(basicBuyBtn, 'Gói 3 Credit', basicAmountDisplay, basicOriginalDisplay, {
+                            savingsEl: basicPriceSubtext,
+                            iconColor: '#2ec4b6',
+                        });
                     }
-                    applyPackageToButton(basicBuyBtn, basicBuyBtn.getAttribute('data-package'), basicAmountDisplay, basicOriginalDisplay);
                 });
             });
         }
