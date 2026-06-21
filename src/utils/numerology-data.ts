@@ -1,10 +1,36 @@
-import fullNumerologyData from '../data/numerology-data.json';
+// import fullNumerologyData from '../data/numerology-data.json';
+
+const markdownFiles = import.meta.glob('../content/numerology/**/*.md', { eager: true });
+
+function formatMarkdownData(entry: any) {
+  if (!entry) return null;
+  return {
+      ...entry.frontmatter,
+      content: entry.compiledContent()
+  };
+}
 
 // Helper để lấy data theo category an toàn
-export function getCategoryData(category: string, key: string | number) {
-  const catData = (fullNumerologyData as any)[category];
-  if (!catData) return null;
-  return catData[key] || catData['default'] || null;
+export function getCategoryData(category: string, key: string | number, subCategory: string | null = null) {
+  let targetPath = `../content/numerology/${category}/${key}.md`;
+  if (subCategory) {
+      targetPath = `../content/numerology/${category}/${subCategory}/${key}.md`;
+  }
+  
+  if (markdownFiles[targetPath]) {
+      return formatMarkdownData(markdownFiles[targetPath]);
+  }
+  
+  // fallback to default if exists
+  const defaultPath = subCategory 
+      ? `../content/numerology/${category}/${subCategory}/default.md` 
+      : `../content/numerology/${category}/default.md`;
+  
+  if (markdownFiles[defaultPath]) {
+      return formatMarkdownData(markdownFiles[defaultPath]);
+  }
+  
+  return null;
 }
 
 export function getLifePathData(number: number) {
@@ -36,19 +62,21 @@ export function getRationalData(number: number) {
 }
 
 export function getGridData(type: 'strengthGrid' | 'synthesisGrid', number: number) {
+  // strengthGrid and synthesisGrid were in JSON root or sub? Wait.
+  // In our script, they were actually named 'strengthGrid' and 'synthesisGrid' at root?
+  // Let's check script:
+  // Wait, I did not include 'strengthGrid' in simpleCategories!
+  // Oh no! simpleCategories = ['lifePath', 'destiny', 'soul', 'personality', 'attitude', 'maturity', 'rational', 'karmicDebt', 'karmicLessons', 'periodCycleMeanings', 'personalYear', 'personalMonth', 'personalityChart', 'careerChart'];
+  // But JSON had strengthGrid and synthesisGrid?
   return getCategoryData(type, number);
 }
 
 export function getArrowData(chartType: 'strength' | 'synthesis', arrowId: string, arrowType: 'present' | 'missing') {
-  const arrows = (fullNumerologyData as any).arrows;
-  if (!arrows || !arrows[chartType] || !arrows[chartType][arrowId]) return null;
-  return arrows[chartType][arrowId][arrowType] || null;
+  return getCategoryData('arrows', arrowId, `${chartType}_${arrowType}`);
 }
 
 export function getMissingNumberData(chartType: 'strength' | 'synthesis', number: number) {
-  const missing = (fullNumerologyData as any).missingNumbers;
-  if (!missing || !missing[chartType]) return null;
-  return missing[chartType][number] || null;
+  return getCategoryData('missingNumbers', number, chartType);
 }
 
 export function getKarmicDebtData(number: number) {
@@ -72,15 +100,17 @@ export function getForecastMonthData(number: number) {
 }
 
 export function getPyramidData(type: 'peaks' | 'challenges', number: number) {
-  const pyramid = (fullNumerologyData as any).pyramid;
-  if (!pyramid || !pyramid[type]) return null;
-  return pyramid[type][number] || null;
+  return getCategoryData('pyramid', number, type);
 }
 
 export function getPersonalityChartData() {
-  return (fullNumerologyData as any).personalityChart || null;
+  // Was mapped to personalityChart/personalityChart or personalityChart/default ?
+  // Actually the JSON was: { "personalityChart": { "title": "...", "content": "..." } }
+  // So the script output `src/content/numerology/personalityChart/personalityChart.md`
+  // Wait, if it was an object at root:
+  return getCategoryData('personalityChart', 'personalityChart') || getCategoryData('personalityChart', 'default');
 }
 
 export function getCareerChartData() {
-  return (fullNumerologyData as any).careerChart || null;
+  return getCategoryData('careerChart', 'careerChart') || getCategoryData('careerChart', 'default');
 }
