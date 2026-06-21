@@ -114,3 +114,117 @@ export function getPersonalityChartData() {
 export function getCareerChartData() {
   return getCategoryData('careerChart', 'careerChart') || getCategoryData('careerChart', 'default');
 }
+
+// ============================================================
+// KV-FIRST DATA ACCESS (Primary: KV, Fallback: File)
+// ============================================================
+
+/**
+ * Đọc dữ liệu từ KV trước, nếu không có thì fallback về file cứng.
+ * @param kv - KVNamespace (env.SESSION), có thể null/undefined
+ */
+async function getCategoryDataFromKV(
+  kv: any,
+  category: string,
+  key: string | number,
+  subCategory: string | null = null
+): Promise<any> {
+  // 1. Thử đọc từ KV
+  if (kv) {
+    try {
+      const kvKey = subCategory
+        ? `numerology:${category}:${subCategory}:${key}`
+        : `numerology:${category}:${key}`;
+      const kvData = await kv.get(kvKey, 'json');
+      if (kvData && kvData.content) {
+        return {
+          ...kvData.frontmatter,
+          content: kvData.content
+        };
+      }
+    } catch (e) {
+      // KV lỗi → fallback
+    }
+  }
+
+  // 2. Fallback về file cứng (build-time)
+  return getCategoryData(category, String(key), subCategory);
+}
+
+// --- KV-First exported functions ---
+
+export async function getLifePathDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'lifePath', number);
+}
+
+export async function getDestinyDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'destiny', number);
+}
+
+export async function getSoulDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'soul', number);
+}
+
+export async function getPersonalityDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'personality', number);
+}
+
+export async function getAttitudeDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'attitude', number);
+}
+
+export async function getMaturityDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'maturity', number);
+}
+
+export async function getRationalDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'rational', number);
+}
+
+export async function getGridDataKV(kv: any, type: 'strengthGrid' | 'synthesisGrid', number: number) {
+  return getCategoryDataFromKV(kv, type, number);
+}
+
+export async function getArrowDataKV(kv: any, chartType: 'strength' | 'synthesis', arrowId: string, arrowType: 'present' | 'missing') {
+  return getCategoryDataFromKV(kv, 'arrows', arrowId, `${chartType}_${arrowType}`);
+}
+
+export async function getMissingNumberDataKV(kv: any, chartType: 'strength' | 'synthesis', number: number) {
+  return getCategoryDataFromKV(kv, 'missingNumbers', number, chartType);
+}
+
+export async function getKarmicDebtDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'karmicDebt', number);
+}
+
+export async function getKarmicLessonDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'karmicLessons', number);
+}
+
+export async function getPeriodCycleDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'periodCycleMeanings', number);
+}
+
+export async function getForecastYearDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'personalYear', number);
+}
+
+export async function getForecastMonthDataKV(kv: any, number: number) {
+  return getCategoryDataFromKV(kv, 'personalMonth', number);
+}
+
+export async function getPyramidDataKV(kv: any, type: 'peaks' | 'challenges', number: number) {
+  return getCategoryDataFromKV(kv, 'pyramid', number, type);
+}
+
+export async function getPersonalityChartDataKV(kv: any) {
+  const result = await getCategoryDataFromKV(kv, 'personalityChart', 'personalityChart');
+  if (result) return result;
+  return getCategoryDataFromKV(kv, 'personalityChart', 'default');
+}
+
+export async function getCareerChartDataKV(kv: any) {
+  const result = await getCategoryDataFromKV(kv, 'careerChart', 'careerChart');
+  if (result) return result;
+  return getCategoryDataFromKV(kv, 'careerChart', 'default');
+}

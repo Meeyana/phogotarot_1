@@ -23,6 +23,8 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260524.1",
     "drizzle-kit": "^0.31.10",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.5",
     "tsx": "^4.22.3"
   }
 }

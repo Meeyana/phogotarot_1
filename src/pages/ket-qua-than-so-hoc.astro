@@ -46,6 +46,7 @@ if (!user) {
 let isPremium = false;
 let hasUnlocked = false;
 const profileId = `${fullName.toLowerCase().trim()}|${dobStr}|${nickname.toLowerCase().trim()}|${gender.toLowerCase().trim()}`;
+const kv = Astro.locals.runtime?.env?.SESSION || null;
 
 if (user) {
     const rawDB = Astro.locals.runtime?.env?.DB || process.env.DB;
@@ -96,75 +97,91 @@ const renderCell = (number: number, countsArray: number[]) => {
 
 // 4. Chuẩn bị data map cho CoreStatsSection
 const coreStatsDataMap = {
-  destiny: numData.getDestinyData(destiny),
-  soul: numData.getSoulData(soul),
-  personality: numData.getPersonalityData(personality),
-  attitude: numData.getAttitudeData(attitude),
-  maturity: numData.getMaturityData(maturity),
-  rational: numData.getRationalData(rational)
+  destiny: await numData.getDestinyDataKV(kv, destiny),
+  soul: await numData.getSoulDataKV(kv, soul),
+  personality: await numData.getPersonalityDataKV(kv, personality),
+  attitude: await numData.getAttitudeDataKV(kv, attitude),
+  maturity: await numData.getMaturityDataKV(kv, maturity),
+  rational: await numData.getRationalDataKV(kv, rational)
 };
 
 // Chuẩn bị data cho ChartGridSection
 const strengthDataStore: Record<number, any> = {};
-chartData.strengthData.forEach((count: number, index: number) => {
-  if (count > 0) strengthDataStore[index + 1] = numData.getGridData('strengthGrid', index + 1);
-});
+for (let index = 0; index < chartData.strengthData.length; index++) {
+  const count = chartData.strengthData[index];
+  if (count > 0) strengthDataStore[index + 1] = await numData.getGridDataKV(kv, 'strengthGrid', index + 1);
+}
 const synthesisDataStore: Record<number, any> = {};
-chartData.synthesisData.forEach((count: number, index: number) => {
-  if (count > 0) synthesisDataStore[index + 1] = numData.getGridData('synthesisGrid', index + 1);
-});
+for (let index = 0; index < chartData.synthesisData.length; index++) {
+  const count = chartData.synthesisData[index];
+  if (count > 0) synthesisDataStore[index + 1] = await numData.getGridDataKV(kv, 'synthesisGrid', index + 1);
+}
 
 // Chuẩn bị mũi tên
 const arrowStore: Record<string, any> = {};
-const mapArrows = (arrowList: any[], chartType: 'strength' | 'synthesis') => {
+const mapArrows = async (arrowList: any[], chartType: 'strength' | 'synthesis') => {
   if (!arrowList) return;
-  arrowList.forEach(arrow => {
+  for (const arrow of arrowList) {
     if (!arrowStore[arrow.id]) arrowStore[arrow.id] = {};
-    arrowStore[arrow.id][arrow.type] = numData.getArrowData(chartType, arrow.id, arrow.type);
-  });
+    arrowStore[arrow.id][arrow.type] = await numData.getArrowDataKV(kv, chartType, arrow.id, arrow.type);
+  }
 };
-mapArrows(chartData.strengthArrows, 'strength');
-mapArrows(chartData.synthesisArrows, 'synthesis');
+await mapArrows(chartData.strengthArrows, 'strength');
+await mapArrows(chartData.synthesisArrows, 'synthesis');
 
 // Chuẩn bị số thiếu
 const missingStore: Record<number, any> = {};
-const mapMissing = (missingList: number[], chartType: 'strength' | 'synthesis') => {
+const mapMissing = async (missingList: number[], chartType: 'strength' | 'synthesis') => {
   if (!missingList) return;
-  missingList.forEach(num => {
-    missingStore[num] = numData.getMissingNumberData(chartType, num);
-  });
+  for (const num of missingList) {
+    missingStore[num] = await numData.getMissingNumberDataKV(kv, chartType, num);
+  }
 };
-mapMissing(chartData.strengthMissingNums, 'strength');
-mapMissing(chartData.synthesisMissingNums, 'synthesis');
+await mapMissing(chartData.strengthMissingNums, 'strength');
+await mapMissing(chartData.synthesisMissingNums, 'synthesis');
 
 // Chuẩn bị chu kỳ
 const cyclesDataStore: Record<number, any> = {
-  [periodCycles.c1.number]: numData.getPeriodCycleData(periodCycles.c1.number),
-  [periodCycles.c2.number]: numData.getPeriodCycleData(periodCycles.c2.number),
-  [periodCycles.c3.number]: numData.getPeriodCycleData(periodCycles.c3.number)
+  [periodCycles.c1.number]: await numData.getPeriodCycleDataKV(kv, periodCycles.c1.number),
+  [periodCycles.c2.number]: await numData.getPeriodCycleDataKV(kv, periodCycles.c2.number),
+  [periodCycles.c3.number]: await numData.getPeriodCycleDataKV(kv, periodCycles.c3.number)
 };
 
 // Chuẩn bị dự báo
 const yearDataStore: Record<number, any> = {};
-forecast.years.forEach((y: any) => yearDataStore[y.number] = numData.getForecastYearData(y.number));
+for (const y of forecast.years) {
+  yearDataStore[y.number] = await numData.getForecastYearDataKV(kv, y.number);
+}
 const monthDataStore: Record<number, any> = {};
-forecast.months.forEach((m: any) => monthDataStore[m.number] = numData.getForecastMonthData(m.number));
+for (const m of forecast.months) {
+  monthDataStore[m.number] = await numData.getForecastMonthDataKV(kv, m.number);
+}
 
 // Chuẩn bị pyramid data store
 const pyramidDataStore = {
   peaks: {
-    [pyramid.peaks.p1]: numData.getPyramidData('peaks', pyramid.peaks.p1),
-    [pyramid.peaks.p2]: numData.getPyramidData('peaks', pyramid.peaks.p2),
-    [pyramid.peaks.p3]: numData.getPyramidData('peaks', pyramid.peaks.p3),
-    [pyramid.peaks.p4]: numData.getPyramidData('peaks', pyramid.peaks.p4)
+    [pyramid.peaks.p1]: await numData.getPyramidDataKV(kv, 'peaks', pyramid.peaks.p1),
+    [pyramid.peaks.p2]: await numData.getPyramidDataKV(kv, 'peaks', pyramid.peaks.p2),
+    [pyramid.peaks.p3]: await numData.getPyramidDataKV(kv, 'peaks', pyramid.peaks.p3),
+    [pyramid.peaks.p4]: await numData.getPyramidDataKV(kv, 'peaks', pyramid.peaks.p4)
   },
   challenges: {
-    [pyramid.challenges.c1]: numData.getPyramidData('challenges', pyramid.challenges.c1),
-    [pyramid.challenges.c2]: numData.getPyramidData('challenges', pyramid.challenges.c2),
-    [pyramid.challenges.c3]: numData.getPyramidData('challenges', pyramid.challenges.c3),
-    [pyramid.challenges.c4]: numData.getPyramidData('challenges', pyramid.challenges.c4)
+    [pyramid.challenges.c1]: await numData.getPyramidDataKV(kv, 'challenges', pyramid.challenges.c1),
+    [pyramid.challenges.c2]: await numData.getPyramidDataKV(kv, 'challenges', pyramid.challenges.c2),
+    [pyramid.challenges.c3]: await numData.getPyramidDataKV(kv, 'challenges', pyramid.challenges.c3),
+    [pyramid.challenges.c4]: await numData.getPyramidDataKV(kv, 'challenges', pyramid.challenges.c4)
   }
 };
+
+// Chuẩn bị karmic data stores (pre-built vì await không dùng được trong JSX inline)
+const debtDataStore: Record<number, any> = {};
+for (const d of karmicDebts) {
+  debtDataStore[d] = await numData.getKarmicDebtDataKV(kv, d);
+}
+const lessonDataStore: Record<number, any> = {};
+for (const l of karmicLessons) {
+  lessonDataStore[l] = await numData.getKarmicLessonDataKV(kv, l);
+}
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
 ---
@@ -252,7 +269,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                     
                     <div class="max-w-4xl mx-auto rich-text-content mt-8">
-                        <LifePathSection lifePath={lifePath} data={numData.getLifePathData(lifePath)} />
+                        <LifePathSection lifePath={lifePath} data={await numData.getLifePathDataKV(kv, lifePath)} />
                     </div>
                 </div>
 
@@ -353,7 +370,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} />
                 </div>
 
-                <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={karmicDebts.reduce((acc, curr) => ({...acc, [curr]: numData.getKarmicDebtData(curr)}), {} as Record<number,any>)} lessonDataStore={karmicLessons.reduce((acc, curr) => ({...acc, [curr]: numData.getKarmicLessonData(curr)}), {} as Record<number,any>)} isLocked={isLocked} />
+                <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={debtDataStore} lessonDataStore={lessonDataStore} isLocked={isLocked} />
 
                 <div class="divider-section"></div>
 
@@ -362,7 +379,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={numData.getPersonalityChartData()} cData={numData.getCareerChartData()} isLocked={isLocked} />
+                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={await numData.getPersonalityChartDataKV(kv)} cData={await numData.getCareerChartDataKV(kv)} isLocked={isLocked} />
 
                 <div class="divider-section"></div>
 
