@@ -46,7 +46,8 @@ if (!user) {
 let isPremium = false;
 let hasUnlocked = false;
 const profileId = `${fullName.toLowerCase().trim()}|${dobStr}|${nickname.toLowerCase().trim()}|${gender.toLowerCase().trim()}`;
-const kv = Astro.locals.runtime?.env?.NUMEROLOGY_KV || null;
+// Numerology content is rendered from src/content/numerology for fast SSR.
+const kv = null;
 
 if (user) {
     const rawDB = Astro.locals.runtime?.env?.DB || process.env.DB;
