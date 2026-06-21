@@ -242,7 +242,16 @@ export const POST: APIRoute = async (context) => {
         data = await runTarotValidateWorker(body, env, config);
     }
     
-    // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema)
+    // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema hoặc [{ output }])
+    const n8nOutput = Array.isArray(data) ? data[0]?.output : data?.output;
+    if (n8nOutput) {
+        data = {
+            ...n8nOutput,
+            usage: n8nOutput.usage || data[0]?.usage || data.usage || null,
+            model: n8nOutput.model || data[0]?.model || data.model || null
+        };
+    }
+
     let rawContent = null;
     let rawUsage = null;
     let rawModel = null;
@@ -273,10 +282,16 @@ export const POST: APIRoute = async (context) => {
                 isValid: true,
                 reason: rawContent,
                 pick_card: true,
+                topic: 'general',
                 usage: rawUsage,
                 model: rawModel
             };
         }
+    }
+
+    if (data) {
+        const allowedTopics = ['general', 'love', 'career', 'finances'];
+        data.topic = allowedTopics.includes(data.topic) ? data.topic : 'general';
     }
 
     // === LƯU VÀO D1 DATABASE ===

@@ -2,6 +2,17 @@
 
 import type { SystemConfig } from './config';
 
+const TAROT_TOPICS = ['general', 'love', 'career', 'finances'];
+
+function toBoolean(value: any) {
+    if (typeof value === 'string') return value.toLowerCase() === 'true';
+    return Boolean(value);
+}
+
+function normalizeTarotTopic(value: any) {
+    return TAROT_TOPICS.includes(value) ? value : 'general';
+}
+
 async function callOpenAI(messages: any[], temperature: number, env: any, config: SystemConfig, passedModel: string = "n8n2") {
     let useFallback = false;
     let customErrorMsg = "";
@@ -126,6 +137,7 @@ export async function runTarotValidateWorker(body: any, env: any, config: System
         const respondBlockedOutput = {
             isValid: false,
             pick_card: false,
+            topic: "general",
             reason: blockedReason,
             usage: null,
             model: null
@@ -183,11 +195,11 @@ export async function runTarotValidateWorker(body: any, env: any, config: System
             rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
         }
         const parsed = JSON.parse(rawText);
-        isValid = Boolean(parsed.isValid);
-        pick_card = Boolean(parsed.pick_card);
+        isValid = toBoolean(parsed.isValid);
+        pick_card = toBoolean(parsed.pick_card);
         if (parsed.numbercard !== undefined) numbercard = parseInt(parsed.numbercard) || 3;
-        if (parsed.needs_image !== undefined) needs_image = Boolean(parsed.needs_image);
-        if (parsed.topic) topic = parsed.topic;
+        if (parsed.needs_image !== undefined) needs_image = toBoolean(parsed.needs_image);
+        if (parsed.topic) topic = normalizeTarotTopic(parsed.topic);
         reason = parsed.reason || "ok";
     } catch (e) {
         const lowerText = rawText.toLowerCase();
@@ -287,6 +299,7 @@ export async function runTarotValidateWorker(body: any, env: any, config: System
         const respondConvOutput = {
             isValid: true,
             pick_card: false,
+            topic: topic,
             reason: convResponse.choices[0].message.content || 'Mình luôn sẵn sàng lắng nghe!',
             usage: {
                 prompt_tokens: usage1.prompt_tokens + usage2.prompt_tokens,
@@ -306,6 +319,7 @@ export async function runTarotValidateWorker(body: any, env: any, config: System
         const respondOutOfScope = {
             isValid: false,
             pick_card: false,
+            topic: topic,
             reason: reason || "Câu hỏi không phù hợp. Vui lòng đặt câu hỏi khác.",
             usage: usage1,
             model: aiResponse.model
@@ -343,7 +357,7 @@ export async function runTarotInterpretWorker(body: any, env: any, config: Syste
 
     const question = body.question || "";
     const cards = body.cards || [];
-    const topic = body.topic || 'general';
+    const topic = normalizeTarotTopic(body.topic || body.validation?.topic || body.output?.topic);
     const userProfile = body.userProfile || { name: 'lữ khách', gender: 'bạn', user_persona: '' };
     
     console.log("🟢 [NODE: build interpretation prompt]");

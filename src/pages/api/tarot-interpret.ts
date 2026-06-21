@@ -237,6 +237,10 @@ export const POST: APIRoute = async (context) => {
         }
     }
 
+    const allowedTopics = ['general', 'love', 'career', 'finances'];
+    const topicCandidate = body.topic || body.validation?.topic || body.output?.topic;
+    body.topic = allowedTopics.includes(topicCandidate) ? topicCandidate : 'general';
+
     const payload = {
       ...body,
       history: history
