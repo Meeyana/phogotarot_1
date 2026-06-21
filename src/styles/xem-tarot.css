@@ -955,6 +955,7 @@ body {
     border-left: 3px solid var(--gold-color, #F2C94C);
     padding: 1.5rem;
     border-radius: 0 12px 12px 0;
+    margin-top: 1.25rem;
 }
 
 .example-title {
@@ -988,6 +989,94 @@ body {
 }
 .example-list strong {
     color: #fff;
+}
+
+.seo-faq-item {
+    background: rgba(6, 18, 43, 0.42);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin-top: 0.75rem;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.seo-faq-item:first-of-type {
+    margin-top: 0;
+}
+
+.seo-faq-item[open] {
+    border-color: rgba(242, 201, 76, 0.38);
+    background: rgba(8, 24, 56, 0.68);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16);
+}
+
+.seo-faq-item summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.95rem 1rem;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 1.45;
+    list-style: none;
+}
+
+.seo-faq-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.seo-faq-item summary::after {
+    content: "+";
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 24px;
+    color: var(--gold-color, #F2C94C);
+    background: rgba(242, 201, 76, 0.1);
+    border: 1px solid rgba(242, 201, 76, 0.24);
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.seo-faq-item[open] summary::after {
+    content: "-";
+}
+
+.seo-faq-item summary:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.seo-faq-item p {
+    margin: 0;
+    padding: 0 1rem 1rem;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+    .seo-guide-container {
+        padding: 0.75rem;
+    }
+
+    .seo-examples {
+        padding: 1.1rem;
+        border-radius: 0 10px 10px 0;
+    }
+
+    .seo-faq-item summary {
+        align-items: flex-start;
+        padding: 0.9rem;
+    }
+
+    .seo-faq-item p {
+        padding: 0 0.9rem 0.9rem;
+    }
 }
 
 /* Visibility toggling for active state */
