@@ -40,8 +40,6 @@ export const POST: APIRoute = async (context) => {
     }
 
     const userId = request.user_id;
-    const reqAmount = request.amount;
-
     // 2. Xác định gói và cộng Credit tương ứng
     let wallet = await db.prepare('SELECT * FROM credit_wallets WHERE user_id = ?').bind(userId).first();
     if (!wallet) {
@@ -49,33 +47,30 @@ export const POST: APIRoute = async (context) => {
     }
 
     const crypto = globalThis.crypto;
-    
-    if (reqAmount === 49000) {
-        // Cộng 3 lượt vĩnh viễn
-        await db.prepare('UPDATE credit_wallets SET balance = balance + 3 WHERE user_id = ?').bind(userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 3, 'purchase', 'Nạp thẻ gói 49K')`).bind(crypto.randomUUID(), userId).run();
-    } else if (reqAmount === 129000) {
-        // Cộng 10 lượt vĩnh viễn
-        await db.prepare('UPDATE credit_wallets SET balance = balance + 10 WHERE user_id = ?').bind(userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 10, 'purchase', 'Nạp thẻ gói 129K')`).bind(crypto.randomUUID(), userId).run();
-    } else if (reqAmount === 199000) {
-        // Premium 1 tháng
+
+    const packageRecord = await db.prepare('SELECT * FROM packages WHERE id = ?').bind(request.package_id).first();
+    if (!packageRecord) {
+      return new Response(JSON.stringify({ error: 'Package not found' }), { status: 400 });
+    }
+
+    if (packageRecord.type === 'pack') {
+        const creditsToAdd = packageRecord.credits;
+        await db.prepare('UPDATE credit_wallets SET balance = balance + ? WHERE user_id = ?').bind(creditsToAdd, userId).run();
+        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, ?, 'purchase', ?)`).bind(crypto.randomUUID(), userId, creditsToAdd, `Mua gói ${packageRecord.name}`).run();
+    } else if (packageRecord.type === 'subscription') {
+        let expStr: string | null = null;
         const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
-        expiresAt.setMonth(expiresAt.getMonth() + 1);
-        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+
+        if (packageRecord.id === 'Vương Giả (Gói Tháng)') {
+          expiresAt.setMonth(expiresAt.getMonth() + 1);
+          expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+        } else if (packageRecord.id === 'Chuyên Gia (Gói Năm)') {
+          expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+          expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
+        }
+
         await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Tháng')`).bind(crypto.randomUUID(), userId).run();
-    } else if (reqAmount === 599000) {
-        // Premium 1 năm
-        const expiresAt = new Date(new Date().getTime() + 7 * 3600 * 1000);
-        expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-        const expStr = expiresAt.toISOString().replace('T', ' ').substring(0, 19) + '+07:00';
-        await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = ? WHERE user_id = ?').bind('premium', expStr, userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium 1 Năm')`).bind(crypto.randomUUID(), userId).run();
-    } else if (reqAmount === 799000) {
-        // Premium Trọn Đời (Không có ngày hết hạn)
-        await db.prepare('UPDATE credit_wallets SET subscription_tier = ?, subscription_expires_at = NULL WHERE user_id = ?').bind('premium', userId).run();
-        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', 'Mua gói Premium Trọn Đời')`).bind(crypto.randomUUID(), userId).run();
+        await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 0, 'purchase', ?)`).bind(crypto.randomUUID(), userId, `Mua gói ${packageRecord.name}`).run();
     }
 
     return new Response(JSON.stringify({ 

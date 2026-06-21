@@ -1288,7 +1288,56 @@ const user = Astro.locals.user;
         popup.classList.remove('show');
     }
 
+    let pricingPackages = {};
+
+    function formatVndAmount(amount) {
+        return new Intl.NumberFormat('vi-VN').format(Number(amount || 0));
+    }
+
+    function packageById(id) {
+        return pricingPackages[id] || null;
+    }
+
+    function applyPackageToButton(btn, packageId, amountEl, originalEl) {
+        const pkg = packageById(packageId);
+        if (!pkg || !btn) return;
+        btn.setAttribute('data-package', pkg.id);
+        btn.setAttribute('data-amount', String(pkg.price));
+        if (amountEl) amountEl.textContent = formatVndAmount(pkg.price);
+        if (originalEl) {
+            const shouldShowOriginal = pkg.list_price && Number(pkg.list_price) > Number(pkg.price);
+            originalEl.textContent = shouldShowOriginal ? '₫' + formatVndAmount(pkg.list_price) : '';
+            originalEl.style.display = shouldShowOriginal ? '' : 'none';
+        }
+    }
+
+    async function loadPricingPackages() {
+        try {
+            const res = await fetch('/api/packages', { headers: { 'Accept': 'application/json' } });
+            const json = await res.json();
+            if (!json.success || !Array.isArray(json.data)) return;
+            pricingPackages = Object.fromEntries(json.data.map(pkg => [pkg.id, pkg]));
+
+            applyPackageToButton(
+                document.getElementById('basic-buy-btn'),
+                document.getElementById('basic-buy-btn')?.getAttribute('data-package'),
+                document.getElementById('basic-amount-display'),
+                document.getElementById('basic-original-display')
+            );
+            applyPackageToButton(
+                document.getElementById('premium-buy-btn'),
+                document.getElementById('premium-buy-btn')?.getAttribute('data-package'),
+                document.getElementById('premium-amount-display'),
+                document.getElementById('premium-original-display')
+            );
+        } catch (e) {
+            console.warn('Could not load dynamic packages pricing', e);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        loadPricingPackages();
+
         const modal = document.getElementById('payment-modal');
         const closeBtn = document.querySelector('.close-modal-btn');
         const confirmBtn = document.querySelector('.confirm-paid-btn');
@@ -1359,6 +1408,7 @@ const user = Astro.locals.user;
                         premiumBuyBtn.setAttribute('data-package', 'Vương Giả (Gói Tháng)');
                         premiumBuyBtn.innerText = 'Trở Thành VIP';
                     }
+                    applyPackageToButton(premiumBuyBtn, premiumBuyBtn.getAttribute('data-package'), amountDisplay, originalDisplay);
                 });
             });
         }
@@ -1410,6 +1460,7 @@ const user = Astro.locals.user;
                         basicBuyBtn.setAttribute('data-package', 'Khởi Đầu (3 lượt)');
                         basicBuyBtn.innerText = 'Chọn Gói 3 Credit';
                     }
+                    applyPackageToButton(basicBuyBtn, basicBuyBtn.getAttribute('data-package'), basicAmountDisplay, basicOriginalDisplay);
                 });
             });
         }
@@ -1441,7 +1492,7 @@ const user = Astro.locals.user;
                     return;
                 }
                 
-                const amount = btn.getAttribute('data-amount');
+                let amount = btn.getAttribute('data-amount');
                 const pkgName = btn.getAttribute('data-package');
                 isPremiumPurchase = pkgName.includes('Vương Giả') || pkgName.includes('Chuyên Gia') || pkgName.includes('Nâng Cao');
                 
@@ -1479,7 +1530,7 @@ const user = Astro.locals.user;
                     const res = await fetch('/api/payment/create', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ amount, package_id: pkgName })
+                        body: JSON.stringify({ package_id: pkgName })
                     });
                     
                     const data = await res.json();
@@ -1490,6 +1541,9 @@ const user = Astro.locals.user;
                     }
 
                     currentTransactionId = data.transaction_id;
+                    amount = String(data.amount || amount);
+                    currentAmountForTracking = amount;
+                    amountEl.innerText = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(amount));
                     const transferContent = currentTransactionId;
                     
                     // Gắn nội dung vào HTML

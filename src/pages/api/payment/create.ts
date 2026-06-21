@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { getEffectivePackagePrice, type PackageRecord } from '../../../lib/pricing';
 
 export const prerender = false;
 
@@ -23,17 +24,17 @@ export const POST: APIRoute = async (context) => {
     }
 
     // Lấy thông tin gói nạp từ Database bảng packages
-    const packageRecord = await db.prepare('SELECT price, is_active FROM packages WHERE id = ?').bind(package_id).first();
+    const packageRecord = await db.prepare('SELECT * FROM packages WHERE id = ?').bind(package_id).first<PackageRecord>();
     
     if (!packageRecord || !packageRecord.is_active) {
       return new Response(JSON.stringify({ error: 'Gói nạp không tồn tại hoặc đã ngừng bán' }), { status: 400 });
     }
     
-    const serverAmount = packageRecord.price;
+    const serverAmount = getEffectivePackagePrice(packageRecord).effectivePrice;
 
     // Kiểm tra nếu đã có đơn hàng pending cho cùng user + package trong 20 phút
     const existing = await db.prepare(`
-      SELECT id, created_at FROM payment_requests 
+      SELECT id, created_at, amount FROM payment_requests 
       WHERE user_id = ? AND package_id = ? AND status = 'pending'
         AND created_at > datetime('now', '-20 minutes')
       ORDER BY created_at DESC
@@ -46,6 +47,7 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ 
         success: true, 
         transaction_id: existing.id,
+        amount: existing.amount,
         created_at: existing.created_at, // UTC string e.g. "2024-05-28 12:34:56"
         reused: true
       }), {
@@ -71,6 +73,7 @@ export const POST: APIRoute = async (context) => {
     return new Response(JSON.stringify({ 
       success: true, 
       transaction_id: transactionId,
+      amount: serverAmount,
       created_at: newReq?.created_at,
       reused: false
     }), {
