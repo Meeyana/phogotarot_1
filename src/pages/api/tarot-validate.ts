@@ -369,10 +369,10 @@ export const POST: APIRoute = async (context) => {
         data.model = 'PhogoTarot Oracle';
     }
 
-    // Xóa các trường nội bộ không cần thiết lộ ra ngoài Network
+    // Xóa các trường nội bộ không cần thiết lộ ra ngoài Network.
+    // Giữ lại topic để frontend truyền tiếp sang bước luận giải.
     if (data) {
         delete data.usage;
-        delete data.topic;
         delete data.needs_image;
     }
 
