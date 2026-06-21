@@ -3,5 +3,18 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 Disallow: /nap-credit
+Disallow: /auth/
+Disallow: /forgot-password
+Disallow: /history
+Disallow: /login
+Disallow: /profile
+Disallow: /register
+Disallow: /reset-password
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
 
 Sitemap: https://phogotarot.com/sitemap-index.xml

@@ -2,57 +2,85 @@
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// 2. TẠO METADATA VÀ SCHEMA
-const pageTitle = "Trải Bài Tarot Yes/No - Câu Trả Lời Nhanh | Phở Gõ Tarot";
-const pageDesc = "Nhận câu trả lời Yes (Có) hoặc No (Không) nhanh chóng cho các câu hỏi của bạn, cùng với luận giải AI chi tiết từ một lá bài Tarot.";
+// 2. Tạo metadata và schema
+const pageTitle = "Tarot Yes/No Online Miễn Phí - Rút 1 Lá Có Hoặc Không | Phở Gõ Tarot";
+const pageDesc = "Rút 1 lá Tarot Yes/No online để nhận câu trả lời Có, Không hoặc Chưa rõ cho tình yêu, công việc và quyết định nhanh. Có 1 lượt miễn phí mỗi ngày.";
 const pageUrl = new URL('/yes-no-reading', Astro.site).href;
+const deepReadingUrl = new URL('/xem-tarot', Astro.site).href;
 
-// CẬP NHẬT SCHEMA CHUẨN GEO/SEO (Dạng Graph cho Yes/No)
+const faqItems = [
+  {
+    question: "Tarot Yes/No là gì?",
+    answer: "Tarot Yes/No là trải bài một lá dành cho câu hỏi cụ thể cần hướng trả lời Có, Không hoặc Chưa rõ. Kết quả nên được xem như một tín hiệu tham khảo để bạn cân nhắc quyết định."
+  },
+  {
+    question: "Nên hỏi Yes/No khi nào?",
+    answer: "Bạn nên dùng Yes/No khi câu hỏi đã rõ, chỉ xoay quanh một vấn đề và cần hướng đi nhanh. Ví dụ: 'Tôi có nên chủ động nhắn tin trong tuần này không?' hoặc 'Offer này có phù hợp với mục tiêu hiện tại không?'."
+  },
+  {
+    question: "Khi nào không nên hỏi Yes/No?",
+    answer: "Không nên dùng Yes/No cho câu hỏi quá rộng, nhiều lựa chọn cùng lúc hoặc cần phân tích nguyên nhân sâu. Khi vấn đề có nhiều lớp cảm xúc và bối cảnh, trải bài hội thoại sẽ phù hợp hơn."
+  },
+  {
+    question: "Nếu cần phân tích sâu hơn thì làm gì?",
+    answer: "Nếu câu trả lời Yes/No khiến bạn muốn hiểu nguyên nhân, lời khuyên hoặc bước tiếp theo, hãy chuyển sang trang xem tarot online dạng hội thoại để đặt câu hỏi mở và chọn trải bài nhiều lá hơn."
+  }
+];
+
 const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
-      "@type": "WebApplication",
-      "name": "Bói Bài Tarot Yes/No Online - 1 Lượt Miễn Phí Mỗi Ngày",
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
       "url": pageUrl,
-      "description": "Công cụ bói bài Tarot Yes/No giúp bạn đưa ra quyết định nhanh chóng. Chọn 1 lá để xem kết quả Có/Không tức thì hoặc 3 lá để xem chi tiết.",
-      "applicationCategory": "LifestyleApplication",
-      "operatingSystem": "Any"
+      "name": pageTitle,
+      "description": pageDesc,
+      "inLanguage": "vi-VN",
+      "isPartOf": {
+        "@id": "https://phogotarot.com/#website"
+      }
     },
     {
-      "@type": "HowTo",
-      "name": "Cách Đặt Câu Hỏi Tarot Yes/No Chính Xác Nhất",
-      "description": "Hướng dẫn đặt câu hỏi đóng (Closed Questions) để nhận được câu trả lời dứt khoát từ các lá bài Tarot.",
-      "step": [
+      "@type": "WebApplication",
+      "@id": `${pageUrl}#app`,
+      "name": "Tarot Yes/No Online - Phở Gõ Tarot",
+      "url": pageUrl,
+      "description": pageDesc,
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any",
+      "isAccessibleForFree": true,
+      "inLanguage": "vi-VN"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${pageUrl}#breadcrumb`,
+      "itemListElement": [
         {
-          "@type": "HowToStep",
-          "name": "Chỉ hỏi một vấn đề duy nhất",
-          "text": "Tránh câu hỏi 'hoặc' (Ví dụ: 'Tôi nên đi du học hay ở lại làm việc?'). Hãy tách thành 2 câu hỏi riêng biệt."
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Trang chủ",
+          "item": "https://phogotarot.com/"
         },
         {
-          "@type": "HowToStep",
-          "name": "Giới hạn thời gian",
-          "text": "Thêm mốc thời gian cụ thể như 'trong tuần này', 'trong tháng tới' để tăng độ chính xác."
-        },
-        {
-          "@type": "HowToStep",
-          "name": "Sẵn sàng đón nhận sự thật",
-          "text": "Giữ tâm thái trung lập, không cố ép các lá bài phải trả lời theo ý muốn của bạn."
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tarot Yes/No Online",
+          "item": pageUrl
         }
       ]
     },
     {
       "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "Có nên bói Yes/No nhiều lần cho một câu hỏi?",
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": "Không nên. Việc hỏi đi hỏi lại cùng một vấn đề trong thời gian ngắn sẽ khiến năng lượng bị nhiễu loạn và kết quả không còn chính xác."
-          }
+      "@id": `${pageUrl}#faq`,
+      "mainEntity": faqItems.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
         }
-      ]
+      }))
     }
   ]
 };
@@ -115,8 +143,8 @@ if (Astro.locals.runtime?.env?.SESSION) {
 
     <!-- MÀN HÌNH 1: ĐẶT CÂU HỎI -->
     <div id="question-screen" class="screen active">
-        <h1 class="title">Hãy suy nghĩ và tập trung vào câu hỏi của bạn</h1>
-        <p class="subtitle">Trải bài này sẽ tự động rút 1 lá bài Yes/No cho bạn. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
+        <h1 class="title">Tarot Yes/No Online: Rút 1 Lá Cho Câu Trả Lời Có Hoặc Không</h1>
+        <p class="subtitle">Phù hợp cho câu hỏi cụ thể cần hướng đi nhanh. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí; nếu vấn đề phức tạp, hãy chuyển sang trải bài hội thoại để phân tích sâu hơn.</p>
         {!Astro.locals.user && (
             <a href="/login?redirect=/yes-no-reading" class="login-badge" style="margin-bottom: 20px; display: inline-block; padding: 6px 16px; background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 20px; color: #F2C94C; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease;">
                 <i class="fa-solid fa-lock" style="margin-right: 5px;"></i> Bạn cần đăng nhập để sử dụng miễn phí mỗi ngày
@@ -157,38 +185,48 @@ if (Astro.locals.runtime?.env?.SESSION) {
         <div class="seo-divider"></div>
         
         <article class="seo-guide-container">
-            <h2 class="seo-title">Bí Quyết Đặt Câu Hỏi Yes/No Tarot Chuẩn Xác</h2>
+            <h2 class="seo-title">Tarot Yes/No phù hợp với câu hỏi nào?</h2>
             <p class="seo-intro">
-                Trải bài Tarot Yes/No là công cụ tuyệt vời cho những quyết định nhanh. Tuy nhiên, để "Vũ trụ" gửi tín hiệu dứt khoát (Có hoặc Không), bạn cần tuân thủ nguyên tắc đặt câu hỏi đóng.
+                Tarot Yes/No online phù hợp khi bạn có một câu hỏi cụ thể và cần hướng trả lời nhanh: Có, Không hoặc Chưa rõ. Với các vấn đề nhiều bối cảnh như tình yêu, công việc hoặc quyết định cá nhân, kết quả nên được xem như tín hiệu tham khảo để bạn cân nhắc bước tiếp theo.
             </p>
 
             <div class="seo-tips-grid">
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">⚡ Một Vấn Đề Duy Nhất</h3>
-                    <p class="tip-content">Tuyệt đối không dùng từ <strong>"hoặc"</strong>. Ví dụ sai: <em>"Tôi nên chọn công ty A hay công ty B?"</em>. Hãy tách thành: <em>"Công ty A có tốt cho tôi không?"</em>.</p>
+                    <h3 class="tip-title">Hỏi một vấn đề duy nhất</h3>
+                    <p class="tip-content">Tránh gộp hai lựa chọn trong cùng một câu. Thay vì hỏi "Tôi nên chọn A hay B?", hãy tách thành hai câu hỏi riêng để kết quả rõ hơn.</p>
                 </div>
-                
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">🎯 Cụ Thể & Trực Tiếp</h3>
-                    <p class="tip-content">Hãy đi thẳng vào vấn đề. Thay vì <em>"Chuyện tình cảm thế nào?"</em>, hãy hỏi <em>"Người ấy có tình cảm với tôi không?"</em>.</p>
+                    <h3 class="tip-title">Thêm mốc thời gian</h3>
+                    <p class="tip-content">Câu hỏi như "trong tuần này", "trong tháng tới" hoặc "ở giai đoạn hiện tại" thường dễ luận giải hơn câu hỏi quá rộng.</p>
                 </div>
-
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">🚫 Không Hỏi Lại Ngay</h3>
-                    <p class="tip-content">Nếu nhận được câu trả lời không như ý (ví dụ: No), đừng rút bài lại ngay lập tức. Hãy chờ ít nhất 1-2 ngày để năng lượng ổn định.</p>
+                    <h3 class="tip-title">Không hỏi lại liên tục</h3>
+                    <p class="tip-content">Nếu kết quả chưa như ý, hãy để cảm xúc lắng xuống trước khi hỏi lại. Việc rút đi rút lại cùng một câu hỏi dễ khiến bạn phụ thuộc vào kết quả.</p>
                 </div>
             </div>
 
             <div class="seo-examples">
-                <h3 class="example-title">💡 Ví Dụ Câu Hỏi Yes/No Điển Hình:</h3>
+                <h2 class="example-title">Ví dụ câu hỏi Yes/No tốt</h2>
                 <ul class="example-list">
-                    <li><strong>Tình yêu:</strong> "Người yêu cũ có quay lại với tôi trong tháng này không?"</li>
-                    <li><strong>Công việc:</strong> "Dự án sắp tới có mang lại lợi nhuận tốt không?"</li>
-                    <li><strong>Đời sống:</strong> "Chuyến đi du lịch tuần sau có suôn sẻ không?"</li>
+                    <li><strong>Tình yêu:</strong> "Tôi có nên chủ động nhắn tin cho người ấy trong tuần này không?"</li>
+                    <li><strong>Công việc:</strong> "Offer mới này có phù hợp với mục tiêu nghề nghiệp hiện tại của tôi không?"</li>
+                    <li><strong>Quyết định nhanh:</strong> "Tôi có nên tiếp tục theo đuổi kế hoạch này trong tháng tới không?"</li>
                 </ul>
-                <p style="margin-top: 1.5rem; font-size: 0.95rem; opacity: 0.85; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1rem;">
-                    * Mẹo nhỏ: Trải bài Yes/No chỉ đưa ra hướng đi nhanh. Nếu bạn muốn trò chuyện và bốc bài chuyên sâu (1, 3, hoặc 5 lá) để phân tích chi tiết nguyên nhân, bối cảnh và lời khuyên của vấn đề, hãy chuyển sang phòng <a href="/xem-tarot" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Trò Chuyện & Trải Bài Tarot</a> nhé!
-                </p>
+            </div>
+
+            <div class="seo-examples">
+                <h2 class="example-title">Khi nào nên chuyển sang trải bài hội thoại?</h2>
+                <p>Nếu bạn cần hiểu nguyên nhân, lời khuyên hoặc nhiều khả năng xảy ra, Tarot Yes/No có thể hơi ngắn. Khi đó, hãy dùng <a href={deepReadingUrl} style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">trải bài tarot online với Reader AI</a> để đặt câu hỏi mở và phân tích sâu hơn.</p>
+            </div>
+
+            <div class="seo-examples" id="faq">
+                <h2 class="example-title">Câu hỏi thường gặp</h2>
+                {faqItems.map((item) => (
+                    <details class="seo-faq-item">
+                        <summary>{item.question}</summary>
+                        <p>{item.answer}</p>
+                    </details>
+                ))}
             </div>
         </article>
         <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->

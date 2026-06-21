@@ -2,7 +2,18 @@ import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 
-// --- Cấu hình Astro ---
+const noIndexPaths = [
+  '/admin',
+  '/api',
+  '/auth',
+  '/forgot-password',
+  '/history',
+  '/login',
+  '/nap-credit',
+  '/profile',
+  '/register',
+  '/reset-password'
+];
 
 export default defineConfig({
   site: 'https://phogotarot.com',
@@ -23,11 +34,12 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const parsedUrl = new URL(page);
-        
-        // Loại bỏ phân trang và admin
+
         if (parsedUrl.searchParams.has('page')) return false;
-        if (parsedUrl.pathname.startsWith('/admin')) return false;
-        
+        if (noIndexPaths.some(path => parsedUrl.pathname === path || parsedUrl.pathname.startsWith(`${path}/`))) {
+          return false;
+        }
+
         return true;
       }
     })

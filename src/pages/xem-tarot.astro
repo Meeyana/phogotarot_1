@@ -5,18 +5,86 @@ import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
 import '../styles/xem-tarot.css';
 
-const pageTitle = "Trò Chuyện & Trải Bài Tarot Miễn Phí | Phở Gõ Tarot";
-const pageDesc = "Trải nghiệm xem Tarot qua giao diện trò chuyện tương tác. Hỏi bất cứ điều gì, chọn bài và nhận thông điệp trực tiếp từ vũ trụ.";
+const pageTitle = "Xem Tarot Online Miễn Phí Với Reader AI | Phở Gõ Tarot";
+const pageDesc = "Trải bài tarot online với Reader AI, đặt câu hỏi về tình yêu, công việc và định hướng cá nhân. Mỗi ngày nhận 1 lượt xem miễn phí tại Phở Gõ Tarot.";
 const pageUrl = new URL('/xem-tarot', Astro.site).href;
+const yesNoUrl = new URL('/yes-no-reading', Astro.site).href;
+
+const faqItems = [
+  {
+    question: "Xem tarot online là gì?",
+    answer: "Xem tarot online là cách đặt câu hỏi, chọn bài và nhận luận giải ngay trên website. Tại Phở Gõ Tarot, Reader AI đọc bối cảnh câu hỏi, các lá bài bạn chọn và đưa ra gợi ý để bạn tự soi chiếu quyết định."
+  },
+  {
+    question: "Mỗi ngày được xem miễn phí không?",
+    answer: "Có. Người dùng đăng nhập có thể nhận 1 lượt xem bài miễn phí mỗi ngày. Sau khi dùng hết lượt miễn phí, bạn có thể nạp thêm credit nếu muốn tiếp tục trải bài."
+  },
+  {
+    question: "Nên hỏi câu hỏi gì khi xem tarot online?",
+    answer: "Bạn nên hỏi câu hỏi mở, có bối cảnh và tập trung vào phần mình có thể chủ động. Ví dụ: 'Tôi nên nhìn nhận mối quan hệ này như thế nào?' thường tốt hơn câu hỏi chỉ muốn đoán suy nghĩ của người khác."
+  },
+  {
+    question: "Tarot online có thay thế reader offline không?",
+    answer: "Không. Tarot online phù hợp khi bạn cần riêng tư, nhanh, chi phí thấp và có thể xem lại nội dung. Reader offline phù hợp hơn với những trường hợp cần tương tác sâu, nhiều lớp cảm xúc và đối thoại trực tiếp."
+  }
+];
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Trải Bài Tarot Dạng Chat - Phở Gõ Tarot",
-  "url": pageUrl,
-  "description": pageDesc,
-  "applicationCategory": "LifestyleApplication",
-  "operatingSystem": "Any"
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${pageUrl}#webpage`,
+      "url": pageUrl,
+      "name": pageTitle,
+      "description": pageDesc,
+      "inLanguage": "vi-VN",
+      "isPartOf": {
+        "@id": "https://phogotarot.com/#website"
+      }
+    },
+    {
+      "@type": "WebApplication",
+      "@id": `${pageUrl}#app`,
+      "name": "Xem Tarot Online Với Reader AI - Phở Gõ Tarot",
+      "url": pageUrl,
+      "description": pageDesc,
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Any",
+      "isAccessibleForFree": true,
+      "inLanguage": "vi-VN"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": `${pageUrl}#breadcrumb`,
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Trang chủ",
+          "item": "https://phogotarot.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Xem Tarot Online",
+          "item": pageUrl
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${pageUrl}#faq`,
+      "mainEntity": faqItems.map((item) => ({
+        "@type": "Question",
+        "name": item.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.answer
+        }
+      }))
+    }
+  ]
 };
 
 // Lấy thông tin profile
@@ -84,7 +152,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     <img src="https://ui-avatars.com/api/?name=Pho+Go&background=F2C94C&color=0b132b&size=128" alt="Phở Gõ Tarot Avatar" />
                 </div>
                 <div class="header-text">
-                    <h1 class="oracle-name">Phở Gõ Tarot</h1>
+                    <div class="oracle-name">Phở Gõ Tarot</div>
                     <span class="oracle-status">Người truyền tin từ Vũ Trụ</span>
                 </div>
             </div>
@@ -104,8 +172,8 @@ if (Astro.locals.runtime?.env?.SESSION) {
         </div>
 
         <div id="initial-greeting" class="initial-greeting">
-            <h1 class="title-glow">Vấn đề bạn đang trăn trở là gì?</h1>
-            <p class="subtitle-muted">Hãy tập trung năng lượng và đặt một câu hỏi cụ thể. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
+            <h1 class="title-glow">Xem Tarot Online Với Reader AI</h1>
+            <p class="subtitle-muted">Đặt câu hỏi về tình yêu, công việc hoặc định hướng cá nhân. Mỗi ngày bạn được tặng 1 lượt xem bài miễn phí.</p>
             {!Astro.locals.user && (
                 <a href="/login?redirect=/xem-tarot" class="login-badge" style="margin-top: 15px; display: inline-block; padding: 6px 16px; background: rgba(242, 201, 76, 0.1); border: 1px solid rgba(242, 201, 76, 0.3); border-radius: 20px; color: #F2C94C; font-size: 0.95rem; text-decoration: none; transition: all 0.2s ease;">
                     <i class="fa-solid fa-lock" style="margin-right: 5px;"></i> Bạn cần đăng nhập để sử dụng miễn phí mỗi ngày
@@ -162,38 +230,55 @@ if (Astro.locals.runtime?.env?.SESSION) {
         <div class="seo-divider"></div>
         
         <article class="seo-guide-container">
-            <h2 class="seo-title">Cách Đặt Câu Hỏi Để Kết Nối Trực Trí Với Reader AI</h2>
+            <h2 class="seo-title">Xem tarot online phù hợp khi nào?</h2>
             <p class="seo-intro">
-                Kết quả của một trải bài Tarot hội thoại phụ thuộc rất nhiều vào <strong>cách bạn đặt câu hỏi và chia sẻ hoàn cảnh</strong>. Việc đặt một câu hỏi mở, đúng trọng tâm và cung cấp đủ thông tin sẽ giúp Reader AI của Phở Gõ Tarot thấu cảm sâu sắc nhất năng lượng của bạn và đưa ra những lời khuyên chỉ dẫn rõ ràng từ Vũ trụ.
+                Xem tarot online phù hợp khi bạn cần một không gian riêng tư để nhìn lại chuyện tình cảm, công việc hoặc định hướng cá nhân. Thay vì chỉ tìm một câu trả lời cố định, Phở Gõ Tarot giúp bạn đặt câu hỏi, chọn bài và nhận luận giải theo bối cảnh qua Reader AI.
             </p>
 
             <div class="seo-tips-grid">
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">🧭 Hỏi Câu Hỏi Mở Cởi Mở</h3>
-                    <p class="tip-content">Tránh những câu hỏi đóng. Thay vì hỏi <em>"Tôi có đạt được mục tiêu không?"</em>, hãy hỏi <em>"Tôi cần tập trung phát triển khía cạnh nào để sớm đạt được mục tiêu của mình?"</em>.</p>
+                    <h3 class="tip-title">Khi bạn cần tự soi chiếu nhanh</h3>
+                    <p class="tip-content">Một lượt trải bài ngắn có thể giúp bạn gọi tên điều đang băn khoăn, nhìn rõ cảm xúc hiện tại và chọn bước tiếp theo tỉnh táo hơn.</p>
                 </div>
-                
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">👤 Tập Trung Vào Bản Thân Bạn</h3>
-                    <p class="tip-content">Tarot phản chiếu năng lượng của chính bạn. Hãy hỏi về những quyết định, hành động của bạn như <em>"Tôi nên làm gì..."</em> thay vì cố gắng đọc suy nghĩ hay thay đổi người khác.</p>
+                    <h3 class="tip-title">Khi vấn đề cần bối cảnh</h3>
+                    <p class="tip-content">Với câu hỏi mở về tình yêu, công việc hoặc lựa chọn cá nhân, hãy chia sẻ thêm hoàn cảnh để Reader AI luận giải sát hơn.</p>
                 </div>
-
                 <div class="seo-tip-card">
-                    <h3 class="tip-title">🔗 Cung Cấp Thêm Bối Cảnh</h3>
-                    <p class="tip-content">Vì đây là cuộc trò chuyện tương tác trực tiếp, bạn đừng ngần ngại chia sẻ ngắn gọn về tình huống hiện tại của mình để nhận được lời luận giải mang tính cá nhân hóa cao nhất.</p>
+                    <h3 class="tip-title">Khi bạn muốn xem lại lời khuyên</h3>
+                    <p class="tip-content">Trải bài online giúp bạn lưu lại nội dung, đọc lại sau khi cảm xúc lắng xuống và tự đánh giá điều nào thật sự hữu ích.</p>
                 </div>
             </div>
 
             <div class="seo-examples">
-                <h3 class="example-title">💡 Gợi Ý Câu Hỏi Mở Dành Riêng Cho Bạn:</h3>
+                <h2 class="example-title">Cách đặt câu hỏi để Reader AI luận giải tốt hơn</h2>
+                <p>Hãy ưu tiên câu hỏi mở, có bối cảnh và tập trung vào phần bạn có thể chủ động. Thay vì hỏi người khác đang nghĩ gì, hãy hỏi bạn nên hiểu tình huống ra sao hoặc nên chuẩn bị điều gì.</p>
                 <ul class="example-list">
-                    <li><strong>Tình yêu & Mối quan hệ:</strong> "Năng lượng tình cảm của tôi trong 3 tháng tới có điểm gì cần lưu ý để thu hút mối quan hệ lành mạnh?"</li>
-                    <li><strong>Sự nghiệp & Tài chính:</strong> "Những cơ hội hay thách thức lớn nào đang chờ đón tôi trong công việc sắp tới?"</li>
-                    <li><strong>Định hướng cá nhân:</strong> "Thông điệp vũ trụ muốn nhắn nhủ và khuyên bảo tôi điều gì tại thời điểm hiện tại?"</li>
+                    <li><strong>Tình yêu:</strong> "Tôi nên nhìn nhận mối quan hệ này như thế nào để không lặp lại cảm giác cũ?"</li>
+                    <li><strong>Công việc:</strong> "Tôi cần cân nhắc điều gì trước khi đổi hướng công việc trong 3 tháng tới?"</li>
+                    <li><strong>Định hướng:</strong> "Điều gì đang cản tôi đưa ra quyết định rõ ràng hơn lúc này?"</li>
                 </ul>
-                <p style="margin-top: 1.5rem; font-size: 0.95rem; opacity: 0.85; font-style: italic; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 1rem;">
-                    * Lưu ý: Nếu bạn có những thắc mắc nhanh cần câu trả lời Có hoặc Không dứt khoát, hãy chuyển sang trang trải bài chuyên biệt <a href="/yes-no-reading" style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Hỏi Đáp Yes/No</a> để được hỗ trợ tốt nhất!
-                </p>
+            </div>
+
+            <div class="seo-examples">
+                <h2 class="example-title">Nên chọn trải bài 1 lá, 3 lá hay 5 lá?</h2>
+                <p>Trải bài 1 lá hợp với câu hỏi nhanh hoặc thông điệp trong ngày. Trải bài 3 lá hợp với bối cảnh quá khứ, hiện tại, lời khuyên. Trải bài 5 lá phù hợp khi bạn cần nhìn nhiều lớp hơn về nguyên nhân, trở ngại và hướng hành động.</p>
+                <p>Nếu câu hỏi chỉ cần câu trả lời Có hoặc Không, bạn có thể dùng <a href={yesNoUrl} style="color: var(--gold-color); text-decoration: underline; font-weight: 600;">Tarot Yes/No online</a>.</p>
+            </div>
+
+            <div class="seo-examples">
+                <h2 class="example-title">Xem tarot online khác gì xem offline?</h2>
+                <p>Tarot online tiện hơn khi bạn muốn hỏi nhanh, riêng tư và có thể xem lại nội dung. Tarot offline phù hợp hơn nếu bạn cần tương tác trực tiếp với reader, trao đổi cảm xúc sâu hoặc có một phiên đồng hành dài hơn.</p>
+            </div>
+
+            <div class="seo-examples" id="faq">
+                <h2 class="example-title">Câu hỏi thường gặp</h2>
+                {faqItems.map((item) => (
+                    <details class="seo-faq-item">
+                        <summary>{item.question}</summary>
+                        <p>{item.answer}</p>
+                    </details>
+                ))}
             </div>
         </article>
         <!-- --- HẾT PHẦN BÀI VIẾT SEO --- -->
