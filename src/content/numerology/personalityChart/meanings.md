@@ -1,6 +1,0 @@
----
-category: personalityChart
-number: meanings
----
-
-
