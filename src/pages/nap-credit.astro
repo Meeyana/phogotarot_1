@@ -421,11 +421,11 @@ const user = Astro.locals.user;
     .sale-countdown {
         color: #FFD700;
         font-size: 0.78rem;
-        margin: 10px auto 0 auto;
-        background: rgba(255, 215, 0, 0.08);
-        border: 1px solid rgba(255, 215, 0, 0.26);
-        padding: 7px 12px;
-        border-radius: 12px;
+        margin: 18px auto 0 auto;
+        background: transparent;
+        border: none;
+        padding: 0;
+        border-radius: 0;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -434,16 +434,17 @@ const user = Astro.locals.user;
         font-weight: 700;
         line-height: 1.45;
         text-align: center;
-        box-shadow: 0 2px 12px rgba(255, 215, 0, 0.08);
+        box-shadow: none;
         width: fit-content;
         max-width: 100%;
     }
 
-    .sale-countdown.basic-countdown {
-        color: #2ec4b6;
-        background: rgba(46, 196, 182, 0.08);
-        border-color: rgba(46, 196, 182, 0.24);
-        box-shadow: 0 2px 12px rgba(46, 196, 182, 0.06);
+    .sale-countdown.urgent {
+        padding: 8px 13px;
+        border-radius: 12px;
+        background: rgba(255, 215, 0, 0.1);
+        border: 1px solid rgba(255, 215, 0, 0.32);
+        box-shadow: 0 0 16px rgba(255, 215, 0, 0.12);
     }
 
     @keyframes pulseGlowSub {
@@ -1395,6 +1396,7 @@ const user = Astro.locals.user;
         if (!pkg || !endsAt) {
             el.style.display = 'none';
             el.innerText = '';
+            el.classList.remove('urgent');
             return;
         }
 
@@ -1403,11 +1405,13 @@ const user = Astro.locals.user;
             if (msLeft <= 0) {
                 el.style.display = 'none';
                 el.innerText = '';
+                el.classList.remove('urgent');
                 const timer = saleCountdownTimers.get(el);
                 if (timer) clearInterval(timer);
                 return;
             }
-            el.innerHTML = `<i class="fa-solid fa-clock"></i> Ưu đãi kết thúc sau <strong>${formatCountdownParts(msLeft)}</strong>`;
+            el.classList.toggle('urgent', msLeft <= 86400000);
+            el.innerHTML = `Ưu đãi kết thúc sau <strong>${formatCountdownParts(msLeft)}</strong>`;
             el.style.display = 'flex';
         };
 
