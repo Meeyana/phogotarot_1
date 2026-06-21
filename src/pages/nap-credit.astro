@@ -44,6 +44,7 @@ const user = Astro.locals.user;
 
                     <!-- Subtext tiết kiệm cho gói cơ bản -->
                     <p class="basic-desc-sub" id="basic-price-subtext" style="display: none;"></p>
+                    <p class="sale-countdown basic-countdown" id="basic-sale-countdown" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
@@ -58,6 +59,10 @@ const user = Astro.locals.user;
 
             <!-- Gói 2: Nâng Cao (Premium với Billing Toggle) -->
             <div class="pricing-card premium-tier">
+                <div class="popular-plan-badge">
+                    <i class="fa-solid fa-star"></i>
+                    <span>Được chọn nhiều nhất</span>
+                </div>
                 <div class="card-header">
                     <h3><i class="fa-solid fa-crown"></i> Nâng Cao</h3>
 
@@ -79,6 +84,7 @@ const user = Astro.locals.user;
 
                     <!-- Subtext tiết kiệm -->
                     <p class="premium-desc-sub" id="premium-price-subtext" style="display: none;"></p>
+                    <p class="sale-countdown" id="premium-sale-countdown" style="display: none;"></p>
                 </div>
                 <div class="card-features">
                     <ul>
@@ -290,6 +296,32 @@ const user = Astro.locals.user;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 45px rgba(255, 215, 0, 0.25);
     }
 
+    .popular-plan-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        max-width: calc(100% - 32px);
+        padding: 7px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 215, 0, 0.55);
+        background: rgba(20, 16, 30, 0.92);
+        color: #FFD700;
+        font-size: 0.72rem;
+        font-weight: 800;
+        line-height: 1.2;
+        text-transform: uppercase;
+        box-shadow: 0 0 18px rgba(255, 215, 0, 0.22);
+    }
+
+    .popular-plan-badge i {
+        font-size: 0.7rem;
+    }
+
     /* Billing Toggle Switch CSS */
     .billing-toggle-container {
         display: inline-flex;
@@ -390,6 +422,34 @@ const user = Astro.locals.user;
         animation: pulseGlowSub 2.5s infinite ease-in-out;
         box-shadow: 0 2px 10px rgba(46, 196, 182, 0.05);
         width: fit-content;
+    }
+
+    .sale-countdown {
+        color: #FFD700;
+        font-size: 0.78rem;
+        margin: 10px auto 0 auto;
+        background: rgba(255, 215, 0, 0.08);
+        border: 1px solid rgba(255, 215, 0, 0.26);
+        padding: 7px 12px;
+        border-radius: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        font-weight: 700;
+        line-height: 1.45;
+        text-align: center;
+        box-shadow: 0 2px 12px rgba(255, 215, 0, 0.08);
+        width: fit-content;
+        max-width: 100%;
+    }
+
+    .sale-countdown.basic-countdown {
+        color: #2ec4b6;
+        background: rgba(46, 196, 182, 0.08);
+        border-color: rgba(46, 196, 182, 0.24);
+        box-shadow: 0 2px 12px rgba(46, 196, 182, 0.06);
     }
 
     @keyframes pulseGlowSub {
@@ -1289,6 +1349,7 @@ const user = Astro.locals.user;
     }
 
     let pricingPackages = {};
+    const saleCountdownTimers = new WeakMap();
     const PACKAGE_ID_ALIASES = {
         'Gói 3 Credit': 'Khởi Đầu (3 lượt)',
         'Gói 10 Credit': 'Đồng Hành (10 lượt)',
@@ -1310,6 +1371,54 @@ const user = Astro.locals.user;
         const salePrice = Number(pkg?.price || 0);
         if (!listPrice || !salePrice || listPrice <= salePrice) return 0;
         return Math.round(((listPrice - salePrice) / listPrice) * 100);
+    }
+
+    function saleEndMillis(pkg) {
+        if (!pkg?.sale_active || !pkg?.sale_ends_at) return null;
+        const raw = String(pkg.sale_ends_at).trim();
+        const normalized = raw.includes('T') ? raw : raw.replace(' ', 'T');
+        const ms = Date.parse(normalized);
+        return Number.isNaN(ms) ? null : ms;
+    }
+
+    function formatCountdownParts(msLeft) {
+        const totalSeconds = Math.max(0, Math.floor(msLeft / 1000));
+        const days = Math.floor(totalSeconds / 86400);
+        const hours = Math.floor((totalSeconds % 86400) / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        if (days > 0) return `${days} ngày ${hours} giờ ${minutes} phút`;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function updateSaleCountdown(el, packageId) {
+        if (!el) return;
+        const existingTimer = saleCountdownTimers.get(el);
+        if (existingTimer) clearInterval(existingTimer);
+
+        const pkg = packageById(packageId);
+        const endsAt = saleEndMillis(pkg);
+        if (!pkg || !endsAt) {
+            el.style.display = 'none';
+            el.innerText = '';
+            return;
+        }
+
+        const render = () => {
+            const msLeft = endsAt - Date.now();
+            if (msLeft <= 0) {
+                el.style.display = 'none';
+                el.innerText = '';
+                const timer = saleCountdownTimers.get(el);
+                if (timer) clearInterval(timer);
+                return;
+            }
+            el.innerHTML = `<i class="fa-solid fa-clock"></i> Ưu đãi kết thúc sau <strong>${formatCountdownParts(msLeft)}</strong>`;
+            el.style.display = 'flex';
+        };
+
+        render();
+        saleCountdownTimers.set(el, setInterval(render, 1000));
     }
 
     function updateSavingsText(el, packageId, options = {}) {
@@ -1349,6 +1458,9 @@ const user = Astro.locals.user;
                 monthlyEquivalent: options.monthlyEquivalent,
             });
         }
+        if (options.countdownEl) {
+            updateSaleCountdown(options.countdownEl, packageId);
+        }
     }
 
     async function loadPricingPackages() {
@@ -1365,6 +1477,7 @@ const user = Astro.locals.user;
                 document.getElementById('basic-original-display'),
                 {
                     savingsEl: document.getElementById('basic-price-subtext'),
+                    countdownEl: document.getElementById('basic-sale-countdown'),
                     iconColor: '#2ec4b6',
                 }
             );
@@ -1377,6 +1490,7 @@ const user = Astro.locals.user;
                 {
                     originalSuffix: activeBilling === 'yearly' ? '/năm' : '/tháng',
                     savingsEl: document.getElementById('premium-price-subtext'),
+                    countdownEl: document.getElementById('premium-sale-countdown'),
                     iconColor: '#ff6b6b',
                     monthlyEquivalent: activeBilling === 'yearly',
                 }
@@ -1409,6 +1523,7 @@ const user = Astro.locals.user;
         const toggleBtns = document.querySelectorAll('.billing-toggle-btn');
         const premiumPriceDisplay = document.getElementById('premium-price-display');
         const premiumPriceSubtext = document.getElementById('premium-price-subtext');
+        const premiumSaleCountdown = document.getElementById('premium-sale-countdown');
         const premiumBuyBtn = document.getElementById('premium-buy-btn');
 
         if (toggleBtns.length > 0 && premiumBuyBtn) {
@@ -1441,6 +1556,7 @@ const user = Astro.locals.user;
                         applyPackageToButton(premiumBuyBtn, 'Gói Năm', amountDisplay, originalDisplay, {
                             originalSuffix: '/năm',
                             savingsEl: premiumPriceSubtext,
+                            countdownEl: premiumSaleCountdown,
                             iconColor: '#ff6b6b',
                             monthlyEquivalent: true,
                         });
@@ -1451,6 +1567,7 @@ const user = Astro.locals.user;
                         applyPackageToButton(premiumBuyBtn, 'Gói Tháng', amountDisplay, originalDisplay, {
                             originalSuffix: '/tháng',
                             savingsEl: premiumPriceSubtext,
+                            countdownEl: premiumSaleCountdown,
                             iconColor: '#ff6b6b',
                         });
                     }
@@ -1461,6 +1578,7 @@ const user = Astro.locals.user;
         // ===== Basic Toggle logic =====
         const basicToggleBtns = document.querySelectorAll('.basic-toggle-btn');
         const basicPriceSubtext = document.getElementById('basic-price-subtext');
+        const basicSaleCountdown = document.getElementById('basic-sale-countdown');
         const basicBuyBtn = document.getElementById('basic-buy-btn');
 
         if (basicToggleBtns.length > 0 && basicBuyBtn) {
@@ -1489,6 +1607,7 @@ const user = Astro.locals.user;
                         basicBuyBtn.innerText = 'Chọn Gói 10 Credit';
                         applyPackageToButton(basicBuyBtn, 'Gói 10 Credit', basicAmountDisplay, basicOriginalDisplay, {
                             savingsEl: basicPriceSubtext,
+                            countdownEl: basicSaleCountdown,
                             iconColor: '#2ec4b6',
                         });
                     } else {
@@ -1496,6 +1615,7 @@ const user = Astro.locals.user;
                         basicBuyBtn.innerText = 'Chọn Gói 3 Credit';
                         applyPackageToButton(basicBuyBtn, 'Gói 3 Credit', basicAmountDisplay, basicOriginalDisplay, {
                             savingsEl: basicPriceSubtext,
+                            countdownEl: basicSaleCountdown,
                             iconColor: '#2ec4b6',
                         });
                     }
