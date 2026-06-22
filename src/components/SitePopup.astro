@@ -4,6 +4,7 @@
     <button class="site-popup__close" type="button" aria-label="Dong popup" data-site-popup-close>&times;</button>
     <img class="site-popup__image" data-site-popup-image alt="" hidden />
     <div class="site-popup__content">
+      <img class="site-popup__logo" src="/images/logo.png" alt="Pho Go Tarot" loading="lazy" decoding="async" />
       <h2 id="site-popup-title" class="site-popup__title" data-site-popup-title></h2>
       <p class="site-popup__body" data-site-popup-body></p>
       <a class="site-popup__cta" data-site-popup-cta hidden></a>
@@ -61,6 +62,10 @@
 
   .site-popup__dialog[data-template="centered-card"] .site-popup__content {
     text-align: center;
+  }
+
+  .site-popup__dialog[data-template="centered-card"] .site-popup__logo {
+    display: block;
   }
 
   .site-popup__dialog[data-template="centered-card"] .site-popup__cta {
@@ -132,6 +137,14 @@
     display: grid;
     gap: 12px;
     padding: 24px;
+  }
+
+  .site-popup__logo {
+    display: none;
+    justify-self: center;
+    width: min(170px, 72%);
+    height: auto;
+    margin: 0 0 2px;
   }
 
   .site-popup__dialog[data-template="split-image"] .site-popup__content {
