@@ -7,6 +7,10 @@ type PageRules = {
   paths?: string[];
 };
 
+type AudienceRules = {
+  mode?: 'all' | 'logged_in' | 'guest';
+};
+
 type PopupRow = {
   id: string;
   name: string;
@@ -57,6 +61,14 @@ async function ensureSitePopupTable(db: any) {
       throw error;
     }
   }
+
+  try {
+    await db.prepare("ALTER TABLE site_popups ADD COLUMN audience_rules TEXT DEFAULT '{\"mode\":\"all\"}'").run();
+  } catch (error: any) {
+    if (!String(error?.message || '').toLowerCase().includes('duplicate column')) {
+      throw error;
+    }
+  }
 }
 
 function parseRules(raw: string | null): PageRules {
@@ -69,6 +81,16 @@ function parseRules(raw: string | null): PageRules {
     };
   } catch {
     return { mode: 'all', paths: [] };
+  }
+}
+
+function parseAudienceRules(raw: string | null): AudienceRules {
+  if (!raw) return { mode: 'all' };
+  try {
+    const parsed = JSON.parse(raw);
+    return { mode: parsed?.mode || 'all' };
+  } catch {
+    return { mode: 'all' };
   }
 }
 
@@ -99,6 +121,13 @@ function matchesPageRules(path: string, rules: PageRules) {
   return true;
 }
 
+function matchesAudienceRules(isLoggedIn: boolean, rules: AudienceRules) {
+  const mode = rules.mode || 'all';
+  if (mode === 'logged_in') return isLoggedIn;
+  if (mode === 'guest') return !isLoggedIn;
+  return true;
+}
+
 function toMillis(value: string | null) {
   if (!value) return null;
   const ms = Date.parse(value);
@@ -123,6 +152,7 @@ export const GET: APIRoute = async (context) => {
 
     const requestUrl = new URL(context.request.url);
     const currentPath = normalizePath(requestUrl.searchParams.get('path') || '/');
+    const isLoggedIn = !!context.locals.user;
     const { results } = await db.prepare(`
       SELECT *
       FROM site_popups
@@ -132,14 +162,19 @@ export const GET: APIRoute = async (context) => {
     `).all<PopupRow>();
 
     const popup = (results || []).find((row) => {
-      return isInWindow(row) && matchesPageRules(currentPath, parseRules(row.page_rules));
+      return (
+        isInWindow(row) &&
+        matchesPageRules(currentPath, parseRules(row.page_rules)) &&
+        matchesAudienceRules(isLoggedIn, parseAudienceRules(row.audience_rules))
+      );
     });
 
     if (!popup) {
       return new Response(JSON.stringify({ success: true, data: null }), {
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'public, max-age=60',
+          'Cache-Control': 'private, no-store',
+          'Vary': 'Cookie',
         },
       });
     }
@@ -161,7 +196,8 @@ export const GET: APIRoute = async (context) => {
     }), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=60',
+        'Cache-Control': 'private, no-store',
+        'Vary': 'Cookie',
       },
     });
   } catch (error: any) {
