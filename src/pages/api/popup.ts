@@ -9,7 +9,10 @@ type PageRules = {
 
 type AudienceRules = {
   mode?: 'all' | 'logged_in' | 'guest';
+  tier?: 'all' | 'no_purchase' | 'basic' | 'premium';
 };
+
+type UserPackageTier = 'no_purchase' | 'basic' | 'premium' | null;
 
 type PopupRow = {
   id: string;
@@ -88,7 +91,10 @@ function parseAudienceRules(raw: string | null): AudienceRules {
   if (!raw) return { mode: 'all' };
   try {
     const parsed = JSON.parse(raw);
-    return { mode: parsed?.mode || 'all' };
+    return {
+      mode: parsed?.mode || 'all',
+      tier: parsed?.tier || 'all',
+    };
   } catch {
     return { mode: 'all' };
   }
@@ -121,11 +127,40 @@ function matchesPageRules(path: string, rules: PageRules) {
   return true;
 }
 
-function matchesAudienceRules(isLoggedIn: boolean, rules: AudienceRules) {
+function matchesAudienceRules(isLoggedIn: boolean, packageTier: UserPackageTier, rules: AudienceRules) {
   const mode = rules.mode || 'all';
-  if (mode === 'logged_in') return isLoggedIn;
-  if (mode === 'guest') return !isLoggedIn;
+  if (mode === 'logged_in' && !isLoggedIn) return false;
+  if (mode === 'guest' && isLoggedIn) return false;
+  const tier = rules.tier || 'all';
+  if (tier !== 'all') return isLoggedIn && packageTier === tier;
   return true;
+}
+
+function isPremiumWallet(wallet: any) {
+  if (!wallet || wallet.subscription_tier !== 'premium') return false;
+  if (!wallet.subscription_expires_at) return true;
+  const expiresAt = Date.parse(String(wallet.subscription_expires_at));
+  return Number.isNaN(expiresAt) || expiresAt > Date.now();
+}
+
+async function getUserPackageTier(db: any, user: any): Promise<UserPackageTier> {
+  if (!user?.id) return null;
+
+  const wallet = await db.prepare(`
+    SELECT subscription_tier, subscription_expires_at
+    FROM credit_wallets
+    WHERE user_id = ?
+  `).bind(user.id).first();
+
+  if (isPremiumWallet(wallet)) return 'premium';
+
+  const paid = await db.prepare(`
+    SELECT COUNT(*) AS total
+    FROM payment_requests
+    WHERE user_id = ? AND status = 'paid'
+  `).bind(user.id).first();
+
+  return Number(paid?.total || 0) > 0 ? 'basic' : 'no_purchase';
 }
 
 function toMillis(value: string | null) {
@@ -153,6 +188,7 @@ export const GET: APIRoute = async (context) => {
     const requestUrl = new URL(context.request.url);
     const currentPath = normalizePath(requestUrl.searchParams.get('path') || '/');
     const isLoggedIn = !!context.locals.user;
+    const packageTier = await getUserPackageTier(db, context.locals.user);
     const { results } = await db.prepare(`
       SELECT *
       FROM site_popups
@@ -165,7 +201,7 @@ export const GET: APIRoute = async (context) => {
       return (
         isInWindow(row) &&
         matchesPageRules(currentPath, parseRules(row.page_rules)) &&
-        matchesAudienceRules(isLoggedIn, parseAudienceRules(row.audience_rules))
+        matchesAudienceRules(isLoggedIn, packageTier, parseAudienceRules(row.audience_rules))
       );
     });
 
