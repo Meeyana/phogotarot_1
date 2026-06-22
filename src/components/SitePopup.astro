@@ -23,6 +23,18 @@
     display: grid;
     place-items: center;
     padding: 18px;
+    width: 100vw;
+    min-height: 100vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+  }
+
+  @supports (height: 100dvh) {
+    .site-popup {
+      min-height: 100dvh;
+      height: 100dvh;
+    }
   }
 
   .site-popup__backdrop {
@@ -36,7 +48,7 @@
     position: relative;
     width: min(94vw, 460px);
     max-height: min(86vh, 720px);
-    overflow: hidden;
+    overflow: auto;
     border: 1px solid rgba(242, 201, 76, 0.24);
     border-radius: 8px;
     background: #15111f;
@@ -182,18 +194,19 @@
 
   @media (max-width: 520px) {
     .site-popup {
-      align-items: end;
-      padding: 12px;
+      place-items: center;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom));
     }
 
     .site-popup__dialog {
-      width: 100%;
-      max-height: 84vh;
+      width: min(100%, 430px);
+      max-height: calc(100vh - 28px);
+      margin: auto;
     }
 
     .site-popup__dialog[data-template="split-image"] {
       display: block;
-      width: 100%;
+      width: min(100%, 430px);
     }
 
     .site-popup__image {
@@ -217,6 +230,14 @@
     .site-popup__dialog[data-template="split-image"] .site-popup__title,
     .site-popup__dialog[data-template="minimal-card"] .site-popup__title {
       font-size: 1.7rem;
+    }
+  }
+
+  @supports (height: 100dvh) {
+    @media (max-width: 520px) {
+      .site-popup__dialog {
+        max-height: calc(100dvh - 28px);
+      }
     }
   }
 </style>
