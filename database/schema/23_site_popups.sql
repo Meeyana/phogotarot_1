@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS site_popups (
   title TEXT,
   body TEXT,
   image_url TEXT,
+  template TEXT DEFAULT 'centered-card',
   cta_label TEXT,
   cta_url TEXT,
   display_delay_seconds INTEGER DEFAULT 5,

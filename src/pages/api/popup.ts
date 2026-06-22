@@ -14,6 +14,7 @@ type PopupRow = {
   title: string | null;
   body: string | null;
   image_url: string | null;
+  template: string | null;
   cta_label: string | null;
   cta_url: string | null;
   display_delay_seconds: number | null;
@@ -34,6 +35,7 @@ async function ensureSitePopupTable(db: any) {
       title TEXT,
       body TEXT,
       image_url TEXT,
+      template TEXT DEFAULT 'centered-card',
       cta_label TEXT,
       cta_url TEXT,
       display_delay_seconds INTEGER DEFAULT 5,
@@ -47,6 +49,14 @@ async function ensureSitePopupTable(db: any) {
       updated_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `).run();
+
+  try {
+    await db.prepare("ALTER TABLE site_popups ADD COLUMN template TEXT DEFAULT 'centered-card'").run();
+  } catch (error: any) {
+    if (!String(error?.message || '').toLowerCase().includes('duplicate column')) {
+      throw error;
+    }
+  }
 }
 
 function parseRules(raw: string | null): PageRules {
@@ -142,6 +152,7 @@ export const GET: APIRoute = async (context) => {
         title: popup.title || '',
         body: popup.body || '',
         imageUrl: popup.image_url || '',
+        template: popup.template || 'centered-card',
         ctaLabel: popup.cta_label || '',
         ctaUrl: popup.cta_url || '',
         delaySeconds: Number(popup.display_delay_seconds ?? 5),

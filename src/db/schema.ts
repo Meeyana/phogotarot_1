@@ -135,6 +135,7 @@ export const sitePopups = sqliteTable('site_popups', {
   title: text('title'),
   body: text('body'),
   imageUrl: text('image_url'),
+  template: text('template').default('centered-card'),
   ctaLabel: text('cta_label'),
   ctaUrl: text('cta_url'),
   displayDelaySeconds: integer('display_delay_seconds').default(5),
