@@ -59,6 +59,15 @@
     animation: site-popup-in 180ms ease-out forwards;
   }
 
+  .site-popup__dialog[data-template="centered-card"] .site-popup__content {
+    text-align: center;
+  }
+
+  .site-popup__dialog[data-template="centered-card"] .site-popup__cta {
+    justify-self: center;
+    min-width: 190px;
+  }
+
   .site-popup__dialog[data-template="split-image"] {
     width: min(94vw, 760px);
     display: grid;
@@ -68,11 +77,14 @@
     border-color: rgba(242, 201, 76, 0.34);
   }
 
-  .site-popup__dialog[data-template="minimal-card"] {
-    width: min(94vw, 390px);
-    background: radial-gradient(circle at 20% 0%, rgba(157, 114, 255, 0.18), transparent 34%), #15111f;
-    color: #fff;
-    border-color: rgba(242, 201, 76, 0.28);
+  .site-popup__dialog[data-template="image-only"] {
+    width: min(94vw, 760px);
+    max-height: min(92vh, 760px);
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    overflow: visible;
   }
 
   .site-popup__close {
@@ -105,6 +117,13 @@
     min-height: 360px;
   }
 
+  .site-popup__dialog[data-template="image-only"] .site-popup__image {
+    width: 100%;
+    height: auto;
+    max-height: min(92vh, 760px);
+    object-fit: contain;
+  }
+
   .site-popup__image[hidden] {
     display: none;
   }
@@ -121,9 +140,8 @@
     text-align: center;
   }
 
-  .site-popup__dialog[data-template="minimal-card"] .site-popup__content {
-    padding: 30px;
-    text-align: center;
+  .site-popup__dialog[data-template="image-only"] .site-popup__content {
+    display: none;
   }
 
   .site-popup__title {
@@ -135,16 +153,11 @@
     color: #f2c94c;
   }
 
-  .site-popup__dialog[data-template="split-image"] .site-popup__title,
-  .site-popup__dialog[data-template="minimal-card"] .site-popup__title {
+  .site-popup__dialog[data-template="split-image"] .site-popup__title {
     color: #f2c94c;
     font-size: 2.45rem;
     font-style: normal;
     text-shadow: 0 0 16px rgba(242, 201, 76, 0.32);
-  }
-
-  .site-popup__dialog[data-template="minimal-card"] .site-popup__title {
-    font-size: 2rem;
   }
 
   .site-popup__body {
@@ -154,8 +167,7 @@
     line-height: 1.6;
   }
 
-  .site-popup__dialog[data-template="split-image"] .site-popup__body,
-  .site-popup__dialog[data-template="minimal-card"] .site-popup__body {
+  .site-popup__dialog[data-template="split-image"] .site-popup__body {
     color: rgba(255, 255, 255, 0.82);
   }
 
@@ -172,8 +184,7 @@
     text-decoration: none;
   }
 
-  .site-popup__dialog[data-template="split-image"] .site-popup__cta,
-  .site-popup__dialog[data-template="minimal-card"] .site-popup__cta {
+  .site-popup__dialog[data-template="split-image"] .site-popup__cta {
     justify-self: center;
     min-width: 190px;
     background: #f2c94c;
@@ -209,6 +220,11 @@
       width: min(100%, 430px);
     }
 
+    .site-popup__dialog[data-template="image-only"] {
+      width: calc(100vw - 28px);
+      max-height: calc(100vh - 28px);
+    }
+
     .site-popup__image {
       max-height: 190px;
     }
@@ -219,6 +235,10 @@
       max-height: 220px;
     }
 
+    .site-popup__dialog[data-template="image-only"] .site-popup__image {
+      max-height: calc(100vh - 28px);
+    }
+
     .site-popup__content {
       padding: 20px;
     }
@@ -227,8 +247,7 @@
       font-size: 1.42rem;
     }
 
-    .site-popup__dialog[data-template="split-image"] .site-popup__title,
-    .site-popup__dialog[data-template="minimal-card"] .site-popup__title {
+    .site-popup__dialog[data-template="split-image"] .site-popup__title {
       font-size: 1.7rem;
     }
   }
@@ -236,6 +255,11 @@
   @supports (height: 100dvh) {
     @media (max-width: 520px) {
       .site-popup__dialog {
+        max-height: calc(100dvh - 28px);
+      }
+
+      .site-popup__dialog[data-template="image-only"],
+      .site-popup__dialog[data-template="image-only"] .site-popup__image {
         max-height: calc(100dvh - 28px);
       }
     }
@@ -305,9 +329,11 @@
       const image = root.querySelector('[data-site-popup-image]');
       const cta = root.querySelector('[data-site-popup-cta]');
       const dialog = root.querySelector('.site-popup__dialog');
-      const template = popup.template || 'centered-card';
+      const template = popup.template === 'minimal-card' ? 'centered-card' : (popup.template || 'centered-card');
 
       if (dialog) dialog.setAttribute('data-template', template);
+
+      if (template === 'image-only' && !popup.imageUrl) return;
 
       title.textContent = popup.title || popup.name || '';
       body.textContent = popup.body || '';
@@ -321,7 +347,7 @@
         image.hidden = true;
       }
 
-      if (popup.ctaLabel && popup.ctaUrl) {
+      if (template !== 'image-only' && popup.ctaLabel && popup.ctaUrl) {
         cta.textContent = popup.ctaLabel;
         cta.href = popup.ctaUrl;
         cta.hidden = false;
