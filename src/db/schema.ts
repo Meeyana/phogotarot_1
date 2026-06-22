@@ -127,3 +127,23 @@ export const packages = sqliteTable('packages', {
   isActive: integer('is_active', { mode: 'boolean' }).default(true),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const sitePopups = sqliteTable('site_popups', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  enabled: integer('enabled', { mode: 'boolean' }).default(false),
+  title: text('title'),
+  body: text('body'),
+  imageUrl: text('image_url'),
+  ctaLabel: text('cta_label'),
+  ctaUrl: text('cta_url'),
+  displayDelaySeconds: integer('display_delay_seconds').default(5),
+  displayFrequency: text('display_frequency').default('once_per_day'),
+  pageRules: text('page_rules').default('{"mode":"all","paths":[]}'),
+  audienceRules: text('audience_rules').default('{"mode":"all"}'),
+  startsAt: text('starts_at'),
+  endsAt: text('ends_at'),
+  priority: integer('priority').default(0),
+  createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
+});

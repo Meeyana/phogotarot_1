@@ -26,6 +26,7 @@ export interface Props {
 }
 
 import OracleChat from '../components/OracleChat.astro';
+import SitePopup from '../components/SitePopup.astro';
 
 const { 
   title, 
@@ -327,6 +328,7 @@ const homeSchema = graphSchema([]);
     </div>
     
     {/* {showChatbot && Astro.locals.user && <OracleChat />} */}
+    <SitePopup />
 
     <script src="/common.js" defer></script>
     

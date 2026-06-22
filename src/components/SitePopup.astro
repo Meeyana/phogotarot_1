@@ -1,0 +1,268 @@
+<div class="site-popup" data-site-popup hidden>
+  <div class="site-popup__backdrop" data-site-popup-close></div>
+  <section class="site-popup__dialog" role="dialog" aria-modal="true" aria-labelledby="site-popup-title">
+    <button class="site-popup__close" type="button" aria-label="Dong popup" data-site-popup-close>&times;</button>
+    <img class="site-popup__image" data-site-popup-image alt="" hidden />
+    <div class="site-popup__content">
+      <h2 id="site-popup-title" class="site-popup__title" data-site-popup-title></h2>
+      <p class="site-popup__body" data-site-popup-body></p>
+      <a class="site-popup__cta" data-site-popup-cta hidden></a>
+    </div>
+  </section>
+</div>
+
+<style is:global>
+  .site-popup[hidden] {
+    display: none;
+  }
+
+  .site-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: grid;
+    place-items: center;
+    padding: 18px;
+  }
+
+  .site-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 7, 12, 0.72);
+    backdrop-filter: blur(10px);
+  }
+
+  .site-popup__dialog {
+    position: relative;
+    width: min(94vw, 460px);
+    max-height: min(86vh, 720px);
+    overflow: hidden;
+    border: 1px solid rgba(242, 201, 76, 0.24);
+    border-radius: 8px;
+    background: #15111f;
+    color: #fff;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.42);
+    transform: translateY(10px);
+    opacity: 0;
+    animation: site-popup-in 180ms ease-out forwards;
+  }
+
+  .site-popup__close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    background: rgba(10, 8, 16, 0.72);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .site-popup__image {
+    display: block;
+    width: 100%;
+    max-height: 260px;
+    object-fit: cover;
+    pointer-events: auto;
+  }
+
+  .site-popup__image[hidden] {
+    display: none;
+  }
+
+  .site-popup__content {
+    display: grid;
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .site-popup__title {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    line-height: 1.15;
+    letter-spacing: 0;
+    color: #f2c94c;
+  }
+
+  .site-popup__body {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .site-popup__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: #f2c94c;
+    color: #130f1d;
+    font-weight: 800;
+    text-decoration: none;
+  }
+
+  .site-popup__cta[hidden] {
+    display: none;
+  }
+
+  @keyframes site-popup-in {
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .site-popup {
+      align-items: end;
+      padding: 12px;
+    }
+
+    .site-popup__dialog {
+      width: 100%;
+      max-height: 84vh;
+    }
+
+    .site-popup__image {
+      max-height: 190px;
+    }
+
+    .site-popup__content {
+      padding: 20px;
+    }
+
+    .site-popup__title {
+      font-size: 1.42rem;
+    }
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    const blockedPrefixes = ['/admin', '/api', '/auth', '/history'];
+    const blockedExact = ['/login', '/register', '/reset-password', '/forgot-password', '/profile'];
+    const path = window.location.pathname || '/';
+    if (blockedExact.includes(path) || blockedPrefixes.some(prefix => path === prefix || path.startsWith(prefix + '/'))) {
+      return;
+    }
+
+    const root = document.querySelector('[data-site-popup]');
+    if (!root) return;
+
+    const storageKey = popup => 'phogotarot:popup:' + popup.id;
+    const now = () => Date.now();
+    const dayMs = 24 * 60 * 60 * 1000;
+
+    const shouldShow = popup => {
+      if (!popup || !popup.id) return false;
+      if (popup.frequency === 'always') return true;
+      if (popup.frequency === 'once_per_session') {
+        return sessionStorage.getItem(storageKey(popup)) !== '1';
+      }
+
+      const raw = localStorage.getItem(storageKey(popup));
+      if (!raw) return true;
+      const seenAt = Number(raw);
+      if (!Number.isFinite(seenAt)) return true;
+      if (popup.frequency === 'once') return false;
+      if (popup.frequency === 'once_per_7_days') return now() - seenAt > 7 * dayMs;
+      return now() - seenAt > dayMs;
+    };
+
+    const markSeen = popup => {
+      if (!popup || !popup.id || popup.frequency === 'always') return;
+      if (popup.frequency === 'once_per_session') {
+        sessionStorage.setItem(storageKey(popup), '1');
+      } else {
+        localStorage.setItem(storageKey(popup), String(now()));
+      }
+    };
+
+    const track = (event, popup) => {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event,
+        popup_id: popup.id,
+        popup_name: popup.name || popup.id,
+      });
+    };
+
+    const close = popup => {
+      root.hidden = true;
+      document.documentElement.style.overflow = '';
+      markSeen(popup);
+      track('popup_close', popup);
+    };
+
+    const show = popup => {
+      const title = root.querySelector('[data-site-popup-title]');
+      const body = root.querySelector('[data-site-popup-body]');
+      const image = root.querySelector('[data-site-popup-image]');
+      const cta = root.querySelector('[data-site-popup-cta]');
+
+      title.textContent = popup.title || popup.name || '';
+      body.textContent = popup.body || '';
+
+      if (popup.imageUrl) {
+        image.src = popup.imageUrl;
+        image.alt = popup.title || popup.name || '';
+        image.hidden = false;
+      } else {
+        image.removeAttribute('src');
+        image.hidden = true;
+      }
+
+      if (popup.ctaLabel && popup.ctaUrl) {
+        cta.textContent = popup.ctaLabel;
+        cta.href = popup.ctaUrl;
+        cta.hidden = false;
+        cta.onclick = () => {
+          markSeen(popup);
+          track('popup_click', popup);
+        };
+      } else {
+        cta.hidden = true;
+        cta.removeAttribute('href');
+      }
+
+      root.querySelectorAll('[data-site-popup-close]').forEach(button => {
+        button.onclick = () => close(popup);
+      });
+
+      root.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      track('popup_view', popup);
+    };
+
+    const load = async () => {
+      try {
+        const response = await fetch('/api/popup?path=' + encodeURIComponent(path), {
+          headers: { Accept: 'application/json' },
+        });
+        if (!response.ok) return;
+        const json = await response.json();
+        const popup = json && json.success ? json.data : null;
+        if (!shouldShow(popup)) return;
+        const delay = Math.max(0, Math.min(300, Number(popup.delaySeconds || 0))) * 1000;
+        window.setTimeout(() => show(popup), delay);
+      } catch (error) {
+        console.warn('Popup load failed', error);
+      }
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', load, { once: true });
+    } else {
+      load();
+    }
+  })();
+</script>
