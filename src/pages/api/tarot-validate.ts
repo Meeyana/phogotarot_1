@@ -341,15 +341,17 @@ export const POST: APIRoute = async (context) => {
                         
                         if (!isPremium) {
                             // Thử trừ lượt miễn phí hàng ngày trước, kèm điều kiện chat_count >= 10 (chống Race Condition)
+                            let creditSource = 'free';
                             let updateResult = await db.prepare('UPDATE credit_wallets SET daily_credits = daily_credits - 1, chat_count = 0 WHERE user_id = ? AND daily_credits > 0 AND chat_count >= 10').bind(safeUserId).run();
                             
                             // Nếu hết daily_credits, thử trừ vào balance
                             if (updateResult.meta && updateResult.meta.changes === 0) {
                                 updateResult = await db.prepare('UPDATE credit_wallets SET balance = balance - 1, chat_count = 0 WHERE user_id = ? AND balance > 0 AND chat_count >= 10').bind(safeUserId).run();
+                                creditSource = 'paid';
                             }
                             
                             if (updateResult.meta && updateResult.meta.changes > 0) {
-                                await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)')`).bind(crypto.randomUUID(), safeUserId).run();
+                                await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description, credit_source, feature, reference_id, question) VALUES (?, ?, -1, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn)', ?, 'tarot_chat_10', ?, ?)`).bind(crypto.randomUUID(), safeUserId, creditSource, safeReadingId, question || '').run();
                                 data.creditDeducted = true;
                             } else {
                                 // Nếu changes = 0 thì luồng khác đã update mất rồi
@@ -358,6 +360,7 @@ export const POST: APIRoute = async (context) => {
                         } else {
                             // Nếu là Premium, chỉ reset biến đếm (Atomic)
                             await db.prepare('UPDATE credit_wallets SET chat_count = 0 WHERE user_id = ? AND chat_count >= 10').bind(safeUserId).run();
+                            await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description, credit_source, feature, reference_id, question) VALUES (?, ?, 0, 'usage_tarot', 'Chat với Oracle (Gói 10 tin nhắn - Premium)', 'paid', 'tarot_chat_10', ?, ?)`).bind(crypto.randomUUID(), safeUserId, safeReadingId, question || '').run();
                             data.creditDeducted = false;
                         }
                     }

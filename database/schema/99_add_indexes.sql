@@ -11,6 +11,7 @@ CREATE INDEX IF NOT EXISTS idx_conversations_user_id ON conversations(user_id);
 
 -- 4. Index cho bảng Credit Transactions (Tăng tốc độ load trang lịch sử Nạp/Tiêu credit)
 CREATE INDEX IF NOT EXISTS idx_credit_transactions_wallet_id ON credit_transactions(wallet_id);
+CREATE INDEX IF NOT EXISTS idx_credit_transactions_paid_questions ON credit_transactions(credit_source, feature, created_at);
 
 -- 5. Index cho bảng OTP Codes (Tăng tốc độ kiểm tra OTP khi đăng ký)
 CREATE INDEX IF NOT EXISTS idx_otp_codes_email ON otp_codes(email);

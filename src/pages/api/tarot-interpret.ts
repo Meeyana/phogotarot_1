@@ -8,6 +8,8 @@ export const POST: APIRoute = async (context) => {
   console.log('🔵 tarot-interpret API route called');
   let creditDeducted = false;
   let isDailyCreditDeducted = false;
+  let refundQuestion = '';
+  let premiumUsageTransactionIdForCleanup = '';
   let safeUserIdForRefund = null;
   let safeReadingIdForRefund = null;
   let dbForRefund = null;
@@ -24,6 +26,7 @@ export const POST: APIRoute = async (context) => {
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_WEBHOOK_TAROT || 'https://n8n.n8ntuanphangz.xyz/webhook/ce565258-c0b7-4c48-b4b1-840994d93bd5';
+    refundQuestion = String(body.question || '');
     
     if (!webhookUrl && config.USE_LOCAL_AI) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
@@ -130,7 +133,11 @@ export const POST: APIRoute = async (context) => {
                         }), { status: 402 });
                     }
                     
-                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá')`).bind(crypto.randomUUID(), queryUserId).run();
+                    const creditSource = isDailyCreditDeducted ? 'free' : 'paid';
+                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description, credit_source, feature, reference_id, question) VALUES (?, ?, -1, 'usage_tarot', 'Luận giải Tarot 3 lá', ?, 'tarot_reading', ?, ?)`).bind(crypto.randomUUID(), queryUserId, creditSource, safeReadingId, refundQuestion).run();
+                } else {
+                    premiumUsageTransactionIdForCleanup = crypto.randomUUID();
+                    await db.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description, credit_source, feature, reference_id, question) VALUES (?, ?, 0, 'usage_tarot', 'Luận giải Tarot 3 lá (Premium)', 'paid', 'tarot_reading', ?, ?)`).bind(premiumUsageTransactionIdForCleanup, queryUserId, safeReadingId, refundQuestion).run();
                 }
 
                 const row = await db.prepare('SELECT * FROM user_profiles WHERE user_id = ?').bind(queryUserId).first();
@@ -367,6 +374,14 @@ export const POST: APIRoute = async (context) => {
     });
   } catch (error: any) {
     // Hoàn tiền nếu đã trừ nhưng AI gặp lỗi
+    if (!creditDeducted && premiumUsageTransactionIdForCleanup && dbForRefund) {
+        try {
+            await dbForRefund.prepare('DELETE FROM credit_transactions WHERE id = ?').bind(premiumUsageTransactionIdForCleanup).run();
+        } catch (cleanupError) {
+            console.error("Lỗi xóa log premium usage:", cleanupError);
+        }
+    }
+
     if (creditDeducted && safeUserIdForRefund && dbForRefund) {
         try {
             if (isDailyCreditDeducted) {
@@ -374,7 +389,8 @@ export const POST: APIRoute = async (context) => {
             } else {
                 await dbForRefund.prepare('UPDATE credit_wallets SET balance = balance + 1 WHERE user_id = ?').bind(safeUserIdForRefund).run();
             }
-            await dbForRefund.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description) VALUES (?, ?, 1, 'refund', 'Hoàn tiền do lỗi hệ thống AI (Tarot)')`).bind(crypto.randomUUID(), safeUserIdForRefund).run();
+            const refundSource = isDailyCreditDeducted ? 'free' : 'paid';
+            await dbForRefund.prepare(`INSERT INTO credit_transactions (id, wallet_id, amount, transaction_type, description, credit_source, feature, reference_id, question) VALUES (?, ?, 1, 'refund', 'Hoàn tiền do lỗi hệ thống AI (Tarot)', ?, 'tarot_reading', ?, ?)`).bind(crypto.randomUUID(), safeUserIdForRefund, refundSource, safeReadingIdForRefund, refundQuestion).run();
             await dbForRefund.prepare('DELETE FROM message_logs WHERE conversation_id = ? AND content = "<!-- PROCESSING_TAROT -->"').bind(safeReadingIdForRefund).run();
             console.log(`Đã hoàn tiền cho user ${safeUserIdForRefund} do lỗi AI`);
         } catch (refundError) {

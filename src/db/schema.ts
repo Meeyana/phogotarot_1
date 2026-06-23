@@ -63,6 +63,10 @@ export const creditTransactions = sqliteTable('credit_transactions', {
   amount: integer('amount').notNull(),
   transactionType: text('transaction_type').notNull(),
   description: text('description'),
+  creditSource: text('credit_source'),
+  feature: text('feature'),
+  referenceId: text('reference_id'),
+  question: text('question'),
   createdAt: integer('created_at', { mode: 'timestamp' }).default(sql`CURRENT_TIMESTAMP`),
 });
 
