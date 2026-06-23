@@ -3,11 +3,11 @@
 
 INSERT INTO packages (
   id, name, price, original_price, list_price, sale_price, sale_starts_at,
-  sale_ends_at, credits, type, is_active, created_at
+  sale_ends_at, show_countdown, credits, type, is_active, created_at
 )
 SELECT
   'Gói 3 Credit', 'Gói 3 Credit', price, original_price, list_price, sale_price,
-  sale_starts_at, sale_ends_at, credits, type, is_active, created_at
+  sale_starts_at, sale_ends_at, COALESCE(show_countdown, 1), credits, type, is_active, created_at
 FROM packages
 WHERE id = 'Khởi Đầu (3 lượt)'
 ON CONFLICT(id) DO UPDATE SET
@@ -18,17 +18,18 @@ ON CONFLICT(id) DO UPDATE SET
   sale_price = excluded.sale_price,
   sale_starts_at = excluded.sale_starts_at,
   sale_ends_at = excluded.sale_ends_at,
+  show_countdown = excluded.show_countdown,
   credits = excluded.credits,
   type = excluded.type,
   is_active = excluded.is_active;
 
 INSERT INTO packages (
   id, name, price, original_price, list_price, sale_price, sale_starts_at,
-  sale_ends_at, credits, type, is_active, created_at
+  sale_ends_at, show_countdown, credits, type, is_active, created_at
 )
 SELECT
   'Gói 10 Credit', 'Gói 10 Credit', price, original_price, list_price, sale_price,
-  sale_starts_at, sale_ends_at, credits, type, is_active, created_at
+  sale_starts_at, sale_ends_at, COALESCE(show_countdown, 1), credits, type, is_active, created_at
 FROM packages
 WHERE id = 'Đồng Hành (10 lượt)'
 ON CONFLICT(id) DO UPDATE SET
@@ -39,17 +40,18 @@ ON CONFLICT(id) DO UPDATE SET
   sale_price = excluded.sale_price,
   sale_starts_at = excluded.sale_starts_at,
   sale_ends_at = excluded.sale_ends_at,
+  show_countdown = excluded.show_countdown,
   credits = excluded.credits,
   type = excluded.type,
   is_active = excluded.is_active;
 
 INSERT INTO packages (
   id, name, price, original_price, list_price, sale_price, sale_starts_at,
-  sale_ends_at, credits, type, is_active, created_at
+  sale_ends_at, show_countdown, credits, type, is_active, created_at
 )
 SELECT
   'Gói Tháng', 'Gói Tháng', price, original_price, list_price, sale_price,
-  sale_starts_at, sale_ends_at, credits, type, is_active, created_at
+  sale_starts_at, sale_ends_at, COALESCE(show_countdown, 1), credits, type, is_active, created_at
 FROM packages
 WHERE id = 'Vương Giả (Gói Tháng)'
 ON CONFLICT(id) DO UPDATE SET
@@ -60,17 +62,18 @@ ON CONFLICT(id) DO UPDATE SET
   sale_price = excluded.sale_price,
   sale_starts_at = excluded.sale_starts_at,
   sale_ends_at = excluded.sale_ends_at,
+  show_countdown = excluded.show_countdown,
   credits = excluded.credits,
   type = excluded.type,
   is_active = excluded.is_active;
 
 INSERT INTO packages (
   id, name, price, original_price, list_price, sale_price, sale_starts_at,
-  sale_ends_at, credits, type, is_active, created_at
+  sale_ends_at, show_countdown, credits, type, is_active, created_at
 )
 SELECT
   'Gói Năm', 'Gói Năm', price, original_price, list_price, sale_price,
-  sale_starts_at, sale_ends_at, credits, type, is_active, created_at
+  sale_starts_at, sale_ends_at, COALESCE(show_countdown, 1), credits, type, is_active, created_at
 FROM packages
 WHERE id = 'Chuyên Gia (Gói Năm)'
 ON CONFLICT(id) DO UPDATE SET
@@ -81,17 +84,18 @@ ON CONFLICT(id) DO UPDATE SET
   sale_price = excluded.sale_price,
   sale_starts_at = excluded.sale_starts_at,
   sale_ends_at = excluded.sale_ends_at,
+  show_countdown = excluded.show_countdown,
   credits = excluded.credits,
   type = excluded.type,
   is_active = excluded.is_active;
 
 INSERT INTO packages (
   id, name, price, original_price, list_price, sale_price, sale_starts_at,
-  sale_ends_at, credits, type, is_active, created_at
+  sale_ends_at, show_countdown, credits, type, is_active, created_at
 )
 SELECT
   'Gói Trọn Đời', 'Gói Trọn Đời', price, original_price, list_price, sale_price,
-  sale_starts_at, sale_ends_at, credits, type, is_active, created_at
+  sale_starts_at, sale_ends_at, COALESCE(show_countdown, 1), credits, type, is_active, created_at
 FROM packages
 WHERE id = 'Khai Sáng (Trọn Đời)'
 ON CONFLICT(id) DO UPDATE SET
@@ -102,6 +106,7 @@ ON CONFLICT(id) DO UPDATE SET
   sale_price = excluded.sale_price,
   sale_starts_at = excluded.sale_starts_at,
   sale_ends_at = excluded.sale_ends_at,
+  show_countdown = excluded.show_countdown,
   credits = excluded.credits,
   type = excluded.type,
   is_active = excluded.is_active;

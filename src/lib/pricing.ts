@@ -7,6 +7,7 @@ export type PackageRecord = {
   sale_price?: number | null;
   sale_starts_at?: string | null;
   sale_ends_at?: string | null;
+  show_countdown?: number | boolean | null;
   credits: number;
   type: string;
   is_active?: number | boolean | null;

@@ -1369,6 +1369,7 @@ const user = Astro.locals.user;
     }
 
     function saleEndMillis(pkg) {
+        if (pkg?.show_countdown === 0 || pkg?.show_countdown === false) return null;
         if (!pkg?.sale_active || !pkg?.sale_ends_at) return null;
         const raw = String(pkg.sale_ends_at).trim();
         const normalized = raw.includes('T') ? raw : raw.replace(' ', 'T');

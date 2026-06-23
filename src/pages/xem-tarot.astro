@@ -694,7 +694,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        function addTypingIndicator() {
+        function addTypingIndicator(message = 'Đang soạn tin nhắn...') {
             const typingDiv = document.createElement('div');
             typingDiv.id = 'typing-indicator';
             typingDiv.className = 'typing-indicator';
@@ -704,7 +704,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     <div class="loader-orbit orbit-1"></div>
                     <div class="loader-orbit orbit-2"></div>
                 </div>
-                Đang soạn tin nhắn...
+                <span>${message}</span>
             `;
             chatMessages.appendChild(typingDiv);
             scrollToBottom();
@@ -1290,7 +1290,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             });
             // -----------------------------------------
             
-            addTypingIndicator();
+            addTypingIndicator('Đang luận giải các lá bài của bạn... Thời gian dự kiến khoảng 40-60 giây, bạn vui lòng chờ và không cần tải lại trang nhé.');
             
             // Khôi phục lại usage nếu bị refresh
             if (!lastValidationUsage) {

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS packages (
     sale_price INTEGER,
     sale_starts_at TEXT,
     sale_ends_at TEXT,
+    show_countdown INTEGER DEFAULT 1,
     credits INTEGER NOT NULL,
     type TEXT NOT NULL, -- 'pack' (gói lẻ), 'subscription' (gói tháng/năm)
     is_active BOOLEAN DEFAULT 1,

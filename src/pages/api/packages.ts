@@ -24,7 +24,7 @@ export const GET: APIRoute = async (context) => {
     const { results } = await db
       .prepare(`
         SELECT id, name, price, original_price, list_price, sale_price, sale_starts_at,
-               sale_ends_at, credits, type, is_active
+               sale_ends_at, show_countdown, credits, type, is_active
         FROM packages
         WHERE is_active = 1
         ORDER BY created_at ASC
@@ -44,6 +44,7 @@ export const GET: APIRoute = async (context) => {
         sale_price: pkg.sale_price ?? null,
         sale_starts_at: pkg.sale_starts_at ?? null,
         sale_ends_at: pkg.sale_ends_at ?? null,
+        show_countdown: pkg.show_countdown === 0 || pkg.show_countdown === false ? 0 : 1,
         sale_active: pricing.saleActive,
       };
     });

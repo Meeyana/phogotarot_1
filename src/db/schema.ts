@@ -126,6 +126,7 @@ export const packages = sqliteTable('packages', {
   salePrice: integer('sale_price'),
   saleStartsAt: text('sale_starts_at'),
   saleEndsAt: text('sale_ends_at'),
+  showCountdown: integer('show_countdown').default(1),
   credits: integer('credits').notNull(),
   type: text('type').notNull(),
   isActive: integer('is_active', { mode: 'boolean' }).default(true),
