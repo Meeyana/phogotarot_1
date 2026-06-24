@@ -67,8 +67,10 @@ const careerPreviewItems = topCareer && careerMeaning
     <div class="chart-column">
       <div class="p-6 h-full rich-text-content">
         <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
-        <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
-          <canvas id="personalityChart"></canvas>
+        <div class="chart-scroll-frame mb-6">
+          <div class="chart-container-responsive glass-card personality-career-chart">
+            <canvas id="personalityChart"></canvas>
+          </div>
         </div>
 
         <NumerologySection title="Chi Tiết Luận Giải Tính Cách" sectionId="personality-combined-box">
@@ -99,8 +101,10 @@ const careerPreviewItems = topCareer && careerMeaning
           <LockedPlaceholder />
         ) : (
           <>
-            <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
-              <canvas id="careerChart"></canvas>
+            <div class="chart-scroll-frame mb-6">
+              <div class="chart-container-responsive glass-card personality-career-chart">
+                <canvas id="careerChart"></canvas>
+              </div>
             </div>
 
             <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">

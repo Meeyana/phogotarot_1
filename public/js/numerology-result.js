@@ -138,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const labels = pDataObj.map(p => p.label);
                 const data = pDataObj.map(p => p.percent);
                 const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'];
+                const xMax = Math.max(40, Math.ceil(Math.max(...data) * 1.18));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -164,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         },
                         scales: {
-                            x: { display: false, max: 40 },
+                            x: { display: false, max: xMax },
                             y: { ticks: { color: '#e5e7eb', font: { size: 10 } }, grid: { display: false } }
                         }
                     },
@@ -178,6 +179,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ctx && typeof Chart !== 'undefined') {
                 const labels = cDataObj.map(c => c.label);
                 const data = cDataObj.map(c => c.percent);
+                const xMax = Math.max(40, Math.ceil(Math.max(...data) * 1.18));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -204,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         },
                         scales: {
-                            x: { display: false, max: 40 },
+                            x: { display: false, max: xMax },
                             y: { ticks: { color: '#e5e7eb', font: { size: 11 } }, grid: { display: false } }
                         }
                     },

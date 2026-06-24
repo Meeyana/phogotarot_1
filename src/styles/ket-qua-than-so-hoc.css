@@ -643,8 +643,43 @@ h5{
 }
 .head-outline{ font-size: 2rem;}
 
+.chart-scroll-frame {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(242, 201, 76, 0.55) rgba(255, 255, 255, 0.08);
+}
+
+.chart-scroll-frame::-webkit-scrollbar {
+    height: 6px;
+}
+
+.chart-scroll-frame::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+}
+
+.chart-scroll-frame::-webkit-scrollbar-thumb {
+    background: rgba(242, 201, 76, 0.55);
+    border-radius: 999px;
+}
+
+.personality-career-chart {
+    position: relative;
+    height: 400px;
+    min-width: 100%;
+}
+
 #careerChart,#personalityChart{
     padding: 1rem;
+}
+
+@media (max-width: 640px) {
+    .personality-career-chart {
+        min-width: 560px;
+    }
 }
 
 /* 1. Style cho thẻ P */
