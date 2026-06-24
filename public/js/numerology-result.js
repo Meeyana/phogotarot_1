@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const labels = pDataObj.map(p => p.label);
                 const data = pDataObj.map(p => p.percent);
                 const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'];
-                const xMax = Math.max(40, Math.ceil(Math.max(...data) * 1.18));
+                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.35));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -154,12 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: { right: 56 }
+                        },
                         plugins: {
                             legend: { display: false },
                             datalabels: {
                                 color: '#fff',
                                 anchor: 'end',
                                 align: 'end',
+                                offset: 6,
+                                clip: false,
+                                clamp: false,
                                 formatter: (value) => value + '%',
                                 font: { weight: 'bold' }
                             }
@@ -179,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ctx && typeof Chart !== 'undefined') {
                 const labels = cDataObj.map(c => c.label);
                 const data = cDataObj.map(c => c.percent);
-                const xMax = Math.max(40, Math.ceil(Math.max(...data) * 1.18));
+                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.35));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -195,12 +201,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         indexAxis: 'y',
                         responsive: true,
                         maintainAspectRatio: false,
+                        layout: {
+                            padding: { right: 56 }
+                        },
                         plugins: {
                             legend: { display: false },
                             datalabels: {
                                 color: '#fff',
                                 anchor: 'center',
                                 align: 'center',
+                                clip: false,
+                                clamp: false,
                                 formatter: (value) => value + '%',
                                 font: { weight: 'bold' }
                             }

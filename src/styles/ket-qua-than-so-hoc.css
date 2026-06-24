@@ -670,10 +670,11 @@ h5{
     position: relative;
     height: 400px;
     min-width: 100%;
+    padding: 1rem;
 }
 
 #careerChart,#personalityChart{
-    padding: 1rem;
+    display: block;
 }
 
 @media (max-width: 640px) {
