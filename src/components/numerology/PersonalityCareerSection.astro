@@ -1,11 +1,12 @@
 ---
+import LockedPreview from './LockedPreview.astro';
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
 interface Props {
-  personalityStats: { id: string, label: string, percent: number }[];
-  careerStats: { id: string, label: string, percent: number }[];
+  personalityStats: { id: string | number; label: string; percent: number }[];
+  careerStats: { id: string; label: string; percent: number }[];
   pData: any;
   cData: any;
   isLocked?: boolean;
@@ -13,37 +14,74 @@ interface Props {
 
 const { personalityStats, careerStats, pData, cData, isLocked = false } = Astro.props;
 
-// Lấy 2 tính cách nổi bật nhất
-const topTraits = [...personalityStats].sort((a,b) => b.percent - a.percent).slice(0, 2);
-const topCareer = careerStats[0]; // Ngành cao nhất
+const topTraits = [...personalityStats].sort((a, b) => b.percent - a.percent).slice(0, 2);
+const topCareer = careerStats[0];
+
+const makeTextData = (content: string) => ({
+  blocks: [{ type: 'text', content }]
+});
+
+const fallbackPersonalityMeanings: Record<string, any> = {
+  1: makeTextData('Bạn nổi bật với tinh thần độc lập, khả năng tự quyết và xu hướng chủ động dẫn dắt tình huống. Khi năng lượng này cân bằng, bạn dễ trở thành người mở đường, dám chịu trách nhiệm và truyền cảm hứng bằng sự tự tin. Bài học quan trọng là mềm lại khi cần, lắng nghe người khác và tránh biến sự quyết đoán thành áp đặt.'),
+  2: makeTextData('Bạn có thế mạnh về sự tinh tế, khả năng lắng nghe và cảm nhận bầu không khí xung quanh. Đây là nhóm tính cách giúp bạn kết nối, hòa giải và nhận ra những chi tiết cảm xúc mà người khác dễ bỏ qua. Điều cần rèn là giữ ranh giới cá nhân, tránh chiều lòng quá mức hoặc để cảm xúc bên ngoài kéo mình dao động.'),
+  3: makeTextData('Bạn mang màu sắc sáng tạo, hoạt bát và có khả năng biểu đạt tốt. Khi được đặt trong môi trường phù hợp, bạn dễ lan tỏa sự vui vẻ, ý tưởng mới và tinh thần lạc quan. Bài học là duy trì kỷ luật, hoàn thành đến cùng và không để sự hứng khởi ban đầu bị phân tán quá nhanh.'),
+  4: makeTextData('Bạn thiên về sự thực tế, cẩn trọng và thích xây dựng mọi thứ theo nền tảng chắc chắn. Đây là nhóm tính cách mạnh về tổ chức, quy trình và độ tin cậy. Mặt cần cân bằng là giảm cầu toàn, linh hoạt hơn trước thay đổi và cho bản thân quyền thử nghiệm thay vì luôn phải chắc chắn tuyệt đối.'),
+  5: makeTextData('Bạn có nhu cầu trải nghiệm, học nhanh và thích sự linh hoạt. Nhóm năng lượng này giúp bạn thích nghi tốt, tò mò và dễ nhìn thấy nhiều lựa chọn trong một vấn đề. Bài học là chọn trọng tâm, tránh ôm quá nhiều hướng cùng lúc và biến sự tự do thành năng lực hành động có định hướng.'),
+  6: makeTextData('Bạn có xu hướng quan tâm, bảo vệ và đặt trách nhiệm với người thân hoặc cộng đồng lên cao. Đây là nhóm tính cách giàu tình cảm, đáng tin và có khả năng tạo cảm giác an toàn. Điều cần lưu ý là tránh gánh thay phần của người khác, học cách chăm sóc chính mình trước khi tiếp tục cho đi.'),
+  7: makeTextData('Bạn thiên về chiều sâu, quan sát, phân tích và tìm kiếm bản chất phía sau sự việc. Nhóm tính cách này phù hợp với học hỏi, nghiên cứu và những không gian cần sự tập trung. Bài học là chia sẻ nhiều hơn, tránh khép kín quá lâu và cho phép trực giác đi cùng lý trí.'),
+  8: makeTextData('Bạn có năng lượng kỷ luật, định hướng kết quả và cảm quan mạnh về công bằng, hiệu quả. Khi phát huy tốt, bạn biết quản trị nguồn lực, đặt mục tiêu rõ và kiên trì với tiêu chuẩn cao. Điều cần cân bằng là mềm mỏng trong giao tiếp, không quá kiểm soát và nhớ rằng thành công bền vững cần cả con người lẫn kết quả.'),
+  9: makeTextData('Bạn có màu sắc bao dung, lý tưởng và dễ nhìn vấn đề bằng góc nhìn rộng. Nhóm tính cách này giúp bạn thấu hiểu, truyền cảm hứng và quan tâm đến giá trị lớn hơn lợi ích trước mắt. Bài học là thực tế hóa lý tưởng, tránh ôm nỗi niềm của quá nhiều người và giữ năng lượng cho chính mình.')
+};
+
+const fallbackCareerMeanings: Record<string, any> = {
+  management: makeTextData('Bạn phù hợp với các vai trò cần định hướng, ra quyết định, phát triển kinh doanh hoặc dẫn dắt đội nhóm. Nhóm này phát huy tốt khi bạn có quyền chủ động, mục tiêu rõ và không gian để biến ý tưởng thành kết quả. Hãy ưu tiên môi trường có lộ trình tăng trưởng, đo lường hiệu quả minh bạch và cho phép bạn chịu trách nhiệm thực sự.'),
+  business: makeTextData('Bạn hợp với các công việc cần sự ổn định, quy trình, số liệu, vận hành, hành chính, tài chính hoặc quản trị chi tiết. Điểm mạnh của nhóm này là tính cẩn thận, khả năng duy trì hệ thống và làm việc đáng tin cậy. Môi trường phù hợp là nơi có cấu trúc rõ, tiêu chuẩn cụ thể và ghi nhận sự bền bỉ.'),
+  technical: makeTextData('Bạn có độ phù hợp cao với nhóm kỹ thuật, công nghệ, vận hành thực tế, công cụ, dữ liệu hoặc các công việc cần tư duy xử lý vấn đề. Nhóm này cần không gian để đào sâu, thử nghiệm và nhìn thấy kết quả cụ thể. Bạn nên chọn môi trường coi trọng năng lực thật, tính logic và khả năng cải tiến liên tục.'),
+  research: makeTextData('Bạn phù hợp với các hướng nghiên cứu, phân tích, giáo dục, tư vấn chuyên sâu, dữ liệu hoặc những lĩnh vực cần đào sâu bản chất. Điểm mạnh là khả năng quan sát, tìm mẫu hình và kiên nhẫn với vấn đề phức tạp. Môi trường tốt nhất là nơi tôn trọng chiều sâu, thời gian suy nghĩ và chất lượng chuyên môn.'),
+  social: makeTextData('Bạn hợp với các công việc liên quan đến con người như chăm sóc khách hàng, đào tạo, nhân sự, tư vấn, cộng đồng, chữa lành hoặc dịch vụ hỗ trợ. Nhóm này phát huy khi bạn được kết nối, lắng nghe và tạo giá trị trực tiếp cho người khác. Cần lưu ý giữ ranh giới để không bị tiêu hao cảm xúc.'),
+  artistic: makeTextData('Bạn phù hợp với các lĩnh vực sáng tạo, truyền thông, nội dung, nghệ thuật, thiết kế, biểu đạt cá nhân hoặc những công việc cần ý tưởng mới. Nhóm này cần không gian tự do và cảm hứng, nhưng vẫn nên đi cùng deadline rõ ràng để ý tưởng thành sản phẩm. Môi trường lý tưởng là nơi tôn trọng cá tính và cho phép thử nghiệm.')
+};
+
+const getPersonalityMeaning = (id: string | number) => pData?.meanings?.[id] || fallbackPersonalityMeanings[String(id)];
+const getCareerMeaning = (id: string) => cData?.meanings?.[id] || fallbackCareerMeanings[id];
+
+const personalityPreviewItems = topTraits
+  .map((trait) => {
+    const data = getPersonalityMeaning(trait.id);
+    return data ? { title: `Tính cách: ${trait.label} (${trait.percent}%)`, data } : null;
+  })
+  .filter(Boolean);
+
+const careerMeaning = topCareer ? getCareerMeaning(topCareer.id) : null;
+const careerPreviewItems = topCareer && careerMeaning
+  ? [{ title: `Ngành phù hợp nhất: ${topCareer.label} (${topCareer.percent}%)`, data: careerMeaning }]
+  : [];
 ---
 
 <div class="chart-section fade-in-up">
   <div class="section-header text-center mb-8">
-    <p class="section-text opacity-70">Bản ngã tính cách & Định hướng nghề nghiệp</p>
+    <p class="section-text opacity-70">Bản ngã tính cách & định hướng nghề nghiệp</p>
   </div>
 
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
-    
-    {/* 1. TÍNH CÁCH */}
     <div class="chart-column">
       <div class="p-6 h-full rich-text-content">
         <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
         <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
           <canvas id="personalityChart"></canvas>
         </div>
-        
+
         <NumerologySection title="Chi Tiết Luận Giải Tính Cách" sectionId="personality-combined-box">
           {isLocked ? (
-            <LockedPlaceholder />
+            <LockedPreview items={personalityPreviewItems} maxItems={2} maxChars={230} />
           ) : (
             <div>
-              {topTraits.map(t => {
-                const meaningData = pData?.meanings?.[t.id];
+              {topTraits.map((trait) => {
+                const meaningData = getPersonalityMeaning(trait.id);
                 if (!meaningData) return null;
                 return (
                   <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
-                    <h5 class="text-gold font-bold text-lg mb-2">✦ Tính cách: {t.label} ({t.percent}%)</h5>
+                    <h5 class="text-gold font-bold text-lg mb-2">✦ Tính cách: {trait.label} ({trait.percent}%)</h5>
                     <ContentBlock blocks={meaningData.blocks} content={meaningData.content} />
                   </div>
                 );
@@ -54,28 +92,30 @@ const topCareer = careerStats[0]; // Ngành cao nhất
       </div>
     </div>
 
-    {/* 2. NGHỀ NGHIỆP */}
     <div class="chart-column">
       <div class="p-6 h-full rich-text-content">
         <h3 class="section-subtitle">Tỉ Lệ Nhóm Ngành Phù Hợp</h3>
-        <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
-          <canvas id="careerChart"></canvas>
-        </div>
-        
-        <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
-          {isLocked ? (
-            <LockedPlaceholder />
-          ) : topCareer && cData?.meanings?.[topCareer.id] ? (
-            <div class="mb-4">
-              <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: {topCareer.label} ({topCareer.percent}%)</h5>
-              <ContentBlock blocks={cData.meanings[topCareer.id].blocks} content={cData.meanings[topCareer.id].content} />
+        {isLocked ? (
+          <LockedPlaceholder />
+        ) : (
+          <>
+            <div class="chart-container-responsive glass-card mb-6" style="position: relative; height: 400px;">
+              <canvas id="careerChart"></canvas>
             </div>
-          ) : (
-            <p class="text-center opacity-60">Không có dữ liệu.</p>
-          )}
-        </NumerologySection>
+
+            <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
+              {topCareer && careerMeaning ? (
+                <div class="mb-4">
+                  <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: {topCareer.label} ({topCareer.percent}%)</h5>
+                  <ContentBlock blocks={careerMeaning.blocks} content={careerMeaning.content} />
+                </div>
+              ) : (
+                <p class="text-center opacity-60">Không có dữ liệu.</p>
+              )}
+            </NumerologySection>
+          </>
+        )}
       </div>
     </div>
-    
   </div>
 </div>

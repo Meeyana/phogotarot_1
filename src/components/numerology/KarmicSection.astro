@@ -1,5 +1,6 @@
 ---
 import LockedPlaceholder from './LockedPlaceholder.astro';
+import LockedPreview from './LockedPreview.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -12,6 +13,20 @@ interface Props {
 }
 
 const { debts, lessons, debtDataStore, lessonDataStore, isLocked = false } = Astro.props;
+
+const debtPreviewItems = debts
+  .map((debtNum) => {
+    const data = debtDataStore[debtNum];
+    return data ? { title: data.title || `Nợ nghiệp ${debtNum}`, data } : null;
+  })
+  .filter(Boolean);
+
+const lessonPreviewItems = lessons
+  .map((num) => {
+    const data = lessonDataStore[num];
+    return data ? { title: `Bài học thiếu số ${num}`, data } : null;
+  })
+  .filter(Boolean);
 ---
 
 {debts.length > 0 && (
@@ -51,7 +66,7 @@ const { debts, lessons, debtDataStore, lessonDataStore, isLocked = false } = Ast
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)" sectionId="karmic-lessons-combined">
         {isLocked ? (
-          <LockedPlaceholder />
+          <LockedPreview items={lessonPreviewItems} maxItems={2} maxChars={230} />
         ) : (
           <div>
             {lessons.map(num => {

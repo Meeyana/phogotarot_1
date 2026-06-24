@@ -24,6 +24,15 @@ const stages = [
   { id: 3, label: "Giai đoạn 3 (Trung niên)", peak: pyramidInfo.peaks.p3, chal: pyramidInfo.challenges.c3, age: pyramidInfo.ages.p3_text },
   { id: 4, label: "Giai đoạn 4 (Viên mãn)", peak: pyramidInfo.peaks.p4, chal: pyramidInfo.challenges.c4, age: pyramidInfo.ages.p4_text }
 ];
+
+const previewItems = stages.flatMap((stage) => {
+  const peakData = pyramidDataStore.peaks?.[stage.peak];
+  const chalData = pyramidDataStore.challenges?.[stage.chal];
+  return [
+    peakData ? { title: `Giai đoạn ${stage.id} - Đỉnh cao số ${stage.peak}`, data: peakData } : null,
+    chalData ? { title: `Giai đoạn ${stage.id} - Thử thách số ${stage.chal}`, data: chalData } : null
+  ].filter(Boolean);
+});
 ---
 
 <NumerologySection title="Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách" sectionId="pyramid-combined-box">

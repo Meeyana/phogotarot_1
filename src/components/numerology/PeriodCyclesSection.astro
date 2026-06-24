@@ -5,9 +5,9 @@ import ContentBlock from './ContentBlock.astro';
 
 interface Props {
   periodCycles: {
-    c1: { number: number, ageRange: string, yearRange: string },
-    c2: { number: number, ageRange: string, yearRange: string },
-    c3: { number: number, ageRange: string, yearRange: string }
+    c1: { number: number; ageRange: string; yearRange: string };
+    c2: { number: number; ageRange: string; yearRange: string };
+    c3: { number: number; ageRange: string; yearRange: string };
   };
   cyclesDataStore: Record<number, any>;
   isLocked?: boolean;
@@ -23,7 +23,7 @@ const list = [
 ---
 
 <div class="cycle-grid fade-in-up mb-8">
-  {list.map(item => (
+  {list.map((item) => (
     <div class="cycle-card glass-card">
       <div class="neon-ring">
         <span>{item.data.number}</span>
@@ -45,7 +45,7 @@ const list = [
     <LockedPlaceholder />
   ) : (
     <div>
-      {list.map(item => {
+      {list.map((item) => {
         const textData = cyclesDataStore[item.data.number];
         if (!textData) return null;
         return (

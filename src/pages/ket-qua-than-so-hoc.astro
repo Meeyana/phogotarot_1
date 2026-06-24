@@ -24,6 +24,7 @@ import ForecastSection from '../components/numerology/ForecastSection.astro';
 import PersonalityCareerSection from '../components/numerology/PersonalityCareerSection.astro';
 import PyramidSection from '../components/numerology/PyramidSection.astro';
 import UnlockBanner from '../components/numerology/UnlockBanner.astro';
+import LockedPlaceholder from '../components/numerology/LockedPlaceholder.astro';
 import '../styles/ket-qua-than-so-hoc.css';
 import { getDB } from '../db';
 import { hasUnlockedProfile } from '../lib/auth';
@@ -281,7 +282,14 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     { key: 'attitude', label: 'Số Thái Độ', value: attitude },
                     { key: 'rational', label: 'Số Tư Duy', value: rational },
                     { key: 'maturity', label: 'Số Trưởng Thành', value: maturity }
-                ]} dataMap={coreStatsDataMap} />
+                ]} dataMap={coreStatsDataMap} isLocked={isLocked} lockModes={{
+                    destiny: 'preview',
+                    soul: 'hidden',
+                    personality: 'free',
+                    attitude: 'free',
+                    rational: 'preview',
+                    maturity: 'preview'
+                }} />
 
                 <div class="divider-section"></div>
 
@@ -311,7 +319,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                         <div class="interpretations-container mt-8 rich-text-content">
-                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} />
+                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="preview" />
                         </div>
                     </div>
                 </div>
@@ -321,6 +329,12 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <h3 class="section-subtitle">Biểu Đồ Tên & Tổng Hợp</h3>
                         <p class="section-text opacity-70">Sự kết hợp giữa năng lực tự nhiên và cái tên của bạn</p>
                     </div>
+                    {isLocked ? (
+                      <div class="max-w-4xl mx-auto rich-text-content">
+                        <LockedPlaceholder />
+                      </div>
+                    ) : (
+                    <>
                     <div class="dual-charts-wrapper">
                         <div class="chart-column">
                             <div class="chart-card glass-card chart-container" id="name-grid-source">
@@ -361,15 +375,25 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                    
                     <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} />
+                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="hidden" />
                     </div>
+                    </>
+                    )}
                 </div>
 
-                <NumerologyPyramid pyramid={pyramid} day={day} month={month} year={year} />
+                {isLocked ? (
+                  <div class="max-w-4xl mx-auto rich-text-content mt-8">
+                    <LockedPlaceholder />
+                  </div>
+                ) : (
+                  <>
+                    <NumerologyPyramid pyramid={pyramid} day={day} month={month} year={year} />
 
-                <div class="max-w-4xl mx-auto rich-text-content mt-8">
-                    <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} />
-                </div>
+                    <div class="max-w-4xl mx-auto rich-text-content mt-8">
+                        <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} />
+                    </div>
+                  </>
+                )}
 
                 <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={debtDataStore} lessonDataStore={lessonDataStore} isLocked={isLocked} />
 

@@ -12,6 +12,21 @@ interface Props {
 }
 
 const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked = false } = Astro.props;
+
+const yearPreviewItems = forecastYears
+  .map((item, index) => {
+    const data = yearDataStore[item.number];
+    const title = `Năm ${item.year} - Vận niên số ${item.number}${index === 0 ? ' (Hiện tại)' : ''}`;
+    return data ? { title, data } : null;
+  })
+  .filter(Boolean);
+
+const monthPreviewItems = forecastMonths
+  .map((item) => {
+    const data = monthDataStore[item.number];
+    return data ? { title: `Tháng ${item.month}/${item.year} - Vận số ${item.number}`, data } : null;
+  })
+  .filter(Boolean);
 ---
 
 {/* 1. DỰ BÁO NĂM */}

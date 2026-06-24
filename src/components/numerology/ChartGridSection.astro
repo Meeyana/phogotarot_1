@@ -1,4 +1,5 @@
 ---
+import LockedPreview from './LockedPreview.astro';
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
@@ -12,16 +13,41 @@ interface Props {
   arrowStore: Record<string, any>;
   missingStore: Record<number, any>;
   isLocked?: boolean;
+  lockMode?: 'preview' | 'hidden';
 }
 
-const { chartType, countsArray, arrowsList, missingList, dataStore, arrowStore, missingStore, isLocked = false } = Astro.props;
+const { chartType, countsArray, arrowsList, missingList, dataStore, arrowStore, missingStore, isLocked = false, lockMode = 'preview' } = Astro.props;
+
+const previewItems: any[] = [];
+
+countsArray.forEach((count, index) => {
+  if (count === 0) return;
+  const data = dataStore[index + 1];
+  if (data) previewItems.push({ title: data.title || `Số ${index + 1}`, data });
+});
+
+if (arrowsList) {
+  arrowsList.forEach((arrow) => {
+    const data = arrowStore[arrow.id]?.[arrow.type];
+    if (data) previewItems.push({ title: data.title, data });
+  });
+}
+
+if (missingList) {
+  missingList.forEach((num) => {
+    const data = missingStore[num];
+    if (data) previewItems.push({ title: `Thiếu số ${num}`, data });
+  });
+}
 
 const boxTitle = chartType === 'strength' ? 'Tổng Hợp Luận Giải Biểu Đồ Ngày Sinh' : 'Tổng Hợp Luận Giải Biểu Đồ Tổng Hợp';
 ---
 
 <NumerologySection title={boxTitle} sectionId={`${chartType}-combined-box`}>
-  {isLocked ? (
+  {isLocked && lockMode === 'hidden' ? (
     <LockedPlaceholder />
+  ) : isLocked ? (
+    <LockedPreview items={previewItems} maxItems={2} maxChars={230} />
   ) : (
     <div>
       {/* 1. Các số xuất hiện trong biểu đồ */}

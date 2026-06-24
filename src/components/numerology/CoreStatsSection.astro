@@ -1,5 +1,6 @@
 ---
 import LockedPlaceholder from './LockedPlaceholder.astro';
+import LockedPreview from './LockedPreview.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
 
@@ -7,29 +8,33 @@ interface Props {
   stats: { key: string; label: string; value: number }[];
   dataMap: Record<string, any>;
   isLocked?: boolean;
+  lockModes?: Record<string, 'free' | 'preview' | 'hidden'>;
 }
 
-const { stats, dataMap, isLocked = false } = Astro.props;
+const { stats, dataMap, isLocked = false, lockModes = {} } = Astro.props;
 ---
 
 <div class="space-y-12">
   {stats.map((stat) => {
     const rawData = dataMap[stat.key];
     if (!rawData) return null;
-    
+
     const displayTitle = `${stat.label} của bạn: Số ${stat.value}`;
     const blockTitle = rawData.title || displayTitle;
+    const lockMode = lockModes[stat.key] || 'free';
 
     return (
       <div class="chart-section fade-in-up">
         <div class="section-header text-center mb-8">
           <h3 class="section-subtitle">{displayTitle}</h3>
         </div>
-        
+
         <div class="max-w-4xl mx-auto rich-text-content">
           <NumerologySection title={blockTitle} sectionId={`core-${stat.key}-${stat.value}`}>
-            {isLocked ? (
+            {isLocked && lockMode === 'hidden' ? (
               <LockedPlaceholder />
+            ) : isLocked && lockMode === 'preview' ? (
+              <LockedPreview items={[{ title: blockTitle, data: rawData }]} maxItems={1} maxChars={260} />
             ) : (
               <ContentBlock blocks={rawData.blocks} content={rawData.content} />
             )}
