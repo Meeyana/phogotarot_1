@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const labels = pDataObj.map(p => p.label);
                 const data = pDataObj.map(p => p.percent);
                 const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'];
-                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.35));
+                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.45));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -162,8 +162,14 @@ document.addEventListener('DOMContentLoaded', () => {
                             datalabels: {
                                 color: '#fff',
                                 anchor: 'end',
-                                align: 'end',
-                                offset: 6,
+                                align: (context) => {
+                                    const value = context.dataset.data[context.dataIndex];
+                                    return value >= 24 ? 'start' : 'end';
+                                },
+                                offset: (context) => {
+                                    const value = context.dataset.data[context.dataIndex];
+                                    return value >= 24 ? 8 : 6;
+                                },
                                 clip: false,
                                 clamp: false,
                                 formatter: (value) => value + '%',
@@ -185,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ctx && typeof Chart !== 'undefined') {
                 const labels = cDataObj.map(c => c.label);
                 const data = cDataObj.map(c => c.percent);
-                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.35));
+                const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.45));
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -208,8 +214,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             legend: { display: false },
                             datalabels: {
                                 color: '#fff',
-                                anchor: 'center',
-                                align: 'center',
+                                anchor: 'end',
+                                align: (context) => {
+                                    const value = context.dataset.data[context.dataIndex];
+                                    return value >= 24 ? 'start' : 'end';
+                                },
+                                offset: (context) => {
+                                    const value = context.dataset.data[context.dataIndex];
+                                    return value >= 24 ? 8 : 6;
+                                },
                                 clip: false,
                                 clamp: false,
                                 formatter: (value) => value + '%',
