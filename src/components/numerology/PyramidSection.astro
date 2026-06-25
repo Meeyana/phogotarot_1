@@ -2,6 +2,7 @@
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   pyramidInfo: {
@@ -14,9 +15,10 @@ interface Props {
     challenges: Record<number, any>
   };
   isLocked?: boolean;
+  definition?: string;
 }
 
-const { pyramidInfo, pyramidDataStore, isLocked = false } = Astro.props;
+const { pyramidInfo, pyramidDataStore, isLocked = false, definition = '' } = Astro.props;
 
 const stages = [
   { id: 1, label: "Giai đoạn 1 (Tuổi trẻ)", peak: pyramidInfo.peaks.p1, chal: pyramidInfo.challenges.c1, age: pyramidInfo.ages.p1_text },
@@ -36,6 +38,8 @@ const previewItems = stages.flatMap((stage) => {
 ---
 
 <NumerologySection title="Chi Tiết Luận Giải 4 Đỉnh Cao & Thử Thách" sectionId="pyramid-combined-box">
+  <DefinitionBlock text={definition} />
+
   {isLocked ? (
     <LockedPlaceholder />
   ) : (

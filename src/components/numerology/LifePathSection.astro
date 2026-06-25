@@ -2,14 +2,16 @@
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   lifePath: number;
   data: any;
   isLocked?: boolean;
+  definition?: string;
 }
 
-const { lifePath, data, isLocked = false } = Astro.props;
+const { lifePath, data, isLocked = false, definition = '' } = Astro.props;
 const title = data?.title || `Đường Đời Số ${lifePath}`;
 ---
 
@@ -18,6 +20,7 @@ const title = data?.title || `Đường Đời Số ${lifePath}`;
 </div>
 
 <NumerologySection title={title} sectionId={`lp-${lifePath}`}>
+  <DefinitionBlock text={definition} />
   {isLocked ? (
     <LockedPlaceholder />
   ) : data ? (

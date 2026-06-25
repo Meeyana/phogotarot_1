@@ -3,6 +3,7 @@ import LockedPreview from './LockedPreview.astro';
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   personalityStats: { id: string | number; label: string; percent: number }[];
@@ -10,9 +11,13 @@ interface Props {
   pData: any;
   cData: any;
   isLocked?: boolean;
+  definitions?: {
+    personalityGroup?: string;
+    careerGroup?: string;
+  };
 }
 
-const { personalityStats, careerStats, pData, cData, isLocked = false } = Astro.props;
+const { personalityStats, careerStats, pData, cData, isLocked = false, definitions = {} } = Astro.props;
 
 const topTraits = [...personalityStats].sort((a, b) => b.percent - a.percent).slice(0, 2);
 const topCareer = careerStats[0];
@@ -67,6 +72,7 @@ const careerPreviewItems = topCareer && careerMeaning
     <div class="chart-column">
       <div class="p-6 h-full rich-text-content">
         <h3 class="section-subtitle">Nhóm Tính Cách Bản Ngã</h3>
+        <DefinitionBlock text={definitions.personalityGroup} />
         <div class="chart-scroll-frame mb-6">
           <div class="chart-container-responsive glass-card personality-career-chart">
             <canvas id="personalityChart"></canvas>
@@ -97,17 +103,18 @@ const careerPreviewItems = topCareer && careerMeaning
     <div class="chart-column">
       <div class="p-6 h-full rich-text-content">
         <h3 class="section-subtitle">Tỉ Lệ Nhóm Ngành Phù Hợp</h3>
-        {isLocked ? (
-          <LockedPlaceholder />
-        ) : (
-          <>
-            <div class="chart-scroll-frame mb-6">
-              <div class="chart-container-responsive glass-card personality-career-chart">
-                <canvas id="careerChart"></canvas>
-              </div>
-            </div>
+        <DefinitionBlock text={definitions.careerGroup} />
+        <div class="chart-scroll-frame mb-6">
+          <div class="chart-container-responsive glass-card personality-career-chart">
+            <canvas id="careerChart"></canvas>
+          </div>
+        </div>
 
-            <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
+        <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
+          {isLocked ? (
+            <LockedPlaceholder />
+          ) : (
+            <>
               {topCareer && careerMeaning ? (
                 <div class="mb-4">
                   <h5 class="text-blue-200 font-bold text-lg mb-2">✦ Ngành phù hợp nhất: {topCareer.label} ({topCareer.percent}%)</h5>
@@ -116,9 +123,9 @@ const careerPreviewItems = topCareer && careerMeaning
               ) : (
                 <p class="text-center opacity-60">Không có dữ liệu.</p>
               )}
-            </NumerologySection>
-          </>
-        )}
+            </>
+          )}
+        </NumerologySection>
       </div>
     </div>
   </div>

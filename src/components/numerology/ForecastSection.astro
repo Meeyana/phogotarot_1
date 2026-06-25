@@ -2,6 +2,7 @@
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   forecastYears: { number: number, year: number }[];
@@ -9,14 +10,20 @@ interface Props {
   yearDataStore: Record<number, any>;
   monthDataStore: Record<number, any>;
   isLocked?: boolean;
+  definitions?: {
+    personalYear?: string;
+    personalMonth?: string;
+  };
 }
 
-const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked = false } = Astro.props;
+const { forecastYears, forecastMonths, yearDataStore, monthDataStore, isLocked = false, definitions = {} } = Astro.props;
+const yearRelationLabels = ['Năm trước', 'Hiện tại', 'Năm tới'];
 
 const yearPreviewItems = forecastYears
   .map((item, index) => {
     const data = yearDataStore[item.number];
-    const title = `Năm ${item.year} - Vận niên số ${item.number}${index === 0 ? ' (Hiện tại)' : ''}`;
+    const relationLabel = yearRelationLabels[index] ? ` (${yearRelationLabels[index]})` : '';
+    const title = `Năm ${item.year} - Vận niên số ${item.number}${relationLabel}`;
     return data ? { title, data } : null;
   })
   .filter(Boolean);
@@ -38,6 +45,7 @@ const monthPreviewItems = forecastMonths
     </div>
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Chi Tiết Vận Trình 3 Năm (Trước - Nay - Sau)" sectionId="years-forecast-combined">
+        <DefinitionBlock text={definitions.personalYear} />
         {isLocked ? (
           <LockedPlaceholder />
         ) : (
@@ -45,7 +53,8 @@ const monthPreviewItems = forecastMonths
             {forecastYears.map((item, index) => {
               const yearData = yearDataStore[item.number];
               if (!yearData) return null;
-              const subTitle = `Năm ${item.year} - Vận niên số ${item.number} ${index === 0 ? '(Hiện tại)' : ''}`;
+              const relationLabel = yearRelationLabels[index] ? ` (${yearRelationLabels[index]})` : '';
+              const subTitle = `Năm ${item.year} - Vận niên số ${item.number}${relationLabel}`;
               
               return (
                 <div class="mb-6 border-b border-white/10 pb-4 last:border-0 last:pb-0">
@@ -70,6 +79,7 @@ const monthPreviewItems = forecastMonths
     </div>
     <div class="max-w-4xl mx-auto rich-text-content">
       <NumerologySection title="Dự Báo Năng Lượng 3 Tháng Tới" sectionId="months-forecast-combined">
+        <DefinitionBlock text={definitions.personalMonth} />
         {isLocked ? (
           <LockedPlaceholder />
         ) : (

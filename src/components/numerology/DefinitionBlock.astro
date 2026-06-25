@@ -1,0 +1,42 @@
+---
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const { title = 'Định nghĩa', text = '' } = Astro.props;
+---
+
+{text && (
+  <div class="definition-block">
+    <div class="definition-block__label">{title}</div>
+    <p>{text}</p>
+  </div>
+)}
+
+<style>
+  .definition-block {
+    margin: 0 0 1.25rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(242, 201, 76, 0.28);
+    border-left: 4px solid #f2c94c;
+    border-radius: 8px;
+    background: rgba(242, 201, 76, 0.08);
+  }
+
+  .definition-block__label {
+    margin-bottom: 0.45rem;
+    color: #f2c94c;
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .definition-block p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 1rem;
+    line-height: 1.75;
+  }
+</style>

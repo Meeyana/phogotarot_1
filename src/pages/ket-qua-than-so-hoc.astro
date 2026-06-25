@@ -24,10 +24,11 @@ import ForecastSection from '../components/numerology/ForecastSection.astro';
 import PersonalityCareerSection from '../components/numerology/PersonalityCareerSection.astro';
 import PyramidSection from '../components/numerology/PyramidSection.astro';
 import UnlockBanner from '../components/numerology/UnlockBanner.astro';
-import LockedPlaceholder from '../components/numerology/LockedPlaceholder.astro';
+import DefinitionBlock from '../components/numerology/DefinitionBlock.astro';
 import '../styles/ket-qua-than-so-hoc.css';
 import { getDB } from '../db';
 import { hasUnlockedProfile } from '../lib/auth';
+import { numerologyDefinitions } from '../data/numerology-definitions';
 
 // 1. Lấy tham số URL
 const url = Astro.url;
@@ -271,7 +272,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                     
                     <div class="max-w-4xl mx-auto rich-text-content mt-8">
-                        <LifePathSection lifePath={lifePath} data={await numData.getLifePathDataKV(kv, lifePath)} />
+                        <LifePathSection lifePath={lifePath} data={await numData.getLifePathDataKV(kv, lifePath)} definition={numerologyDefinitions.lifePath} />
                     </div>
                 </div>
 
@@ -289,6 +290,13 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     attitude: 'free',
                     rational: 'preview',
                     maturity: 'preview'
+                }} definitions={{
+                    destiny: numerologyDefinitions.destiny,
+                    soul: numerologyDefinitions.soul,
+                    personality: numerologyDefinitions.personality,
+                    attitude: numerologyDefinitions.attitude,
+                    rational: numerologyDefinitions.rational,
+                    maturity: numerologyDefinitions.maturity
                 }} />
 
                 <div class="divider-section"></div>
@@ -304,6 +312,10 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <p class="section-text opacity-70">Sức mạnh bẩm sinh của bạn qua các con số</p>
                     </div>
         
+                    <div class="max-w-4xl mx-auto rich-text-content mb-6">
+                        <DefinitionBlock text={numerologyDefinitions.birthChart} />
+                    </div>
+
                     <div class="single-chart-layout">
                         <div class="chart-card glass-card chart-container mx-auto" id="strength-grid-source">
                             <div class="numerology-grid">
@@ -319,7 +331,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                         <div class="interpretations-container mt-8 rich-text-content">
-                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="preview" />
+                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="preview" definition={numerologyDefinitions.birthChartReading} />
                         </div>
                     </div>
                 </div>
@@ -329,12 +341,6 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                         <h3 class="section-subtitle">Biểu Đồ Tên & Tổng Hợp</h3>
                         <p class="section-text opacity-70">Sự kết hợp giữa năng lực tự nhiên và cái tên của bạn</p>
                     </div>
-                    {isLocked ? (
-                      <div class="max-w-4xl mx-auto rich-text-content">
-                        <LockedPlaceholder />
-                      </div>
-                    ) : (
-                    <>
                     <div class="dual-charts-wrapper">
                         <div class="chart-column">
                             <div class="chart-card glass-card chart-container" id="name-grid-source">
@@ -375,27 +381,20 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                    
                     <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="hidden" />
+                        <ChartGridSection chartType="synthesis" countsArray={chartData.synthesisData} arrowsList={chartData.synthesisArrows} missingList={chartData.synthesisMissingNums} dataStore={synthesisDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="hidden" definition={`${numerologyDefinitions.nameChart} ${numerologyDefinitions.synthesisChart}`} />
                     </div>
-                    </>
-                    )}
                 </div>
 
-                {isLocked ? (
-                  <div class="max-w-4xl mx-auto rich-text-content mt-8">
-                    <LockedPlaceholder />
-                  </div>
-                ) : (
-                  <>
-                    <NumerologyPyramid pyramid={pyramid} day={day} month={month} year={year} />
+                <NumerologyPyramid pyramid={pyramid} day={day} month={month} year={year} />
 
-                    <div class="max-w-4xl mx-auto rich-text-content mt-8">
-                        <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} />
-                    </div>
-                  </>
-                )}
+                <div class="max-w-4xl mx-auto rich-text-content mt-8">
+                    <PyramidSection pyramidInfo={pyramid} pyramidDataStore={pyramidDataStore} isLocked={isLocked} definition={numerologyDefinitions.pyramid} />
+                </div>
 
-                <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={debtDataStore} lessonDataStore={lessonDataStore} isLocked={isLocked} />
+                <KarmicSection debts={karmicDebts} lessons={karmicLessons} debtDataStore={debtDataStore} lessonDataStore={lessonDataStore} isLocked={isLocked} definitions={{
+                    karmicDebt: numerologyDefinitions.karmicDebt,
+                    karmicLessons: numerologyDefinitions.karmicLessons
+                }} />
 
                 <div class="divider-section"></div>
 
@@ -404,7 +403,10 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     <div class="w-24 h-1 bg-gold mx-auto mt-2 opacity-50"></div>
                 </div>
 
-                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={await numData.getPersonalityChartDataKV(kv)} cData={await numData.getCareerChartDataKV(kv)} isLocked={isLocked} />
+                <PersonalityCareerSection personalityStats={personalityStats} careerStats={careerStats} pData={await numData.getPersonalityChartDataKV(kv)} cData={await numData.getCareerChartDataKV(kv)} isLocked={isLocked} definitions={{
+                    personalityGroup: numerologyDefinitions.personalityGroup,
+                    careerGroup: numerologyDefinitions.careerGroup
+                }} />
 
                 <div class="divider-section"></div>
 
@@ -420,7 +422,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                     
                     <div class="interpretations-container max-w-4xl mx-auto rich-text-content">
-                        <PeriodCyclesSection periodCycles={periodCycles} cyclesDataStore={cyclesDataStore} isLocked={isLocked} />
+                        <PeriodCyclesSection periodCycles={periodCycles} cyclesDataStore={cyclesDataStore} isLocked={isLocked} definition={numerologyDefinitions.periodCycles} />
                     </div>
                 </div>
 
@@ -439,7 +441,10 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     </div>
                 </div>
 
-                <ForecastSection forecastYears={forecast.years} forecastMonths={forecast.months} yearDataStore={yearDataStore} monthDataStore={monthDataStore} isLocked={isLocked} />
+                <ForecastSection forecastYears={forecast.years} forecastMonths={forecast.months} yearDataStore={yearDataStore} monthDataStore={monthDataStore} isLocked={isLocked} definitions={{
+                    personalYear: numerologyDefinitions.personalYear,
+                    personalMonth: numerologyDefinitions.personalMonth
+                }} />
                 
                 {isLocked && <UnlockBanner fullName={fullName} dobStr={dobStr} nickname={nickname} gender={gender} currentCredit={user?.credits || 0} />}
 

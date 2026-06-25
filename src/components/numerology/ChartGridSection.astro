@@ -3,6 +3,7 @@ import LockedPreview from './LockedPreview.astro';
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   chartType: 'strength' | 'synthesis';
@@ -14,9 +15,10 @@ interface Props {
   missingStore: Record<number, any>;
   isLocked?: boolean;
   lockMode?: 'preview' | 'hidden';
+  definition?: string;
 }
 
-const { chartType, countsArray, arrowsList, missingList, dataStore, arrowStore, missingStore, isLocked = false, lockMode = 'preview' } = Astro.props;
+const { chartType, countsArray, arrowsList, missingList, dataStore, arrowStore, missingStore, isLocked = false, lockMode = 'preview', definition = '' } = Astro.props;
 
 const previewItems: any[] = [];
 
@@ -44,6 +46,7 @@ const boxTitle = chartType === 'strength' ? 'Tổng Hợp Luận Giải Biểu �
 ---
 
 <NumerologySection title={boxTitle} sectionId={`${chartType}-combined-box`}>
+  <DefinitionBlock text={definition} />
   {isLocked && lockMode === 'hidden' ? (
     <LockedPlaceholder />
   ) : isLocked ? (

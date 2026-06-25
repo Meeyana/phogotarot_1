@@ -459,7 +459,7 @@ export function calculateForecast(day, month) {
     // 1. Tính 3 Năm liên tiếp (Năm nay + 2 năm tới)
     const years = [];
     for (let i = 0; i < 3; i++) {
-        const y = currentYear + i;
+        const y = currentYear - 1 + i;
         const num = calculatePersonalYear(day, month, y);
         years.push({ year: y, number: num });
     }

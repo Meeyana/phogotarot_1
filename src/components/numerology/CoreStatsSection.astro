@@ -3,15 +3,17 @@ import LockedPlaceholder from './LockedPlaceholder.astro';
 import LockedPreview from './LockedPreview.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   stats: { key: string; label: string; value: number }[];
   dataMap: Record<string, any>;
   isLocked?: boolean;
   lockModes?: Record<string, 'free' | 'preview' | 'hidden'>;
+  definitions?: Record<string, string>;
 }
 
-const { stats, dataMap, isLocked = false, lockModes = {} } = Astro.props;
+const { stats, dataMap, isLocked = false, lockModes = {}, definitions = {} } = Astro.props;
 ---
 
 <div class="space-y-12">
@@ -31,6 +33,7 @@ const { stats, dataMap, isLocked = false, lockModes = {} } = Astro.props;
 
         <div class="max-w-4xl mx-auto rich-text-content">
           <NumerologySection title={blockTitle} sectionId={`core-${stat.key}-${stat.value}`}>
+            <DefinitionBlock text={definitions[stat.key]} />
             {isLocked && lockMode === 'hidden' ? (
               <LockedPlaceholder />
             ) : isLocked && lockMode === 'preview' ? (

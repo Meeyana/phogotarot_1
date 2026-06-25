@@ -2,6 +2,7 @@
 import LockedPlaceholder from './LockedPlaceholder.astro';
 import NumerologySection from './NumerologySection.astro';
 import ContentBlock from './ContentBlock.astro';
+import DefinitionBlock from './DefinitionBlock.astro';
 
 interface Props {
   periodCycles: {
@@ -11,9 +12,10 @@ interface Props {
   };
   cyclesDataStore: Record<number, any>;
   isLocked?: boolean;
+  definition?: string;
 }
 
-const { periodCycles, cyclesDataStore, isLocked = false } = Astro.props;
+const { periodCycles, cyclesDataStore, isLocked = false, definition = '' } = Astro.props;
 
 const list = [
   { id: 1, label: 'Gieo Hạt', data: periodCycles.c1 },
@@ -41,6 +43,7 @@ const list = [
 </div>
 
 <NumerologySection title="Chi Tiết Ý Nghĩa Các Giai Đoạn" sectionId="cycles-text-combined">
+  <DefinitionBlock text={definition} />
   {isLocked ? (
     <LockedPlaceholder />
   ) : (
