@@ -78,6 +78,12 @@ const careerPreviewItems = topCareer && careerMeaning
             <canvas id="personalityChart"></canvas>
           </div>
         </div>
+        {isLocked && (
+          <div class="chart-lock-hint">
+            <i class="fas fa-lock"></i>
+            <span>3 nhóm tính cách chi phối bạn mạnh nhất đang được giữ lại. Mở khóa để biết đâu là màu tính cách chủ đạo và cách nó vận hành trong bạn.</span>
+          </div>
+        )}
 
         <NumerologySection title="Chi Tiết Luận Giải Tính Cách" sectionId="personality-combined-box">
           {isLocked ? (
@@ -109,6 +115,12 @@ const careerPreviewItems = topCareer && careerMeaning
             <canvas id="careerChart"></canvas>
           </div>
         </div>
+        {isLocked && (
+          <div class="chart-lock-hint">
+            <i class="fas fa-lock"></i>
+            <span>3 nhóm ngành có độ phù hợp cao nhất đang được giữ lại. Mở khóa để xem hướng nghề nổi bật, tỉ lệ thật và gợi ý phát triển chi tiết.</span>
+          </div>
+        )}
 
         <NumerologySection title="Chi Tiết Định Hướng Nghề Nghiệp" sectionId="career-combined-box">
           {isLocked ? (
@@ -130,3 +142,25 @@ const careerPreviewItems = topCareer && careerMeaning
     </div>
   </div>
 </div>
+
+<style>
+  .chart-lock-hint {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin: -0.75rem 0 1.25rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid rgba(242, 201, 76, 0.28);
+    border-left: 4px solid #f2c94c;
+    border-radius: 8px;
+    background: rgba(242, 201, 76, 0.08);
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .chart-lock-hint i {
+    margin-top: 0.2rem;
+    color: #f2c94c;
+  }
+</style>

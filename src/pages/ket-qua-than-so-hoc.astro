@@ -90,6 +90,38 @@ const karmicDebts = calculateKarmicDebt(day, month, year, fullName);
 const karmicLessons = calculateKarmicLessons(fullName);
 const personalityStats = calculatePersonalityPercentages(chartData.strengthData, chartData.nameData, lifePath, destiny, soul, personality);
 const careerStats = calculateCareerPercentages(day, month, year, fullName, nickname, lifePath, destiny, soul);
+const maskTopChartStats = <T extends { label: string; percent: number }>(
+  stats: T[],
+  hiddenLabels: string[],
+  placeholderPercents: number[]
+) => {
+  return [...stats]
+    .sort((a, b) => b.percent - a.percent)
+    .map((item, index) => {
+      if (index >= hiddenLabels.length) return item;
+
+      return {
+        label: hiddenLabels[index],
+        percent: placeholderPercents[index] ?? item.percent,
+        locked: true
+      };
+    });
+};
+
+const chartPersonalityStats = isLocked
+  ? maskTopChartStats(
+      personalityStats,
+      ['Nhóm tính cách chủ đạo (đã khóa)', 'Nhóm ảnh hưởng thứ hai (đã khóa)', 'Nhóm ảnh hưởng thứ ba (đã khóa)'],
+      [38, 31, 24]
+    )
+  : personalityStats;
+const chartCareerStats = isLocked
+  ? maskTopChartStats(
+      careerStats,
+      ['Nhóm ngành phù hợp nhất (đã khóa)', 'Nhóm ngành tiềm năng thứ hai (đã khóa)', 'Nhóm ngành tiềm năng thứ ba (đã khóa)'],
+      [39, 30, 23]
+    )
+  : careerStats;
 const forecast = calculateForecast(day, month);
 
 const renderCell = (number: number, countsArray: number[]) => {
@@ -196,8 +228,8 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
 
     {/* Inline script inject data for charts */}
     <script define:vars={{
-      personalityStats,
-      careerStats,
+      personalityStats: chartPersonalityStats,
+      careerStats: chartCareerStats,
       day,
       month
     }}>

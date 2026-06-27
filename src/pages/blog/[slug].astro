@@ -274,6 +274,48 @@ const shareImage = post.data.image ? new URL(post.data.image.src, Astro.site).hr
     #post-content :global(a) { color: var(--gold-color, #F2C94C); text-decoration: none; font-weight: 600; border-bottom: 1px dashed rgba(242, 201, 76, 0.5); transition: all 0.3s; }
     #post-content :global(a:hover) { color: #fff; border-bottom-style: solid; text-shadow: 0 0 5px var(--gold-color, #F2C94C); }
     #post-content :global(strong) { color: #fff; }
+    #post-content :global(table) {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+      max-width: 100%;
+      margin: 2rem 0;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid rgba(242, 201, 76, 0.28);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.035);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+      text-shadow: none;
+      overflow: hidden;
+    }
+    #post-content :global(thead) {
+      background: linear-gradient(135deg, rgba(242, 201, 76, 0.2), rgba(255, 255, 255, 0.06));
+    }
+    #post-content :global(th),
+    #post-content :global(td) {
+      padding: 0.85rem 1rem;
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      vertical-align: top;
+      text-align: left;
+      overflow-wrap: break-word;
+    }
+    #post-content :global(th) {
+      color: #fff;
+      font-weight: 700;
+      background: rgba(242, 201, 76, 0.08);
+      white-space: nowrap;
+    }
+    #post-content :global(td) {
+      color: #e8e8f2;
+      line-height: 1.6;
+    }
+    #post-content :global(tr:last-child td) { border-bottom: 0; }
+    #post-content :global(th:last-child),
+    #post-content :global(td:last-child) { border-right: 0; }
+    #post-content :global(tbody tr:nth-child(even)) { background: rgba(255, 255, 255, 0.025); }
+    #post-content :global(tbody tr:hover) { background: rgba(242, 201, 76, 0.06); }
     #post-content :global(.text-center){
       text-align: center;
     }
@@ -342,7 +384,28 @@ const shareImage = post.data.image ? new URL(post.data.image.src, Astro.site).hr
     .related-card-desc { font-size: 0.9rem; opacity: 0.7; text-shadow: none; padding: 0 1rem 1.5rem 1rem; margin: 0; flex-grow: 1; color: #ccc; line-height: 1.5; }
     @media (max-width: 900px) { .hero-title { font-size: 2.2rem; } }
     @media (max-width: 768px) { .related-posts-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .homepage-section { padding: 4rem 0.5rem; } .container { padding: 0 0.5rem; } .related-posts-grid { grid-template-columns: 1fr; } .hero-title { font-size: 2rem; } #post-content { font-size: 1rem; } }
+    @media (max-width: 600px) {
+      .homepage-section { padding: 4rem 0.5rem; }
+      .container { padding: 0 0.5rem; }
+      .related-posts-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 2rem; }
+      #post-content { font-size: 1rem; }
+      #post-content :global(table) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      #post-content :global(table::-webkit-scrollbar) { height: 8px; }
+      #post-content :global(table::-webkit-scrollbar-track) { background: rgba(255, 255, 255, 0.05); }
+      #post-content :global(table::-webkit-scrollbar-thumb) {
+        background: rgba(242, 201, 76, 0.45);
+        border-radius: 999px;
+      }
+      #post-content :global(th),
+      #post-content :global(td) {
+        min-width: 180px;
+      }
+    }
     /* --- Style cho phần Disclaimer (Lưu ý) --- */
     .post-disclaimer {
         margin-bottom: 3rem; /* Cách banner CTA một chút */

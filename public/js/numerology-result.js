@@ -137,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ctx && typeof Chart !== 'undefined') {
                 const labels = pDataObj.map(p => p.label);
                 const data = pDataObj.map(p => p.percent);
+                const lockedFlags = pDataObj.map(p => Boolean(p.locked));
                 const colors = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#06b6d4', '#3b82f6', '#8b5cf6', '#d946ef', '#f43f5e'];
                 const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.45));
                 new Chart(ctx, {
@@ -159,6 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         plugins: {
                             legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (item) => lockedFlags[item.dataIndex] ? 'Đã khóa - mở khóa để xem chi tiết' : item.raw + '%'
+                                }
+                            },
                             datalabels: {
                                 color: '#fff',
                                 anchor: 'end',
@@ -172,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 },
                                 clip: false,
                                 clamp: false,
-                                formatter: (value) => value + '%',
+                                formatter: (value, context) => lockedFlags[context.dataIndex] ? '??%' : value + '%',
                                 font: { weight: 'bold' }
                             }
                         },
@@ -191,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (ctx && typeof Chart !== 'undefined') {
                 const labels = cDataObj.map(c => c.label);
                 const data = cDataObj.map(c => c.percent);
+                const lockedFlags = cDataObj.map(c => Boolean(c.locked));
                 const xMax = Math.max(45, Math.ceil(Math.max(...data) * 1.45));
                 new Chart(ctx, {
                     type: 'bar',
@@ -212,6 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         },
                         plugins: {
                             legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: (item) => lockedFlags[item.dataIndex] ? 'Đã khóa - mở khóa để xem chi tiết' : item.raw + '%'
+                                }
+                            },
                             datalabels: {
                                 color: '#fff',
                                 anchor: 'end',
@@ -225,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 },
                                 clip: false,
                                 clamp: false,
-                                formatter: (value) => value + '%',
+                                formatter: (value, context) => lockedFlags[context.dataIndex] ? '??%' : value + '%',
                                 font: { weight: 'bold' }
                             }
                         },
