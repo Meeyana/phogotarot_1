@@ -284,12 +284,12 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                     { key: 'rational', label: 'Số Tư Duy', value: rational },
                     { key: 'maturity', label: 'Số Trưởng Thành', value: maturity }
                 ]} dataMap={coreStatsDataMap} isLocked={isLocked} lockModes={{
-                    destiny: 'preview',
+                    destiny: 'hidden',
                     soul: 'hidden',
                     personality: 'free',
                     attitude: 'free',
-                    rational: 'preview',
-                    maturity: 'preview'
+                    rational: 'hidden',
+                    maturity: 'hidden'
                 }} definitions={{
                     destiny: numerologyDefinitions.destiny,
                     soul: numerologyDefinitions.soul,
@@ -331,7 +331,7 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         </div>
                         <div class="interpretations-container mt-8 rich-text-content">
-                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="preview" definition={numerologyDefinitions.birthChartReading} />
+                            <ChartGridSection chartType="strength" countsArray={chartData.strengthData} arrowsList={chartData.strengthArrows} missingList={chartData.strengthMissingNums} dataStore={strengthDataStore} arrowStore={arrowStore} missingStore={missingStore} isLocked={isLocked} lockMode="hidden" definition={numerologyDefinitions.birthChartReading} />
                         </div>
                     </div>
                 </div>

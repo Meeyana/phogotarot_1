@@ -73,7 +73,7 @@ const lessonPreviewItems = lessons
       <NumerologySection title="Tổng Hợp Các Bài Học Đường Đời (Điểm Yếu)" sectionId="karmic-lessons-combined">
         <DefinitionBlock text={definitions.karmicLessons} />
         {isLocked ? (
-          <LockedPreview items={lessonPreviewItems} maxItems={2} maxChars={230} />
+          <LockedPlaceholder />
         ) : (
           <div>
             {lessons.map(num => {

@@ -81,7 +81,7 @@ const careerPreviewItems = topCareer && careerMeaning
 
         <NumerologySection title="Chi Tiết Luận Giải Tính Cách" sectionId="personality-combined-box">
           {isLocked ? (
-            <LockedPreview items={personalityPreviewItems} maxItems={2} maxChars={230} />
+            <LockedPlaceholder />
           ) : (
             <div>
               {topTraits.map((trait) => {
