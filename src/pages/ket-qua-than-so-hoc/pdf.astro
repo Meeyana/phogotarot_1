@@ -530,6 +530,9 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
 
       @media print {
         @page { size: 210mm 297mm; margin: 0 !important; }
+        @supports (-webkit-touch-callout: none) {
+          @page { size: auto; margin: 0 !important; }
+        }
         html, body {
           background: #fff;
           color: #050a1f;
@@ -548,7 +551,8 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
 
         /* Enforce table layout for repeating margins */
         #print-layout-table {
-          width: 210mm !important;
+          width: 100% !important;
+          max-width: 210mm !important;
           border-collapse: collapse;
           border: none;
           margin: 0;
@@ -589,6 +593,7 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
           padding: 0 !important;
           border: 0 !important;
           page-break-after: always;
+          break-after: page;
           overflow: visible;
           position: relative;
           z-index: 20;
@@ -596,16 +601,15 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
         .page:first-child { page-break-before: auto; }
         .page::before { display: none !important; }
         .page::after { display: none !important; }
-
-        .section-page { page-break-before: always !important; }
-        .toc-page { page-break-after: always !important; }
         
         /* Cover page: pulled outside the table to avoid table footers */
         .cover, .back-cover {
           margin: 0 !important;
           padding: 20mm 16mm 22mm !important;
-          height: 297mm !important;
-          width: 210mm !important;
+          height: 100vh !important;
+          max-height: 297mm !important;
+          width: 100vw !important;
+          max-width: 210mm !important;
           box-sizing: border-box !important;
           background-color: #fff !important; /* solid background hides watermark */
           background-image: url('/images/cover-artwork.png') !important;
@@ -1278,6 +1282,16 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
         if (simActive) { simEl.textContent = buildSimCSS(); drawGuides(); }
       });
     })();
+    </script>
+    <script is:inline>
+      window.addEventListener('load', function() {
+        if (!new URLSearchParams(window.location.search).has('tune')) {
+          // Add a small delay to ensure webfonts and images are fully rendered
+          setTimeout(function() {
+            window.print();
+          }, 500);
+        }
+      });
     </script>
   </body>
 </html>
