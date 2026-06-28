@@ -219,6 +219,7 @@ for (const l of karmicLessons) {
 }
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
+const pdfReportUrl = `/ket-qua-than-so-hoc/pdf?name=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(dobStr)}${nickname ? `&nickname=${encodeURIComponent(nickname)}` : ''}${gender ? `&gender=${encodeURIComponent(gender)}` : ''}`;
 ---
 
 <BaseLayout title={pageTitle} showChatbot={false}>
@@ -262,6 +263,14 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
                             </div>
                         )}
                     </div>
+                    {!isLocked && (
+                        <div class="report-actions">
+                            <a href={pdfReportUrl} class="btn-pdf-report" target="_blank" rel="noopener noreferrer">
+                                <i class="fas fa-file-pdf"></i>
+                                Xuất PDF
+                            </a>
+                        </div>
+                    )}
                 </header>
 
                 <div class="chart-section fade-in-up">
@@ -500,3 +509,33 @@ const pageTitle = `Hồ Sơ: ${fullName}`;
     <NumerologyCTA />
 
 </BaseLayout>
+
+<style>
+  .report-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+  }
+
+  .btn-pdf-report {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1.25rem;
+    border: 1px solid rgba(242, 201, 76, 0.55);
+    border-radius: 8px;
+    background: rgba(242, 201, 76, 0.12);
+    color: #f2c94c;
+    font-weight: 700;
+    text-decoration: none;
+    text-shadow: none;
+    transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .btn-pdf-report:hover {
+    transform: translateY(-2px);
+    background: #f2c94c;
+    color: #0b132b;
+    box-shadow: 0 0 18px rgba(242, 201, 76, 0.35);
+  }
+</style>

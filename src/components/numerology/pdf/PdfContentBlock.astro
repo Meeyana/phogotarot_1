@@ -1,0 +1,32 @@
+---
+interface Props {
+  blocks?: any[];
+  content?: string;
+}
+
+const { blocks, content } = Astro.props;
+const cleanHTML = (html: string) => html ? html.replace(/<p>|<\/p>/g, '') : '';
+---
+
+{blocks && blocks.length > 0 ? (
+  <div class="pdf-content-block">
+    {blocks.map((block: any) => (
+      <div class="pdf-block">
+        {block.title && <h4 set:html={cleanHTML(block.title)}></h4>}
+        {block.type === 'list' && block.items ? (
+          <ul>
+            {block.items.map((item: string) => <li set:html={cleanHTML(item)}></li>)}
+          </ul>
+        ) : block.type === 'quote' ? (
+          <blockquote set:html={cleanHTML(block.content)}></blockquote>
+        ) : block.type === 'text' || block.content ? (
+          <p set:html={cleanHTML(block.content)}></p>
+        ) : null}
+      </div>
+    ))}
+  </div>
+) : content ? (
+  <div class="pdf-content-block" set:html={content}></div>
+) : (
+  <p class="muted">Nội dung đang được cập nhật.</p>
+)}
