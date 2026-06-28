@@ -627,6 +627,16 @@ const getCareerMeaning = (id: string) => content.careerChart?.meanings?.[id] || 
         .back-cover { background-position: center bottom !important; page-break-before: always !important; page-break-after: auto !important; }
         .cover > .brand-logo, .back-cover > .brand-logo { margin-top: 0; }
 
+        /* Safari-specific fix: Safari's native pagination conflicts with forced breaks causing blank duplicate pages */
+        @supports (background: -webkit-named-image(i)) {
+          .page, .cover, .back-cover {
+            page-break-after: auto !important;
+            break-after: auto !important;
+            page-break-before: auto !important;
+            break-before: auto !important;
+          }
+        }
+
         /* Fixed Footer */
         .footer { display: none !important; }
         .print-footer {
