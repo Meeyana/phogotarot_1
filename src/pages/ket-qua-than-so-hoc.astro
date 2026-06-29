@@ -220,6 +220,8 @@ for (const l of karmicLessons) {
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
 const pdfReportUrl = `/ket-qua-than-so-hoc/pdf?name=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(dobStr)}${nickname ? `&nickname=${encodeURIComponent(nickname)}` : ''}${gender ? `&gender=${encodeURIComponent(gender)}` : ''}`;
+const pdfReportApiUrl = `/api/numerology/report?name=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(dobStr)}${nickname ? `&nickname=${encodeURIComponent(nickname)}` : ''}${gender ? `&gender=${encodeURIComponent(gender)}` : ''}`;
+const pdfExporterUrl = import.meta.env.PUBLIC_NUMEROLOGY_PDF_EXPORTER_URL || '';
 ---
 
 <BaseLayout title={pageTitle} showChatbot={false}>
@@ -265,7 +267,7 @@ const pdfReportUrl = `/ket-qua-than-so-hoc/pdf?name=${encodeURIComponent(fullNam
                     </div>
                     {!isLocked && (
                         <div class="report-actions">
-                            <a href={pdfReportUrl} class="btn-pdf-report" target="_blank" rel="noopener noreferrer">
+                            <a href={pdfReportUrl} class="btn-pdf-report" id="pdf-export-link" data-report-api={pdfReportApiUrl} data-exporter-url={pdfExporterUrl} target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-file-pdf"></i>
                                 Xuất PDF
                             </a>
@@ -507,6 +509,68 @@ const pdfReportUrl = `/ket-qua-than-so-hoc/pdf?name=${encodeURIComponent(fullNam
     <div class="divider-section"></div>
 
     <NumerologyCTA />
+
+    <script is:inline>
+      (function() {
+        var link = document.getElementById('pdf-export-link');
+        if (!link) return;
+
+        var exporterUrl = link.getAttribute('data-exporter-url');
+        var reportApi = link.getAttribute('data-report-api');
+        if (!exporterUrl || !reportApi) return;
+
+        link.addEventListener('click', async function(event) {
+          event.preventDefault();
+
+          var originalText = link.innerHTML;
+          var exporterOrigin = new URL(exporterUrl).origin;
+          var target = window.open(exporterUrl, 'phogotarot-pdf-exporter');
+          if (!target) {
+            alert('Trinh duyet dang chan popup tai PDF. Vui long cho phep popup cho website nay.');
+            return;
+          }
+
+          link.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dang tao PDF';
+          link.style.pointerEvents = 'none';
+
+          try {
+            var response = await fetch(reportApi, { credentials: 'include' });
+            var report = await response.json();
+            if (!response.ok) throw new Error(report.error || 'Khong lay duoc du lieu PDF.');
+
+            var send = function() {
+              target.postMessage({
+                type: 'PHOGOTAROT_NUMEROLOGY_REPORT',
+                report: report,
+                autoDownload: true
+              }, exporterOrigin);
+            };
+
+            var timer = setInterval(send, 500);
+            var onReady = function(messageEvent) {
+              if (messageEvent.origin !== exporterOrigin) return;
+              if (!messageEvent.data || messageEvent.data.type !== 'PHOGOTAROT_PDF_EXPORTER_READY') return;
+              clearInterval(timer);
+              send();
+              window.removeEventListener('message', onReady);
+            };
+
+            window.addEventListener('message', onReady);
+            send();
+            setTimeout(function() {
+              clearInterval(timer);
+              window.removeEventListener('message', onReady);
+            }, 10000);
+          } catch (error) {
+            target.close();
+            alert(error.message || 'Khong tao duoc PDF.');
+          } finally {
+            link.innerHTML = originalText;
+            link.style.pointerEvents = '';
+          }
+        });
+      })();
+    </script>
 
 </BaseLayout>
 
