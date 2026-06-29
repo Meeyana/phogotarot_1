@@ -22,10 +22,7 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Chưa cấu hình RESEND_API_KEY để gửi email.' }), { status: 500 });
     }
 
-    const body = await context.request.json();
-    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-    const password = body.password;
-    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    const { email, password, name } = await context.request.json();
 
     if (!email || !password || !name) {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin đăng ký' }), { status: 400 });

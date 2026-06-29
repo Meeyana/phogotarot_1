@@ -5,7 +5,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const runtimeEnv = Astro.locals.runtime?.env || {};
 const supabaseUrl = runtimeEnv.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
 const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
-const enableGoogleAuth = false;
 
 // Nếu đã đăng nhập, chuyển hướng sang trang chủ
 if (Astro.locals.user) {
@@ -22,19 +21,15 @@ if (Astro.locals.user) {
           <p>Tạo tài khoản để kết nối với vũ trụ</p>
         </div>
 
-        {enableGoogleAuth && (
-          <>
-            <!-- Đăng nhập bằng Google -->
-            <button id="google-login-btn" class="google-btn" type="button" data-url={supabaseUrl} data-key={supabaseKey}>
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
-              Tiếp tục với Google
-            </button>
+        <!-- Đăng nhập bằng Google -->
+        <button id="google-login-btn" class="google-btn" type="button" data-url={supabaseUrl} data-key={supabaseKey}>
+          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
+          Tiếp tục với Google
+        </button>
 
-            <div class="divider">
-              <span>hoặc</span>
-            </div>
-          </>
-        )}
+        <div class="divider">
+          <span>hoặc</span>
+        </div>
 
         <!-- Form Đăng Ký Email -->
         <form id="register-form" class="auth-form">

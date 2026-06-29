@@ -1,15 +1,10 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-
-const runtimeEnv = Astro.locals.runtime?.env || {};
-const supabaseUrl = runtimeEnv.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
-const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 ---
 
 <BaseLayout title="Đang xác thực..." description="Đang xử lý đăng nhập Google" showChatbot={false}>
   <main class="callback-page">
-    <div class="callback-container" id="callback-config" data-url={supabaseUrl} data-key={supabaseKey}>
-      <div id="status-message" class="status-message">Đang xác thực tài khoản...</div>
+    <div class="callback-container">
       <div id="error-message" class="error-message" style="display: none;"></div>
     </div>
   </main>
@@ -17,72 +12,55 @@ const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLI
   <script>
     import { createClient } from '@supabase/supabase-js';
 
-    const config = document.getElementById('callback-config');
-    const statusMessage = document.getElementById('status-message');
     const errorMessage = document.getElementById('error-message');
-
-    const showError = (message: string) => {
-      if (statusMessage) statusMessage.style.display = 'none';
-      if (!errorMessage) return;
-      errorMessage.style.display = 'block';
-      errorMessage.innerText = message;
+    const runtimeEnv = {
+      PUBLIC_SUPABASE_URL: import.meta.env.PUBLIC_SUPABASE_URL || '',
+      PUBLIC_SUPABASE_ANON_KEY: import.meta.env.PUBLIC_SUPABASE_ANON_KEY || ''
     };
 
-    const syncSession = async (accessToken: string) => {
-      const res = await fetch('/api/auth/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ access_token: accessToken })
+    const supabase = createClient(runtimeEnv.PUBLIC_SUPABASE_URL, runtimeEnv.PUBLIC_SUPABASE_ANON_KEY);
+
+    // Bắt sự kiện khi Supabase parse được token từ URL Hash
+    supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === 'SIGNED_IN' && session) {
+        try {
+          // Gửi token về backend để xác thực bảo mật và tạo phiên (Session) của riêng hệ thống D1
+          const res = await fetch('/api/auth/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: session.access_token })
+          });
+
+          const data = await res.json();
+          if (res.ok && data.success) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || '/';
+            window.location.href = redirect; // Đăng nhập thành công, về đúng trang
+          } else {
+            if (errorMessage) {
+              errorMessage.style.display = 'block';
+              errorMessage.innerText = data.error || 'Lỗi đồng bộ tài khoản.';
+            }
+          }
+        } catch (error) {
+          if (errorMessage) {
+            errorMessage.style.display = 'block';
+            errorMessage.innerText = 'Lỗi kết nối máy chủ.';
+          }
+        }
+      }
+    });
+
+    // Nếu sau 5 giây không có event SIGNED_IN (vd user truy cập nhầm trang)
+    setTimeout(() => {
+      if (!errorMessage || errorMessage.style.display === 'block') return;
+      supabase.auth.getSession().then(({ data }) => {
+        if (!data.session) {
+          errorMessage.style.display = 'block';
+          errorMessage.innerText = 'Không tìm thấy phiên đăng nhập. Vui lòng thử lại.';
+        }
       });
-
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Lỗi đồng bộ tài khoản.');
-      }
-
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirect = urlParams.get('redirect') || '/';
-      window.location.href = redirect;
-    };
-
-    const handleCallback = async () => {
-      const supabaseUrl = config?.getAttribute('data-url') || '';
-      const supabaseKey = config?.getAttribute('data-key') || '';
-
-      if (!supabaseUrl || !supabaseKey) {
-        showError('Thiếu cấu hình Supabase URL hoặc Key.');
-        return;
-      }
-
-      const supabase = createClient(supabaseUrl, supabaseKey);
-
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        let session = null;
-
-        if (code) {
-          const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) throw error;
-          session = data.session;
-        } else {
-          const { data, error } = await supabase.auth.getSession();
-          if (error) throw error;
-          session = data.session;
-        }
-
-        if (!session?.access_token) {
-          showError('Không tìm thấy phiên đăng nhập. Vui lòng thử lại.');
-          return;
-        }
-
-        await syncSession(session.access_token);
-      } catch (error: any) {
-        showError(error.message || 'Lỗi kết nối máy chủ.');
-      }
-    };
-
-    handleCallback();
+    }, 5000);
   </script>
 
   <style>
@@ -98,27 +76,17 @@ const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLI
       max-width: 500px;
     }
 
-    .status-message,
     .error-message {
       margin-top: 1rem;
       padding: 1.5rem;
+      background: rgba(231, 76, 60, 0.1);
+      color: #ff6b6b;
+      border: 1px solid rgba(231, 76, 60, 0.3);
       border-radius: 12px;
       backdrop-filter: blur(10px);
       text-align: center;
       font-size: 1.05rem;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    }
-
-    .status-message {
-      background: rgba(242, 201, 76, 0.1);
-      color: var(--gold-color, #F2C94C);
-      border: 1px solid rgba(242, 201, 76, 0.3);
-    }
-
-    .error-message {
-      background: rgba(231, 76, 60, 0.1);
-      color: #ff6b6b;
-      border: 1px solid rgba(231, 76, 60, 0.3);
     }
   </style>
 </BaseLayout>

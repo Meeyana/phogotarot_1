@@ -17,9 +17,7 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Database not available' }), { status: 500 });
     }
 
-    const body = await context.request.json();
-    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-    const password = body.password;
+    const { email, password } = await context.request.json();
 
     if (!email || !password) {
       return new Response(JSON.stringify({ error: 'Vui lòng nhập email và mật khẩu' }), { status: 400 });

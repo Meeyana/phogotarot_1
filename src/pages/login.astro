@@ -1,17 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 
+// Lấy biến môi trường (ưu tiên Cloudflare Runtime, sau đó fallback về Vite import.meta.env)
 const runtimeEnv = Astro.locals.runtime?.env || {};
 const supabaseUrl = runtimeEnv.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
 const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
-const enableGoogleAuth = false;
+const googleClientId = runtimeEnv.PUBLIC_GOOGLE_CLIENT_ID || import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '357142710685-hkhoju35vfp5fo6s16e3j5rgebojtstb.apps.googleusercontent.com';
 
+// Nếu đã đăng nhập, chuyển hướng sang trang chủ
 if (Astro.locals.user) {
   return Astro.redirect('/');
 }
 ---
 
 <BaseLayout title="Đăng Nhập - Phở Gõ Tarot" description="Đăng nhập để xem Tarot và trò chuyện cùng Oracle" showChatbot={false}>
+  <!-- Thêm thư viện Google Identity Services -->
+  <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
+
   <main class="auth-page">
     <div class="auth-container">
       <div class="auth-card">
@@ -20,19 +25,39 @@ if (Astro.locals.user) {
           <p>Mở cánh cửa bước vào thế giới huyền học</p>
         </div>
 
-        {enableGoogleAuth && (
-          <>
-            <button id="google-login-btn" class="google-btn" type="button" data-url={supabaseUrl} data-key={supabaseKey}>
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
-              Tiếp tục với Google
-            </button>
+        <!-- Đăng nhập bằng Google Identity Services (UI Custom Overlay) -->
+        <div class="google-btn-wrapper" id="supabase-auth-config" data-url={supabaseUrl} data-key={supabaseKey}>
+          <button class="google-btn" type="button">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
+            Tiếp tục với Google
+          </button>
+          
+          <div id="g_id_onload"
+               data-client_id={googleClientId}
+               data-context="signin"
+               data-ux_mode="popup"
+               data-callback="handleGoogleSignIn"
+               data-auto_prompt="false">
+          </div>
+          
+          <div class="gis-overlay">
+              <div class="g_id_signin"
+                   data-type="standard"
+                   data-shape="rectangular"
+                   data-theme="outline"
+                   data-text="continue_with"
+                   data-size="large"
+                   data-logo_alignment="center"
+                   data-width="400">
+              </div>
+          </div>
+        </div>
 
-            <div class="divider">
-              <span>hoặc</span>
-            </div>
-          </>
-        )}
+        <div class="divider">
+          <span>hoặc</span>
+        </div>
 
+        <!-- Form Đăng nhập Email -->
         <form id="login-form" class="auth-form">
           <div class="form-group">
             <label for="email">Email</label>
@@ -65,54 +90,73 @@ if (Astro.locals.user) {
     const loginForm = document.getElementById('login-form');
     const errorMessage = document.getElementById('error-message');
     const submitBtn = document.getElementById('submit-btn');
-    const googleBtn = document.getElementById('google-login-btn');
+    
+    // Supabase config cho Google Auth
+    const sbConfig = document.getElementById('supabase-auth-config');
+    let supUrl = '';
+    let supKey = '';
+    if (sbConfig) {
+       supUrl = sbConfig.getAttribute('data-url') || '';
+       supKey = sbConfig.getAttribute('data-key') || '';
+    }
 
-    const showError = (message: string) => {
-      if (!errorMessage) return;
-      errorMessage.innerText = message;
-      errorMessage.style.display = 'block';
-    };
+    // CallBack từ thư viện Google
+    (window as any).handleGoogleSignIn = async (response: any) => {
+      if (!supUrl || !supKey) {
+        alert('Thiếu cấu hình Supabase URL hoặc Key.');
+        return;
+      }
+      
+      const supabase = createClient(supUrl, supKey);
+      
+      if (errorMessage) {
+        errorMessage.style.display = 'block';
+        errorMessage.style.backgroundColor = 'rgba(242, 201, 76, 0.1)';
+        errorMessage.style.color = 'var(--gold-color, #F2C94C)';
+        errorMessage.style.borderColor = 'rgba(242, 201, 76, 0.3)';
+        errorMessage.innerText = 'Đang đồng bộ tài khoản Google...';
+      }
 
-    if (googleBtn) {
-      googleBtn.addEventListener('click', async () => {
-        const supabaseUrl = googleBtn.getAttribute('data-url');
-        const supabaseKey = googleBtn.getAttribute('data-key');
-
-        if (!supabaseUrl || !supabaseKey) {
-          showError('Thiếu cấu hình Supabase URL hoặc Key.');
-          return;
-        }
-
-        const originalText = googleBtn.textContent || 'Tiếp tục với Google';
-        googleBtn.textContent = 'Đang chuyển hướng...';
-        googleBtn.setAttribute('disabled', 'true');
-
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const urlParams = new URLSearchParams(window.location.search);
-        const redirect = urlParams.get('redirect') || '/';
-        const callbackUrl = new URL('/auth/callback', window.location.origin);
-        callbackUrl.searchParams.set('redirect', redirect);
-
-        const { error } = await supabase.auth.signInWithOAuth({
+      try {
+        const { data, error } = await supabase.auth.signInWithIdToken({
           provider: 'google',
-          options: {
-            redirectTo: callbackUrl.toString()
-          }
+          token: response.credential,
         });
 
-        if (error) {
-          showError(error.message || 'Không thể đăng nhập Google. Vui lòng thử lại.');
-          googleBtn.textContent = originalText;
-          googleBtn.removeAttribute('disabled');
+        if (error) throw error;
+
+        if (data.session) {
+          const res = await fetch('/api/auth/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ access_token: data.session.access_token })
+          });
+
+          const syncData = await res.json();
+          if (res.ok && syncData.success) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || '/';
+            window.location.href = redirect;
+          } else {
+            throw new Error(syncData.error || 'Lỗi đồng bộ cookie.');
+          }
         }
-      });
-    }
+      } catch (err: any) {
+        if (errorMessage) {
+           errorMessage.style.backgroundColor = 'rgba(231, 76, 60, 0.1)';
+           errorMessage.style.color = '#ff6b6b';
+           errorMessage.style.borderColor = 'rgba(231, 76, 60, 0.3)';
+           errorMessage.innerText = err.message || 'Lỗi kết nối. Vui lòng thử lại sau.';
+        }
+      }
+    };
 
     if (loginForm && errorMessage && submitBtn) {
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         errorMessage.style.display = 'none';
         
+        // Disable button while loading
         const originalText = submitBtn.innerText;
         submitBtn.innerText = 'Đang xử lý...';
         submitBtn.setAttribute('disabled', 'true');
@@ -193,12 +237,32 @@ if (Astro.locals.user) {
       margin: 0;
     }
 
+    /* Google Button & GIS Overlay */
+    .google-btn-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .gis-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.01; /* Ẩn đi nhưng vẫn click được */
+      z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .google-btn {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
-      min-height: 52px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.1);
       color: #fff;
@@ -209,19 +273,12 @@ if (Astro.locals.user) {
       text-decoration: none;
       transition: all 0.3s ease;
       gap: 12px;
-      cursor: pointer;
     }
 
-    .google-btn:hover:not(:disabled) {
+    .google-btn-wrapper:hover .google-btn {
       background: rgba(255, 255, 255, 0.1);
       border-color: rgba(255, 255, 255, 0.2);
       transform: translateY(-2px);
-    }
-
-    .google-btn:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
     }
 
     .google-icon {
@@ -229,6 +286,7 @@ if (Astro.locals.user) {
       height: 24px;
     }
 
+    /* Divider */
     .divider {
       display: flex;
       align-items: center;
@@ -249,6 +307,7 @@ if (Astro.locals.user) {
       font-size: 0.9rem;
     }
 
+    /* Form */
     .form-group {
       margin-bottom: 1.5rem;
     }

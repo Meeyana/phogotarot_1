@@ -12,11 +12,7 @@ export const POST: APIRoute = async (context) => {
       return new Response(JSON.stringify({ error: 'Database not available' }), { status: 500 });
     }
 
-    const body = await context.request.json();
-    const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
-    const password = body.password;
-    const name = typeof body.name === 'string' ? body.name.trim() : '';
-    const otp = typeof body.otp === 'string' ? body.otp.trim() : '';
+    const { email, password, name, otp } = await context.request.json();
 
     if (!email || !password || !name || !otp) {
       return new Response(JSON.stringify({ error: 'Thiếu thông tin xác thực' }), { status: 400 });
