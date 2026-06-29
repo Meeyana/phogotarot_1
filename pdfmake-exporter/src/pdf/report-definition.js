@@ -50,19 +50,14 @@ export async function buildPdfDefinition(report, assets = {}) {
     background(currentPage) {
       if (currentPage === 1) return fullPageImage(assets.coverArtwork);
       return [
-        {
-          canvas: [
-            { type: "rect", x: 30, y: 30, w: A4.width - 60, h: A4.height - 60, lineColor: GOLD, lineWidth: 0.7 }
-          ]
-        },
         assets.logo ? { image: assets.logo, width: 260, opacity: 0.07, absolutePosition: { x: 168, y: 285 } } : {}
       ];
     },
     footer(currentPage, pageCount) {
       if (currentPage === 1 || currentPage === pageCount) return {};
-      const footerIdentity = `™ Copyright 2026 - ${input.fullName || "Phở Gõ Tarot"} - ${input.formattedDob || input.dobStr || ""}`;
+      const footerIdentity = `© Copyright 2026 - ${input.fullName || "Phở Gõ Tarot"} - ${input.formattedDob || input.dobStr || ""}`;
       return {
-        margin: [18, 34, 18, 0],
+        margin: [36, 24, 36, 0],
         columns: [
           { text: footerIdentity, style: "footerText" },
           { text: `${String(currentPage - 1).padStart(2, "0")} / ${String(pageCount - 2).padStart(2, "0")}`, alignment: "right", style: "footerText" }
@@ -74,8 +69,8 @@ export async function buildPdfDefinition(report, assets = {}) {
     defaultStyle: {
       font: "Roboto",
       color: INK,
-      fontSize: 11.5,
-      lineHeight: 1.32
+      fontSize: 13,
+      lineHeight: 1.34
     }
   };
 }
@@ -428,22 +423,22 @@ function styles() {
     coverNote: { fontSize: 9, alignment: "center", color: "#5c6470" },
     metaLabel: { fontSize: 8.5, color: "#5c6470" },
     metaValue: { fontSize: 13, bold: true, color: NAVY },
-    pageTitle: { fontSize: 25, bold: true, color: NAVY, margin: [0, 0, 0, 22] },
-    sectionTitle: { fontSize: 20, bold: true, color: NAVY, margin: [0, 0, 0, 14] },
-    subsectionTitle: { fontSize: 15.5, bold: true, color: NAVY },
-    tocGroup: { fontSize: 13, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
-    tocNumber: { fontSize: 11.5, bold: true, color: GOLD, margin: [0, 2, 0, 2] },
-    tocItem: { fontSize: 11.5, color: INK, margin: [0, 2, 0, 2] },
-    definition: { fontSize: 10.6, italics: true, color: MUTED, margin: [0, 0, 0, 8] },
-    paragraph: { fontSize: 11.4, color: INK, margin: [0, 0, 0, 8] },
-    blockTitle: { fontSize: 13.4, bold: true, color: GOLD, margin: [0, 12, 0, 7] },
-    quote: { fontSize: 11.2, italics: true, color: "#3f4857", margin: [12, 4, 12, 8] },
-    muted: { fontSize: 10.5, color: MUTED, margin: [0, 0, 0, 7] },
-    miniTitle: { fontSize: 11, bold: true, color: GOLD, margin: [0, 0, 0, 4] },
-    gridCell: { fontSize: 15, bold: true, color: NAVY, alignment: "center", margin: [0, 12, 0, 0] },
-    tableHeader: { fontSize: 10.3, bold: true, color: NAVY, fillColor: SOFT },
-    tableText: { fontSize: 10.2, color: INK },
-    footerText: { fontSize: 9, italics: true, color: MUTED },
+    pageTitle: { fontSize: 27, bold: true, color: NAVY, margin: [0, 0, 0, 24] },
+    sectionTitle: { fontSize: 22, bold: true, color: NAVY, margin: [0, 0, 0, 16] },
+    subsectionTitle: { fontSize: 17, bold: true, color: NAVY },
+    tocGroup: { fontSize: 14.5, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
+    tocNumber: { fontSize: 13, bold: true, color: GOLD, margin: [0, 2, 0, 2] },
+    tocItem: { fontSize: 13, color: INK, margin: [0, 2, 0, 2] },
+    definition: { fontSize: 12, italics: true, color: MUTED, margin: [0, 0, 0, 10] },
+    paragraph: { fontSize: 13.2, color: INK, margin: [0, 0, 0, 10] },
+    blockTitle: { fontSize: 15, bold: true, color: GOLD, margin: [0, 14, 0, 8] },
+    quote: { fontSize: 12.8, italics: true, color: "#3f4857", margin: [12, 4, 12, 8] },
+    muted: { fontSize: 12, color: MUTED, margin: [0, 0, 0, 8] },
+    miniTitle: { fontSize: 12.5, bold: true, color: GOLD, margin: [0, 0, 0, 4] },
+    gridCell: { fontSize: 16, bold: true, color: NAVY, alignment: "center", margin: [0, 12, 0, 0] },
+    tableHeader: { fontSize: 11.5, bold: true, color: NAVY, fillColor: SOFT },
+    tableText: { fontSize: 11.5, color: INK },
+    footerText: { fontSize: 9.5, italics: true, color: MUTED },
     backTitle: { fontSize: 23, bold: true, alignment: "center", color: NAVY, margin: [0, 0, 0, 18] },
     backParagraph: { fontSize: 11, alignment: "center", color: INK, margin: [28, 0, 28, 0] },
     ctaTitle: { fontSize: 13, bold: true, color: NAVY, margin: [0, 0, 0, 8] },
