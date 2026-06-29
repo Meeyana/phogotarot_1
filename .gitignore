@@ -32,6 +32,7 @@ danh-gia-he-thong-phogotarot.md
 tools
 n8n-workflow
 cms-worker
+pdfmake-exporter
 
 # macOS-specific files
 .DS_Store
@@ -44,7 +45,6 @@ cms-worker
 
 # Content Plan folder
 content-plan/
-
 
 
 

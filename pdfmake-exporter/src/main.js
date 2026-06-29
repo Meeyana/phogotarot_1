@@ -1,9 +1,14 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import playfair400Url from "./assets/fonts/playfair-display-400.ttf?url";
+import playfair900Url from "./assets/fonts/playfair-display-900.ttf?url";
 import { buildPdfDefinition } from "./pdf/report-definition.js";
 import { clearStoredReport, listenForReport, readStoredReport, writeStoredReport } from "./bridge/report-channel.js";
 
 pdfMake.vfs = pdfFonts.pdfMake?.vfs || pdfFonts.vfs || pdfFonts;
+const playfair400Font = new URL(playfair400Url, window.location.href).href;
+const playfair900Font = new URL(playfair900Url, window.location.href).href;
+
 pdfMake.fonts = {
   Roboto: {
     normal: "Roboto-Regular.ttf",
@@ -12,10 +17,10 @@ pdfMake.fonts = {
     bolditalics: "Roboto-MediumItalic.ttf"
   },
   PlayfairDisplay: {
-    normal: "/fonts/playfair-display-400.ttf",
-    bold: "/fonts/playfair-display-900.ttf",
-    italics: "/fonts/playfair-display-400.ttf",
-    bolditalics: "/fonts/playfair-display-900.ttf"
+    normal: playfair400Font,
+    bold: playfair900Font,
+    italics: playfair400Font,
+    bolditalics: playfair900Font
   }
 };
 

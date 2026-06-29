@@ -88,15 +88,16 @@ function coverPage(input, generatedAt, assets, displayName) {
         assets.logo ? { image: assets.logo, width: 100, alignment: "center", margin: [0, 0, 0, 104] } : {},
         { text: "BÁO CÁO", style: "coverTitleTop" },
         { text: "THẦN SỐ HỌC", style: "coverTitleMain" },
+        coverDivider(),
         { text: displayName || "Bạn Mình", style: "coverName" },
         {
-          margin: [52, 34, 52, 0],
+          margin: [52, 18, 52, 0],
           columns: [
-            metaBox("Ngày sinh", input.formattedDob || input.dobStr || ""),
-            metaBox("Ngày xuất", generatedAt)
+            metaBox("Ngày sinh", input.formattedDob || input.dobStr || "", "left"),
+            metaBox("Ngày xuất", generatedAt, "right")
           ]
         },
-        { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", width: A4.width, absolutePosition: { x: 0, y: 786 } }
+        { text: "© Copyright 2026 - phogotarot.com.", style: "coverNote", margin: [0, 204, 0, 0] }
       ],
       pageBreak: "after",
       margin: [0, 40, 0, 0]
@@ -104,7 +105,20 @@ function coverPage(input, generatedAt, assets, displayName) {
   ];
 }
 
-function metaBox(label, value) {
+function coverDivider() {
+  return {
+    canvas: [
+      { type: "line", x1: 0, y1: 0, x2: 94, y2: 0, lineWidth: 0.75, lineColor: "#b9aa88" },
+      { type: "ellipse", x: 112, y: 0, r1: 3, r2: 3, color: "#b9aa88" },
+      { type: "line", x1: 130, y1: 0, x2: 224, y2: 0, lineWidth: 0.75, lineColor: "#b9aa88" }
+    ],
+    width: 224,
+    alignment: "center",
+    margin: [0, -8, 0, 18]
+  };
+}
+
+function metaBox(label, value, alignment = "left") {
   return {
     width: "*",
     margin: [10, 0, 10, 0],
@@ -113,8 +127,8 @@ function metaBox(label, value) {
       body: [[
         {
           stack: [
-            { text: label.toUpperCase(), style: "metaLabel" },
-            { text: value, style: "metaValue" }
+            { text: label.toUpperCase(), style: "metaLabel", alignment },
+            { text: value, style: "metaValue", alignment }
           ],
           border: [false, false, false, true],
           borderColor: ["", "", "", "#b9aa88"],
@@ -410,45 +424,67 @@ function pyramidGraphic(report) {
   const pyramid = report.pyramid || {};
   const peaks = pyramid.peaks || {};
   const challenges = pyramid.challenges || {};
+  const base = pyramid.base || {};
   const input = report.input || {};
-  const svgNode = (x, y, value, fill = "#0b132b") => `
-    <circle cx="${x}" cy="${y}" r="18" fill="${fill}" stroke="${GOLD}" stroke-width="2"/>
-    <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">${escapeSvg(value ?? "")}</text>
+  const ages = pyramid.ages || {};
+  const ageLabel = (range, year, x, y, anchor = "middle") => `
+    <text x="${x}" y="${y}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="#2f3747">${escapeSvg(range)}</text>
+    ${year ? `<text x="${x}" y="${y + 17}" text-anchor="${anchor}" font-size="12" font-weight="700" fill="#9a6b16">(${escapeSvg(year)})</text>` : ""}
+  `;
+  const svgNode = (x, y, value, fill = "#fffaf0", textColor = "#0b132b", glow = false) => `
+    ${glow ? `<circle cx="${x}" cy="${y}" r="28" fill="#d4a33a" opacity="0.16"/>` : ""}
+    <circle cx="${x}" cy="${y}" r="20" fill="${fill}" stroke="#c7972f" stroke-width="1.45"/>
+    <text x="${x}" y="${y + 5}" text-anchor="middle" font-size="15" font-weight="700" fill="${textColor}">${escapeSvg(value ?? "")}</text>
   `;
   const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="420" height="430" viewBox="0 0 420 430">
-    <rect width="420" height="430" fill="#fffaf0" opacity="0"/>
-    <g stroke="${GOLD}" stroke-width="1.4" opacity="0.95">
-      <line x1="210" y1="25" x2="92" y2="205"/>
-      <line x1="210" y1="25" x2="328" y2="205"/>
-      <line x1="92" y1="205" x2="210" y2="365"/>
-      <line x1="328" y1="205" x2="210" y2="365"/>
-      <line x1="92" y1="205" x2="328" y2="205"/>
-      <line x1="210" y1="25" x2="210" y2="365" opacity="0.65"/>
-      <line x1="150" y1="155" x2="210" y2="92" opacity="0.65"/>
-      <line x1="270" y1="155" x2="210" y2="92" opacity="0.65"/>
-      <line x1="150" y1="155" x2="92" y2="205" opacity="0.65"/>
-      <line x1="270" y1="155" x2="328" y2="205" opacity="0.65"/>
+  <svg xmlns="http://www.w3.org/2000/svg" width="420" height="560" viewBox="0 0 420 560">
+    <rect width="420" height="560" fill="#fffaf0" opacity="0"/>
+    <g stroke="#c7972f" stroke-width="1.25" opacity="0.86" fill="none">
+      <line x1="210" y1="45" x2="88" y2="280"/>
+      <line x1="210" y1="45" x2="332" y2="280"/>
+      <line x1="88" y1="280" x2="210" y2="510"/>
+      <line x1="332" y1="280" x2="210" y2="510"/>
+      <line x1="88" y1="280" x2="332" y2="280" opacity="0.45"/>
+      <line x1="152" y1="218" x2="210" y2="128"/>
+      <line x1="268" y1="218" x2="210" y2="128"/>
+      <line x1="152" y1="218" x2="88" y2="280"/>
+      <line x1="268" y1="218" x2="332" y2="280"/>
+      <line x1="152" y1="218" x2="210" y2="280"/>
+      <line x1="268" y1="218" x2="210" y2="280"/>
+      <line x1="210" y1="280" x2="152" y2="360"/>
+      <line x1="210" y1="280" x2="268" y2="360"/>
+      <line x1="152" y1="360" x2="210" y2="430"/>
+      <line x1="268" y1="360" x2="210" y2="430"/>
     </g>
-    ${svgNode(210, 25, peaks.p4)}
-    ${svgNode(210, 92, peaks.p3)}
-    ${svgNode(150, 155, peaks.p1)}
-    ${svgNode(270, 155, peaks.p2)}
-    ${svgNode(92, 205, input.month)}
-    ${svgNode(210, 205, input.day, "#1b2745")}
-    ${svgNode(328, 205, String(input.year || "").slice(-1))}
-    ${svgNode(150, 270, challenges.c1, "#1f2633")}
-    ${svgNode(270, 270, challenges.c2, "#1f2633")}
-    ${svgNode(210, 325, challenges.c3, "#1f2633")}
-    ${svgNode(210, 382, challenges.c4, "#1f2633")}
-    <text x="92" y="235" text-anchor="middle" font-size="12" fill="#667085">Tháng ${escapeSvg(input.month || "")}</text>
-    <text x="210" y="235" text-anchor="middle" font-size="12" font-weight="700" fill="${GOLD}">Ngày ${escapeSvg(input.day || "")}</text>
-    <text x="328" y="235" text-anchor="middle" font-size="12" fill="#667085">Năm ${escapeSvg(input.year || "")}</text>
+    <g stroke="#8a93a3" stroke-width="1.05" opacity="0.62" fill="none">
+      <path d="M234 66 H324 L334 56"/>
+      <path d="M234 138 H322 L332 128"/>
+      <path d="M292 230 H352 L362 220"/>
+      <path d="M128 230 H68 L58 220"/>
+    </g>
+    ${ageLabel(ages.p4_text || "48-56 tuổi", ages.p4_year || pyramid.years?.p4, 346, 52, "middle")}
+    ${ageLabel(ages.p3_text || "39-47 tuổi", ages.p3_year || pyramid.years?.p3, 346, 124, "middle")}
+    ${ageLabel(ages.p2_text || "30-38 tuổi", ages.p2_year || pyramid.years?.p2, 356, 218, "start")}
+    ${ageLabel(ages.p1_text || "21-29 tuổi", ages.p1_year || pyramid.years?.p1, 64, 218, "end")}
+    ${svgNode(210, 45, peaks.p4, "#0b132b", "#fffaf0")}
+    ${svgNode(210, 128, peaks.p3, "#0b132b", "#fffaf0")}
+    ${svgNode(152, 218, peaks.p1, "#0b132b", "#fffaf0")}
+    ${svgNode(268, 218, peaks.p2, "#0b132b", "#fffaf0")}
+    ${svgNode(88, 280, base.m ?? input.month)}
+    ${svgNode(210, 280, base.d ?? input.day, "#fffaf0", "#9a6b16", true)}
+    ${svgNode(332, 280, base.y ?? String(input.year || "").slice(-1))}
+    ${svgNode(152, 360, challenges.c1, "#f2eadb", "#2f3747")}
+    ${svgNode(268, 360, challenges.c2, "#f2eadb", "#2f3747")}
+    ${svgNode(210, 430, challenges.c3, "#f2eadb", "#2f3747")}
+    ${svgNode(210, 510, challenges.c4, "#f2eadb", "#2f3747")}
+    <text x="88" y="314" text-anchor="middle" font-size="12" fill="#667085">Tháng ${escapeSvg(input.month || "")}</text>
+    <text x="210" y="314" text-anchor="middle" font-size="12" font-weight="700" fill="#9a6b16">Ngày ${escapeSvg(input.day || "")}</text>
+    <text x="332" y="314" text-anchor="middle" font-size="12" fill="#667085">Năm ${escapeSvg(input.year || "")}</text>
   </svg>`;
 
   return {
     stack: [
-      { svg, width: 420, alignment: "center", margin: [0, 8, 0, 8] }
+      { svg, width: 360, alignment: "center", margin: [0, 8, 0, 8] }
     ],
     alignment: "center",
     margin: [0, 6, 0, 14]
@@ -593,12 +629,12 @@ function tocLineLayout() {
 
 function styles() {
   return {
-    coverTitleTop: { font: "PlayfairDisplay", fontSize: 35, bold: true, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 0.2, margin: [0, 0, 0, 0] },
-    coverTitleMain: { font: "PlayfairDisplay", fontSize: 48, bold: true, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 0.2, margin: [0, 0, 0, 18] },
-    coverName: { fontSize: 22, bold: true, alignment: "center", color: NAVY, margin: [0, 0, 0, 8] },
+    coverTitleTop: { font: "PlayfairDisplay", fontSize: 35, bold: false, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 1.4, margin: [0, 0, 0, 10] },
+    coverTitleMain: { font: "PlayfairDisplay", fontSize: 48, bold: false, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 1.2, margin: [0, 0, 0, 24] },
+    coverName: { font: "PlayfairDisplay", fontSize: 25, bold: false, alignment: "center", color: "#746556", margin: [0, 0, 0, 8] },
     coverNote: { fontSize: 9, alignment: "center", color: "#5c6470" },
-    metaLabel: { fontSize: 8.5, color: "#5c6470" },
-    metaValue: { fontSize: 13, bold: true, color: NAVY },
+    metaLabel: { fontSize: 9.5, color: "#5c6470" },
+    metaValue: { fontSize: 15, bold: true, color: "#746556" },
     pageTitle: { fontSize: 27, bold: true, color: NAVY, margin: [0, 0, 0, 24] },
     tocTitle: { fontSize: 27, bold: true, color: "#8a5a10", margin: [0, 0, 0, 18] },
     tocMajor: { fontSize: 14.5, bold: true, color: "#8a5a10", margin: [0, 4, 0, 6] },
