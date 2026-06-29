@@ -1,11 +1,19 @@
 // import fullNumerologyData from '../data/numerology-data.json';
 
 const markdownFiles = import.meta.glob('../content/numerology/**/*.md', { eager: true });
+const rawMarkdownFiles = import.meta.glob('../content/numerology/**/*.md', {
+  eager: true,
+  query: '?raw',
+  import: 'default'
+});
 
-function formatMarkdownData(entry: any) {
+function formatMarkdownData(entry: any, path: string) {
   if (!entry) return null;
+  const rawMarkdown = rawMarkdownFiles[path];
   const rawContent =
-    typeof entry.rawContent === 'function'
+    typeof rawMarkdown === 'string'
+      ? rawMarkdown
+      : typeof entry.rawContent === 'function'
       ? entry.rawContent()
       : typeof entry.rawContent === 'string'
         ? entry.rawContent
@@ -26,7 +34,7 @@ export function getCategoryData(category: string, key: string | number, subCateg
   }
   
   if (markdownFiles[targetPath]) {
-      return formatMarkdownData(markdownFiles[targetPath]);
+      return formatMarkdownData(markdownFiles[targetPath], targetPath);
   }
   
   // fallback to default if exists
@@ -35,7 +43,7 @@ export function getCategoryData(category: string, key: string | number, subCateg
       : `../content/numerology/${category}/default.md`;
   
   if (markdownFiles[defaultPath]) {
-      return formatMarkdownData(markdownFiles[defaultPath]);
+      return formatMarkdownData(markdownFiles[defaultPath], defaultPath);
   }
   
   return null;
