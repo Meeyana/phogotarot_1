@@ -18,6 +18,7 @@ export async function buildPdfDefinition(report, assets = {}) {
   });
 
   const input = report.input || {};
+  const displayName = titleCaseName(input.fullName || "");
   const numbers = report.numbers || {};
   const content = report.content || {};
   const chartData = report.chartData || {};
@@ -31,7 +32,7 @@ export async function buildPdfDefinition(report, assets = {}) {
 
   const sections = [];
 
-  sections.push(coverPage(input, now, assets));
+  sections.push(coverPage(input, now, assets, displayName));
   sections.push(tocPage(numbers));
   sections.push(coreSection(report));
   sections.push(chartSection(report));
@@ -43,7 +44,7 @@ export async function buildPdfDefinition(report, assets = {}) {
     pageSize: "A4",
     pageMargins: [54, 62, 54, 58],
     info: {
-      title: `Báo cáo Thần Số Học - ${input.fullName || ""}`,
+      title: `Báo cáo Thần Số Học - ${displayName}`,
       author: "Phở Gõ Tarot",
       subject: "Báo cáo Thần Số Học"
     },
@@ -56,7 +57,7 @@ export async function buildPdfDefinition(report, assets = {}) {
     footer(currentPage, pageCount) {
       if (currentPage === 1 || currentPage === pageCount) return {};
       const pageLabel = `${String(currentPage).padStart(2, "0")} / ${String(pageCount).padStart(2, "0")}`;
-      const footerName = input.fullName || "Phở Gõ Tarot";
+      const footerName = displayName || "Phở Gõ Tarot";
       const footerDob = input.formattedDob || input.dobStr || "";
       return {
         margin: [36, 24, 36, 0],
@@ -80,13 +81,13 @@ export async function buildPdfDefinition(report, assets = {}) {
   };
 }
 
-function coverPage(input, generatedAt, assets) {
+function coverPage(input, generatedAt, assets, displayName) {
   return [
     {
       stack: [
-        assets.logo ? { image: assets.logo, width: 100, alignment: "center", margin: [0, 0, 0, 100] } : {},
+        assets.logo ? { image: assets.logo, width: 100, alignment: "center", margin: [0, 0, 0, 104] } : {},
         { text: "BÁO CÁO\nTHẦN SỐ HỌC", style: "coverTitle" },
-        { text: input.fullName || "Bạn Mình", style: "coverName" },
+        { text: displayName || "Bạn Mình", style: "coverName" },
         {
           margin: [52, 34, 52, 0],
           columns: [
@@ -94,10 +95,10 @@ function coverPage(input, generatedAt, assets) {
             metaBox("Ngày xuất", generatedAt)
           ]
         },
-        { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", margin: [0, 126, 0, 0] }
+        { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", margin: [0, 168, 0, 0] }
       ],
       pageBreak: "after",
-      margin: [0, 62, 0, 0]
+      margin: [0, 44, 0, 0]
     }
   ];
 }
@@ -521,6 +522,13 @@ function escapeSvg(value) {
     .replace(/"/g, "&quot;");
 }
 
+function titleCaseName(value) {
+  return String(value || "")
+    .trim()
+    .toLocaleLowerCase("vi-VN")
+    .replace(/(^|[\s'-])(\p{L})/gu, (_, prefix, letter) => `${prefix}${letter.toLocaleUpperCase("vi-VN")}`);
+}
+
 function textData(content) {
   return { rawContent: content };
 }
@@ -573,7 +581,7 @@ function tocLineLayout() {
   return {
     hLineColor: () => "#dfcfaa",
     vLineColor: () => "#ffffff",
-    hLineWidth: (i) => (i === 0 ? 0 : 0.6),
+    hLineWidth: () => 0,
     vLineWidth: () => 0,
     paddingLeft: () => 20,
     paddingRight: () => 0,
