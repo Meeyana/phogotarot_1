@@ -32,7 +32,7 @@ export async function buildPdfDefinition(report, assets = {}) {
   const sections = [];
 
   sections.push(coverPage(input, now, assets));
-  sections.push(tocPage());
+  sections.push(tocPage(numbers));
   sections.push(coreSection(report));
   sections.push(chartSection(report));
   sections.push(directionSection(report, topTraits, topCareer));
@@ -55,6 +55,7 @@ export async function buildPdfDefinition(report, assets = {}) {
     },
     footer(currentPage, pageCount) {
       if (currentPage === 1 || currentPage === pageCount) return {};
+      const pageLabel = `${String(currentPage).padStart(2, "0")} / ${String(pageCount).padStart(2, "0")}`;
       return {
         margin: [36, 24, 36, 0],
         columns: [
@@ -72,10 +73,11 @@ export async function buildPdfDefinition(report, assets = {}) {
             ],
             style: "footerText"
           },
-          { text: `${String(currentPage).padStart(2, "0")} / ${String(pageCount).padStart(2, "0")}`, alignment: "right", style: "footerText" }
+          { text: pageLabel, alignment: "right", style: "footerText" }
         ]
       };
-    },    content: sections.flat(),
+    },
+    content: sections.flat(),
     styles: styles(),
     defaultStyle: {
       font: "Roboto",
@@ -130,14 +132,63 @@ function metaBox(label, value) {
   };
 }
 
-function tocPage() {
-  return [
+function tocPage(numbers = {}) {
+  const groups = [
     {
-      toc: {
-        title: { text: "Má»¥c lá»¥c bÃ¡o cÃ¡o", style: "pageTitle" },
-        numberStyle: { bold: true, color: GOLD }
-      }
+      title: "I. NỀN TẢNG CỐT LÕI",
+      items: [
+        [`1.  Số chủ đạo của bạn: Số ${numbers.lifePath || ""}`, "section-1"],
+        [`2.  Số Sứ Mệnh của bạn: Số ${numbers.destiny || ""}`, "section-2"],
+        [`3.  Số Linh Hồn của bạn: Số ${numbers.soul || ""}`, "section-3"],
+        [`4.  Số Nhân Cách của bạn: Số ${numbers.personality || ""}`, "section-4"],
+        [`5.  Số Thái Độ của bạn: Số ${numbers.attitude || ""}`, "section-5"],
+        [`6.  Số Tư Duy của bạn: Số ${numbers.rational || ""}`, "section-6"],
+        [`7.  Số Trưởng Thành của bạn: Số ${numbers.maturity || ""}`, "section-7"]
+      ]
     },
+    {
+      title: "II. BIỂU ĐỒ & CẤU TRÚC",
+      items: [
+        ["8.  Biểu Đồ Ngày Sinh", "section-8"],
+        ["9.  Biểu Đồ Tên & Tổng Hợp", "section-9"],
+        ["10.  Kim Tự Tháp Thần Số", "section-10"],
+        ["11.  Chỉ Số Nợ Nghiệp", "section-11"],
+        ["12.  Bài Học Đường Đời (Điểm Yếu)", "section-12"]
+      ]
+    },
+    {
+      title: "III. NHÓM TÍNH CÁCH & ĐỊNH HƯỚNG",
+      items: [
+        ["13.  Nhóm Tính Cách Bản Ngã", "section-13"],
+        ["14.  Tỉ Lệ Nhóm Ngành Phù Hợp", "section-14"]
+      ]
+    },
+    {
+      title: "IV. DÒNG THỜI GIAN - CHU KỲ VẬN ĐỘNG",
+      items: [
+        ["15.  Chu Kỳ Đường Đời", "section-15"],
+        ["16.  Chu Kỳ Vận Số 9 Năm", "section-16"],
+        ["17.  Dự Báo Năm Cá Nhân", "section-17"],
+        ["18.  Dự Báo Tháng Cá Nhân", "section-18"]
+      ]
+    }
+  ];
+
+  return [
+    { text: "Mục lục báo cáo", style: "tocTitle" },
+    ...groups.flatMap((group) => [
+      { text: group.title, style: "tocMajor" },
+      {
+        table: {
+          widths: ["*"],
+          body: group.items.map(([label, destination]) => [
+            { text: label, linkToDestination: destination, style: "tocCustomItem" }
+          ])
+        },
+        layout: tocLineLayout(),
+        margin: [0, 0, 0, 13]
+      }
+    ]),
     { text: "", pageBreak: "after" }
   ];
 }
@@ -511,6 +562,19 @@ function cardLayout() {
   };
 }
 
+function tocLineLayout() {
+  return {
+    hLineColor: () => "#dfcfaa",
+    vLineColor: () => "#ffffff",
+    hLineWidth: (i) => (i === 0 ? 0 : 0.6),
+    vLineWidth: () => 0,
+    paddingLeft: () => 20,
+    paddingRight: () => 0,
+    paddingTop: () => 6,
+    paddingBottom: () => 6
+  };
+}
+
 function styles() {
   return {
     coverTitle: { fontSize: 40, bold: true, alignment: "center", color: NAVY, lineHeight: 1.05, margin: [0, 0, 0, 20] },
@@ -519,6 +583,9 @@ function styles() {
     metaLabel: { fontSize: 8.5, color: "#5c6470" },
     metaValue: { fontSize: 13, bold: true, color: NAVY },
     pageTitle: { fontSize: 27, bold: true, color: NAVY, margin: [0, 0, 0, 24] },
+    tocTitle: { fontSize: 27, bold: true, color: "#8a5a10", margin: [0, 0, 0, 18] },
+    tocMajor: { fontSize: 14.5, bold: true, color: "#8a5a10", margin: [0, 4, 0, 6] },
+    tocCustomItem: { fontSize: 12.8, color: INK, margin: [0, 0, 0, 0] },
     sectionTitle: { fontSize: 22, bold: true, color: NAVY, margin: [0, 0, 0, 16] },
     subsectionTitle: { fontSize: 17, bold: true, color: NAVY },
     tocGroup: { fontSize: 14.5, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
