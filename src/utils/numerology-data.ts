@@ -4,9 +4,17 @@ const markdownFiles = import.meta.glob('../content/numerology/**/*.md', { eager:
 
 function formatMarkdownData(entry: any) {
   if (!entry) return null;
+  const rawContent =
+    typeof entry.rawContent === 'function'
+      ? entry.rawContent()
+      : typeof entry.rawContent === 'string'
+        ? entry.rawContent
+        : '';
+
   return {
       ...entry.frontmatter,
-      content: entry.compiledContent()
+      content: entry.compiledContent(),
+      rawContent
   };
 }
 
