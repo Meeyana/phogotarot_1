@@ -43,9 +43,9 @@ export async function buildPdfDefinition(report, assets = {}) {
     pageSize: "A4",
     pageMargins: [54, 62, 54, 58],
     info: {
-      title: `BÃ¡o cÃ¡o Tháº§n Sá»‘ Há»c - ${input.fullName || ""}`,
-      author: "Phá»Ÿ GÃµ Tarot",
-      subject: "BÃ¡o cÃ¡o Tháº§n Sá»‘ Há»c"
+      title: `Báo cáo Thần Số Học - ${input.fullName || ""}`,
+      author: "Phở Gõ Tarot",
+      subject: "Báo cáo Thần Số Học"
     },
     background(currentPage) {
       if (currentPage === 1) return fullPageImage(assets.coverArtwork);
@@ -56,21 +56,13 @@ export async function buildPdfDefinition(report, assets = {}) {
     footer(currentPage, pageCount) {
       if (currentPage === 1 || currentPage === pageCount) return {};
       const pageLabel = `${String(currentPage).padStart(2, "0")} / ${String(pageCount).padStart(2, "0")}`;
+      const footerName = input.fullName || "Phở Gõ Tarot";
+      const footerDob = input.formattedDob || input.dobStr || "";
       return {
         margin: [36, 24, 36, 0],
         columns: [
           {
-            text: [
-              { text: "Xem trai bai online", link: "https://phogotarot.com/xem-tarot" },
-              " | ",
-              { text: "Facebook", link: "https://www.facebook.com/phogotarot" },
-              " | ",
-              { text: "YouTube", link: "https://www.youtube.com/@phogotarot" },
-              " | ",
-              { text: "Instagram", link: "https://www.instagram.com/pho_go_tarot/" },
-              " | ",
-              { text: "TikTok", link: "https://www.tiktok.com/@phogo_tarot" }
-            ],
+            text: `© Copyright 2026 - ${footerName}${footerDob ? ` - ${footerDob}` : ""}`,
             style: "footerText"
           },
           { text: pageLabel, alignment: "right", style: "footerText" }
@@ -93,13 +85,13 @@ function coverPage(input, generatedAt, assets) {
     {
       stack: [
         assets.logo ? { image: assets.logo, width: 100, alignment: "center", margin: [0, 0, 0, 100] } : {},
-        { text: "BÃO CÃO\nTHáº¦N Sá» Há»ŒC", style: "coverTitle" },
-        { text: input.fullName || "Báº¡n MÃ¬nh", style: "coverName" },
+        { text: "BÁO CÁO\nTHẦN SỐ HỌC", style: "coverTitle" },
+        { text: input.fullName || "Bạn Mình", style: "coverName" },
         {
           margin: [52, 34, 52, 0],
           columns: [
-            metaBox("NgÃ y sinh", input.formattedDob || input.dobStr || ""),
-            metaBox("NgÃ y xuáº¥t", generatedAt)
+            metaBox("Ngày sinh", input.formattedDob || input.dobStr || ""),
+            metaBox("Ngày xuất", generatedAt)
           ]
         },
         { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", margin: [0, 126, 0, 0] }
@@ -180,9 +172,10 @@ function tocPage(numbers = {}) {
       { text: group.title, style: "tocMajor" },
       {
         table: {
-          widths: ["*"],
+          widths: ["*", 42],
           body: group.items.map(([label, destination]) => [
-            { text: label, linkToDestination: destination, style: "tocCustomItem" }
+            { text: label, linkToDestination: destination, style: "tocCustomItem" },
+            { text: "", pageReference: destination, linkToDestination: destination, style: "tocPageNumber" }
           ])
         },
         layout: tocLineLayout(),
@@ -196,21 +189,21 @@ function tocPage(numbers = {}) {
 function coreSection(report) {
   const { numbers = {}, content = {} } = report;
   const core = [
-    ["Sá»‘ Sá»© Má»‡nh", numbers.destiny, content.coreStatsDataMap?.destiny, report.definitions?.destiny],
-    ["Sá»‘ Linh Há»“n", numbers.soul, content.coreStatsDataMap?.soul, report.definitions?.soul],
-    ["Sá»‘ NhÃ¢n CÃ¡ch", numbers.personality, content.coreStatsDataMap?.personality, report.definitions?.personality],
-    ["Sá»‘ ThÃ¡i Äá»™", numbers.attitude, content.coreStatsDataMap?.attitude, report.definitions?.attitude],
-    ["Sá»‘ TÆ° Duy", numbers.rational, content.coreStatsDataMap?.rational, report.definitions?.rational],
-    ["Sá»‘ TrÆ°á»Ÿng ThÃ nh", numbers.maturity, content.coreStatsDataMap?.maturity, report.definitions?.maturity]
+    ["Số Sứ Mệnh", numbers.destiny, content.coreStatsDataMap?.destiny, report.definitions?.destiny],
+    ["Số Linh Hồn", numbers.soul, content.coreStatsDataMap?.soul, report.definitions?.soul],
+    ["Số Nhân Cách", numbers.personality, content.coreStatsDataMap?.personality, report.definitions?.personality],
+    ["Số Thái Độ", numbers.attitude, content.coreStatsDataMap?.attitude, report.definitions?.attitude],
+    ["Số Tư Duy", numbers.rational, content.coreStatsDataMap?.rational, report.definitions?.rational],
+    ["Số Trưởng Thành", numbers.maturity, content.coreStatsDataMap?.maturity, report.definitions?.maturity]
   ];
 
   return [
-    sectionTitle("I. Ná»n táº£ng cá»‘t lÃµi"),
-    subsection("1. Sá»‘ chá»§ Ä‘áº¡o cá»§a báº¡n", `Sá»‘ ${numbers.lifePath}`, "section-1"),
+    sectionTitle("I. Nền tảng cốt lõi"),
+    subsection("1. Số chủ đạo của bạn", `Số ${numbers.lifePath}`, "section-1"),
     definition(report.definitions?.lifePath),
     ...contentBlocks(content.lifePath),
     ...core.flatMap(([label, value, data, def], idx) => [
-      subsection(`${idx + 2}. ${label} cá»§a báº¡n`, `Sá»‘ ${value}`, `section-${idx + 2}`),
+      subsection(`${idx + 2}. ${label} của bạn`, `Số ${value}`, `section-${idx + 2}`),
       definition(def),
       ...contentBlocks(data)
     ]),
@@ -226,27 +219,27 @@ function chartSection(report) {
   const lessons = safeArray(report.karmicLessons);
 
   return [
-    sectionTitle("II. Biá»ƒu Ä‘á»“ & cáº¥u trÃºc"),
-    subsection("8. Biá»ƒu Äá»“ NgÃ y Sinh", "", "section-8"),
+    sectionTitle("II. Biểu đồ & cấu trúc"),
+    subsection("8. Biểu Đồ Ngày Sinh", "", "section-8"),
     definition(report.definitions?.birthChart),
     centerBlock(numerologyGrid(chartData.strengthData)),
-    chartDetails("Luáº­n giáº£i biá»ƒu Ä‘á»“ ngÃ y sinh", chartData.strengthArrows, chartData.strengthMissingNums),
-    subsection("9. Biá»ƒu Äá»“ TÃªn & Tá»•ng Há»£p", "", "section-9"),
-    twoColumns(numerologyGrid(chartData.nameData, "Biá»ƒu Ä‘á»“ tÃªn"), numerologyGrid(chartData.synthesisData, "Biá»ƒu Ä‘á»“ tá»•ng há»£p")),
-    chartDetails("Luáº­n giáº£i biá»ƒu Ä‘á»“ tá»•ng há»£p", chartData.synthesisArrows, chartData.synthesisMissingNums),
-    subsection("10. Kim Tá»± ThÃ¡p Tháº§n Sá»‘", "", "section-10"),
+    chartDetails("Luận giải biểu đồ ngày sinh", chartData.strengthArrows, chartData.strengthMissingNums),
+    subsection("9. Biểu Đồ Tên & Tổng Hợp", "", "section-9"),
+    twoColumns(numerologyGrid(chartData.nameData, "Biểu đồ tên"), numerologyGrid(chartData.synthesisData, "Biểu đồ tổng hợp")),
+    chartDetails("Luận giải biểu đồ tổng hợp", chartData.synthesisArrows, chartData.synthesisMissingNums),
+    subsection("10. Kim Tự Tháp Thần Số", "", "section-10"),
     definition(report.definitions?.pyramid),
     pyramidGraphic(report),
     ...["p1", "p2", "p3", "p4"].flatMap((key) => {
       const value = pyramid.peaks?.[key];
-      return value ? [{ text: `Äá»‰nh cao sá»‘ ${value}`, style: "blockTitle" }, ...contentBlocks(content.pyramidDataStore?.peaks?.[value])] : [];
+      return value ? [{ text: `Đỉnh cao số ${value}`, style: "blockTitle" }, ...contentBlocks(content.pyramidDataStore?.peaks?.[value])] : [];
     }),
-    subsection("11. Chá»‰ Sá»‘ Ná»£ Nghiá»‡p", "", "section-11"),
+    subsection("11. Chỉ Số Nợ Nghiệp", "", "section-11"),
     definition(report.definitions?.karmicDebt),
-    ...(debts.length ? debts.flatMap((debt) => [{ text: `Ná»£ nghiá»‡p sá»‘ ${debt}`, style: "blockTitle" }, ...contentBlocks(content.debtDataStore?.[debt])]) : [{ text: "KhÃ´ng ghi nháº­n chá»‰ sá»‘ ná»£ nghiá»‡p ná»•i báº­t trong há»“ sÆ¡ nÃ y.", style: "paragraph" }]),
-    subsection("12. BÃ i Há»c ÄÆ°á»ng Äá»i (Äiá»ƒm Yáº¿u)", "", "section-12"),
+    ...(debts.length ? debts.flatMap((debt) => [{ text: `Nợ nghiệp số ${debt}`, style: "blockTitle" }, ...contentBlocks(content.debtDataStore?.[debt])]) : [{ text: "Không ghi nhận chỉ số nợ nghiệp nổi bật trong hồ sơ này.", style: "paragraph" }]),
+    subsection("12. Bài Học Đường Đời (Điểm Yếu)", "", "section-12"),
     definition(report.definitions?.karmicLessons),
-    ...(lessons.length ? lessons.flatMap((lesson) => [{ text: `BÃ i há»c thiáº¿u sá»‘ ${lesson}`, style: "blockTitle" }, ...contentBlocks(content.lessonDataStore?.[lesson])]) : [{ text: "KhÃ´ng ghi nháº­n bÃ i há»c thiáº¿u ná»•i báº­t trong biá»ƒu Ä‘á»“ tÃªn.", style: "paragraph" }]),
+    ...(lessons.length ? lessons.flatMap((lesson) => [{ text: `Bài học thiếu số ${lesson}`, style: "blockTitle" }, ...contentBlocks(content.lessonDataStore?.[lesson])]) : [{ text: "Không ghi nhận bài học thiếu nổi bật trong biểu đồ tên.", style: "paragraph" }]),
     { text: "", pageBreak: "after" }
   ];
 }
@@ -256,19 +249,19 @@ function directionSection(report, topTraits, topCareer) {
   const personalityFallback = fallbackPersonalityMeanings();
   const careerFallback = fallbackCareerMeanings();
   return [
-    sectionTitle("III. NhÃ³m tÃ­nh cÃ¡ch & Ä‘á»‹nh hÆ°á»›ng"),
-    subsection("13. NhÃ³m TÃ­nh CÃ¡ch Báº£n NgÃ£", "", "section-13"),
+    sectionTitle("III. Nhóm tính cách & định hướng"),
+    subsection("13. Nhóm Tính Cách Bản Ngã", "", "section-13"),
     definition(report.definitions?.personalityGroup),
     percentTable(report.personalityStats || [], GOLD),
     ...topTraits.flatMap((trait) => [
-      { text: `TÃ­nh cÃ¡ch: ${trait.label} (${trait.percent}%)`, style: "blockTitle" },
+      { text: `Tính cách: ${trait.label} (${trait.percent}%)`, style: "blockTitle" },
       ...contentBlocks(content.personalityChart?.meanings?.[trait.id] || personalityFallback[String(trait.id)] || content.personalityChart)
     ]),
-    subsection("14. Tá»‰ Lá»‡ NhÃ³m NgÃ nh PhÃ¹ Há»£p", "", "section-14"),
+    subsection("14. Tỉ Lệ Nhóm Ngành Phù Hợp", "", "section-14"),
     definition(report.definitions?.careerGroup),
     percentTable(report.careerStats || [], NAVY),
     ...topCareer.flatMap((career) => [
-      { text: `NgÃ nh phÃ¹ há»£p: ${career.label} (${career.percent}%)`, style: "blockTitle" },
+      { text: `Ngành phù hợp: ${career.label} (${career.percent}%)`, style: "blockTitle" },
       ...contentBlocks(content.careerChart?.meanings?.[career.id] || careerFallback[career.id] || content.careerChart)
     ]),
     { text: "", pageBreak: "after" }
@@ -278,27 +271,27 @@ function directionSection(report, topTraits, topCareer) {
 function timelineSection(report) {
   const content = report.content || {};
   const forecast = report.forecast || {};
-  const yearLabels = ["NÄƒm trÆ°á»›c", "Hiá»‡n táº¡i", "NÄƒm tá»›i"];
+  const yearLabels = ["Năm trước", "Hiện tại", "Năm tới"];
   const cycleList = [
-    { id: 1, label: "Gieo Háº¡t", data: report.periodCycles?.c1 || {} },
-    { id: 2, label: "ChÃ­n", data: report.periodCycles?.c2 || {} },
-    { id: 3, label: "Thu Hoáº¡ch", data: report.periodCycles?.c3 || {} }
+    { id: 1, label: "Gieo Hạt", data: report.periodCycles?.c1 || {} },
+    { id: 2, label: "Chín", data: report.periodCycles?.c2 || {} },
+    { id: 3, label: "Thu Hoạch", data: report.periodCycles?.c3 || {} }
   ];
 
   return [
-    sectionTitle("IV. DÃ²ng thá»i gian - chu ká»³ váº­n Ä‘á»™ng"),
-    subsection("15. Chu Ká»³ ÄÆ°á»ng Äá»i", "", "section-15"),
-    tableBlock(["Chu ká»³", "Sá»‘", "Äá»™ tuá»•i", "Giai Ä‘oáº¡n"], cycleList.map((cycle) => [`${cycle.id} - ${cycle.label}`, cycle.data.number || "", cycle.data.ageRange || "", cycle.data.yearRange || ""])),
-    subsection("16. Chu Ká»³ Váº­n Sá»‘ 9 NÄƒm", "", "section-16"),
-    tableBlock(["NÄƒm", "Váº­n sá»‘", "Vá»‹ trÃ­"], safeArray(forecast.years).map((item, index) => [item.year, item.number, yearLabels[index] || ""])),
-    subsection("17. Dá»± BÃ¡o NÄƒm CÃ¡ NhÃ¢n", "", "section-17"),
+    sectionTitle("IV. Dòng thời gian - chu kỳ vận động"),
+    subsection("15. Chu Kỳ Đường Đời", "", "section-15"),
+    tableBlock(["Chu kỳ", "Số", "Độ tuổi", "Giai đoạn"], cycleList.map((cycle) => [`${cycle.id} - ${cycle.label}`, cycle.data.number || "", cycle.data.ageRange || "", cycle.data.yearRange || ""])),
+    subsection("16. Chu Kỳ Vận Số 9 Năm", "", "section-16"),
+    tableBlock(["Năm", "Vận số", "Vị trí"], safeArray(forecast.years).map((item, index) => [item.year, item.number, yearLabels[index] || ""])),
+    subsection("17. Dự Báo Năm Cá Nhân", "", "section-17"),
     ...safeArray(forecast.years).flatMap((item, index) => [
-      { text: `NÄƒm ${item.year} - Váº­n niÃªn sá»‘ ${item.number} (${yearLabels[index] || ""})`, style: "blockTitle" },
+      { text: `Năm ${item.year} - Vận niên số ${item.number} (${yearLabels[index] || ""})`, style: "blockTitle" },
       ...contentBlocks(content.yearDataStore?.[item.number])
     ]),
-    subsection("18. Dá»± BÃ¡o ThÃ¡ng CÃ¡ NhÃ¢n", "", "section-18"),
+    subsection("18. Dự Báo Tháng Cá Nhân", "", "section-18"),
     ...safeArray(forecast.months).flatMap((item) => [
-      { text: `ThÃ¡ng ${item.month}/${item.year} - Váº­n sá»‘ ${item.number}`, style: "blockTitle" },
+      { text: `Tháng ${item.month}/${item.year} - Vận số ${item.number}`, style: "blockTitle" },
       ...contentBlocks(content.monthDataStore?.[item.number])
     ])
   ];
@@ -310,9 +303,9 @@ function backCover(assets) {
     {
       stack: [
         assets.logo ? { image: assets.logo, width: 105, alignment: "center", margin: [0, 0, 0, 36] } : {},
-        { text: "Cáº£m Æ¡n báº¡n Ä‘Ã£ lá»±a chá»n Phá»Ÿ GÃµ Tarot!", style: "backTitle" },
+        { text: "Cảm ơn bạn đã lựa chọn Phở Gõ Tarot!", style: "backTitle" },
         {
-          text: "Báº£n bÃ¡o cÃ¡o Tháº§n Sá»‘ Há»c nÃ y Ä‘Æ°á»£c biÃªn soáº¡n vá»›i mong muá»‘n mang Ä‘áº¿n cho báº¡n má»™t táº¥m báº£n Ä‘á»“ tháº¥u hiá»ƒu báº£n thÃ¢n vÃ  Ä‘á»‹nh hÆ°á»›ng tÆ°Æ¡ng lai.",
+          text: "Bản báo cáo Thần Số Học này được biên soạn với mong muốn mang đến cho bạn một tấm bản đồ thấu hiểu bản thân và định hướng tương lai.",
           style: "backParagraph"
         },
         {
@@ -320,8 +313,8 @@ function backCover(assets) {
             widths: ["*"],
             body: [[{
               stack: [
-                { text: "Báº¡n cÃ³ Ä‘ang gáº·p khÃºc máº¯c cáº§n giáº£i Ä‘Ã¡p?", style: "ctaTitle" },
-                { text: "Tháº§n sá»‘ há»c giÃºp báº¡n hiá»ƒu bá»©c tranh tá»•ng thá»ƒ, cÃ²n Tarot sáº½ soi sÃ¡ng nhá»¯ng cÃ¢u chuyá»‡n hiá»‡n táº¡i. HÃ£y Ä‘áº·t lá»‹ch xem bÃ i Tarot chuyÃªn sÃ¢u Ä‘á»ƒ nháº­n lá»i khuyÃªn chi tiáº¿t.", style: "paragraph" },
+                { text: "Bạn có đang gặp khúc mắc cần giải đáp?", style: "ctaTitle" },
+                { text: "Thần số học giúp bạn hiểu bức tranh tổng thể, còn Tarot sẽ soi sáng những câu chuyện hiện tại. Hãy đặt lịch xem bài Tarot chuyên sâu để nhận lời khuyên chi tiết.", style: "paragraph" },
                 { text: "Booking Xem Tarot", link: "https://m.me/phogotarot", style: "ctaLink" }
               ],
               margin: [20, 18, 20, 18]
@@ -330,7 +323,21 @@ function backCover(assets) {
           layout: cardLayout(),
           margin: [28, 24, 28, 24]
         },
-        { text: "phogotarot.com  |  fb.com/phogotarot  |  @phogotarot", style: "muted", alignment: "center" }
+        {
+          text: [
+            { text: "Xem trải bài online", link: "https://phogotarot.com/xem-tarot" },
+            "  |  ",
+            { text: "Facebook", link: "https://www.facebook.com/phogotarot" },
+            "  |  ",
+            { text: "YouTube", link: "https://www.youtube.com/@phogotarot" },
+            "\n",
+            { text: "Instagram", link: "https://www.instagram.com/pho_go_tarot/" },
+            "  |  ",
+            { text: "TikTok", link: "https://www.tiktok.com/@phogo_tarot" }
+          ],
+          style: "socialLinks",
+          alignment: "center"
+        }
       ],
       margin: [0, 160, 0, 0]
     }
@@ -387,13 +394,13 @@ function numerologyGrid(countsArray = [], title = "") {
 
 function chartDetails(title, arrows = [], missingNums = []) {
   const rows = [
-    ...safeArray(arrows).map((arrow) => [arrow.type === "present" ? "MÅ©i tÃªn hiá»‡n diá»‡n" : "MÅ©i tÃªn thiáº¿u", arrow.name || arrow.id || ""]),
-    ...safeArray(missingNums).map((num) => ["Sá»‘ thiáº¿u", String(num)])
+    ...safeArray(arrows).map((arrow) => [arrow.type === "present" ? "Mũi tên hiện diện" : "Mũi tên thiếu", arrow.name || arrow.id || ""]),
+    ...safeArray(missingNums).map((num) => ["Số thiếu", String(num)])
   ];
   if (!rows.length) return {};
   return [
     { text: title, style: "blockTitle" },
-    tableBlock(["Loáº¡i", "Chi tiáº¿t"], rows)
+    tableBlock(["Loại", "Chi tiết"], rows)
   ];
 }
 
@@ -586,6 +593,7 @@ function styles() {
     tocTitle: { fontSize: 27, bold: true, color: "#8a5a10", margin: [0, 0, 0, 18] },
     tocMajor: { fontSize: 14.5, bold: true, color: "#8a5a10", margin: [0, 4, 0, 6] },
     tocCustomItem: { fontSize: 12.8, color: INK, margin: [0, 0, 0, 0] },
+    tocPageNumber: { fontSize: 12.8, color: "#8a5a10", alignment: "right" },
     sectionTitle: { fontSize: 22, bold: true, color: NAVY, margin: [0, 0, 0, 16] },
     subsectionTitle: { fontSize: 17, bold: true, color: NAVY },
     tocGroup: { fontSize: 14.5, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
@@ -603,6 +611,7 @@ function styles() {
     footerText: { fontSize: 9.5, italics: true, color: MUTED },
     backTitle: { fontSize: 23, bold: true, alignment: "center", color: NAVY, margin: [0, 0, 0, 18] },
     backParagraph: { fontSize: 11, alignment: "center", color: INK, margin: [28, 0, 28, 0] },
+    socialLinks: { fontSize: 11.5, color: GOLD, lineHeight: 1.55 },
     ctaTitle: { fontSize: 13, bold: true, color: NAVY, margin: [0, 0, 0, 8] },
     ctaLink: { fontSize: 12, bold: true, color: GOLD, decoration: "underline", alignment: "center", margin: [0, 8, 0, 0] }
   };
