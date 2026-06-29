@@ -4,6 +4,20 @@ import { buildPdfDefinition } from "./pdf/report-definition.js";
 import { clearStoredReport, listenForReport, readStoredReport, writeStoredReport } from "./bridge/report-channel.js";
 
 pdfMake.vfs = pdfFonts.pdfMake?.vfs || pdfFonts.vfs || pdfFonts;
+pdfMake.fonts = {
+  Roboto: {
+    normal: "Roboto-Regular.ttf",
+    bold: "Roboto-Medium.ttf",
+    italics: "Roboto-Italic.ttf",
+    bolditalics: "Roboto-MediumItalic.ttf"
+  },
+  PlayfairDisplay: {
+    normal: "/fonts/playfair-display-400.ttf",
+    bold: "/fonts/playfair-display-900.ttf",
+    italics: "/fonts/playfair-display-400.ttf",
+    bolditalics: "/fonts/playfair-display-900.ttf"
+  }
+};
 
 const payloadEl = document.getElementById("payload");
 const downloadBtn = document.getElementById("download");

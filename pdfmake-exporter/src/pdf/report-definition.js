@@ -86,7 +86,8 @@ function coverPage(input, generatedAt, assets, displayName) {
     {
       stack: [
         assets.logo ? { image: assets.logo, width: 100, alignment: "center", margin: [0, 0, 0, 104] } : {},
-        { text: "BÁO CÁO\nTHẦN SỐ HỌC", style: "coverTitle" },
+        { text: "BÁO CÁO", style: "coverTitleTop" },
+        { text: "THẦN SỐ HỌC", style: "coverTitleMain" },
         { text: displayName || "Bạn Mình", style: "coverName" },
         {
           margin: [52, 34, 52, 0],
@@ -95,10 +96,10 @@ function coverPage(input, generatedAt, assets, displayName) {
             metaBox("Ngày xuất", generatedAt)
           ]
         },
-        { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", margin: [0, 168, 0, 0] }
+        { text: "Copyright 2026 - phogotarot.com.", style: "coverNote", width: A4.width, absolutePosition: { x: 0, y: 786 } }
       ],
       pageBreak: "after",
-      margin: [0, 44, 0, 0]
+      margin: [0, 40, 0, 0]
     }
   ];
 }
@@ -592,7 +593,8 @@ function tocLineLayout() {
 
 function styles() {
   return {
-    coverTitle: { fontSize: 40, bold: true, alignment: "center", color: NAVY, lineHeight: 1.05, margin: [0, 0, 0, 20] },
+    coverTitleTop: { font: "PlayfairDisplay", fontSize: 35, bold: true, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 0.2, margin: [0, 0, 0, 0] },
+    coverTitleMain: { font: "PlayfairDisplay", fontSize: 48, bold: true, alignment: "center", color: "#272525", lineHeight: 0.92, characterSpacing: 0.2, margin: [0, 0, 0, 18] },
     coverName: { fontSize: 22, bold: true, alignment: "center", color: NAVY, margin: [0, 0, 0, 8] },
     coverNote: { fontSize: 9, alignment: "center", color: "#5c6470" },
     metaLabel: { fontSize: 8.5, color: "#5c6470" },
