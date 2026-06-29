@@ -2,7 +2,7 @@ export function stripHtml(input = "") {
   return String(input)
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<\/p>/gi, "\n")
-    .replace(/<li>/gi, "• ")
+    .replace(/<li>/gi, "- ")
     .replace(/<\/li>/gi, "\n")
     .replace(/<[^>]*>/g, "")
     .replace(/&nbsp;/g, " ")
@@ -18,8 +18,10 @@ export function stripHtml(input = "") {
 export function stripMarkdown(input = "") {
   return String(input)
     .replace(/^---[\s\S]*?---\s*/g, "")
-    .replace(/^#{1,6}\s*/gm, "")
-    .replace(/^\s*[-*+]\s+/gm, "• ")
+    .replace(/✦/g, "")
+    .replace(/[☉☽☿♀♂♃♄♅♆♇]/g, "")
+    .replace(/[\u2600-\u27BF]/g, "")
+    .replace(/^\s*[-*+]\s+/gm, "- ")
     .replace(/\*\*(.*?)\*\*/g, "$1")
     .replace(/\*(.*?)\*/g, "$1")
     .replace(/__(.*?)__/g, "$1")
@@ -54,6 +56,39 @@ function paragraphsFromText(text, parser = stripHtml) {
     }));
 }
 
+function markdownBlocks(text) {
+  const clean = stripMarkdown(text);
+  const blocks = [];
+  let paragraphLines = [];
+
+  const flushParagraph = () => {
+    const paragraph = paragraphLines.join("\n").trim();
+    if (paragraph) {
+      blocks.push({ text: paragraph, style: "paragraph" });
+    }
+    paragraphLines = [];
+  };
+
+  for (const line of clean.split("\n")) {
+    const heading = line.match(/^#{1,6}\s*(.+)$/);
+    if (heading) {
+      flushParagraph();
+      blocks.push({ text: heading[1].trim(), style: "blockTitle" });
+      continue;
+    }
+
+    if (!line.trim()) {
+      flushParagraph();
+      continue;
+    }
+
+    paragraphLines.push(line);
+  }
+
+  flushParagraph();
+  return blocks;
+}
+
 export function contentBlocks(data) {
   if (!data) return [{ text: "Nội dung đang được cập nhật.", style: "muted" }];
 
@@ -85,7 +120,7 @@ export function contentBlocks(data) {
   }
 
   if (data.rawContent) {
-    return paragraphsFromText(data.rawContent, stripMarkdown);
+    return markdownBlocks(data.rawContent);
   }
 
   const contentText = readableText(data.content);

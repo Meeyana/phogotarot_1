@@ -60,10 +60,11 @@ export async function buildPdfDefinition(report, assets = {}) {
     },
     footer(currentPage, pageCount) {
       if (currentPage === 1 || currentPage === pageCount) return {};
+      const footerIdentity = `™ Copyright 2026 - ${input.fullName || "Phở Gõ Tarot"} - ${input.formattedDob || input.dobStr || ""}`;
       return {
-        margin: [54, 0, 54, 0],
+        margin: [18, 34, 18, 0],
         columns: [
-          { text: "Phở Gõ Tarot", style: "footerText" },
+          { text: footerIdentity, style: "footerText" },
           { text: `${String(currentPage - 1).padStart(2, "0")} / ${String(pageCount - 2).padStart(2, "0")}`, alignment: "right", style: "footerText" }
         ]
       };
@@ -73,8 +74,8 @@ export async function buildPdfDefinition(report, assets = {}) {
     defaultStyle: {
       font: "Roboto",
       color: INK,
-      fontSize: 10.5,
-      lineHeight: 1.28
+      fontSize: 11.5,
+      lineHeight: 1.32
     }
   };
 }
@@ -427,22 +428,22 @@ function styles() {
     coverNote: { fontSize: 9, alignment: "center", color: "#5c6470" },
     metaLabel: { fontSize: 8.5, color: "#5c6470" },
     metaValue: { fontSize: 13, bold: true, color: NAVY },
-    pageTitle: { fontSize: 24, bold: true, color: NAVY, margin: [0, 0, 0, 22] },
-    sectionTitle: { fontSize: 18, bold: true, color: NAVY, margin: [0, 0, 0, 14] },
-    subsectionTitle: { fontSize: 14, bold: true, color: NAVY },
-    tocGroup: { fontSize: 12, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
-    tocNumber: { fontSize: 10.5, bold: true, color: GOLD, margin: [0, 2, 0, 2] },
-    tocItem: { fontSize: 10.5, color: INK, margin: [0, 2, 0, 2] },
-    definition: { fontSize: 9.8, italics: true, color: MUTED, margin: [0, 0, 0, 8] },
-    paragraph: { fontSize: 10.3, color: INK, margin: [0, 0, 0, 7] },
-    blockTitle: { fontSize: 12, bold: true, color: GOLD, margin: [0, 9, 0, 5] },
-    quote: { fontSize: 10.2, italics: true, color: "#3f4857", margin: [12, 4, 12, 8] },
-    muted: { fontSize: 9.5, color: MUTED, margin: [0, 0, 0, 7] },
-    miniTitle: { fontSize: 10, bold: true, color: GOLD, margin: [0, 0, 0, 4] },
+    pageTitle: { fontSize: 25, bold: true, color: NAVY, margin: [0, 0, 0, 22] },
+    sectionTitle: { fontSize: 20, bold: true, color: NAVY, margin: [0, 0, 0, 14] },
+    subsectionTitle: { fontSize: 15.5, bold: true, color: NAVY },
+    tocGroup: { fontSize: 13, bold: true, color: GOLD, margin: [0, 10, 0, 5] },
+    tocNumber: { fontSize: 11.5, bold: true, color: GOLD, margin: [0, 2, 0, 2] },
+    tocItem: { fontSize: 11.5, color: INK, margin: [0, 2, 0, 2] },
+    definition: { fontSize: 10.6, italics: true, color: MUTED, margin: [0, 0, 0, 8] },
+    paragraph: { fontSize: 11.4, color: INK, margin: [0, 0, 0, 8] },
+    blockTitle: { fontSize: 13.4, bold: true, color: GOLD, margin: [0, 12, 0, 7] },
+    quote: { fontSize: 11.2, italics: true, color: "#3f4857", margin: [12, 4, 12, 8] },
+    muted: { fontSize: 10.5, color: MUTED, margin: [0, 0, 0, 7] },
+    miniTitle: { fontSize: 11, bold: true, color: GOLD, margin: [0, 0, 0, 4] },
     gridCell: { fontSize: 15, bold: true, color: NAVY, alignment: "center", margin: [0, 12, 0, 0] },
-    tableHeader: { fontSize: 9.5, bold: true, color: NAVY, fillColor: SOFT },
-    tableText: { fontSize: 9.3, color: INK },
-    footerText: { fontSize: 8.5, color: MUTED },
+    tableHeader: { fontSize: 10.3, bold: true, color: NAVY, fillColor: SOFT },
+    tableText: { fontSize: 10.2, color: INK },
+    footerText: { fontSize: 9, italics: true, color: MUTED },
     backTitle: { fontSize: 23, bold: true, alignment: "center", color: NAVY, margin: [0, 0, 0, 18] },
     backParagraph: { fontSize: 11, alignment: "center", color: INK, margin: [28, 0, 28, 0] },
     ctaTitle: { fontSize: 13, bold: true, color: NAVY, margin: [0, 0, 0, 8] },
