@@ -16,7 +16,20 @@ if (Astro.locals.user) {
 
 <BaseLayout title="Đăng Nhập - Phở Gõ Tarot" description="Đăng nhập để xem Tarot và trò chuyện cùng Oracle" showChatbot={false}>
   <!-- Thêm thư viện Google Identity Services -->
-  {enableGoogleAuth && <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>}
+  {enableGoogleAuth && (
+    <>
+      <script is:inline>
+        window.__pendingGoogleSignInResponses = [];
+        window.handleGoogleSignIn = function(response) {
+          if (typeof window.__handleGoogleSignInImpl === 'function') {
+            return window.__handleGoogleSignInImpl(response);
+          }
+          window.__pendingGoogleSignInResponses.push(response);
+        };
+      </script>
+      <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
+    </>
+  )}
 
   <main class="auth-page">
     <div class="auth-container">
@@ -106,7 +119,7 @@ if (Astro.locals.user) {
     }
 
     // CallBack từ thư viện Google
-    (window as any).handleGoogleSignIn = async (response: any) => {
+    (window as any).__handleGoogleSignInImpl = async (response: any) => {
       if (!supUrl || !supKey) {
         alert('Thiếu cấu hình Supabase URL hoặc Key.');
         return;
@@ -155,6 +168,11 @@ if (Astro.locals.user) {
         }
       }
     };
+
+    const pendingGoogleResponses = (window as any).__pendingGoogleSignInResponses || [];
+    while (pendingGoogleResponses.length > 0) {
+      (window as any).__handleGoogleSignInImpl(pendingGoogleResponses.shift());
+    }
 
     if (loginForm && errorMessage && submitBtn) {
       loginForm.addEventListener('submit', async (e) => {
