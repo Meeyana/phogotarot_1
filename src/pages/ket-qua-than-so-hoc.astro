@@ -219,9 +219,7 @@ for (const l of karmicLessons) {
 }
 
 const pageTitle = `Hồ Sơ: ${fullName}`;
-const pdfReportUrl = `/ket-qua-than-so-hoc/pdf?name=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(dobStr)}${nickname ? `&nickname=${encodeURIComponent(nickname)}` : ''}${gender ? `&gender=${encodeURIComponent(gender)}` : ''}`;
 const pdfReportApiUrl = `/api/numerology/report?name=${encodeURIComponent(fullName)}&dob=${encodeURIComponent(dobStr)}${nickname ? `&nickname=${encodeURIComponent(nickname)}` : ''}${gender ? `&gender=${encodeURIComponent(gender)}` : ''}`;
-const pdfExporterUrl = import.meta.env.PUBLIC_NUMEROLOGY_PDF_EXPORTER_URL || '';
 ---
 
 <BaseLayout title={pageTitle} showChatbot={false}>
@@ -267,10 +265,10 @@ const pdfExporterUrl = import.meta.env.PUBLIC_NUMEROLOGY_PDF_EXPORTER_URL || '';
                     </div>
                     {!isLocked && (
                         <div class="report-actions">
-                            <a href={pdfReportUrl} class="btn-pdf-report" id="pdf-export-link" data-report-api={pdfReportApiUrl} data-exporter-url={pdfExporterUrl} target="_blank" rel="noopener noreferrer">
+                            <button type="button" class="btn-pdf-report" id="pdf-export-btn" data-report-api={pdfReportApiUrl}>
                                 <i class="fas fa-file-pdf"></i>
                                 Xuất PDF
-                            </a>
+                            </button>
                         </div>
                     )}
                 </header>
@@ -512,61 +510,102 @@ const pdfExporterUrl = import.meta.env.PUBLIC_NUMEROLOGY_PDF_EXPORTER_URL || '';
 
     <script is:inline>
       (function() {
-        var link = document.getElementById('pdf-export-link');
-        if (!link) return;
+        var btn = document.getElementById('pdf-export-btn');
+        if (!btn) return;
+        var reportApi = btn.getAttribute('data-report-api');
+        if (!reportApi) return;
+        var busy = false;
 
-        var exporterUrl = link.getAttribute('data-exporter-url');
-        var reportApi = link.getAttribute('data-report-api');
-        if (!exporterUrl || !reportApi) return;
+        function loadScript(src) {
+          return new Promise(function(resolve, reject) {
+            if (document.querySelector('script[src="' + src + '"]')) { resolve(); return; }
+            var s = document.createElement('script');
+            s.src = src;
+            s.onload = resolve;
+            s.onerror = function() { reject(new Error('Khong tai duoc: ' + src)); };
+            document.head.appendChild(s);
+          });
+        }
 
-        link.addEventListener('click', async function(event) {
-          event.preventDefault();
+        function imageToDataUrl(path) {
+          return fetch(path).then(function(r) {
+            if (!r.ok) throw new Error('Khong tai duoc anh: ' + path);
+            return r.blob();
+          }).then(function(blob) {
+            return new Promise(function(resolve, reject) {
+              var reader = new FileReader();
+              reader.onload = function() { resolve(reader.result); };
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          });
+        }
 
-          var originalText = link.innerHTML;
-          var exporterOrigin = new URL(exporterUrl).origin;
-          var target = window.open(exporterUrl, 'phogotarot-pdf-exporter');
-          if (!target) {
-            alert('Trinh duyet dang chan popup tai PDF. Vui long cho phep popup cho website nay.');
-            return;
-          }
+        function makeFilename(report) {
+          var name = (report.input && report.input.fullName) || 'than-so-hoc';
+          return ('Bao-cao-than-so-hoc-' + name)
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-zA-Z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase() + '.pdf';
+        }
 
-          link.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dang tao PDF';
-          link.style.pointerEvents = 'none';
+        btn.addEventListener('click', async function() {
+          if (busy) return;
+          busy = true;
+          var originalHTML = btn.innerHTML;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo PDF...';
+          btn.disabled = true;
 
           try {
             var response = await fetch(reportApi, { credentials: 'include' });
             var report = await response.json();
-            if (!response.ok) throw new Error(report.error || 'Khong lay duoc du lieu PDF.');
+            if (!response.ok) throw new Error(report.error || 'Khong lay duoc du lieu.');
 
-            var send = function() {
-              target.postMessage({
-                type: 'PHOGOTAROT_NUMEROLOGY_REPORT',
-                report: report,
-                autoDownload: true
-              }, exporterOrigin);
+            report.definitions = report.definitions || {};
+
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js');
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js');
+            await loadScript('/js/pdf-content-normalizer.js');
+            await loadScript('/js/pdf-report-definition.js');
+
+            var fontResults = await Promise.all([
+              imageToDataUrl('/fonts/playfair-display-400.ttf'),
+              imageToDataUrl('/fonts/playfair-display-900.ttf'),
+              imageToDataUrl('/images/logo-l.png'),
+              imageToDataUrl('/images/cover-artwork.png')
+            ]);
+
+            pdfMake.vfs = pdfMake.vfs || {};
+            if (window.pdfMake && window.pdfMake.vfs) {
+               // vfs_fonts.js attaches to pdfMake.vfs, make sure we keep existing Roboto fonts
+            }
+            pdfMake.vfs['playfair400.ttf'] = fontResults[0].split(',')[1];
+            pdfMake.vfs['playfair900.ttf'] = fontResults[1].split(',')[1];
+
+            pdfMake.fonts = {
+              Roboto: {
+                normal: 'Roboto-Regular.ttf',
+                bold: 'Roboto-Medium.ttf',
+                italics: 'Roboto-Italic.ttf',
+                bolditalics: 'Roboto-MediumItalic.ttf'
+              },
+              PlayfairDisplay: {
+                normal: 'playfair400.ttf',
+                bold: 'playfair900.ttf',
+                italics: 'playfair400.ttf',
+                bolditalics: 'playfair900.ttf'
+              }
             };
 
-            var timer = setInterval(send, 500);
-            var onReady = function(messageEvent) {
-              if (messageEvent.origin !== exporterOrigin) return;
-              if (!messageEvent.data || messageEvent.data.type !== 'PHOGOTAROT_PDF_EXPORTER_READY') return;
-              clearInterval(timer);
-              send();
-              window.removeEventListener('message', onReady);
-            };
-
-            window.addEventListener('message', onReady);
-            send();
-            setTimeout(function() {
-              clearInterval(timer);
-              window.removeEventListener('message', onReady);
-            }, 10000);
-          } catch (error) {
-            target.close();
-            alert(error.message || 'Khong tao duoc PDF.');
+            var assets = { logo: fontResults[2], coverArtwork: fontResults[3] };
+            var definition = await window.__pdfReportDefinition.buildPdfDefinition(report, assets);
+            pdfMake.createPdf(definition).download(makeFilename(report));
+          } catch (err) {
+            console.error(err);
+            alert(err.message || 'Khong tao duoc PDF.');
           } finally {
-            link.innerHTML = originalText;
-            link.style.pointerEvents = '';
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+            busy = false;
           }
         });
       })();
@@ -591,6 +630,9 @@ const pdfExporterUrl = import.meta.env.PUBLIC_NUMEROLOGY_PDF_EXPORTER_URL || '';
     background: rgba(242, 201, 76, 0.12);
     color: #f2c94c;
     font-weight: 700;
+    font-size: 1rem;
+    font-family: inherit;
+    cursor: pointer;
     text-decoration: none;
     text-shadow: none;
     transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
