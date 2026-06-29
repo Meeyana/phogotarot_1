@@ -6,6 +6,7 @@ const runtimeEnv = Astro.locals.runtime?.env || {};
 const supabaseUrl = runtimeEnv.PUBLIC_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL || '';
 const supabaseKey = runtimeEnv.PUBLIC_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY || '';
 const googleClientId = runtimeEnv.PUBLIC_GOOGLE_CLIENT_ID || import.meta.env.PUBLIC_GOOGLE_CLIENT_ID || '357142710685-hkhoju35vfp5fo6s16e3j5rgebojtstb.apps.googleusercontent.com';
+const enableGoogleAuth = true;
 
 // Nếu đã đăng nhập, chuyển hướng sang trang chủ
 if (Astro.locals.user) {
@@ -15,7 +16,7 @@ if (Astro.locals.user) {
 
 <BaseLayout title="Đăng Nhập - Phở Gõ Tarot" description="Đăng nhập để xem Tarot và trò chuyện cùng Oracle" showChatbot={false}>
   <!-- Thêm thư viện Google Identity Services -->
-  <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
+  {enableGoogleAuth && <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>}
 
   <main class="auth-page">
     <div class="auth-container">
@@ -25,37 +26,41 @@ if (Astro.locals.user) {
           <p>Mở cánh cửa bước vào thế giới huyền học</p>
         </div>
 
-        <!-- Đăng nhập bằng Google Identity Services (UI Custom Overlay) -->
-        <div class="google-btn-wrapper" id="supabase-auth-config" data-url={supabaseUrl} data-key={supabaseKey}>
-          <button class="google-btn" type="button">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
-            Tiếp tục với Google
-          </button>
-          
-          <div id="g_id_onload"
-               data-client_id={googleClientId}
-               data-context="signin"
-               data-ux_mode="popup"
-               data-callback="handleGoogleSignIn"
-               data-auto_prompt="false">
-          </div>
-          
-          <div class="gis-overlay">
-              <div class="g_id_signin"
-                   data-type="standard"
-                   data-shape="rectangular"
-                   data-theme="outline"
-                   data-text="continue_with"
-                   data-size="large"
-                   data-logo_alignment="center"
-                   data-width="400">
+        {enableGoogleAuth && (
+          <>
+            <!-- Đăng nhập bằng Google Identity Services (UI Custom Overlay) -->
+            <div class="google-btn-wrapper" id="supabase-auth-config" data-url={supabaseUrl} data-key={supabaseKey}>
+              <button class="google-btn" type="button">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google Logo" class="google-icon" />
+                Tiếp tục với Google
+              </button>
+              
+              <div id="g_id_onload"
+                   data-client_id={googleClientId}
+                   data-context="signin"
+                   data-ux_mode="popup"
+                   data-callback="handleGoogleSignIn"
+                   data-auto_prompt="false">
               </div>
-          </div>
-        </div>
+              
+              <div class="gis-overlay">
+                  <div class="g_id_signin"
+                       data-type="standard"
+                       data-shape="rectangular"
+                       data-theme="outline"
+                       data-text="continue_with"
+                       data-size="large"
+                       data-logo_alignment="center"
+                       data-width="400">
+                  </div>
+              </div>
+            </div>
 
-        <div class="divider">
-          <span>hoặc</span>
-        </div>
+            <div class="divider">
+              <span>hoặc</span>
+            </div>
+          </>
+        )}
 
         <!-- Form Đăng nhập Email -->
         <form id="login-form" class="auth-form">
