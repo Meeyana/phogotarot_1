@@ -1238,6 +1238,15 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 card.dataset.idx = idx;
                 setFanVars(card, order, visibleCards.length);
                 card.style.animation = `fanCardIn 0.38s ease-out forwards ${order * 14}ms`;
+                
+                const animationEndCallback = (e) => {
+                    if (e.animationName === 'fanCardIn') {
+                        e.target.classList.add('is-dealt');
+                        e.target.style.animation = '';
+                    }
+                };
+                card.addEventListener('animationend', animationEndCallback);
+                
                 card.addEventListener('click', (e) => handleCardSelect(e.currentTarget));
                 fanStage.appendChild(card);
             });
