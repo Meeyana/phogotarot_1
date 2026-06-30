@@ -944,9 +944,11 @@ body {
 
 @media (max-width: 768px) {
     #card-spread-container {
-        max-width: 100%;
+        width: 100%;
+        max-width: calc(100vw - 24px);
         gap: 10px 0;
         perspective: none;
+        overflow-x: hidden;
     }
     .card-row {
         display: flex;
@@ -955,17 +957,19 @@ body {
         padding-left: 0;
     }
     .mobile-card-row {
-        max-width: 247px;
+        --mobile-card-w: clamp(36px, 10.4vw, 42px);
+        max-width: min(calc(100vw - 28px), calc(var(--mobile-card-w) * 6.32));
         margin: 0 auto;
     }
     .facedown-card {
-        width: 38px;
-        height: 64.6px;
+        width: var(--mobile-card-w);
+        aspect-ratio: 372 / 619;
+        height: auto;
         margin-left: 0;
         border-radius: 3px;
     }
     .mobile-card-row .facedown-card + .facedown-card {
-        margin-left: -27px;
+        margin-left: calc(var(--mobile-card-w) * -0.72);
     }
     .card-fan-stage {
         width: min(112vw, 680px);
@@ -987,17 +991,17 @@ body {
 
     #chosen-cards-display,
     #chosen-cards-display.spread-3 {
-        gap: 0.5rem;
-        min-height: 126px;
+        gap: 0.45rem;
+        min-height: 148px;
         margin-bottom: 3rem;
     }
 
     /* Giữ nguyên kích thước bài trên mobile như cũ */
     .chosen-card-placeholder, .chosen-card-item {
-        width: 72px;
+        width: 84px;
     }
     .chosen-card-placeholder {
-        height: 122.4px;
+        height: calc(84px * 619 / 372);
         font-size: 0.95rem;
     }
     .question-display-header {
