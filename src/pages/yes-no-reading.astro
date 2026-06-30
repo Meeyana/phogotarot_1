@@ -732,10 +732,12 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #card-spread-container .mobile-card-row {
                 --mobile-card-w: clamp(42px, 11.6vw, 52px);
-                max-width: min(calc(100vw - 28px), calc(var(--mobile-card-w) * 8.2));
+                width: fit-content;
+                max-width: calc(100vw - 28px);
                 padding-inline: 6px;
                 box-sizing: content-box;
                 margin: 0 auto;
+                justify-content: flex-start;
             }
             #card-spread-container .mobile-card-row .facedown-card {
                 width: var(--mobile-card-w);
@@ -806,10 +808,12 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #card-spread-container .mobile-card-row.tablet-card-row {
                 --mobile-card-w: clamp(52px, 5.7vw, 78px);
-                max-width: min(calc(100vw - 48px), calc(var(--mobile-card-w) * 14.4));
+                width: fit-content;
+                max-width: calc(100vw - 48px);
                 padding-inline: 12px;
                 box-sizing: content-box;
                 margin: 0 auto;
+                justify-content: flex-start;
             }
             #card-spread-container .mobile-card-row.tablet-card-row .facedown-card {
                 width: var(--mobile-card-w);
@@ -847,7 +851,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #card-spread-container .mobile-card-row {
                 --mobile-card-w: clamp(38px, 6.8vw, 50px);
-                max-width: min(calc(100vw - 44px), calc(var(--mobile-card-w) * 8.4));
+                max-width: calc(100vw - 44px);
             }
             #card-spread-container .mobile-card-row .facedown-card + .facedown-card {
                 margin-left: calc(var(--mobile-card-w) * -0.62);
