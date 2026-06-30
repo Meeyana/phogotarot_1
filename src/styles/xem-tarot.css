@@ -1013,12 +1013,17 @@ body {
 }
 
 @media (min-width: 769px) and (max-width: 1180px), (pointer: coarse) and (min-width: 769px) and (max-width: 1366px) {
+    #chosen-cards-display,
+    #chosen-cards-display.spread-3 {
+        margin-bottom: 4rem;
+    }
     #card-spread-container {
         width: 100%;
         max-width: calc(100vw - 40px);
         gap: 18px 0;
         perspective: none;
         overflow-x: visible;
+        margin-top: 0.8rem;
     }
     .card-row {
         display: flex;
@@ -1027,8 +1032,8 @@ body {
         padding-left: 0;
     }
     .mobile-card-row.tablet-card-row {
-        --mobile-card-w: clamp(50px, 5.2vw, 70px);
-        max-width: min(calc(100vw - 64px), calc(var(--mobile-card-w) * 9.9));
+        --mobile-card-w: clamp(52px, 5.7vw, 78px);
+        max-width: min(calc(100vw - 48px), calc(var(--mobile-card-w) * 12.2));
         padding-inline: 12px;
         box-sizing: content-box;
         margin: 0 auto;
@@ -1052,7 +1057,26 @@ body {
         backface-visibility: hidden;
     }
     .mobile-card-row.tablet-card-row .facedown-card + .facedown-card {
-        margin-left: calc(var(--mobile-card-w) * -0.76);
+        margin-left: calc(var(--mobile-card-w) * -0.69);
+    }
+}
+
+@media (max-width: 768px) and (orientation: landscape) {
+    #chosen-cards-display,
+    #chosen-cards-display.spread-3 {
+        margin-bottom: 4rem;
+    }
+    #card-spread-container {
+        margin-top: 0.8rem;
+        gap: 14px 0;
+        max-width: calc(100vw - 36px);
+    }
+    .mobile-card-row {
+        --mobile-card-w: clamp(34px, 6.4vw, 48px);
+        max-width: min(calc(100vw - 56px), calc(var(--mobile-card-w) * 6.6));
+    }
+    .mobile-card-row .facedown-card + .facedown-card {
+        margin-left: calc(var(--mobile-card-w) * -0.72);
     }
 }
 
