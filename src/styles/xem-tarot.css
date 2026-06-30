@@ -884,7 +884,6 @@ body {
     border-radius: 8px; margin-left: -40px; cursor: pointer;
     border: 1px solid rgba(255,255,255,0.18);
     position: relative;
-    overflow: hidden;
     background-color: rgba(19, 32, 64, 0.92);
     background-position: center;
     background-repeat: no-repeat;
@@ -923,13 +922,13 @@ body {
     pointer-events: none;
     transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-34px) scale(.92);
 }
-.facedown-card:hover {
+#card-spread-container .facedown-card:hover {
     transform: translateY(-18px) scale(1.09) rotate(var(--card-tilt, 0deg));
     z-index: 10;
     filter: brightness(1.15) saturate(1.08);
     box-shadow: -6px 12px 18px rgba(0,0,0,0.35), 0 0 24px rgba(242,201,76,0.28);
 }
-.facedown-card.fan-card:hover {
+#card-spread-container .facedown-card.fan-card:hover {
     z-index: 9999;
     transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-6px) scale(1.025);
     filter: brightness(1.15) saturate(1.08);
@@ -989,7 +988,7 @@ body {
         bottom: calc(var(--fan-bottom) + 18px);
         transform-origin: 50% calc(var(--fan-origin) - 430px);
     }
-    .facedown-card.fan-card:hover {
+    #card-spread-container .facedown-card.fan-card:hover {
         transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-4px) scale(1.02);
         filter: brightness(1.15) saturate(1.08);
         box-shadow: -6px 12px 18px rgba(0,0,0,0.35), 0 0 24px rgba(242,201,76,0.28);
