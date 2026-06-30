@@ -1274,6 +1274,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 const modal = document.getElementById('tarot-modal');
                 const scrollTop = modal.scrollTop || 0;
                 const scrollLeft = modal.scrollLeft || 0;
+                const deltaX = eRect.left - sRect.left;
+                const deltaY = eRect.top - sRect.top;
+                const scaleX = eRect.width / Math.max(sRect.width, 1);
+                const scaleY = eRect.height / Math.max(sRect.height, 1);
 
                 flying.style.top = `${sRect.top + scrollTop}px`;
                 flying.style.left = `${sRect.left + scrollLeft}px`;
@@ -1284,11 +1288,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 modal.appendChild(flying);
                 
                 requestAnimationFrame(() => {
-                    flying.style.top = `${eRect.top + scrollTop}px`;
-                    flying.style.left = `${eRect.left + scrollLeft}px`;
-                    flying.style.width = `${eRect.width}px`;
-                    flying.style.height = `${eRect.height}px`;
-                    flying.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
+                    flying.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
                     flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
                 });
 

@@ -957,9 +957,11 @@ if (Astro.locals.runtime?.env?.SESSION) {
         /* --- FLYING CARD --- */
         .flying-card-animator {
             position: absolute; z-index: 1000; pointer-events: none; width: 60px; height: 102px;
-            transition: top 1.85s cubic-bezier(.16,.74,.22,1), left 1.85s cubic-bezier(.16,.74,.22,1), width 1.85s cubic-bezier(.16,.74,.22,1), height 1.85s cubic-bezier(.16,.74,.22,1), transform 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
+            transition: transform 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
             transform-style: preserve-3d;
-            filter: drop-shadow(0 18px 22px rgba(0,0,0,0.36)) drop-shadow(0 0 18px rgba(242,201,76,0.28));
+            will-change: transform, opacity;
+            contain: layout paint style;
+            box-shadow: 0 18px 26px rgba(0,0,0,0.32), 0 0 18px rgba(242,201,76,0.18);
         }
         .flying-card-inner {
             position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.9s cubic-bezier(.22,.72,.2,1) 0.88s;
@@ -2104,8 +2106,13 @@ function animateCardFlight(startEl, endEl, cardData) {
             </div>
         `;
         
+        const deltaX = endRect.left - startRect.left;
+        const deltaY = endRect.top - startRect.top;
+        const scaleX = endRect.width / Math.max(startRect.width, 1);
+        const scaleY = endRect.height / Math.max(startRect.height, 1);
+
         flyingCard.style.top = `${startRect.top + window.scrollY}px`;
-        flyingCard.style.left = `${startRect.left}px`;
+        flyingCard.style.left = `${startRect.left + window.scrollX}px`;
         flyingCard.style.width = `${startRect.width}px`;
         flyingCard.style.height = `${startRect.height}px`;
         flyingCard.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
@@ -2114,12 +2121,7 @@ function animateCardFlight(startEl, endEl, cardData) {
         
         requestAnimationFrame(() => {
             const inner = flyingCard.querySelector('.flying-card-inner');
-            
-            flyingCard.style.top = `${endRect.top + window.scrollY}px`;
-            flyingCard.style.left = `${endRect.left}px`;
-            flyingCard.style.width = `${endRect.width}px`;
-            flyingCard.style.height = `${endRect.height}px`;
-            flyingCard.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
+            flyingCard.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
             
             inner.style.transform = 'rotateY(180deg) translateZ(0)';
         });
