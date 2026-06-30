@@ -7,7 +7,9 @@
         <!-- MÀN HÌNH 2: XÁO BÀI -->
         <div id="shuffling-screen" class="screen">
             <div id="shuffling-question-display" class="question-display-header"></div>
-            <div class="shuffling-animation-container">
+            <div class="shuffling-animation-container" aria-hidden="true">
+                <div class="energy-ring ring-1"></div>
+                <div class="energy-ring ring-2"></div>
                 <div class="shuffle-card"></div>
                 <div class="shuffle-card"></div>
                 <div class="shuffle-card"></div>
@@ -31,7 +33,7 @@
             </div>
             
             <!-- Bộ bài trải ra: Bắt buộc 2 hàng, căn giữa -->
-            <div id="card-spread-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; max-width: 900px; padding-left: 0; margin: 0 auto; gap: 15px 0;">
+            <div id="card-spread-container">
             </div>
         </div>
     </div>

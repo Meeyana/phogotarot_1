@@ -370,6 +370,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         // State
         let cardData = [];
         let allCardImagesLoaded = false;
+        const cardImageCache = new Map();
         let selectedCards = [];
         let isAnimating = false;
         let isThinking = false;
@@ -378,6 +379,43 @@ if (Astro.locals.runtime?.env?.SESSION) {
         let lastValidationModel = null;
         let currentCycleDrawnCardIds = []; // Mảng chứa ID các lá bài đã rút trong phiên (tối đa 21 lá)
         let targetSpreadCount = 3; // Số lá bài cần bốc (1, 3, 5)
+
+        function normalizeImageUrl(url) {
+            if (!url) return '';
+            try {
+                if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                    const parsed = new URL(url, window.location.origin);
+                    if (parsed.hostname === 'phogotarot.com' && parsed.pathname.startsWith('/images/uploads/cards/')) {
+                        return parsed.pathname;
+                    }
+                }
+                return new URL(url, window.location.origin).href;
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function preloadCardImage(url) {
+            const normalizedUrl = normalizeImageUrl(url);
+            if (!normalizedUrl) return Promise.resolve();
+            if (cardImageCache.has(normalizedUrl)) {
+                return cardImageCache.get(normalizedUrl).promise;
+            }
+
+            const img = new Image();
+            img.decoding = 'async';
+            const promise = new Promise((resolve) => {
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(img);
+            });
+            img.src = normalizedUrl;
+            cardImageCache.set(normalizedUrl, { img, promise });
+            return promise;
+        }
+
+        function whenCardImageReady(url) {
+            return preloadCardImage(url);
+        }
 
         const sendIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M3.4 22a.8.8 0 0 1-.5-.1.75.75 0 0 1-.4-.8l2-9.5 12-1.6-12-1.6-2-9.5a.75.75 0 0 1 .9-.9l20 10a.75.75 0 0 1 0 1.3L3.9 21.9a.8.8 0 0 1-.5-.1Z"/></svg>`;
         const spinnerIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="animate-spin" style="animation: spin 1s linear infinite;"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>`;
@@ -732,16 +770,12 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 cardData = cards.map(card => ({
                     id: card.id,
                     name: card.name,
-                    image: card.image
+                    image: normalizeImageUrl(card.image)
                 }));
 
                 // Preload images
-                const promises = cardData.map(card => {
-                    return new Promise((res) => { 
-                        const img = new Image(); img.src = card.image;
-                        img.onload = res; img.onerror = res;
-                    });
-                });
+                const uniqueImageUrls = [...new Set(cardData.map(card => card.image).filter(Boolean))];
+                const promises = uniqueImageUrls.map(preloadCardImage);
                 Promise.all(promises).then(() => allCardImagesLoaded = true);
             } catch (err) {
                 console.error("Lỗi tải data bài:", err);
@@ -1037,8 +1071,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
             
             if (targetSpreadCount === 5) {
                 chosenCardsDisplay.classList.add('spread-5');
+                chosenCardsDisplay.classList.remove('spread-3');
             } else {
                 chosenCardsDisplay.classList.remove('spread-5');
+                chosenCardsDisplay.classList.add('spread-3');
             }
             
             showScreen('shuffling-screen');
@@ -1137,36 +1173,66 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
 
             // Responsive: Chia thành nhiều hàng. Mobile: 20 lá/hàng, Desktop: 39 lá/hàng.
-            const isMobile = window.innerWidth <= 768 || 
-                             window.matchMedia("(max-width: 768px)").matches || 
-                             /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const cardsPerRow = isMobile ? 20 : 39;
+            const isMobileDeck = window.innerWidth <= 768 ||
+                window.matchMedia("(max-width: 768px)").matches ||
+                /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-            for (let i = 0; i < visibleCards.length; i += cardsPerRow) {
-                const chunk = visibleCards.slice(i, i + cardsPerRow);
-                const row = document.createElement('div');
-                row.className = 'card-row';
-
-                chunk.forEach((idx, j) => {
-                    const card = document.createElement('div');
-                    card.className = 'facedown-card'; 
-                    card.dataset.idx = idx;
-                    card.style.animation = `dealCardIn 0.3s ease-out forwards ${(i + j) * 20}ms`;
-                    card.addEventListener('click', (e) => handleCardSelect(e.currentTarget));
-                    row.appendChild(card);
-                });
-
-                spreadContainer.appendChild(row);
+            if (isMobileDeck) {
+                const cardsPerRow = 20;
+                for (let i = 0; i < visibleCards.length; i += cardsPerRow) {
+                    const row = document.createElement('div');
+                    row.className = 'card-row mobile-card-row';
+                    visibleCards.slice(i, i + cardsPerRow).forEach((idx, j) => {
+                        const card = document.createElement('div');
+                        card.className = 'facedown-card';
+                        card.dataset.idx = idx;
+                        card.style.animation = `dealCardIn 0.3s ease-out forwards ${(i + j) * 18}ms`;
+                        card.addEventListener('click', (e) => handleCardSelect(e.currentTarget));
+                        row.appendChild(card);
+                    });
+                    spreadContainer.appendChild(row);
+                }
+                return;
             }
+
+            const fanStage = document.createElement('div');
+            fanStage.className = `card-fan-stage spread-${targetSpreadCount}`;
+            const ringSplit = Math.ceil(visibleCards.length / 2);
+            const setFanVars = (card, order, total) => {
+                const isOuterRing = order < ringSplit;
+                const ringIndex = isOuterRing ? order : order - ringSplit;
+                const ringTotal = isOuterRing ? ringSplit : Math.max(total - ringSplit, 1);
+                const progress = ringTotal <= 1 ? 0.5 : ringIndex / (ringTotal - 1);
+                const arc = isOuterRing ? 92 : 82;
+                const angle = -arc / 2 + progress * arc;
+                card.style.setProperty('--fan-angle', `${angle}deg`);
+                card.style.setProperty('--fan-bottom', isOuterRing ? '26px' : '-34px');
+                card.style.setProperty('--fan-origin', isOuterRing ? '820px' : '730px');
+                card.style.setProperty('--fan-z', `${isOuterRing ? ringIndex : ringSplit + ringIndex + 8}`);
+            };
+
+            visibleCards.forEach((idx, order) => {
+                const card = document.createElement('div');
+                card.className = 'facedown-card fan-card';
+                card.dataset.idx = idx;
+                setFanVars(card, order, visibleCards.length);
+                card.style.animation = `fanCardIn 0.38s ease-out forwards ${order * 14}ms`;
+                card.addEventListener('click', (e) => handleCardSelect(e.currentTarget));
+                fanStage.appendChild(card);
+            });
+
+            spreadContainer.appendChild(fanStage);
         }
 
         function handleCardSelect(el) {
             if (selectedCards.length >= targetSpreadCount || isAnimating) return;
+            pauseFanHover(el);
             const idx = el.dataset.idx;
             const cards = document.querySelectorAll(`.facedown-card[data-idx="${idx}"]`);
             if (cards[0].style.display === 'none') return;
 
             isAnimating = true;
+            createPickBurst(el, tarotModal);
             
             // Chỉ lưu tạm vị trí lá bài, chưa lưu vào LocalStorage (tránh lỗi reload mất bài)
             tempDrawnIndices.push(parseInt(idx));
@@ -1190,8 +1256,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         }
 
         function animateFlight(startEl, endEl, cardInfo) {
-            const img = new Image();
-            img.onload = () => {
+            whenCardImageReady(cardInfo.image).then(() => {
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
                 
@@ -1210,6 +1275,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.style.left = `${sRect.left + scrollLeft}px`;
                 flying.style.width = `${sRect.width}px`;
                 flying.style.height = `${sRect.height}px`;
+                flying.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
                 
                 modal.appendChild(flying);
                 
@@ -1218,6 +1284,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     flying.style.left = `${eRect.left + scrollLeft}px`;
                     flying.style.width = `${eRect.width}px`;
                     flying.style.height = `${eRect.height}px`;
+                    flying.style.transform = 'translate3d(0, 0, 0) rotate(0deg) scale(1)';
                     flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
                 });
 
@@ -1226,6 +1293,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     if (isDone) return;
                     isDone = true;
                     if (flying.parentNode) flying.remove();
+                    createPickBurst(endEl, tarotModal);
                     selectedCards.push(cardInfo);
                     updateChosenCards();
                     isAnimating = false;
@@ -1251,9 +1319,33 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 });
 
                 // Fallback nếu transitionend không chạy trên Mobile Safari
-                setTimeout(finishAnimation, 900);
-            };
-            img.src = cardInfo.image;
+                setTimeout(finishAnimation, 2400);
+            });
+        }
+
+        function pauseFanHover(cardEl) {
+            const fanStage = cardEl?.closest('.card-fan-stage');
+            if (!fanStage) return;
+            fanStage.classList.add('hover-paused');
+            clearTimeout(fanStage._hoverPauseTimer);
+            fanStage._hoverPauseTimer = setTimeout(() => {
+                fanStage.classList.remove('hover-paused');
+            }, 2000);
+        }
+
+        function createPickBurst(anchorEl, parentEl = document.body) {
+            if (!anchorEl || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const rect = anchorEl.getBoundingClientRect();
+            const parentRect = parentEl === document.body
+                ? { top: -window.scrollY, left: -window.scrollX }
+                : parentEl.getBoundingClientRect();
+            const burst = document.createElement('span');
+            burst.className = 'tarot-pick-burst';
+            burst.style.left = `${rect.left - parentRect.left + rect.width / 2}px`;
+            burst.style.top = `${rect.top - parentRect.top + rect.height / 2}px`;
+            parentEl.appendChild(burst);
+            burst.addEventListener('animationend', () => burst.remove(), { once: true });
+            setTimeout(() => burst.remove(), 900);
         }
 
         function updateChosenCards() {

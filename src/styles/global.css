@@ -907,7 +907,7 @@
             width: 100%;
             padding: 0 10%; 
         }
-         .facedown-card {
+         .facedown-card:not(.fan-card) {
             flex-shrink: 0;
             width: 80px;
             aspect-ratio: 2/3;
@@ -928,21 +928,21 @@
             opacity: 0;
             transform: translateY(30px) scale(0.8) translateZ(0); 
         }
-        .facedown-card:first-child { margin-left: 0; }
+        .facedown-card:not(.fan-card):first-child { margin-left: 0; }
 
-        .facedown-card.is-dealt {
+        .facedown-card:not(.fan-card).is-dealt {
             opacity: 1;
             transform: translateY(0) scale(1) translateZ(0);
         }
 
         @media (min-width: 768px){
-                .facedown-card:hover {
+                .facedown-card:not(.fan-card):hover {
 /*                transform: translateY(-15px)!important; */
 /*                border-color: var(--title-color);*/
             }
         }
 
-        .facedown-card.is-chosen {
+        .facedown-card:not(.fan-card).is-chosen {
             opacity: 0!important; 
             pointer-events: none;
         }
@@ -1130,7 +1130,7 @@
         /* === MEDIA QUERY FOR MOBILE ======== */
         /* =================================== */
         @media (max-width: 768px) {
-            .facedown-card {
+            .facedown-card:not(.fan-card) {
                 width: 50px;
                 margin-left: -35px;
             }
