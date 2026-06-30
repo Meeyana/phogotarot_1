@@ -1288,25 +1288,27 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.className = 'flying-card-animator';
                 flying.innerHTML = `<div class="flying-card-inner"><div class="flying-card-back"></div><div class="flying-card-front"><img src="${cardInfo.image}" class="${cardInfo.isReversed ? 'reversed' : ''}"></div></div>`;
                 
-                const modal = document.getElementById('tarot-modal');
-                const scrollTop = modal.scrollTop || 0;
-                const scrollLeft = modal.scrollLeft || 0;
-                const deltaX = eRect.left - sRect.left;
-                const deltaY = eRect.top - sRect.top;
+                const deltaX = (eRect.left + eRect.width / 2) - (sRect.left + sRect.width / 2);
+                const deltaY = (eRect.top + eRect.height / 2) - (sRect.top + sRect.height / 2);
                 const scaleX = eRect.width / Math.max(sRect.width, 1);
                 const scaleY = eRect.height / Math.max(sRect.height, 1);
 
-                flying.style.top = `${sRect.top + scrollTop}px`;
-                flying.style.left = `${sRect.left + scrollLeft}px`;
+                // Dùng position:fixed + viewport coords để tránh lệch do backdrop-filter tạo containing block
+                flying.style.position = 'fixed';
+                flying.style.top = `${sRect.top}px`;
+                flying.style.left = `${sRect.left}px`;
                 flying.style.width = `${sRect.width}px`;
                 flying.style.height = `${sRect.height}px`;
                 flying.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
                 
-                modal.appendChild(flying);
+                document.body.appendChild(flying);
                 
+                // Double RAF đảm bảo browser đã paint trạng thái ban đầu trước khi chạy transition
+                requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     flying.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
                     flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
+                });
                 });
 
                 let isDone = false;

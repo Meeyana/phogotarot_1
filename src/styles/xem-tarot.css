@@ -1081,7 +1081,7 @@ body {
 }
 
 .flying-card-animator {
-    position: absolute; z-index: 10000; pointer-events: none; width: 60px; height: 102px;
+    position: fixed; z-index: 10000; pointer-events: none; width: 60px; height: 102px;
     transition: transform 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
     transform-style: preserve-3d;
     will-change: transform, opacity;

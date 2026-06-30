@@ -967,7 +967,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
 
         /* --- FLYING CARD --- */
         .flying-card-animator {
-            position: absolute; z-index: 1000; pointer-events: none; width: 60px; height: 102px;
+            position: fixed; z-index: 1000; pointer-events: none; width: 60px; height: 102px;
             transition: transform 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
             transform-style: preserve-3d;
             will-change: transform, opacity;
@@ -2086,6 +2086,9 @@ function handleCardSelection(event, clickedElement) {
     isAnimating = true; 
     createPickBurst(clickedElement);
 
+    // Lưu tọa độ lá bài TRƯỚC khi is-chosen transform làm lệch vị trí
+    const savedStartRect = clickedElement.getBoundingClientRect();
+
     allCardsWithIndex.forEach(card => card.classList.add('is-chosen'));
 
     const availableCards = cardData.filter(card => !selectedCards.some(sc => sc.id === card.id));
@@ -2096,17 +2099,18 @@ function handleCardSelection(event, clickedElement) {
 
     const targetPlaceholder = document.querySelectorAll('#chosen-cards-display .chosen-card-placeholder')[0];
     if (targetPlaceholder) {
-        animateCardFlight(clickedElement, targetPlaceholder, chosenCard);
+        animateCardFlight(clickedElement, targetPlaceholder, chosenCard, savedStartRect);
     } else {
         isAnimating = false;
     }
 }
 
 /** Hiệu ứng lá bài bay */
-function animateCardFlight(startEl, endEl, cardData) {
+function animateCardFlight(startEl, endEl, cardData, savedStartRect) {
     
     const onImageLoaded = () => {
-        const startRect = startEl.getBoundingClientRect();
+        // Dùng rect đã lưu trước khi is-chosen transform làm lệch, fallback nếu không có
+        const startRect = savedStartRect || startEl.getBoundingClientRect();
         const endRect = endEl.getBoundingClientRect();
         
         const flyingCard = document.createElement('div');
@@ -2123,24 +2127,29 @@ function animateCardFlight(startEl, endEl, cardData) {
             </div>
         `;
         
-        const deltaX = endRect.left - startRect.left;
-        const deltaY = endRect.top - startRect.top;
+        const deltaX = (endRect.left + endRect.width / 2) - (startRect.left + startRect.width / 2);
+        const deltaY = (endRect.top + endRect.height / 2) - (startRect.top + startRect.height / 2);
         const scaleX = endRect.width / Math.max(startRect.width, 1);
         const scaleY = endRect.height / Math.max(startRect.height, 1);
 
-        flyingCard.style.top = `${startRect.top + window.scrollY}px`;
-        flyingCard.style.left = `${startRect.left + window.scrollX}px`;
+        // Dùng position:fixed + viewport coords để tọa độ luôn chính xác
+        flyingCard.style.position = 'fixed';
+        flyingCard.style.top = `${startRect.top}px`;
+        flyingCard.style.left = `${startRect.left}px`;
         flyingCard.style.width = `${startRect.width}px`;
         flyingCard.style.height = `${startRect.height}px`;
         flyingCard.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
         
         document.body.appendChild(flyingCard);
         
+        // Double RAF đảm bảo browser đã paint trạng thái ban đầu trước khi chạy transition
+        requestAnimationFrame(() => {
         requestAnimationFrame(() => {
             const inner = flyingCard.querySelector('.flying-card-inner');
             flyingCard.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
             
             inner.style.transform = 'rotateY(180deg) translateZ(0)';
+        });
         });
         let flightHasEnded = false;
         

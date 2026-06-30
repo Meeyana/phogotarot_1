@@ -835,7 +835,7 @@
         
         /* --- CSS Cho Hiệu Ứng Bay Của Lá Bài --- */
         .flying-card-animator {
-            position: absolute; 
+            position: fixed; 
             /* (CHỈNH SỬA) z-index 1000, dưới nav */
             z-index: 1000;
             transition: all 1s ease-in-out;
