@@ -691,16 +691,16 @@ if (Astro.locals.runtime?.env?.SESSION) {
             #drawing-screen #chosen-cards-display,
             #chosen-cards-display.spread-1,
             #chosen-cards-display.spread-3 {
-                gap: 0.35rem;
-                min-height: 92px;
+                gap: 0.5rem;
+                min-height: 126px;
                 margin-bottom: 1.35rem;
             }
             #drawing-screen .chosen-card-placeholder,
             #drawing-screen .chosen-card-item {
-                width: 54px;
+                width: 72px;
             }
             #drawing-screen .chosen-card-placeholder {
-                height: 91.8px;
+                height: 122.4px;
                 font-size: 0.95rem;
             }
             #drawing-screen #card-spread-container {
@@ -714,16 +714,16 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 display: flex;
                 justify-content: center;
                 width: 100%;
-                padding-left: 27px;
+                padding-left: 0;
             }
             #card-spread-container .mobile-card-row {
-                max-width: 230px;
+                max-width: 247px;
                 margin: 0 auto;
             }
             #card-spread-container .mobile-card-row .facedown-card {
                 width: 38px;
                 height: 64.6px;
-                margin-left: -27px;
+                margin-left: 0;
                 border-radius: 3px;
                 opacity: 0;
                 position: relative;
@@ -739,6 +739,9 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 -webkit-transform: translateY(-18px) scale(0.72) rotate(-8deg);
                 -webkit-backface-visibility: hidden;
                 backface-visibility: hidden;
+            }
+            #card-spread-container .mobile-card-row .facedown-card + .facedown-card {
+                margin-left: -27px;
             }
             #card-spread-container .mobile-card-row .facedown-card .mobile-card-back-img {
                 position: absolute;
