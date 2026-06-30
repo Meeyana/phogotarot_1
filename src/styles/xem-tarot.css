@@ -881,7 +881,7 @@ body {
 .card-row { display: flex; justify-content: center; width: 100%; padding-left: 40px; }
 .facedown-card {
     width: 132px; height: 224.4px; background-image: url('/card-back.jpg'); background-size: cover;
-    border-radius: 5px; margin-left: -40px; cursor: pointer;
+    border-radius: 8px; margin-left: -40px; cursor: pointer;
     border: 1px solid rgba(255,255,255,0.18);
     position: relative;
     overflow: hidden;
@@ -932,6 +932,8 @@ body {
 .facedown-card.fan-card:hover {
     z-index: 9999;
     transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-6px) scale(1.025);
+    filter: brightness(1.15) saturate(1.08);
+    box-shadow: -6px 12px 18px rgba(0,0,0,0.35), 0 0 24px rgba(242,201,76,0.28);
 }
 .card-fan-stage.hover-paused .facedown-card.fan-card:hover {
     z-index: var(--fan-z);
@@ -989,6 +991,8 @@ body {
     }
     .facedown-card.fan-card:hover {
         transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-4px) scale(1.02);
+        filter: brightness(1.15) saturate(1.08);
+        box-shadow: -6px 12px 18px rgba(0,0,0,0.35), 0 0 24px rgba(242,201,76,0.28);
     }
 
     #chosen-cards-display,
