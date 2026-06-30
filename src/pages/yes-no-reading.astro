@@ -727,15 +727,33 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 border-radius: 3px;
                 opacity: 0;
                 position: relative;
+                overflow: hidden;
                 transform: translateY(-18px) scale(0.72) rotate(-8deg);
                 aspect-ratio: auto;
                 flex-shrink: 0;
+                background-color: rgba(19, 32, 64, 0.92);
                 background-image: url('/card-back.jpg');
                 background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                -webkit-transform: translateY(-18px) scale(0.72) rotate(-8deg);
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+            #card-spread-container .mobile-card-row .facedown-card .mobile-card-back-img {
+                position: absolute;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: inherit;
+                pointer-events: none;
+                display: block;
             }
             #card-spread-container .mobile-card-row .facedown-card.is-dealt {
                 opacity: 1;
                 transform: translateY(0) scale(1) rotate(var(--card-tilt, 0deg));
+                -webkit-transform: translateY(0) scale(1) rotate(var(--card-tilt, 0deg));
             }
             #card-spread-container .card-fan-stage {
                 width: min(112vw, 680px);
@@ -1873,6 +1891,9 @@ function populateCardDeck() {
     followUpContainer.style.display = 'none';
     followUpInput.value = '';
     followUpErrorDisplay.textContent = ''; 
+    if (cardLookupContainerResults) {
+        cardLookupContainerResults.style.display = 'none';
+    }
     questionInput.value = ''; 
 
     const isMobileDeck = window.innerWidth <= 768 ||
@@ -1888,6 +1909,7 @@ function populateCardDeck() {
                 const cardElementMobile = document.createElement('div');
                 cardElementMobile.className = 'facedown-card';
                 cardElementMobile.dataset.positionIndex = j;
+                cardElementMobile.innerHTML = '<img class="mobile-card-back-img" src="/card-back.jpg" alt="" decoding="async" draggable="false">';
                 cardElementMobile.style.animation = `dealCardIn 0.3s ease-out forwards ${j * 18}ms`;
                 cardElementMobile.addEventListener('animationend', (e) => {
                     if (e.animationName === 'dealCardIn') {
