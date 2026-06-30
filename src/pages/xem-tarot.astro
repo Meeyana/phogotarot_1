@@ -3,6 +3,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
+import { getImage } from 'astro:assets';
 import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 import '../styles/xem-tarot.css';
 
@@ -39,6 +40,15 @@ const schema = graphSchema([
   ]),
   faqPageSchema(pageUrl, faqItems)
 ]);
+
+const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { eager: true, import: 'default' });
+const optimizedCardImageEntries = await Promise.all(
+  Object.entries(sourceCardImages).map(async ([path, image]) => {
+    const optimized = await getImage({ src: image as any, width: 480, format: 'webp', quality: 72 });
+    return [path.split('/').pop() || '', optimized.src];
+  })
+);
+const optimizedCardImageMap = Object.fromEntries(optimizedCardImageEntries);
 
 // Lấy thông tin profile
 const db = Astro.locals.runtime?.env?.DB;
@@ -254,9 +264,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
     <!-- Thư viện Showdown để parse markdown -->
     <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
-    <script define:vars={{ isLoggedIn: !!Astro.locals.user, serverUserId: Astro.locals.user?.id }}>
+    <script define:vars={{ isLoggedIn: !!Astro.locals.user, serverUserId: Astro.locals.user?.id, optimizedCardImageMap }}>
         window.IS_LOGGED_IN = isLoggedIn;
         window.SERVER_USER_ID = serverUserId || null;
+        window.TAROT_CARD_IMAGE_MAP = optimizedCardImageMap || {};
     </script>
 
     <div id="suggested-questions-data" style="display:none;" data-questions={suggestedQuestionsKV}></div>
@@ -383,13 +394,19 @@ if (Astro.locals.runtime?.env?.SESSION) {
         function normalizeImageUrl(url) {
             if (!url) return '';
             try {
+                const parsed = new URL(url, window.location.origin);
+                const filename = decodeURIComponent(parsed.pathname.split('/').pop() || '');
+                const cardImageMap = window.TAROT_CARD_IMAGE_MAP || {};
+                const mapKey = Object.keys(cardImageMap).find(key => filename === key || filename.startsWith(key.replace('.jpg', '')));
+                if (mapKey) {
+                    return new URL(cardImageMap[mapKey], window.location.origin).href;
+                }
                 if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                    const parsed = new URL(url, window.location.origin);
                     if (parsed.hostname === 'phogotarot.com' && parsed.pathname.startsWith('/images/uploads/cards/')) {
                         return parsed.pathname;
                     }
                 }
-                return new URL(url, window.location.origin).href;
+                return parsed.href;
             } catch (e) {
                 return url;
             }

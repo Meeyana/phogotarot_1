@@ -1,6 +1,7 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { getImage } from 'astro:assets';
 import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 
 // 2. Tạo metadata và schema
@@ -41,6 +42,15 @@ const schema = graphSchema([
 import fallbackTarotCards from '../data/tarot-cards.json';
 import fallbackYesNoCards from '../data/yesno-meanings.json';
 
+const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { eager: true, import: 'default' });
+const optimizedCardImageEntries = await Promise.all(
+    Object.entries(sourceCardImages).map(async ([path, image]) => {
+        const optimized = await getImage({ src: image as any, width: 480, format: 'webp', quality: 72 });
+        return [path.split('/').pop() || '', optimized.src];
+    })
+);
+const optimizedCardImageMap = Object.fromEntries(optimizedCardImageEntries);
+
 // Đọc gợi ý câu hỏi từ KV, nếu chưa có thì dùng mặc định
 let suggestedQuestionsKV = JSON.stringify([
   { "category": "Tình Cảm", "question": "Tôi có nên tiếp tục mối quan hệ này không?" },
@@ -78,8 +88,9 @@ if (Astro.locals.runtime?.env?.SESSION) {
   title={pageTitle}
   description={pageDesc}
 >
-    <script define:vars={{ isLoggedIn: !!Astro.locals.user }}>
+    <script define:vars={{ isLoggedIn: !!Astro.locals.user, optimizedCardImageMap }}>
         window.IS_LOGGED_IN = isLoggedIn;
+        window.TAROT_CARD_IMAGE_MAP = optimizedCardImageMap || {};
     </script>
     <!-- CONFIRM MODAL OVERLAY (Toàn cục) -->
     <div id="credit-confirm-modal" class="confirm-modal hidden">
@@ -1441,13 +1452,19 @@ let cardMeaningsHtml = '';
 function normalizeImageUrl(url) {
     if (!url) return '';
     try {
+        const parsed = new URL(url, window.location.origin);
+        const filename = decodeURIComponent(parsed.pathname.split('/').pop() || '');
+        const cardImageMap = window.TAROT_CARD_IMAGE_MAP || {};
+        const mapKey = Object.keys(cardImageMap).find(key => filename === key || filename.startsWith(key.replace('.jpg', '')));
+        if (mapKey) {
+            return new URL(cardImageMap[mapKey], window.location.origin).href;
+        }
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            const parsed = new URL(url, window.location.origin);
             if (parsed.hostname === 'phogotarot.com' && parsed.pathname.startsWith('/images/uploads/cards/')) {
                 return parsed.pathname;
             }
         }
-        return new URL(url, window.location.origin).href;
+        return parsed.href;
     } catch (e) {
         return url;
     }
