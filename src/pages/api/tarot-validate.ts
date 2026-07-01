@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
+import { runAiProviderChain } from '../../lib/ai-provider-router';
 
 export const prerender = false;
 
@@ -67,8 +68,6 @@ export const POST: APIRoute = async (context) => {
     const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_VALIDATE_TAROT
       || 'https://n8n.n8ntuanphangz.xyz/webhook/7179b8ca-c774-47a9-9ed4-6bf975344058'; // fallback localhost
-    
-    if (!webhookUrl && config.USE_LOCAL_AI) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;
@@ -208,39 +207,14 @@ export const POST: APIRoute = async (context) => {
           }
       }
 
-    let data: any;
-    const useN8nFirst = config.USE_LOCAL_AI === true;
-
-    if (useN8nFirst && webhookUrl) {
-        try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            if (!response.ok) {
-                throw new Error(`n8n HTTP error ${response.status}`);
-            }
-
-            const responseText = await response.text();
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.warn('n8n validate trả về không phải JSON, chuyển sang AI nội bộ...');
-                const { runTarotValidateWorker } = await import('../../lib/ai-workers');
-                data = await runTarotValidateWorker(body, env, config);
-            }
-        } catch (e) {
-            console.warn('n8n validate failed, chuyển sang AI nội bộ...');
-            const { runTarotValidateWorker } = await import('../../lib/ai-workers');
-            data = await runTarotValidateWorker(body, env, config);
-        }
-    } else {
-        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ (Cloudflare Workers)...');
-        const { runTarotValidateWorker } = await import('../../lib/ai-workers');
-        data = await runTarotValidateWorker(body, env, config);
-    }
+    const { runTarotValidateWorker } = await import('../../lib/ai-workers');
+    let data: any = await runAiProviderChain({
+        config,
+        webhookUrl,
+        webhookLabel: 'tarot validate',
+        payload: body,
+        runWorker: () => runTarotValidateWorker(body, env, config)
+    });
     
     // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema hoặc [{ output }])
     const n8nOutput = Array.isArray(data) ? data[0]?.output : data?.output;

@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
+import { runAiProviderChain } from '../../lib/ai-provider-router';
 
 export const prerender = false;
 
@@ -65,8 +66,6 @@ export const POST: APIRoute = async (context) => {
         
     const config = await getSystemConfig(env);
     const webhookUrl = env.N8N_VALIDATE_YESNO;
-    const useN8nFirst = config.USE_LOCAL_AI === true;
-    if (!webhookUrl && useN8nFirst) return new Response(JSON.stringify({ error: 'Config missing' }), { status: 500 });
 
     const db = env.DB;
     const user = context.locals.user;
@@ -139,36 +138,14 @@ export const POST: APIRoute = async (context) => {
     body.userProfile = profile;
 
 
-    let data: any;
-
-    if (useN8nFirst && webhookUrl) {
-        try {
-            const response = await fetch(webhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-            if (!response.ok) {
-                throw new Error(`n8n HTTP error ${response.status}`);
-            }
-            const responseText = await response.text();
-            try {
-                data = JSON.parse(responseText);
-            } catch (e) {
-                console.warn('n8n validate trả về không phải JSON, chuyển sang AI nội bộ...');
-                const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
-                data = await runYesNoValidateWorker(body, env, config);
-            }
-        } catch (e) {
-            console.warn('n8n validate failed, chuyển sang AI nội bộ...');
-            const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
-            data = await runYesNoValidateWorker(body, env, config);
-        }
-    } else {
-        console.log('[LOCAL AI] Sử dụng trực tiếp AI nội bộ cho Yes/No Validate (Cloudflare Workers)...');
-        const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
-        data = await runYesNoValidateWorker(body, env, config);
-    }
+    const { runYesNoValidateWorker } = await import('../../lib/ai-workers');
+    let data: any = await runAiProviderChain({
+        config,
+        webhookUrl,
+        webhookLabel: 'yesno validate',
+        payload: body,
+        runWorker: () => runYesNoValidateWorker(body, env, config)
+    });
     
     // NORMALIZE RAW LLM JSON (nếu n8n trả về mảng OpenAI schema)
     let rawContent = null;

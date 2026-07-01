@@ -1,6 +1,7 @@
 // Thư viện AI Workers (Staging Toggle) thay thế n8n
 
 import type { SystemConfig } from './config';
+import { normalizeAiProviderOrder } from './config';
 
 const TAROT_TOPICS = ['general', 'love', 'career', 'finances'];
 
@@ -14,10 +15,17 @@ function normalizeTarotTopic(value: any) {
 }
 
 async function callOpenAI(messages: any[], temperature: number, env: any, config: SystemConfig, passedModel: string = "n8n2") {
+    const enabledProviders = normalizeAiProviderOrder(config.AI_PROVIDER_ORDER, config.USE_LOCAL_AI);
+    const routerEnabled = enabledProviders.includes('router');
+    const openAiEnabled = enabledProviders.includes('openai');
     let useFallback = false;
     let customErrorMsg = "";
 
-    if (config.AI_API_URL) {
+    if (!routerEnabled && !openAiEnabled) {
+        throw new Error('Không có luồng AI nội bộ nào được bật trong CMS.');
+    }
+
+    if (routerEnabled && config.AI_API_URL) {
         // Thử gọi Custom API trước
         const apiUrl = config.AI_API_URL;
         const apiKey = config.DEFAULT_API_KEY || "";
@@ -55,8 +63,12 @@ async function callOpenAI(messages: any[], temperature: number, env: any, config
             useFallback = true;
         }
     } else {
-        customErrorMsg = "AI_API_URL is empty";
+        customErrorMsg = routerEnabled ? "AI_API_URL is empty" : "9router disabled by CMS";
         useFallback = true;
+    }
+
+    if (useFallback && !openAiEnabled) {
+        throw new Error(`9router Error: ${customErrorMsg}`);
     }
 
     if (useFallback) {
