@@ -3,7 +3,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TarotSpreadModal from '../components/TarotSpreadModal.astro';
 import ProfileModal from '../components/ProfileModal.astro';
-import { getImage } from 'astro:assets';
 import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 import '../styles/xem-tarot.css';
 
@@ -41,13 +40,11 @@ const schema = graphSchema([
   faqPageSchema(pageUrl, faqItems)
 ]);
 
-const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { eager: true, import: 'default' });
-const optimizedCardImageEntries = await Promise.all(
-  Object.entries(sourceCardImages).map(async ([path, image]) => {
-    const optimized = await getImage({ src: image as any, width: 480, format: 'webp', quality: 72 });
-    return [path.split('/').pop() || '', optimized.src];
-  })
-);
+const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { query: '?url', eager: true, import: 'default' });
+const optimizedCardImageEntries = Object.entries(sourceCardImages).map(([path, image]) => [
+  path.split('/').pop() || '',
+  image
+]);
 const optimizedCardImageMap = Object.fromEntries(optimizedCardImageEntries);
 
 // Lấy thông tin profile
@@ -790,10 +787,8 @@ if (Astro.locals.runtime?.env?.SESSION) {
                     image: normalizeImageUrl(card.image)
                 }));
 
-                // Preload images
-                const uniqueImageUrls = [...new Set(cardData.map(card => card.image).filter(Boolean))];
-                const promises = uniqueImageUrls.map(preloadCardImage);
-                Promise.all(promises).then(() => allCardImagesLoaded = true);
+                // Không preload 78 lá ở đầu phiên: ảnh lá được chọn sẽ được load ngay trước khi flip.
+                allCardImagesLoaded = true;
             } catch (err) {
                 console.error("Lỗi tải data bài:", err);
             }

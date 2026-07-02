@@ -1,7 +1,6 @@
 ---
 // 1. IMPORT
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getImage } from 'astro:assets';
 import { breadcrumbListSchema, faqPageSchema, graphSchema, webApplicationSchema, webPageSchema } from '../lib/schema';
 
 // 2. Tạo metadata và schema
@@ -42,13 +41,11 @@ const schema = graphSchema([
 import fallbackTarotCards from '../data/tarot-cards.json';
 import fallbackYesNoCards from '../data/yesno-meanings.json';
 
-const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { eager: true, import: 'default' });
-const optimizedCardImageEntries = await Promise.all(
-    Object.entries(sourceCardImages).map(async ([path, image]) => {
-        const optimized = await getImage({ src: image as any, width: 480, format: 'webp', quality: 72 });
-        return [path.split('/').pop() || '', optimized.src];
-    })
-);
+const sourceCardImages = import.meta.glob('/src/assets/uploads/cards/*.jpg', { query: '?url', eager: true, import: 'default' });
+const optimizedCardImageEntries = Object.entries(sourceCardImages).map(([path, image]) => [
+    path.split('/').pop() || '',
+    image
+]);
 const optimizedCardImageMap = Object.fromEntries(optimizedCardImageEntries);
 
 // Đọc gợi ý câu hỏi từ KV, nếu chưa có thì dùng mặc định
@@ -1590,7 +1587,8 @@ async function initialize() {
             name: row[0] || 'Unknown Card',
             image: normalizeImageUrl(row[1] || 'https://placehold.co/200x340')
         }));
-        preloadAllCardImages();
+        // Không preload 78 lá ở đầu phiên: ảnh lá được chọn sẽ được load ngay trước khi flip.
+        allCardImagesLoaded = true;
     } catch (error)
     {
         console.error("Lỗi khi tải lá bài:", error);
