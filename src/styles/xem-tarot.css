@@ -695,9 +695,6 @@ body {
     padding-top: 2vh; /* Giảm padding top của modal để dịch chuyển nội dung lên trên */
     padding-bottom: 2vh;
 }
-.tarot-modal.flight-scroll-lock {
-    overflow: hidden;
-}
 .tarot-modal::before {
     content: '';
     position: fixed;
@@ -866,8 +863,8 @@ body {
     border-radius: 0 0 18px 18px;
     transform: translateY(-4px);
 }
-.card-fan-stage.spread-3 { margin-top: -6.2rem; }
-.card-fan-stage.spread-5 { margin-top: -2.1rem; }
+.card-fan-stage.spread-3 { margin-top: -13.2rem; }
+.card-fan-stage.spread-5 { margin-top: -9.1rem; }
 .card-fan-stage::before {
     content: '';
     position: absolute;
