@@ -695,6 +695,9 @@ body {
     padding-top: 2vh; /* Giảm padding top của modal để dịch chuyển nội dung lên trên */
     padding-bottom: 2vh;
 }
+.tarot-modal.flight-scroll-lock {
+    overflow: hidden;
+}
 .tarot-modal::before {
     content: '';
     position: fixed;

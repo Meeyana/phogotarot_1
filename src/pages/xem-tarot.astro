@@ -1104,8 +1104,13 @@ if (Astro.locals.runtime?.env?.SESSION) {
         }
 
         function closeTarotModal() {
+            setFlightScrollLocked(false);
             document.body.style.overflow = '';
             tarotModal.classList.add('hidden');
+        }
+
+        function setFlightScrollLocked(isLocked) {
+            tarotModal?.classList.toggle('flight-scroll-lock', isLocked);
         }
 
         let tempDrawnIndices = []; // Định nghĩa biến toàn cục
@@ -1281,6 +1286,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         }
 
         function animateFlight(startEl, endEl, cardInfo) {
+            setFlightScrollLocked(true);
             const animationStartedAt = performance.now();
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
@@ -1325,6 +1331,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 const finishAnimation = () => {
                     if (isDone) return;
                     isDone = true;
+                    setFlightScrollLocked(false);
                     if (flying.parentNode) flying.remove();
                     createPickBurst(endEl, tarotModal);
                     selectedCards.push(cardInfo);
