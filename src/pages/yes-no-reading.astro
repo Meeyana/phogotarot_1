@@ -87,6 +87,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
 <BaseLayout
   title={pageTitle}
   description={pageDesc}
+  showChatbot={false}
 >
     <script define:vars={{ isLoggedIn: !!Astro.locals.user, optimizedCardImageMap }}>
         window.IS_LOGGED_IN = isLoggedIn;
@@ -711,10 +712,34 @@ if (Astro.locals.runtime?.env?.SESSION) {
         #card-spread-container .facedown-card.fan-card.is-chosen { opacity: 0; pointer-events: none; transform: translateX(-50%) rotate(var(--fan-angle)) translateY(-34px) scale(.92); }
         .mobile-row { display: none; }
         @media (max-width: 768px) {
+            body.yesno-draw-flow {
+                overflow-x: hidden;
+                background-color: #0b132b;
+                background-image: radial-gradient(circle at top, #142850 0%, #0a1f44 40%, #0b132b 100%);
+            }
+            body.yesno-draw-flow .main-nav,
+            body.yesno-draw-flow #stars-bg {
+                display: none !important;
+            }
             #drawing-screen {
                 min-height: auto;
-                padding-bottom: 3rem;
+                padding: 1.25rem 0 3rem;
                 overflow-x: visible;
+            }
+            #drawing-screen .question-display-header {
+                width: calc(100vw - 48px);
+                max-width: 520px;
+                font-size: 1.05rem;
+                line-height: 1.28;
+                margin: 0 auto 1.2rem;
+                padding-bottom: 0.55rem;
+                max-height: 95px;
+                overflow-y: auto;
+            }
+            #drawing-screen .drawing-subheader {
+                font-size: 1.32rem;
+                line-height: 1.25;
+                margin-bottom: 1.5rem;
             }
             .mobile-row { display: flex; }
             #drawing-screen #chosen-cards-display,
@@ -722,7 +747,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             #chosen-cards-display.spread-3 {
                 gap: 0.18rem;
                 min-height: 148px;
-                margin-bottom: 3rem;
+                margin-bottom: 3.2rem;
             }
             #drawing-screen .chosen-card-placeholder,
             #drawing-screen .chosen-card-item {
@@ -734,7 +759,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #drawing-screen #card-spread-container {
                 width: 100%;
-                max-width: calc(100vw - 24px);
+                max-width: calc(100vw - 12px);
                 gap: 10px 0;
                 perspective: none;
                 margin-top: 0;
@@ -748,8 +773,8 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 padding-left: 0;
             }
             #card-spread-container .mobile-card-row {
-                --mobile-card-w: clamp(36px, 10.4vw, 42px);
-                max-width: min(calc(100vw - 28px), calc(var(--mobile-card-w) * 5.18));
+                --mobile-card-w: clamp(42px, 12vw, 50px);
+                max-width: min(calc(100vw - 36px), calc(var(--mobile-card-w) * 6.6));
                 padding-inline: 8px;
                 box-sizing: content-box;
                 margin: 0 auto;
@@ -759,11 +784,13 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 aspect-ratio: 372 / 619;
                 height: auto;
                 margin-left: 0;
-                border-radius: 3px;
+                border-radius: 7px;
                 opacity: 0;
+                overflow: hidden;
+                flex-shrink: 0;
             }
             #card-spread-container .mobile-card-row .facedown-card + .facedown-card {
-                margin-left: calc(var(--mobile-card-w) * -0.78);
+                margin-left: calc(var(--mobile-card-w) * -0.70);
             }
             #card-spread-container .mobile-card-row .facedown-card.is-dealt {
                 opacity: 1;
@@ -1501,6 +1528,7 @@ function showScreen(screenId) {
     if (activeScreen) {
         activeScreen.classList.add('active');
     }
+    document.body.classList.toggle('yesno-draw-flow', screenId === 'shuffling-screen' || screenId === 'drawing-screen');
 }
 
 /** Tải dữ liệu 78 lá bài */
