@@ -1281,7 +1281,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         }
 
         function animateFlight(startEl, endEl, cardInfo) {
-            whenCardImageReady(cardInfo.image).then(() => {
+            const animationStartedAt = performance.now();
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
                 
@@ -1306,12 +1306,18 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
                 
                 document.body.appendChild(flying);
+                const inner = flying.querySelector('.flying-card-inner');
+                whenCardImageReady(cardInfo.image).then(() => {
+                    const delay = Math.max(0, 880 - (performance.now() - animationStartedAt));
+                    setTimeout(() => {
+                        if (inner) inner.style.transform = 'rotateY(180deg) translateZ(0)';
+                    }, delay);
+                });
                 
                 // Double RAF đảm bảo browser đã paint trạng thái ban đầu trước khi chạy transition
                 requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
                     flying.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
-                    flying.querySelector('.flying-card-inner').style.transform = 'rotateY(180deg) translateZ(0)';
                 });
                 });
 
@@ -1342,12 +1348,11 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.addEventListener('transitionend', function handler(e) {
                     if (e.target !== flying) return;
                     flying.removeEventListener('transitionend', handler);
-                    finishAnimation();
+                    setTimeout(finishAnimation, 920);
                 });
 
                 // Fallback nếu transitionend không chạy trên Mobile Safari
-                setTimeout(finishAnimation, 2400);
-            });
+                setTimeout(finishAnimation, 5200);
         }
 
         function pauseFanHover(cardEl) {
