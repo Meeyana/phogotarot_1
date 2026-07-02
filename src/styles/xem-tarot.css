@@ -966,7 +966,7 @@ body {
     }
     .facedown-card {
         width: var(--mobile-card-w);
-        aspect-ratio: 372 / 619;
+        aspect-ratio: 500 / 850;
         height: auto;
         margin-left: 0;
         border-radius: 3px;
@@ -1006,7 +1006,7 @@ body {
         width: 84px;
     }
     .chosen-card-placeholder {
-        height: calc(84px * 619 / 372);
+        height: calc(84px * 850 / 500);
         font-size: 0.95rem;
     }
     .question-display-header {
@@ -1043,7 +1043,7 @@ body {
     }
     .mobile-card-row.tablet-card-row .facedown-card {
         width: var(--mobile-card-w);
-        aspect-ratio: 372 / 619;
+        aspect-ratio: 500 / 850;
         height: auto;
         margin-left: 0;
         border-radius: 5px;

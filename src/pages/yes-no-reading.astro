@@ -754,7 +754,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 width: 84px;
             }
             #drawing-screen .chosen-card-placeholder {
-                height: calc(84px * 619 / 372);
+                height: calc(84px * 850 / 500);
                 font-size: 0.95rem;
             }
             #drawing-screen #card-spread-container {
@@ -781,13 +781,17 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #card-spread-container .mobile-card-row .facedown-card {
                 width: var(--mobile-card-w);
-                aspect-ratio: 372 / 619;
+                aspect-ratio: 500 / 850;
                 height: auto;
                 margin-left: 0;
                 border-radius: 7px;
                 opacity: 0;
                 overflow: hidden;
                 flex-shrink: 0;
+                background-image: none;
+                background-color: transparent;
+                box-shadow: 0 7px 14px rgba(0,0,0,0.22);
+                border-color: rgba(255,255,255,0.18);
             }
             #card-spread-container .mobile-card-row .facedown-card + .facedown-card {
                 margin-left: calc(var(--mobile-card-w) * -0.70);
@@ -847,7 +851,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             }
             #card-spread-container .mobile-card-row.tablet-card-row .facedown-card {
                 width: var(--mobile-card-w);
-                aspect-ratio: 372 / 619;
+                aspect-ratio: 500 / 850;
                 height: auto;
                 margin-left: 0;
                 border-radius: 5px;
@@ -855,11 +859,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 position: relative;
                 overflow: hidden;
                 flex-shrink: 0;
-                background-color: rgba(19, 32, 64, 0.92);
-                background-image: url('/card-back.jpg');
-                background-size: cover;
-                background-position: center;
-                background-repeat: no-repeat;
+                background-color: transparent;
+                background-image: none;
+                box-shadow: 0 7px 14px rgba(0,0,0,0.22);
+                border-color: rgba(255,255,255,0.18);
                 -webkit-backface-visibility: hidden;
                 backface-visibility: hidden;
             }
