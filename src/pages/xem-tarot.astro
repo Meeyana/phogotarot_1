@@ -1297,15 +1297,17 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.className = 'flying-card-animator';
                 flying.innerHTML = `<div class="flying-card-inner"><div class="flying-card-back"></div><div class="flying-card-front"><img src="${cardInfo.image}" class="${cardInfo.isReversed ? 'reversed' : ''}"></div></div>`;
                 
-                const deltaX = (eRect.left + eRect.width / 2) - (sRect.left + sRect.width / 2);
-                const deltaY = (eRect.top + eRect.height / 2) - (sRect.top + sRect.height / 2);
-                const scaleX = endWidth / Math.max(startWidth, 1);
-                const scaleY = endHeight / Math.max(startHeight, 1);
+                const startLeft = sRect.left + sRect.width / 2 - startWidth / 2;
+                const startTop = sRect.top + sRect.height / 2 - startHeight / 2;
+                const endLeft = eRect.left + eRect.width / 2 - endWidth / 2;
+                const endTop = eRect.top + eRect.height / 2 - endHeight / 2;
+                const deltaX = endLeft - startLeft;
+                const deltaY = endTop - startTop;
 
                 // Dùng position:fixed + viewport coords để tránh lệch do backdrop-filter tạo containing block
                 flying.style.position = 'fixed';
-                flying.style.top = `${sRect.top + sRect.height / 2 - startHeight / 2}px`;
-                flying.style.left = `${sRect.left + sRect.width / 2 - startWidth / 2}px`;
+                flying.style.top = `${startTop}px`;
+                flying.style.left = `${startLeft}px`;
                 flying.style.width = `${startWidth}px`;
                 flying.style.height = `${startHeight}px`;
                 flying.style.borderRadius = startRadius;
@@ -1323,7 +1325,9 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 // Double RAF đảm bảo browser đã paint trạng thái ban đầu trước khi chạy transition
                 requestAnimationFrame(() => {
                 requestAnimationFrame(() => {
-                    flying.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
+                    flying.style.width = `${endWidth}px`;
+                    flying.style.height = `${endHeight}px`;
+                    flying.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(1)`;
                 });
                 });
 

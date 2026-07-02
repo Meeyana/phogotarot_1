@@ -1032,7 +1032,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         /* --- FLYING CARD --- */
         .flying-card-animator {
             position: fixed; z-index: 1000; pointer-events: none; width: 60px; height: 102px;
-            transition: transform 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
+            transition: transform 1.85s cubic-bezier(.16,.74,.22,1), width 1.85s cubic-bezier(.16,.74,.22,1), height 1.85s cubic-bezier(.16,.74,.22,1), opacity 0.24s ease;
             transform-style: preserve-3d;
             will-change: transform, opacity;
             contain: layout paint style;
@@ -1048,7 +1048,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
         }
         .flying-card-back { background-image: url('/card-back.jpg'); background-size: cover; background-position: center; }
         .flying-card-front { transform: rotateY(180deg); }
-        .flying-card-front img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; display: block; }
+        .flying-card-front img { width: 100%; height: 100%; border-radius: inherit; object-fit: contain; display: block; background: #050711; }
         .tarot-pick-burst {
             position: absolute;
             width: 18px;
@@ -2201,15 +2201,17 @@ function animateCardFlight(startEl, endEl, cardData, savedStartRect) {
             </div>
         `;
         
-        const deltaX = (endRect.left + endRect.width / 2) - (startRect.left + startRect.width / 2);
-        const deltaY = (endRect.top + endRect.height / 2) - (startRect.top + startRect.height / 2);
-        const scaleX = endWidth / Math.max(startWidth, 1);
-        const scaleY = endHeight / Math.max(startHeight, 1);
+        const startLeft = startRect.left + startRect.width / 2 - startWidth / 2;
+        const startTop = startRect.top + startRect.height / 2 - startHeight / 2;
+        const endLeft = endRect.left + endRect.width / 2 - endWidth / 2;
+        const endTop = endRect.top + endRect.height / 2 - endHeight / 2;
+        const deltaX = endLeft - startLeft;
+        const deltaY = endTop - startTop;
 
         // Dùng position:fixed + viewport coords để tọa độ luôn chính xác
         flyingCard.style.position = 'fixed';
-        flyingCard.style.top = `${startRect.top + startRect.height / 2 - startHeight / 2}px`;
-        flyingCard.style.left = `${startRect.left + startRect.width / 2 - startWidth / 2}px`;
+        flyingCard.style.top = `${startTop}px`;
+        flyingCard.style.left = `${startLeft}px`;
         flyingCard.style.width = `${startWidth}px`;
         flyingCard.style.height = `${startHeight}px`;
         flyingCard.style.borderRadius = startRadius;
@@ -2227,7 +2229,9 @@ function animateCardFlight(startEl, endEl, cardData, savedStartRect) {
         // Double RAF đảm bảo browser đã paint trạng thái ban đầu trước khi chạy transition
         requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            flyingCard.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(${scaleX}, ${scaleY})`;
+            flyingCard.style.width = `${endWidth}px`;
+            flyingCard.style.height = `${endHeight}px`;
+            flyingCard.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) rotate(0deg) scale(1)`;
         });
         });
         let flightHasEnded = false;
