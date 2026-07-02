@@ -1089,13 +1089,15 @@ body {
     transform-style: preserve-3d;
     will-change: transform, opacity;
     contain: layout paint style;
+    border-radius: 8px;
+    overflow: hidden;
     box-shadow: 0 18px 26px rgba(0,0,0,0.32), 0 0 18px rgba(242,201,76,0.18);
 }
 .flying-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.9s cubic-bezier(.22,.72,.2,1) 0.88s; }
-.flying-card-front, .flying-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 4px; }
-.flying-card-back { background-image: url('/card-back.jpg'); background-size: cover; }
+.flying-card-front, .flying-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: inherit; overflow: hidden; }
+.flying-card-back { background-image: url('/card-back.jpg'); background-size: cover; background-position: center; }
 .flying-card-front { transform: rotateY(180deg); }
-.flying-card-front img { width: 100%; height: 100%; border-radius: 4px; }
+.flying-card-front img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; display: block; }
 .tarot-pick-burst {
     position: absolute;
     width: 18px;

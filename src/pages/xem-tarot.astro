@@ -1284,6 +1284,10 @@ if (Astro.locals.runtime?.env?.SESSION) {
             const animationStartedAt = performance.now();
                 const sRect = startEl.getBoundingClientRect();
                 const eRect = endEl.getBoundingClientRect();
+                const startWidth = startEl.offsetWidth || sRect.width;
+                const startHeight = startEl.offsetHeight || sRect.height;
+                const endWidth = endEl.offsetWidth || eRect.width;
+                const endHeight = endEl.offsetHeight || eRect.height;
                 
                 // Ẩn lá bài ngay lập tức khỏi flow để các lá bài khác trượt vào lấp đầy khoảng trống
                 startEl.style.display = 'none';
@@ -1294,15 +1298,15 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 
                 const deltaX = (eRect.left + eRect.width / 2) - (sRect.left + sRect.width / 2);
                 const deltaY = (eRect.top + eRect.height / 2) - (sRect.top + sRect.height / 2);
-                const scaleX = eRect.width / Math.max(sRect.width, 1);
-                const scaleY = eRect.height / Math.max(sRect.height, 1);
+                const scaleX = endWidth / Math.max(startWidth, 1);
+                const scaleY = endHeight / Math.max(startHeight, 1);
 
                 // Dùng position:fixed + viewport coords để tránh lệch do backdrop-filter tạo containing block
                 flying.style.position = 'fixed';
-                flying.style.top = `${sRect.top}px`;
-                flying.style.left = `${sRect.left}px`;
-                flying.style.width = `${sRect.width}px`;
-                flying.style.height = `${sRect.height}px`;
+                flying.style.top = `${sRect.top + sRect.height / 2 - startHeight / 2}px`;
+                flying.style.left = `${sRect.left + sRect.width / 2 - startWidth / 2}px`;
+                flying.style.width = `${startWidth}px`;
+                flying.style.height = `${startHeight}px`;
                 flying.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
                 
                 document.body.appendChild(flying);
