@@ -1288,6 +1288,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 const startHeight = startEl.offsetHeight || sRect.height;
                 const endWidth = endEl.offsetWidth || eRect.width;
                 const endHeight = endEl.offsetHeight || eRect.height;
+                const startRadius = getComputedStyle(startEl).borderRadius;
                 
                 // Ẩn lá bài ngay lập tức khỏi flow để các lá bài khác trượt vào lấp đầy khoảng trống
                 startEl.style.display = 'none';
@@ -1307,6 +1308,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
                 flying.style.left = `${sRect.left + sRect.width / 2 - startWidth / 2}px`;
                 flying.style.width = `${startWidth}px`;
                 flying.style.height = `${startHeight}px`;
+                flying.style.borderRadius = startRadius;
                 flying.style.transform = 'translate3d(0, 0, 0) rotate(-12deg) scale(1)';
                 
                 document.body.appendChild(flying);
