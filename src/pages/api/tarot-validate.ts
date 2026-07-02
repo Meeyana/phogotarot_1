@@ -66,8 +66,7 @@ export const POST: APIRoute = async (context) => {
     }
         
     const config = await getSystemConfig(env);
-    const webhookUrl = env.N8N_VALIDATE_TAROT
-      || 'https://n8n.n8ntuanphangz.xyz/webhook/7179b8ca-c774-47a9-9ed4-6bf975344058'; // fallback localhost
+    const webhookUrl = env.N8N_VALIDATE_TAROT;
     
     // Lấy thông tin cá nhân hóa của user
     const user = context.locals.user;

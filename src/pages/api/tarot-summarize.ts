@@ -8,7 +8,7 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const config = await getSystemConfig(env);
-    const webhookUrl = env.N8N_WEBHOOK_SUMMARIZE || 'https://n8n.n8ntuanphangz.xyz/webhook/0724835f-eb5a-4eb6-acc4-df1a7b4515b6';
+    const webhookUrl = env.N8N_WEBHOOK_SUMMARIZE;
 
     // Nếu người dùng chưa cấu hình webhook tóm tắt, ta bỏ qua mượt mà
     if (!webhookUrl && config.USE_LOCAL_AI) {

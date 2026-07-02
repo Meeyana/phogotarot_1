@@ -26,7 +26,7 @@ export const POST: APIRoute = async (context) => {
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
     const config = await getSystemConfig(env);
-    const webhookUrl = env.N8N_WEBHOOK_TAROT || 'https://n8n.n8ntuanphangz.xyz/webhook/ce565258-c0b7-4c48-b4b1-840994d93bd5';
+    const webhookUrl = env.N8N_WEBHOOK_TAROT;
     refundQuestion = String(body.question || '');
 
     const db = env.DB;
