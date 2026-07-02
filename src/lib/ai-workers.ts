@@ -16,89 +16,109 @@ function normalizeTarotTopic(value: any) {
 
 async function callOpenAI(messages: any[], temperature: number, env: any, config: SystemConfig, passedModel: string = "n8n2") {
     const enabledProviders = normalizeAiProviderOrder(config.AI_PROVIDER_ORDER, config.USE_LOCAL_AI);
-    const routerEnabled = enabledProviders.includes('router');
-    const openAiEnabled = enabledProviders.includes('openai');
-    let useFallback = false;
-    let customErrorMsg = "";
+    const internalProviders = enabledProviders.filter(provider => provider === 'router' || provider === 'openai' || provider === 'deepseek');
+    const failures: string[] = [];
 
-    if (!routerEnabled && !openAiEnabled) {
-        throw new Error('Không có luồng AI nội bộ nào được bật trong CMS.');
+    if (internalProviders.length === 0) {
+        throw new Error('Khong co luong AI noi bo nao duoc bat trong CMS.');
     }
 
-    if (routerEnabled && config.AI_API_URL) {
-        // Thử gọi Custom API trước
-        const apiUrl = config.AI_API_URL;
-        const apiKey = config.DEFAULT_API_KEY || "";
-        // 9router chỉ nhận đúng tên model đặc thù (VD: "n8n", "n8n3", v.v.)
-        let actualModel = passedModel;
-        
-        if (passedModel === 'n8n') actualModel = config.ROUTER_MODEL_1 || 'n8n';
-        if (passedModel === 'n8n2') actualModel = config.ROUTER_MODEL_2 || 'n8n2';
-
+    for (const provider of internalProviders) {
         try {
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`
-                },
-                body: JSON.stringify({
-                    model: actualModel,
-                    messages: messages,
-                    temperature: temperature
-                })
-            });
+            if (provider === 'router') {
+                if (!config.AI_API_URL) throw new Error('AI_API_URL is empty');
+                const apiKey = config.DEFAULT_API_KEY || "";
+                let actualModel = passedModel;
+                if (passedModel === 'n8n') actualModel = config.ROUTER_MODEL_1 || 'n8n';
+                if (passedModel === 'n8n2') actualModel = config.ROUTER_MODEL_2 || 'n8n2';
 
-            if (response.ok) {
+                const response = await fetch(config.AI_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: actualModel,
+                        messages,
+                        temperature
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status} - ${await response.text()}`);
                 return await response.json();
-            } else {
-                const errText = await response.text();
-                customErrorMsg = `HTTP ${response.status} - ${errText}`;
-                console.warn(`[AI API] Custom endpoint failed (${customErrorMsg}). Chuyển sang Fallback OpenAI...`);
-                useFallback = true;
+            }
+
+            if (provider === 'openai') {
+                const fallbackUrl = config.FALLBACK_API_URL || "https://api.openai.com/v1/chat/completions";
+                const fallbackKey = env.OPENAI_API_KEY || "";
+                if (!fallbackKey) throw new Error('OPENAI_API_KEY is empty');
+                let fallbackModel = passedModel;
+                if (passedModel === 'n8n') fallbackModel = config.MODEL_1 || "gpt-4o";
+                if (passedModel === 'n8n2') fallbackModel = config.MODEL_2 || "gpt-4o-mini";
+
+                const response = await fetch(fallbackUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${fallbackKey}`
+                    },
+                    body: JSON.stringify({
+                        model: fallbackModel,
+                        messages,
+                        temperature
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status} - ${await response.text()}`);
+                return await response.json();
+            }
+
+            if (provider === 'deepseek') {
+                const deepseekUrl = config.DEEPSEEK_API_URL || "https://api.deepseek.com/chat/completions";
+                const deepseekKey = env.DEEPSEEK_API_KEY || "";
+                if (!deepseekKey) throw new Error('DEEPSEEK_API_KEY is empty');
+                let deepseekModel = passedModel;
+                if (passedModel === 'n8n') deepseekModel = config.DEEPSEEK_MODEL_1 || "deepseek-v4-pro";
+                if (passedModel === 'n8n2') deepseekModel = config.DEEPSEEK_MODEL_2 || "deepseek-v4-pro";
+
+                const response = await fetch(deepseekUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${deepseekKey}`
+                    },
+                    body: JSON.stringify({
+                        model: deepseekModel,
+                        messages,
+                        thinking: { type: 'enabled' },
+                        reasoning_effort: 'high',
+                        max_tokens: 4096,
+                        response_format: { type: 'text' },
+                        stop: null,
+                        stream: false,
+                        stream_options: null,
+                        temperature,
+                        top_p: 1,
+                        tools: null,
+                        tool_choice: 'none',
+                        logprobs: false,
+                        top_logprobs: null
+                    })
+                });
+
+                if (!response.ok) throw new Error(`HTTP ${response.status} - ${await response.text()}`);
+                return await response.json();
             }
         } catch (err: any) {
-            customErrorMsg = `Fetch error: ${err.message}`;
-            console.warn(`[AI API] Custom endpoint fetch error (${customErrorMsg}). Chuyển sang Fallback OpenAI...`);
-            useFallback = true;
+            const reason = err?.message || String(err);
+            console.warn(`[AI API] ${provider} failed (${reason}).`);
+            failures.push(`${provider}: ${reason}`);
         }
-    } else {
-        customErrorMsg = routerEnabled ? "AI_API_URL is empty" : "9router disabled by CMS";
-        useFallback = true;
     }
 
-    if (useFallback && !openAiEnabled) {
-        throw new Error(`9router Error: ${customErrorMsg}`);
-    }
-
-    if (useFallback) {
-        // Fallback OpenAI hoặc AI Gateway
-        const fallbackUrl = config.FALLBACK_API_URL || "https://api.openai.com/v1/chat/completions";
-        const fallbackKey = env.OPENAI_API_KEY || "";
-        let fallbackModel = passedModel;
-        
-        if (passedModel === 'n8n') fallbackModel = config.MODEL_1 || "gpt-4o";
-        if (passedModel === 'n8n2') fallbackModel = config.MODEL_2 || "gpt-4o-mini";
-
-        const fbResponse = await fetch(fallbackUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${fallbackKey}`
-            },
-            body: JSON.stringify({
-                model: fallbackModel,
-                messages: messages,
-                temperature: temperature
-            })
-        });
-
-        if (!fbResponse.ok) {
-            throw new Error(`9router Error: ${customErrorMsg} | Fallback Error: ${fbResponse.status} ${await fbResponse.text()}`);
-        }
-
-        return await fbResponse.json();
-    }
+    throw new Error(`Tat ca luong AI noi bo duoc bat deu loi. ${failures.join(' | ')}`);
 }
 
 // 1. Logic Validation & Conversational

@@ -7,13 +7,16 @@ export interface SystemConfig {
     ROUTER_MODEL_1: string;
     ROUTER_MODEL_2: string;
     FALLBACK_API_URL: string;
+    DEEPSEEK_API_URL: string;
+    DEEPSEEK_MODEL_1: string;
+    DEEPSEEK_MODEL_2: string;
     AI_PROVIDER_ORDER: AiProvider[];
 }
 
-export type AiProvider = 'n8n' | 'router' | 'openai';
+export type AiProvider = 'n8n' | 'router' | 'openai' | 'deepseek';
 
-const DEFAULT_PROVIDER_ORDER: AiProvider[] = ['n8n', 'router', 'openai'];
-const INTERNAL_PROVIDER_ORDER: AiProvider[] = ['router', 'openai'];
+const DEFAULT_PROVIDER_ORDER: AiProvider[] = ['n8n', 'router', 'openai', 'deepseek'];
+const INTERNAL_PROVIDER_ORDER: AiProvider[] = ['router', 'openai', 'deepseek'];
 
 export function normalizeAiProviderOrder(value: any, useN8nFirst = true): AiProvider[] {
     const source = Array.isArray(value)
@@ -26,7 +29,7 @@ export function normalizeAiProviderOrder(value: any, useN8nFirst = true): AiProv
 
     const normalized = source
         .map((item: any) => String(item || '').trim().toLowerCase())
-        .filter((item: string): item is AiProvider => item === 'n8n' || item === 'router' || item === 'openai');
+        .filter((item: string): item is AiProvider => item === 'n8n' || item === 'router' || item === 'openai' || item === 'deepseek');
 
     return [...new Set(normalized)];
 }
@@ -43,13 +46,17 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
          ROUTER_MODEL_1: env.ROUTER_MODEL_1 || 'n8n',
          ROUTER_MODEL_2: env.ROUTER_MODEL_2 || 'n8n2',
          FALLBACK_API_URL: env.FALLBACK_API_URL || 'https://api.openai.com/v1/chat/completions',
+         DEEPSEEK_API_URL: env.DEEPSEEK_API_URL || 'https://api.deepseek.com/chat/completions',
+         DEEPSEEK_MODEL_1: env.DEEPSEEK_MODEL_1 || 'deepseek-v4-pro',
+         DEEPSEEK_MODEL_2: env.DEEPSEEK_MODEL_2 || 'deepseek-v4-pro',
          AI_PROVIDER_ORDER: normalizeAiProviderOrder(env.AI_PROVIDER_ORDER, env.USE_LOCAL_AI === 'true')
      };
 
     // 2. Thử đọc cấu hình từ Cloudflare KV (ghi đè lên cấu hình mặc định)
-    if (env.SESSION) {
+    const sessionKV = env.SESSION || env.phogotarot_session;
+    if (sessionKV) {
         try {
-            const kvConfigStr = await env.SESSION.get('SYSTEM_CONFIG');
+            const kvConfigStr = await sessionKV.get('SYSTEM_CONFIG');
             if (kvConfigStr) {
                 const kvConfig = JSON.parse(kvConfigStr);
                 
@@ -61,6 +68,9 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
                  if (kvConfig.ROUTER_MODEL_1) config.ROUTER_MODEL_1 = kvConfig.ROUTER_MODEL_1;
                  if (kvConfig.ROUTER_MODEL_2) config.ROUTER_MODEL_2 = kvConfig.ROUTER_MODEL_2;
                  if (kvConfig.FALLBACK_API_URL) config.FALLBACK_API_URL = kvConfig.FALLBACK_API_URL;
+                 if (kvConfig.DEEPSEEK_API_URL) config.DEEPSEEK_API_URL = kvConfig.DEEPSEEK_API_URL;
+                 if (kvConfig.DEEPSEEK_MODEL_1) config.DEEPSEEK_MODEL_1 = kvConfig.DEEPSEEK_MODEL_1;
+                 if (kvConfig.DEEPSEEK_MODEL_2) config.DEEPSEEK_MODEL_2 = kvConfig.DEEPSEEK_MODEL_2;
                  if (typeof kvConfig.AI_PROVIDER_ORDER !== 'undefined') {
                      config.AI_PROVIDER_ORDER = normalizeAiProviderOrder(kvConfig.AI_PROVIDER_ORDER, config.USE_LOCAL_AI);
                  }

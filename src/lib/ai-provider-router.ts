@@ -1,4 +1,4 @@
-import type { SystemConfig } from './config';
+import type { AiProvider, SystemConfig } from './config';
 import { normalizeAiProviderOrder } from './config';
 
 type WorkerRunner = () => Promise<any>;
@@ -15,7 +15,7 @@ export function getEnabledAiProviders(config: SystemConfig) {
     return normalizeAiProviderOrder(config.AI_PROVIDER_ORDER, config.USE_LOCAL_AI);
 }
 
-export function hasEnabledProvider(config: SystemConfig, provider: 'n8n' | 'router' | 'openai') {
+export function hasEnabledProvider(config: SystemConfig, provider: AiProvider) {
     return getEnabledAiProviders(config).includes(provider);
 }
 
@@ -56,7 +56,7 @@ export async function runAiProviderChain(options: RunProviderChainOptions) {
         }
     }
 
-    if (providers.includes('router') || providers.includes('openai')) {
+    if (providers.includes('router') || providers.includes('openai') || providers.includes('deepseek')) {
         try {
             return await options.runWorker();
         } catch (error: any) {
