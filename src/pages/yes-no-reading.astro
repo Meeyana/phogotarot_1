@@ -911,6 +911,7 @@ if (Astro.locals.runtime?.env?.SESSION) {
             background: rgba(11, 19, 43, 0.8); border: 1px solid rgba(242, 201, 76, 0.3);
             border-radius: 16px; padding: 2.5rem; backdrop-filter: blur(10px);
             box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: left;
+            box-sizing: border-box;
         }
         #interpretation-results-display h1, #interpretation-results-display h2, #interpretation-results-display h3 {
             font-family: var(--font-title);
@@ -921,6 +922,41 @@ if (Astro.locals.runtime?.env?.SESSION) {
             color: #e0e0e0; line-height: 1.8; font-size: 1.05rem; text-shadow: none;
         }
         #interpretation-results-display strong { color: #fff; }
+
+        @media (max-width: 768px) {
+            #interpretation-results-display {
+                width: calc(100% - 24px);
+                margin: 2rem auto;
+                padding: 1.4rem 1.15rem;
+                border-radius: 14px;
+            }
+            #interpretation-results-display h1,
+            #interpretation-results-display h2,
+            #interpretation-results-display h3 {
+                font-size: 1.25rem;
+                line-height: 1.35;
+            }
+            #interpretation-results-display p,
+            #interpretation-results-display li {
+                font-size: 1rem;
+                line-height: 1.78;
+            }
+            #follow-up-question-container,
+            #card-lookup-container-results {
+                width: calc(100% - 24px);
+                max-width: calc(100% - 24px);
+                box-sizing: border-box;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #follow-up-question-container .question-input-area {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #card-lookup-container-results {
+                padding: 1.25rem;
+            }
+        }
 
         /* --- LOADER HÀNH TINH 3D --- */
         .interpretation-loader {
