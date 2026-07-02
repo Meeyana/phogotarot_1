@@ -11,12 +11,24 @@ export interface SystemConfig {
     DEEPSEEK_MODEL_1: string;
     DEEPSEEK_MODEL_2: string;
     AI_PROVIDER_ORDER: AiProvider[];
+    AI_ROUTES?: AiRoutesConfig;
 }
 
 export type AiProvider = 'n8n' | 'router' | 'openai' | 'deepseek';
+export type AiRouteKey = 'tarot' | 'yesno';
 
-const DEFAULT_PROVIDER_ORDER: AiProvider[] = ['n8n', 'router', 'openai', 'deepseek'];
-const INTERNAL_PROVIDER_ORDER: AiProvider[] = ['router', 'openai', 'deepseek'];
+export interface AiRouteConfig {
+    AI_PROVIDER_ORDER?: AiProvider[];
+    MODEL_1?: string;
+    MODEL_2?: string;
+    DEEPSEEK_MODEL_1?: string;
+    DEEPSEEK_MODEL_2?: string;
+}
+
+export type AiRoutesConfig = Partial<Record<AiRouteKey, AiRouteConfig>>;
+
+const DEFAULT_PROVIDER_ORDER: AiProvider[] = ['n8n', 'router', 'deepseek', 'openai'];
+const INTERNAL_PROVIDER_ORDER: AiProvider[] = ['router', 'deepseek', 'openai'];
 
 export function normalizeAiProviderOrder(value: any, useN8nFirst = true): AiProvider[] {
     const source = Array.isArray(value)
@@ -34,6 +46,18 @@ export function normalizeAiProviderOrder(value: any, useN8nFirst = true): AiProv
     return [...new Set(normalized)];
 }
 
+export function getRouteSystemConfig(config: SystemConfig, route: AiRouteKey): SystemConfig {
+    const routeConfig = config.AI_ROUTES?.[route] || {};
+    return {
+        ...config,
+        MODEL_1: routeConfig.MODEL_1 || config.MODEL_1,
+        MODEL_2: routeConfig.MODEL_2 || config.MODEL_2,
+        DEEPSEEK_MODEL_1: routeConfig.DEEPSEEK_MODEL_1 || config.DEEPSEEK_MODEL_1,
+        DEEPSEEK_MODEL_2: routeConfig.DEEPSEEK_MODEL_2 || config.DEEPSEEK_MODEL_2,
+        AI_PROVIDER_ORDER: normalizeAiProviderOrder(routeConfig.AI_PROVIDER_ORDER || config.AI_PROVIDER_ORDER, config.USE_LOCAL_AI)
+    };
+}
+
 export async function getSystemConfig(env: any): Promise<SystemConfig> {
     // 1. Khởi tạo cấu hình bằng giá trị mặc định từ biến môi trường (.dev.vars hoặc Cloudflare Dashboard)
     // Điều này đảm bảo hệ thống không chết nếu KV chưa được thiết lập.
@@ -49,7 +73,11 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
          DEEPSEEK_API_URL: env.DEEPSEEK_API_URL || 'https://api.deepseek.com/chat/completions',
          DEEPSEEK_MODEL_1: env.DEEPSEEK_MODEL_1 || 'deepseek-v4-pro',
          DEEPSEEK_MODEL_2: env.DEEPSEEK_MODEL_2 || 'deepseek-v4-pro',
-         AI_PROVIDER_ORDER: normalizeAiProviderOrder(env.AI_PROVIDER_ORDER, env.USE_LOCAL_AI === 'true')
+         AI_PROVIDER_ORDER: normalizeAiProviderOrder(env.AI_PROVIDER_ORDER, env.USE_LOCAL_AI === 'true'),
+         AI_ROUTES: {
+             tarot: { AI_PROVIDER_ORDER: DEFAULT_PROVIDER_ORDER },
+             yesno: { AI_PROVIDER_ORDER: DEFAULT_PROVIDER_ORDER }
+         }
      };
 
     // 2. Thử đọc cấu hình từ Cloudflare KV (ghi đè lên cấu hình mặc định)
@@ -73,6 +101,18 @@ export async function getSystemConfig(env: any): Promise<SystemConfig> {
                  if (kvConfig.DEEPSEEK_MODEL_2) config.DEEPSEEK_MODEL_2 = kvConfig.DEEPSEEK_MODEL_2;
                  if (typeof kvConfig.AI_PROVIDER_ORDER !== 'undefined') {
                      config.AI_PROVIDER_ORDER = normalizeAiProviderOrder(kvConfig.AI_PROVIDER_ORDER, config.USE_LOCAL_AI);
+                 }
+                 if (kvConfig.AI_ROUTES && typeof kvConfig.AI_ROUTES === 'object') {
+                     config.AI_ROUTES = {
+                         tarot: kvConfig.AI_ROUTES.tarot ? {
+                             ...kvConfig.AI_ROUTES.tarot,
+                             AI_PROVIDER_ORDER: normalizeAiProviderOrder(kvConfig.AI_ROUTES.tarot.AI_PROVIDER_ORDER, config.USE_LOCAL_AI)
+                         } : undefined,
+                         yesno: kvConfig.AI_ROUTES.yesno ? {
+                             ...kvConfig.AI_ROUTES.yesno,
+                             AI_PROVIDER_ORDER: normalizeAiProviderOrder(kvConfig.AI_ROUTES.yesno.AI_PROVIDER_ORDER, config.USE_LOCAL_AI)
+                         } : undefined
+                     };
                  }
              }
         } catch (error) {

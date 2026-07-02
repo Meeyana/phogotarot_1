@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getSystemConfig } from '../../lib/config';
+import { getRouteSystemConfig, getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
 import { runAiProviderChain } from '../../lib/ai-provider-router';
 export const prerender = false;
@@ -23,7 +23,7 @@ export const POST: APIRoute = async (context) => {
 
     const body = await context.request.json();
     const env: any = context.locals.runtime?.env || process.env || import.meta.env;
-    const config = await getSystemConfig(env);
+    const config = getRouteSystemConfig(await getSystemConfig(env), 'yesno');
     const webhookUrl = env.N8N_WEBHOOK_YESNO;
     refundQuestion = String(body.question || '');
 

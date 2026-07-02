@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getSystemConfig } from '../../lib/config';
+import { getRouteSystemConfig, getSystemConfig } from '../../lib/config';
 import { checkRateLimit } from '../../lib/rate-limiter';
 import { runAiProviderChain } from '../../lib/ai-provider-router';
 
@@ -65,7 +65,7 @@ export const POST: APIRoute = async (context) => {
         lockedValidate = true;
     }
         
-    const config = await getSystemConfig(env);
+    const config = getRouteSystemConfig(await getSystemConfig(env), 'tarot');
     const webhookUrl = env.N8N_VALIDATE_TAROT;
     
     // Lấy thông tin cá nhân hóa của user
